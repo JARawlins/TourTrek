@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TourTrek</string>
+    <string name="title_tour_market">Tour Market</string>
+    <string name="title_my_tours">My Tours</string>
+    <string name="title_profile">Profile</string>
+</resources>
