@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "920357432114",
+    "firebase_url": "https://tourtrek-61893.firebaseio.com",
+    "project_id": "tourtrek-61893",
+    "storage_bucket": "tourtrek-61893.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920357432114:android:a6e30bdb35bf019f22c52b",
+        "android_client_info": {
+          "package_name": "com.tourtrek"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920357432114-gpulueotbsfl6618r7o2tg40cs5ij5jr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeaBaWXpKmDFKFzFnzjAi3mlaf89eI8XY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920357432114-gpulueotbsfl6618r7o2tg40cs5ij5jr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

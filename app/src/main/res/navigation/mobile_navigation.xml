@@ -9,17 +9,17 @@
         android:id="@+id/navigation_tour_market"
         android:name="com.tourtrek.fragments.TourMarketFragment"
         android:label="@string/title_tour_market"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_tour_market" />
 
     <fragment
         android:id="@+id/navigation_tours"
         android:name="com.tourtrek.fragments.ToursFragment"
         android:label="@string/title_tours"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_tours" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.tourtrek.fragments.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>
