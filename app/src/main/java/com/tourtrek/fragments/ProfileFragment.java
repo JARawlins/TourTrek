@@ -172,7 +172,7 @@ public class ProfileFragment extends Fragment {
                                         errorTextView.setVisibility(View.VISIBLE);
                                         errorTextView.setText(Objects.requireNonNull(task.getException()).getLocalizedMessage());
 
-                                        Log.w(TAG, "signInWithEmail:failure - 175 -" + task.getException().getMessage());
+                                        Log.w(TAG, "signInWithEmail:failure - " + task.getException().getMessage());
 
                                         // Stop loading progress circle
                                         getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);

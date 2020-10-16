@@ -122,6 +122,9 @@ public class ToursFragment extends Fragment {
                                                             // This means the user does not exist in the database
                                                             else {
                                                                 Log.w(TAG, "firestore:failure - unable to find user in firestore");
+
+                                                                // Stop loading progress circle
+                                                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
                                                             }
                                                         }
                                                     }
@@ -132,6 +135,10 @@ public class ToursFragment extends Fragment {
                                         errorTextView.setVisibility(View.VISIBLE);
                                         errorTextView.setText(Objects.requireNonNull(task.getException()).getLocalizedMessage());
                                         Log.w(TAG, "signInWithEmail:failure - " + task.getException().getMessage());
+
+                                        // Stop loading progress circle
+                                        getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+
                                         emailEditText.requestFocus();
                                     }
                                 }
