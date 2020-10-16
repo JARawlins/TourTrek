@@ -3,6 +3,7 @@
     <string name="title_tour_market">Tour Market</string>
     <string name="title_tours">Tours</string>
     <string name="title_profile">Profile</string>
+    <string name="title_login">Login</string>
     <string name="action_sign_in">Sign In</string>
     <string name="action_sign_in_short">Sign In</string>
     <string name="prompt_password">Password</string>
