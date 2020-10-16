@@ -8,18 +8,21 @@
     <fragment
         android:id="@+id/navigation_tour_market"
         android:name="com.tourtrek.fragments.TourMarketFragment"
+        app:defaultNavHost="true"
         android:label="@string/title_tour_market"
         tools:layout="@layout/fragment_tour_market" />
 
     <fragment
         android:id="@+id/navigation_tours"
         android:name="com.tourtrek.fragments.ToursFragment"
+        app:defaultNavHost="true"
         android:label="@string/title_tours"
         tools:layout="@layout/fragment_tours" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.tourtrek.fragments.ProfileFragment"
+        app:defaultNavHost="true"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>
