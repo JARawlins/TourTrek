@@ -67,7 +67,6 @@ public class ProfileFragment extends Fragment {
         if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
             navController.navigate(R.id.navigation_login);
         }
-
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,6 +74,10 @@ public class ProfileFragment extends Fragment {
 
         View profileFragmentView = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        /*
+        FIXME: Unfortunately we need to do this because this fragments entire lifecycle is called even if we overlay the
+        FIXME: login fragment on top of it. If somebody can figure out a better way of doing this, please implement.
+         */
         if (MainActivity.user != null) {
 
             // TODO: This is where we will load the users information into their profile
