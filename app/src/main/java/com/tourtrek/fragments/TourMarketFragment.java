@@ -3,12 +3,17 @@ package com.tourtrek.fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,9 +26,11 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
+import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
 import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.TourMarketViewModel;
 
 import java.util.ArrayList;
 
@@ -34,17 +41,18 @@ public class TourMarketFragment extends Fragment {
     private RecyclerView.Adapter tourMarketAdapter;
     private RecyclerView.LayoutManager tourMarketLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private TourMarketViewModel tourMarketViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View tourMarketView = inflater.inflate(R.layout.fragment_tour_market, container, false);
 
+        // Initialize view model
+        tourMarketViewModel = new ViewModelProvider(this.getActivity()).get(TourMarketViewModel.class);
+
         configureRecyclerView(tourMarketView);
         configureSwipeRefreshLayout(tourMarketView);
         configureOnClickRecyclerView();
-
-        // TODO: Load all public tours here (query database by publicly available)
 
         return tourMarketView;
     }
@@ -60,13 +68,22 @@ public class TourMarketFragment extends Fragment {
 
                         Tour tour = ((TourMarketAdapter)tourMarketAdapter).getTour(position);
 
-                        // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
+                        // Add the selected tour to the view model
+                        tourMarketViewModel.setSelectedTour(tour);
 
-                        Toast.makeText(getContext(), "You clicked on tour : " + tour.getName(), Toast.LENGTH_SHORT).show();
+                        // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
+                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                        ft.addToBackStack("TourFragment").commit();
                     }
                 });
     }
 
+    /**
+     * Configure the recycler view
+     *
+     * @param tourMarketView current view
+     */
     private void configureRecyclerView(View tourMarketView) {
 
         // Get our recycler view from the layout
@@ -74,6 +91,13 @@ public class TourMarketFragment extends Fragment {
 
         // Improves performance because content does not change size
         recyclerView.setHasFixedSize(true);
+
+        // Only load 10 tours before loading more
+        recyclerView.setItemViewCacheSize(10);
+
+        // Enable drawing cache
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         // User linear layout manager
         tourMarketLayoutManager = new LinearLayoutManager(getContext());
@@ -87,6 +111,11 @@ public class TourMarketFragment extends Fragment {
 
     }
 
+    /**
+     * Configure the swipe down to refresh function of our recycler view
+     *
+     * @param tourMarketView current view
+     */
     private void configureSwipeRefreshLayout(View tourMarketView) {
 
         swipeRefreshLayout = tourMarketView.findViewById(R.id.tour_market_srl);
@@ -94,15 +123,16 @@ public class TourMarketFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-                // TODO: Pull data from firestore
-
                 fetchToursAsync(0);
-
             }
         });
     }
 
+    /**
+     * Retrieve all publicly facing tours from firestore
+     *
+     * @param page limit the number of pages to load
+     */
     private void fetchToursAsync(int page) {
 
         // Get instance of firestore
@@ -141,5 +171,11 @@ public class TourMarketFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
     }
 }

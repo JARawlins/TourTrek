@@ -2,6 +2,7 @@ package com.tourtrek.adapters;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
+import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Tour;
-import com.tourtrek.fragments.TourMarketFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.TourMarketViewHolder> {
 
-    private List<Tour> toursDataSet;
-    private Context context;
+    private final List<Tour> toursDataSet;
+    private final Context context;
+    private static final String TAG = "TourMarketAdapter";
 
     public static class TourMarketViewHolder extends RecyclerView.ViewHolder {
 
@@ -73,9 +74,25 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     public void onBindViewHolder(@NonNull TourMarketViewHolder holder, int position) {
         holder.tourName.setText(toursDataSet.get(position).getName());
 
-        holder.coverImage.setImageDrawable(null);
-        Picasso.get().load(toursDataSet.get(position).getCoverImageURI()).into(holder.coverImage);
-        holder.coverImage.setClipToOutline(true); // TODO: I can't figure out the equivalent in xml
+        Picasso.get()
+                .load(toursDataSet.get(position).getCoverImageURI())
+                .into(holder.coverImage, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (position >= toursDataSet.size() - 1) {
+                            ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
+                            ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+                        }
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Log.w(TAG, "Error: Tour cover image not loaded");
+                    }
+                });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            holder.coverImage.setClipToOutline(true);
+        }
 
         holder.location.setText(toursDataSet.get(position).getLocation());
     }
