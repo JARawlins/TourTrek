@@ -1,15 +1,22 @@
 package com.tourtrek.adapters;
 
+import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.data.Tour;
+import com.tourtrek.fragments.TourMarketFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +24,19 @@ import java.util.List;
 public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.TourMarketViewHolder> {
 
     private List<Tour> toursDataSet;
+    private Context context;
 
     public static class TourMarketViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tourName;
+        public ImageView coverImage;
+        public TextView location;
 
         public TourMarketViewHolder(View view) {
             super(view);
             this.tourName = view.findViewById(R.id.item_tour_name);
+            this.coverImage = view.findViewById(R.id.item_tour_cover_iv);
+            this.location = view.findViewById(R.id.item_tour_location);
         }
 
     }
@@ -32,8 +44,9 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     /**
      * Empty constructor
      */
-    public TourMarketAdapter() {
+    public TourMarketAdapter(Context context) {
         this.toursDataSet = new ArrayList<>();
+        this.context = context;
     }
 
     /**
@@ -41,8 +54,9 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
      *
      * @param toursDataSet tours to set
      */
-    public TourMarketAdapter(List<Tour> toursDataSet) {
+    public TourMarketAdapter(List<Tour> toursDataSet, Context context) {
         this.toursDataSet = toursDataSet;
+        this.context = context;
     }
 
     @NonNull
@@ -54,9 +68,16 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         return new TourMarketViewHolder(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(@NonNull TourMarketViewHolder holder, int position) {
         holder.tourName.setText(toursDataSet.get(position).getName());
+
+        holder.coverImage.setImageDrawable(null);
+        Picasso.get().load(toursDataSet.get(position).getCoverImageURI()).into(holder.coverImage);
+        holder.coverImage.setClipToOutline(true); // TODO: I can't figure out the equivalent in xml
+
+        holder.location.setText(toursDataSet.get(position).getLocation());
     }
 
     @Override

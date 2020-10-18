@@ -44,8 +44,6 @@ public class TourMarketFragment extends Fragment {
         configureSwipeRefreshLayout(tourMarketView);
         configureOnClickRecyclerView();
 
-//        pullPublicTours();
-
         // TODO: Load all public tours here (query database by publicly available)
 
         return tourMarketView;
@@ -84,7 +82,7 @@ public class TourMarketFragment extends Fragment {
         fetchToursAsync(0);
 
         // Specify an adapter
-        tourMarketAdapter = new TourMarketAdapter();
+        tourMarketAdapter = new TourMarketAdapter(getContext());
         recyclerView.setAdapter(tourMarketAdapter);
 
     }
