@@ -136,7 +136,7 @@ public class RegisterFragment extends Fragment {
 
                                                             if (fm.getBackStackEntryAt(0).getName().equals("ToursFragment")) {
                                                                 final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                                                                ft.replace(R.id.nav_host_fragment, new ToursFragment(), "ToursFragment");
+                                                                ft.replace(R.id.nav_host_fragment, new PersonalToursFragment(), "ToursFragment");
                                                                 ft.commit();
                                                             }
                                                             else if (fm.getBackStackEntryAt(0).getName().equals("ProfileFragment")) {

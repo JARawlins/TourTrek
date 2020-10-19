@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/personal_current_tours_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:text="Current Tours"
+                android:background="#DDDDDD"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="2">
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/personal_current_tours_srl"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/personal_current_tours_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="invisible" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <LinearLayout
+                    android:id="@+id/personal_current_tours_loading_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/personal_current_tours_future_loading_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Loading Current Tours"
+                        android:textSize="25sp"
+                        android:layout_marginBottom="20dp" />
+
+                    <ProgressBar
+                        android:id="@+id/personal_current_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/personal_future_tours_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:text="Future Tours"
+                android:background="#DDDDDD"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="2">
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/personal_future_tours_srl"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/personal_future_tours_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="invisible" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <LinearLayout
+                    android:id="@+id/personal_future_tours_loading_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/personal_future_tours_future_loading_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Loading Future Tours"
+                        android:textSize="25sp"
+                        android:layout_marginBottom="20dp" />
+
+                    <ProgressBar
+                        android:id="@+id/personal_tours_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/personal_past_tours_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:text="Past Tours"
+                android:background="#DDDDDD"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="2">
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/personal_past_tours_srl"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/personal_past_tours_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="invisible" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <LinearLayout
+                    android:id="@+id/personal_past_tours_loading_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/personal_past_tours_loading_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Loading Past Tours"
+                        android:textSize="25sp"
+                        android:layout_marginBottom="20dp" />
+
+                    <ProgressBar
+                        android:id="@+id/personal_past_tours_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +19,12 @@ import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Tour;
-import com.tourtrek.viewModels.TourMarketViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
 public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
-    private TourMarketViewModel tourMarketViewModel;
+    private TourViewModel tourViewModel;
     private Tour tour;
 
     @Override
@@ -48,13 +46,13 @@ public class TourFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         // Initialize tourMarketViewModel to get the current tour
-        tourMarketViewModel = new ViewModelProvider(this.getActivity()).get(TourMarketViewModel.class);
+        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.tour_fragment, container, false);
 
         // Grab the tour that was selected
-        this.tour = tourMarketViewModel.getSelectedTour();
+        this.tour = tourViewModel.getSelectedTour();
 
         TextView tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
 

@@ -3,17 +3,13 @@ package com.tourtrek.fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -30,7 +26,7 @@ import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
 import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.viewModels.TourMarketViewModel;
+import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 
@@ -41,14 +37,14 @@ public class TourMarketFragment extends Fragment {
     private RecyclerView.Adapter tourMarketAdapter;
     private RecyclerView.LayoutManager tourMarketLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private TourMarketViewModel tourMarketViewModel;
+    private TourViewModel tourViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View tourMarketView = inflater.inflate(R.layout.fragment_tour_market, container, false);
 
         // Initialize view model
-        tourMarketViewModel = new ViewModelProvider(this.getActivity()).get(TourMarketViewModel.class);
+        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
         configureRecyclerView(tourMarketView);
         configureSwipeRefreshLayout(tourMarketView);
@@ -69,7 +65,7 @@ public class TourMarketFragment extends Fragment {
                         Tour tour = ((TourMarketAdapter)tourMarketAdapter).getTour(position);
 
                         // Add the selected tour to the view model
-                        tourMarketViewModel.setSelectedTour(tour);
+                        tourViewModel.setSelectedTour(tour);
 
                         // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
                         final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -82,12 +78,12 @@ public class TourMarketFragment extends Fragment {
     /**
      * Configure the recycler view
      *
-     * @param tourMarketView current view
+     * @param view current view
      */
-    private void configureRecyclerView(View tourMarketView) {
+    private void configureRecyclerView(View view) {
 
         // Get our recycler view from the layout
-        recyclerView = tourMarketView.findViewById(R.id.tour_market_rv);
+        recyclerView = view.findViewById(R.id.tour_market_rv);
 
         // Improves performance because content does not change size
         recyclerView.setHasFixedSize(true);
@@ -114,11 +110,11 @@ public class TourMarketFragment extends Fragment {
     /**
      * Configure the swipe down to refresh function of our recycler view
      *
-     * @param tourMarketView current view
+     * @param view current view
      */
-    private void configureSwipeRefreshLayout(View tourMarketView) {
+    private void configureSwipeRefreshLayout(View view) {
 
-        swipeRefreshLayout = tourMarketView.findViewById(R.id.tour_market_srl);
+        swipeRefreshLayout = view.findViewById(R.id.tour_market_srl);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

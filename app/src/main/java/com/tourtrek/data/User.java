@@ -1,10 +1,15 @@
 package com.tourtrek.data;
 
+import com.google.firebase.firestore.DocumentReference;
+
+import java.util.List;
+
 public class User {
 
     private String username;
     private String email;
     private String profileImageURI;
+    private List<DocumentReference> tours;
 
     /**
      * Empty constructor needed for firestore
@@ -68,5 +73,23 @@ public class User {
      */
     public void setProfileImageURI(String profileImageURI) {
         this.profileImageURI = profileImageURI;
+    }
+
+    /**
+     * Getter for tours
+     *
+     * @return current tours
+     */
+    public List<DocumentReference> getTours() {
+        return tours;
+    }
+
+    /**
+     * Setter for tours
+     *
+     * @param tours tours to set
+     */
+    public void setTours(List<DocumentReference> tours) {
+        this.tours = tours;
     }
 }

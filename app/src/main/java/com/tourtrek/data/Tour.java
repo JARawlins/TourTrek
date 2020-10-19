@@ -14,6 +14,7 @@ public class Tour {
     private List<DocumentReference> attractions;
     private Timestamp startDate;
     private String location;
+    private Long length;
 
     /**
      * Empty constructor needed for firestore
@@ -144,5 +145,23 @@ public class Tour {
      */
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    /**
+     * Getter for length
+     *
+     * @return current length
+     */
+    public Long getLength() {
+        return length;
+    }
+
+    /**
+     * Setter for length
+     *
+     * @param length length to set
+     */
+    public void setLength(Long length) {
+        this.length = length;
     }
 }

@@ -23,9 +23,9 @@ import java.util.List;
 
 public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.TourMarketViewHolder> {
 
+    private static final String TAG = "TourMarketAdapter";
     private final List<Tour> toursDataSet;
     private final Context context;
-    private static final String TAG = "TourMarketAdapter";
 
     public static class TourMarketViewHolder extends RecyclerView.ViewHolder {
 
@@ -50,51 +50,41 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         this.context = context;
     }
 
-    /**
-     * Adapter Constructor
-     *
-     * @param toursDataSet tours to set
-     */
-    public TourMarketAdapter(List<Tour> toursDataSet, Context context) {
-        this.toursDataSet = toursDataSet;
-        this.context = context;
-    }
-
     @NonNull
     @Override
     public TourMarketViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tour, parent, false);
-
         return new TourMarketViewHolder(view);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(@NonNull TourMarketViewHolder holder, int position) {
+
+        ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.VISIBLE);
+        ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.INVISIBLE);
+
         holder.tourName.setText(toursDataSet.get(position).getName());
+        holder.location.setText(toursDataSet.get(position).getLocation());
 
         Picasso.get()
                 .load(toursDataSet.get(position).getCoverImageURI())
                 .into(holder.coverImage, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
-                        if (position >= toursDataSet.size() - 1) {
-                            ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
-                            ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+                        ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
+                        ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            holder.coverImage.setClipToOutline(true);
                         }
+
                     }
                     @Override
                     public void onError(Exception e) {
                         Log.w(TAG, "Error: Tour cover image not loaded");
                     }
                 });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            holder.coverImage.setClipToOutline(true);
-        }
-
-        holder.location.setText(toursDataSet.get(position).getLocation());
     }
 
     @Override
@@ -134,10 +124,10 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     /**
      * Add a list of tours to the recycler
      *
-     * @param toursDataSet list of tour to add
+     * @param dataSet list of tours to add
      */
-    public void addAll(List<Tour> toursDataSet) {
-        this.toursDataSet.addAll(toursDataSet);
+    public void addAll(List<Tour> dataSet) {
+        this.toursDataSet.addAll(dataSet);
         notifyDataSetChanged();
     }
 }
