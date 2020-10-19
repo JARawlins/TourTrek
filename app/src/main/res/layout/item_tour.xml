@@ -29,6 +29,7 @@
             android:id="@+id/item_tour_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="150dp"
             android:paddingEnd="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
@@ -37,7 +38,7 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/item_tour_bg_img"
             android:textSize="20sp"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -46,6 +47,7 @@
             android:id="@+id/item_tour_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="150dp"
             android:paddingEnd="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
@@ -54,7 +56,7 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/item_tour_bg_img"
             android:textSize="20sp"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
