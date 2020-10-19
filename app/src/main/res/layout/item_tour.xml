@@ -18,7 +18,8 @@
         android:background="@drawable/item_tour_bg_img"
         android:src="@drawable/ic_profile_black"/>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/item_tour_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,53 +27,39 @@
 
         <TextView
             android:id="@+id/item_tour_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
+            android:paddingEnd="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingStart="5dp"
             android:text="Example Tour"
             android:textColor="#FFFFFF"
             android:background="@drawable/item_tour_bg_img"
             android:textSize="20sp"
             android:gravity="center_horizontal"
-            android:layout_gravity="center_vertical"
-            android:selectAllOnFocus="true" />
-
-        <TextView
-            android:id="@+id/item_tour_placeholder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:textSize="20sp"
-            android:layout_gravity="center_vertical"
-            android:selectAllOnFocus="true" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/item_tour_location"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
+            android:paddingEnd="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingStart="5dp"
             android:text="Example Location"
             android:textColor="#FFFFFF"
             android:background="@drawable/item_tour_bg_img"
             android:textSize="20sp"
-            android:layout_gravity="center_vertical"
             android:gravity="center_horizontal"
-            android:selectAllOnFocus="true"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             />
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
