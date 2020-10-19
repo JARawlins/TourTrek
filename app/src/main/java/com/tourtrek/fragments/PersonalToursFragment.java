@@ -37,6 +37,7 @@ import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.FuturePersonalToursAdapter;
 import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.data.User;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
@@ -338,7 +339,7 @@ public class PersonalToursFragment extends Fragment {
 
         // Pull out the UID's from each documentReference
         List<String> usersToursUIDs = new ArrayList<>();
-        if (!usersToursUIDs.isEmpty()) {
+        if (!MainActivity.user.getTours().isEmpty()) {
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
                 usersToursUIDs.add(documentReference.getId());
             }
@@ -400,46 +401,6 @@ public class PersonalToursFragment extends Fragment {
                         }
                     }
                 });
-
-
-
-//        query
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                    if (task.isSuccessful()) {
-//
-//                        ArrayList<Tour> tours = new ArrayList<>();
-//
-//                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-//                            tours.add(documentSnapshot.toObject(Tour.class));
-//                        }
-//
-//                        Log.i(TAG, "Successfully retrieved " + tours.size() + " tours from the firestore");
-//
-//                        if (type.equals("current")) {
-//                            ((CurrentPersonalToursAdapter)currentTourMarketAdapter).clear();
-//                            ((CurrentPersonalToursAdapter)currentTourMarketAdapter).addAll(tours);
-//                            currentSwipeRefreshLayout.setRefreshing(false);
-//                        }
-//                        else if (type.equals("future")) {
-//                            ((FuturePersonalToursAdapter)futureTourMarketAdapter).clear();
-//                            ((FuturePersonalToursAdapter)futureTourMarketAdapter).addAll(tours);
-//                            futureSwipeRefreshLayout.setRefreshing(false);
-//                        }
-//                        else if (type.equals("past")) {
-//                            ((PastPersonalToursAdapter)pastTourMarketAdapter).clear();
-//                            ((PastPersonalToursAdapter)pastTourMarketAdapter).addAll(tours);
-//                            pastSwipeRefreshLayout.setRefreshing(false);
-//                        }
-//
-//                    }
-//                    else {
-//                        Log.w(TAG, "Error retrieving tours from firestore: ", task.getException());
-//                    }
-//                }
-//            });
     }
 
 }

@@ -29,6 +29,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -89,10 +91,6 @@ public class ProfileFragment extends Fragment {
 
         View profileFragmentView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-
-
-
-
         /*
         FIXME: Unfortunately we need to do this because this fragments entire lifecycle is called even if we overlay the
         FIXME: login fragment on top of it. If somebody can figure out a better way of doing this, please implement.
@@ -114,7 +112,7 @@ public class ProfileFragment extends Fragment {
                     .into(profileUserImageView);
 
             // If user clicks profile image, they can change it
-            profileFragmentView.setOnClickListener(view -> {
+            profileUserImageView.setOnClickListener(view -> {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -122,7 +120,11 @@ public class ProfileFragment extends Fragment {
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
             });
 
-            Glide.with(this).load(MainActivity.user.getProfileImageURI()).circleCrop().into(profileUserImageView);
+            Glide.with(this)
+                    .load(MainActivity.user.getProfileImageURI())
+                    .placeholder(R.drawable.ic_profile_black)
+                    .circleCrop()
+                    .into(profileUserImageView);
 
         }
 
