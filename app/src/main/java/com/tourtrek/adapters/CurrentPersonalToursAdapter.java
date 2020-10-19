@@ -120,7 +120,9 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
     }
 
     public void stopLoading() {
-        ((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container).setVisibility(View.INVISIBLE);
-        ((MainActivity) context).findViewById(R.id.personal_current_tours_rv).setVisibility(View.VISIBLE);
+        if (((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container) != null) {
+            ((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container).setVisibility(View.INVISIBLE);
+            ((MainActivity) context).findViewById(R.id.personal_current_tours_rv).setVisibility(View.VISIBLE);
+        }
     }
 }
