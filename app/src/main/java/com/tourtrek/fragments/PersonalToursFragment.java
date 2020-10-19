@@ -3,9 +3,13 @@ package com.tourtrek.fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -93,6 +97,15 @@ public class PersonalToursFragment extends Fragment {
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
+        Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
+
+        personalFutureToursTitleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         if (MainActivity.user != null) {
 
             // Configure recycler views
@@ -170,6 +183,16 @@ public class PersonalToursFragment extends Fragment {
             futureTourAdapter = new FuturePersonalToursAdapter(getContext());
             futureRecyclerView.setAdapter(futureTourAdapter);
 
+            futureRecyclerView
+                    .getViewTreeObserver()
+                    .addOnGlobalLayoutListener(
+                            new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    ((FuturePersonalToursAdapter)futureTourAdapter).stopLoading();
+                                }
+                            });
+
         // Past
 
             // Get our recycler view from the layout
@@ -194,6 +217,16 @@ public class PersonalToursFragment extends Fragment {
             // Specify an adapter
             pastTourAdapter = new PastPersonalToursAdapter(getContext());
             pastRecyclerView.setAdapter(pastTourAdapter);
+
+            pastRecyclerView
+                    .getViewTreeObserver()
+                    .addOnGlobalLayoutListener(
+                            new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    ((PastPersonalToursAdapter)pastTourAdapter).stopLoading();
+                                }
+                            });
 
     }
 
@@ -305,8 +338,10 @@ public class PersonalToursFragment extends Fragment {
 
         // Pull out the UID's from each documentReference
         List<String> usersToursUIDs = new ArrayList<>();
-        for (DocumentReference documentReference : MainActivity.user.getTours()) {
-            usersToursUIDs.add(documentReference.getId());
+        if (!usersToursUIDs.isEmpty()) {
+            for (DocumentReference documentReference : MainActivity.user.getTours()) {
+                usersToursUIDs.add(documentReference.getId());
+            }
         }
 
         // Grab all tours in order to query

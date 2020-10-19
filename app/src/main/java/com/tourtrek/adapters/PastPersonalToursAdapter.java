@@ -109,4 +109,14 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
         this.pastPersonalToursDataSet.addAll(dataSet);
         notifyDataSetChanged();
     }
+
+    /**
+     * Stops the loading of the progress bar
+     */
+    public void stopLoading() {
+        if (((MainActivity) context).findViewById(R.id.personal_past_tours_loading_container) != null) {
+            ((MainActivity) context).findViewById(R.id.personal_past_tours_loading_container).setVisibility(View.INVISIBLE);
+            ((MainActivity) context).findViewById(R.id.personal_past_tours_rv).setVisibility(View.VISIBLE);
+        }
+    }
 }

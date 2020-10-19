@@ -6,13 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ProfileFragment">
 
+    <ImageView
+        android:id="@+id/profile_user_iv"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_profile_black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/profile_username_tv"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
         android:text="Temp Username"
-        android:layout_marginBottom="150dp"
-        app:layout_constraintBottom_toTopOf="@+id/profile_logout_btn"
+        app:layout_constraintBottom_toTopOf="@+id/profile_user_iv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
@@ -21,12 +33,12 @@
         android:id="@+id/profile_logout_btn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
+        android:layout_marginTop="50dp"
         android:text="Logout"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/profile_user_iv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

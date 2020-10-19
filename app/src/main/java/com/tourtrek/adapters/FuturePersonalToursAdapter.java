@@ -108,4 +108,14 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
         this.futurePersonalToursDataSet.addAll(dataSet);
         notifyDataSetChanged();
     }
+
+    /**
+     * Stops the loading of the progress bar
+     */
+    public void stopLoading() {
+        if (((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container) != null) {
+            ((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container).setVisibility(View.INVISIBLE);
+            ((MainActivity) context).findViewById(R.id.personal_future_tours_rv).setVisibility(View.VISIBLE);
+        }
+    }
 }

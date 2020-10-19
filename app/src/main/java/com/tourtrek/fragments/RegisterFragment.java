@@ -134,16 +134,19 @@ public class RegisterFragment extends Fragment {
 
                                                             FragmentManager fm = getParentFragmentManager();
 
-                                                            if (fm.getBackStackEntryAt(0).getName().equals("ToursFragment")) {
-                                                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                                                                ft.replace(R.id.nav_host_fragment, new PersonalToursFragment(), "ToursFragment");
-                                                                ft.commit();
-                                                            }
-                                                            else if (fm.getBackStackEntryAt(0).getName().equals("ProfileFragment")) {
-                                                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                                                                ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
-                                                                ft.commit();
-                                                            }
+//                                                            if (fm.getBackStackEntryAt(0).getName().equals("ToursFragment")) {
+//                                                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+//                                                                ft.replace(R.id.nav_host_fragment, new PersonalToursFragment(), "ToursFragment");
+//                                                                ft.commit();
+//                                                            }
+//                                                            else if (fm.getBackStackEntryAt(0).getName().equals("ProfileFragment")) {
+//                                                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+//                                                                ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
+//                                                                ft.commit();
+//                                                            }
+
+                                                            getActivity().getSupportFragmentManager().popBackStack();
+                                                            getActivity().getSupportFragmentManager().popBackStack();
 
                                                             // Stop loading progress circle
                                                             loadingProgressBar.setVisibility(View.GONE);
