@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.tourtrek.R;
 import com.tourtrek.viewmodels.TourMaketViewModel;
@@ -19,18 +19,21 @@ public class TourMarketFragment extends Fragment {
 
     private TourMaketViewModel tourMaketViewModel;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        tourMaketViewModel =
-                ViewModelProviders.of(this).get(TourMaketViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        tourMaketViewModel = new ViewModelProvider(this).get(TourMaketViewModel.class);
+
+        View root = inflater.inflate(R.layout.fragment_tour_market, container, false);
+
         final TextView textView = root.findViewById(R.id.text_home);
+
         tourMaketViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
         });
+
         return root;
     }
 }
