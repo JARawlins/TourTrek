@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,7 +39,7 @@ public class LoginFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // Do nothing because there is no user logged in
+                // Do nothing
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -63,118 +59,110 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View loginFragmentView = inflater.inflate(R.layout.fragment_login, container, false);
-
-        return loginFragmentView;
+        return inflater.inflate(R.layout.fragment_login, container, false);
 
     }
 
+    /**
+     * Setup login button listener
+     *
+     * @param view current view
+     */
     private void setupLoginButton(View view) {
 
         Button loginButton = view.findViewById(R.id.login_login_btn);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        loginButton.setOnClickListener(v -> {
 
-                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+            final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                // Close soft keyboard
-                Activity currentActivity = getActivity();
-                Utilities.hideKeyboard(currentActivity);
+            // Close soft keyboard
+            Activity currentActivity = getActivity();
+            Utilities.hideKeyboard(currentActivity);
 
-                // Start loading progress circle
-                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.VISIBLE);
+            // Start loading progress circle
+            getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.VISIBLE);
 
-                final EditText emailEditText = getActivity().findViewById(R.id.login_email_et);
-                final EditText passwordEditText = getActivity().findViewById(R.id.login_password_et);
-                final TextView errorTextView = getActivity().findViewById(R.id.login_error_tv);
+            final EditText emailEditText = getActivity().findViewById(R.id.login_email_et);
+            final EditText passwordEditText = getActivity().findViewById(R.id.login_password_et);
+            final TextView errorTextView = getActivity().findViewById(R.id.login_error_tv);
 
-                final String email = emailEditText.getText().toString();
-                final String password = passwordEditText.getText().toString();
+            final String email = emailEditText.getText().toString();
+            final String password = passwordEditText.getText().toString();
 
-                if (emailEditText.getText().toString().equals("") || passwordEditText.getText().toString().equals("")) {
-                    errorTextView.setVisibility(View.VISIBLE);
-                    errorTextView.setText("Invalid username or password");
-                    // Stop loading progress circle
-                    getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
-                }
-                else {
+            if (emailEditText.getText().toString().equals("") || passwordEditText.getText().toString().equals("")) {
+                errorTextView.setVisibility(View.VISIBLE);
+                errorTextView.setText("Invalid username or password");
 
-                    mAuth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "signInWithEmail:success");
+                // Stop loading progress circle
+                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+            }
+            else {
 
-                                        // Get the users info from the firestore
-                                        db.collection("Users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
-                                                .get()
-                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        if (task.isSuccessful()) {
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(getActivity(), task -> {
+                            if (task.isSuccessful()) {
 
-                                                            DocumentSnapshot userDocument = task.getResult();
+                                Log.d(TAG, "signInWithEmail:success");
 
-                                                            if (userDocument != null && userDocument.exists()) {
+                                // Get the users info from the firestore
+                                db.collection("Users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
+                                        .get()
+                                        .addOnCompleteListener(task2 -> {
 
-                                                                MainActivity.user = userDocument.toObject(User.class);
+                                            if (task2.isSuccessful()) {
 
-                                                                // Go back to the profile screen
-                                                                NavHostFragment.findNavController(LoginFragment.this).popBackStack();
+                                                DocumentSnapshot userDocument = task2.getResult();
 
-                                                                // Stop loading progress circle
-                                                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
-                                                            }
+                                                if (userDocument != null && userDocument.exists()) {
 
-                                                            // This means the user does not exist in the database
-                                                            else {
-                                                                Log.w(TAG, "firestore:failure - unable to find user in firestore");
+                                                    // Convert the document to its object and save it globally
+                                                    MainActivity.user = userDocument.toObject(User.class);
 
-                                                                // Stop loading progress circle
-                                                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
-                                                            }
-                                                        }
-                                                    }
-                                                });
+                                                    // Go back to the profile screen
+                                                    getActivity().getSupportFragmentManager().popBackStack();
 
+                                                }
 
+                                                // This means the user does not exist in the database
+                                                else {
+                                                    Log.w(TAG, "firestore:failure - unable to find user in firestore");
+                                                }
 
-                                    } else {
-                                        // If sign in fails, display a message to the user.
-                                        errorTextView.setVisibility(View.VISIBLE);
-                                        errorTextView.setText(Objects.requireNonNull(task.getException()).getLocalizedMessage());
+                                                // Stop showing progress bar
+                                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+                                            }
+                                        });
 
-                                        Log.w(TAG, "signInWithEmail:failure - " + task.getException().getMessage());
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                errorTextView.setVisibility(View.VISIBLE);
+                                errorTextView.setText(Objects.requireNonNull(task.getException()).getLocalizedMessage());
 
-                                        // Stop loading progress circle
-                                        getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+                                Log.w(TAG, "signInWithEmail:failure - " + task.getException().getMessage());
 
-                                        emailEditText.requestFocus();
-                                    }
-                                }
-                            });
-                }
+                                // Stop loading progress circle
+                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+                            }
+                        });
             }
         });
 
     }
 
+    /**
+     * Setup register button listener
+     *
+     * @param view current view
+     */
     private void setupRegisterButton(View view) {
 
         Button registerButton = view.findViewById(R.id.login_register_btn);
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                ft.replace(R.id.nav_host_fragment, new RegisterFragment(), "RegisterFragment");
-                ft.addToBackStack("RegisterFragment").commit();
-            }
+        registerButton.setOnClickListener(v -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new RegisterFragment(), "RegisterFragment");
+            ft.addToBackStack("RegisterFragment").commit();
         });
     }
 

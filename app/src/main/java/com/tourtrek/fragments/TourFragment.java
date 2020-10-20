@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
@@ -60,7 +61,7 @@ public class TourFragment extends Fragment {
 
         ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
 
-        Picasso.get().load(tour.getCoverImageURI()).into(tourCoverImageView);
+        Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
 
         return tourView;
     }
