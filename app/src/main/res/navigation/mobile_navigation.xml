@@ -2,24 +2,35 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/nav_graph"
     app:startDestination="@+id/navigation_tours">
 
     <fragment
         android:id="@+id/navigation_tour_market"
         android:name="com.tourtrek.fragments.TourMarketFragment"
+        app:defaultNavHost="true"
         android:label="@string/title_tour_market"
         tools:layout="@layout/fragment_tour_market" />
 
     <fragment
         android:id="@+id/navigation_tours"
-        android:name="com.tourtrek.fragments.ToursFragment"
+        android:name="com.tourtrek.fragments.PersonalToursFragment"
+        app:defaultNavHost="true"
         android:label="@string/title_tours"
-        tools:layout="@layout/fragment_tours" />
+        tools:layout="@layout/fragment_personal_tours" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.tourtrek.fragments.ProfileFragment"
+        app:defaultNavHost="true"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.tourtrek.fragments.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login" />
+
+
 </navigation>
