@@ -83,6 +83,9 @@ public class User {
      * @return current tours
      */
     public List<DocumentReference> getTours() {
+        if (this.tours == null){
+            this.tours = new ArrayList<>();
+        }
         return tours;
     }
 

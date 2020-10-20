@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+//        mAuth.signOut();
+//        MainActivity.user = null;
         // If the user was previously logged in, load their information here
         if (mAuth.getCurrentUser() != null) {
 
