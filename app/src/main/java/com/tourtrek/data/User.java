@@ -2,6 +2,7 @@ package com.tourtrek.data;
 
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -19,6 +20,7 @@ public class User {
     public User(String username, String email) {
         this.username = username;
         this.email = email;
+        this.tours = new ArrayList<DocumentReference>();
     }
 
     /**
