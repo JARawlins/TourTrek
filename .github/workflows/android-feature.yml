@@ -23,5 +23,12 @@ jobs:
         java-version: 1.8
     
     # Runs Unit Tests
-    - name: Unit tests
-      run: bash ./gradlew test --stacktrace
+    - name: Unit Tests
+      run: bash ./gradlew test
+    
+    # Runs Instrumentation Tests
+    - name: Instrumentation Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 30
+        script: ./gradle2 connectedCheck
