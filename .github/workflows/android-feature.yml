@@ -80,7 +80,7 @@ jobs:
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
-          service_account_key: ${{ secrets.FIREBASE_TOKEN }}
+          service_account_key: ${{ secrets.GCLOUD_AUTH }}
 
       - name: Set current project
         run: gcloud config set project ${{ secrets.FIREBASE_APP_ID }}
