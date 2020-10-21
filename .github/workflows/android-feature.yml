@@ -41,7 +41,7 @@ jobs:
           path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
     
   test:
-    name: Run Tests
+    name: Run Unit Tests
     runs-on: ubuntu-latest
 
     steps:
