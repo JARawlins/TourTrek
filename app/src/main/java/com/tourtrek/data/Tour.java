@@ -1,13 +1,13 @@
 package com.tourtrek.data;
 
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tour implements TourADT {
-
+public class Tour{
+//TODO inheritance to remove duplicate code - a Tour object will have its own variables from the superclass including getters and setters
     private String name;
     private Timestamp startDate;
     private String location;
@@ -18,7 +18,10 @@ public class Tour implements TourADT {
     private String description;
     private Boolean publiclyAvailable;
     private List<DocumentReference> attractions;
+    private List<Attraction> attractionsObj;
     private String coverImageURI;
+    private String UID;
+    private Timestamp lastModified; // used to only update recently modified attractions and tours and save on database writes
 
     /**
      * Empty constructor needed for Firestore
@@ -38,11 +41,12 @@ public class Tour implements TourADT {
     /**
      * Alternate constructor
      */
-    public Tour(String name, Boolean publiclyAvailable, String description){
+    public Tour(String name, Boolean publiclyAvailable, String description, String UID){
         this.startDate = Timestamp.now();
         this.name = name;
         this.description = description;
         this.publiclyAvailable = publiclyAvailable;
+        this.UID = UID;
 //        this.location = "";
 //        this.notifications = false;
 //        this.reviews = new ArrayList<>();
@@ -237,5 +241,50 @@ public class Tour implements TourADT {
      */
     public void setPubliclyAvailable(Boolean publiclyAvailable) {
         this.publiclyAvailable = publiclyAvailable;
+    }
+
+    public String getTourUID() {
+        return this.UID;
+    }
+
+    public void setTourUID(String UID) {
+        this.UID = UID;
+    }
+
+    public Boolean getPubliclyAvailable() {
+        return publiclyAvailable;
+    }
+
+    public List<Attraction> getAttractionsObj() {
+        if (this.attractionsObj != null){
+            return attractionsObj;
+        }
+        return new ArrayList<Attraction>();
+    }
+
+    public void setAttractionsObj(List<Attraction> attractionsObj) {
+        this.attractionsObj = attractionsObj;
+    }
+
+    public String getUID() {
+        if (this.UID != null){
+            return this.UID;
+        }
+        return "";
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
+    }
+
+    public Timestamp getLastModified() {
+        if (this.lastModified != null){
+            return this.lastModified;
+        }
+        return Timestamp.now();
+    }
+
+    public void setLastModified(Timestamp lastModified) {
+        this.lastModified = lastModified;
     }
 }

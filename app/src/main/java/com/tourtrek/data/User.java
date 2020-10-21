@@ -1,17 +1,18 @@
 package com.tourtrek.data;
 
 import com.google.firebase.firestore.DocumentReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class User implements UserADT {
+public class User{
 
     private String username;
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
+    private List<Tour> toursObj;
     private List<DocumentReference> contacts;
+    // TODO perhaps a map of Tour objects and DocumentReferences would be better
 
     /**
      * Empty constructor needed for firestore
@@ -125,5 +126,16 @@ public class User implements UserADT {
 
     public void setContacts(List<DocumentReference> contacts) {
         this.contacts = contacts;
+    }
+
+    public List<Tour> getToursObj() {
+        if (this.toursObj != null){
+            return this.toursObj;
+        }
+        return new ArrayList<Tour>();
+    }
+
+    public void setToursObj(List<Tour> toursObj) {
+        this.toursObj = toursObj;
     }
 }

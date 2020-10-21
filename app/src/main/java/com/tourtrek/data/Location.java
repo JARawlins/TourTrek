@@ -1,6 +1,6 @@
 package com.tourtrek.data;
 
-public class Location implements LocationADT{
+public class Location{
     private String street; // Ex: 330 N. Orchard Street
     private String unit;
     private String county;

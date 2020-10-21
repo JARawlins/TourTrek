@@ -2,14 +2,16 @@ package com.tourtrek.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.firebase.Timestamp;
 
-public class Attraction implements AttractionADT {
+public class Attraction {
 
     private List<String> reviews;
     private Location extendedLocation;
     private float cost;
     private String name;
     private String description;
+    private Timestamp lastModified; // used to only update recently modified attractions and tours and save on database writes
 
     /**
      * Attraction constructor, default
@@ -105,5 +107,14 @@ public class Attraction implements AttractionADT {
         this.description = description;
     }
 
+    public Timestamp getLastModified() {
+        if (this.lastModified != null){
+            return this.lastModified;
+        }
+        return Timestamp.now();
+    }
 
+    public void setLastModified(Timestamp lastModified) {
+        this.lastModified = lastModified;
+    }
 }
