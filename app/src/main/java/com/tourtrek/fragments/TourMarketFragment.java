@@ -1,39 +1,173 @@
 package com.tourtrek.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
-import com.tourtrek.viewmodels.TourMaketViewModel;
+import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.TourMarketAdapter;
+import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.TourViewModel;
+
+import java.util.ArrayList;
 
 public class TourMarketFragment extends Fragment {
 
-    private TourMaketViewModel tourMaketViewModel;
+    private static final String TAG = "TourMarketFragment";
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter tourMarketAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TourViewModel tourViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        tourMaketViewModel = new ViewModelProvider(this).get(TourMaketViewModel.class);
+        View tourMarketView = inflater.inflate(R.layout.fragment_tour_market, container, false);
 
-        View root = inflater.inflate(R.layout.fragment_tour_market, container, false);
+        // Initialize view model
+        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
-        final TextView textView = root.findViewById(R.id.text_home);
+        configureRecyclerView(tourMarketView);
+        configureSwipeRefreshLayout(tourMarketView);
+        configureOnClickRecyclerView();
 
-        tourMaketViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        return tourMarketView;
+    }
 
-        return root;
+    /**
+     * Enables the click listener for each item in our recycler view
+     */
+    private void configureOnClickRecyclerView() {
+        ItemClickSupport.addTo(recyclerView, R.layout.item_tour)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                        // Reference to the current tour selected
+                        Tour tour = ((TourMarketAdapter)tourMarketAdapter).getTour(position);
+
+                        // Add the selected tour to the view model so we can access the tour inside the fragment
+                        tourViewModel.setSelectedTour(tour);
+
+                        // Display the tour selected
+                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                        ft.addToBackStack("TourFragment").commit();
+                    }
+                });
+    }
+
+    /**
+     * Configure the recycler view
+     *
+     * @param view current view
+     */
+    private void configureRecyclerView(View view) {
+
+        // Get our recycler view from the layout
+        recyclerView = view.findViewById(R.id.tour_market_rv);
+
+        // Improves performance because content does not change size
+        recyclerView.setHasFixedSize(true);
+
+        // Only load 10 tours before loading more
+        recyclerView.setItemViewCacheSize(10);
+
+        // Enable drawing cache
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+        // User linear layout manager
+        RecyclerView.LayoutManager tourMarketLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(tourMarketLayoutManager);
+
+        // Fetch all the public tours
+        fetchToursAsync();
+
+        // Specify an adapter
+        tourMarketAdapter = new TourMarketAdapter(getContext());
+        recyclerView.setAdapter(tourMarketAdapter);
+
+    }
+
+    /**
+     * Configure the swipe down to refresh function of our recycler view
+     *
+     * @param view current view
+     */
+    private void configureSwipeRefreshLayout(View view) {
+
+        swipeRefreshLayout = view.findViewById(R.id.tour_market_srl);
+        swipeRefreshLayout.setOnRefreshListener(this::fetchToursAsync);
+    }
+
+    /**
+     * Retrieve all publicly facing tours from firestore
+     */
+    private void fetchToursAsync() {
+
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Setup collection reference
+        CollectionReference toursCollection = db.collection("Tours");
+
+        // Setup basic query information
+        Query query = toursCollection.whereEqualTo("publiclyAvailable", true);
+
+        // Query database
+        query
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            // For holding all our tours
+                            ArrayList<Tour> tours = new ArrayList<>();
+
+                            // Convert each document into its object
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                tours.add(documentSnapshot.toObject(Tour.class));
+                            }
+
+                            Log.i(TAG, "Successfully retrieved " + tours.size() + " tours from the firestore");
+
+                            // Clear and add tours
+                            ((TourMarketAdapter)tourMarketAdapter).clear();
+                            ((TourMarketAdapter)tourMarketAdapter).addAll(tours);
+
+                            // Stop showing refresh decorator
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        else {
+                            Log.w(TAG, "Error retrieving tours from firestore: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
     }
 }
