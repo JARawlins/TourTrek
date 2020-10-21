@@ -5,22 +5,31 @@ import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User implements UserADT {
 
     private String username;
     private String email;
-    private String profileImageURI;
     private List<DocumentReference> tours;
+    private String profileImageURI;
+    private List<DocumentReference> contacts;
 
     /**
      * Empty constructor needed for firestore
      */
-    public User() {}
+    public User() {
+//        this.username = "";
+//        this.email = "";
+//        this.tours = new ArrayList<>();
+//        this.profileImageURI = "";
+//        this.contacts = new ArrayList<>();
+    }
 
     public User(String username, String email) {
         this.username = username;
         this.email = email;
-        this.tours = new ArrayList<DocumentReference>();
+//        this.tours = new ArrayList<>();
+//        this.profileImageURI = "";
+//        this.contacts = new ArrayList<>();
     }
 
     /**
@@ -29,7 +38,10 @@ public class User {
      * @return current username
      */
     public String getUsername() {
-        return username;
+        if (this.username != null){
+            return this.username;
+        }
+        return "";
     }
 
     /**
@@ -47,7 +59,10 @@ public class User {
      * @return current email
      */
     public String getEmail() {
-        return email;
+        if (this.email != null){
+            return this.email;
+        }
+        return "";
     }
 
     /**
@@ -65,7 +80,10 @@ public class User {
      * @return current profileImageURI
      */
     public String getProfileImageURI() {
-        return profileImageURI;
+        if (this.profileImageURI != null){
+            return this.profileImageURI;
+        }
+        return "";
     }
 
     /**
@@ -86,7 +104,7 @@ public class User {
         if (this.tours == null){
             this.tours = new ArrayList<>();
         }
-        return tours;
+        return this.tours;
     }
 
     /**
@@ -96,5 +114,16 @@ public class User {
      */
     public void setTours(List<DocumentReference> tours) {
         this.tours = tours;
+    }
+
+    public List<DocumentReference> getContacts() {
+        if (this.contacts == null){
+            this.contacts = new ArrayList<>();
+        }
+        return this.contacts;
+    }
+
+    public void setContacts(List<DocumentReference> contacts) {
+        this.contacts = contacts;
     }
 }
