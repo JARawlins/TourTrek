@@ -23,4 +23,9 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.tourtrek", appContext.getPackageName());
     }
+
+    @Test
+    public void test2() {
+        assertEquals(4, 2 + 2);
+    }
 }
