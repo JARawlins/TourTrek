@@ -2,7 +2,10 @@ package com.tourtrek.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 
 public class Attraction {
 
@@ -50,6 +53,7 @@ public class Attraction {
      * @param cost
      */
     public void setCost(float cost) {
+        this.lastModified = Timestamp.now();
         this.cost = cost;
     }
 
@@ -71,6 +75,7 @@ public class Attraction {
      * @param reviews list of reviews for the tour
      */
     public void setReviews(List<String> reviews) {
+        this.lastModified = Timestamp.now();
         this.reviews = reviews;
     }
 
@@ -82,6 +87,7 @@ public class Attraction {
     }
 
     public void setExtendedLocation(Location extendedLocation) {
+        this.lastModified = Timestamp.now();
         this.extendedLocation = extendedLocation;
     }
 
@@ -93,6 +99,7 @@ public class Attraction {
     }
 
     public void setName(String name) {
+        this.lastModified = Timestamp.now();
         this.name = name;
     }
 
@@ -104,6 +111,7 @@ public class Attraction {
     }
 
     public void setDescription(String description) {
+        this.lastModified = Timestamp.now();
         this.description = description;
     }
 

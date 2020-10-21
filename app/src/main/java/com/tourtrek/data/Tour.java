@@ -4,7 +4,9 @@ package com.tourtrek.data;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Tour{
 //TODO inheritance to remove duplicate code - a Tour object will have its own variables from the superclass including getters and setters
@@ -20,6 +22,7 @@ public class Tour{
     private List<DocumentReference> attractions;
     private List<Attraction> attractionsObj;
     private String coverImageURI;
+    private Map<Attraction, DocumentReference> localToFirebaseMap;
     private Timestamp lastModified; // used to only update recently modified attractions and tours and save on database writes
 
     /**
@@ -70,6 +73,7 @@ public class Tour{
      * @param name name to set
      */
     public void setName(String name) {
+        this.lastModified = Timestamp.now();
         this.name = name;
     }
 
@@ -91,6 +95,7 @@ public class Tour{
      * @param coverImageURI coverImageURI to set
      */
     public void setCoverImageURI(String coverImageURI) {
+        this.lastModified = Timestamp.now();
         this.coverImageURI = coverImageURI;
     }
 
@@ -112,6 +117,7 @@ public class Tour{
      * @param attractions attractions to set
      */
     public void setAttractions(List<DocumentReference> attractions) {
+        this.lastModified = Timestamp.now();
         this.attractions = attractions;
     }
 
@@ -133,6 +139,7 @@ public class Tour{
      * @param startDate startDate to set
      */
     public void setStartDate(Timestamp startDate) {
+        this.lastModified = Timestamp.now();
         this.startDate = startDate;
     }
 
@@ -151,6 +158,7 @@ public class Tour{
      * @param notifications notifications to set
      */
     public void setNotifications(Boolean notifications) {
+        this.lastModified = Timestamp.now();
         this.notifications = notifications;
     }
 
@@ -172,6 +180,7 @@ public class Tour{
      * @param location location to set
      */
     public void setLocation(String location) {
+        this.lastModified = Timestamp.now();
         this.location = location;
     }
 
@@ -190,6 +199,7 @@ public class Tour{
      * @param length length to set
      */
     public void setLength(Long length) {
+        this.lastModified = Timestamp.now();
         this.length = length;
     }
 
@@ -198,6 +208,7 @@ public class Tour{
     }
 
     public void setCost(float cost) {
+        this.lastModified = Timestamp.now();
         this.cost = cost;
     }
 
@@ -209,6 +220,7 @@ public class Tour{
     }
 
     public void setReviews(List<String> reviews) {
+        this.lastModified = Timestamp.now();
         this.reviews = reviews;
     }
 
@@ -220,6 +232,7 @@ public class Tour{
     }
 
     public void setDescription(String description) {
+        this.lastModified = Timestamp.now();
         this.description = description;
     }
 
@@ -238,6 +251,7 @@ public class Tour{
      * @param publiclyAvailable publiclyAvailable to set
      */
     public void setPubliclyAvailable(Boolean publiclyAvailable) {
+        this.lastModified = Timestamp.now();
         this.publiclyAvailable = publiclyAvailable;
     }
 
@@ -253,6 +267,7 @@ public class Tour{
     }
 
     public void setAttractionsObj(List<Attraction> attractionsObj) {
+        this.lastModified = Timestamp.now();
         this.attractionsObj = attractionsObj;
     }
 
@@ -265,6 +280,20 @@ public class Tour{
     }
 
     public void setLastModified(Timestamp lastModified) {
+        this.lastModified = Timestamp.now();
         this.lastModified = lastModified;
+    }
+
+    public Map<Attraction, DocumentReference> getLocalToFirebase() {
+        if (this.localToFirebaseMap != null)
+        {
+            return this.localToFirebaseMap;
+        }
+        return new HashMap<Attraction,DocumentReference>();
+    }
+
+    public void setLocalToFirebase(Map<Attraction, DocumentReference> localToFirebaseMap) {
+        this.lastModified = Timestamp.now();
+        this.localToFirebaseMap = localToFirebaseMap;
     }
 }

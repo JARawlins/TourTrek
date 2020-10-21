@@ -61,17 +61,18 @@ public class Firestore {
 
         // update every tour in the user's list
         for (int i = 0; i < tours.size(); i++) {
-            // get a reference to the current tour in Firestore
-            DocumentReference currentTourDoc = MainActivity.user.getTours().get(i);
             // get the local version of the current tour
             Tour currentTourObj = tours.get(i);
+            // get a reference to the current tour in Firestore
+            DocumentReference currentTourDoc = MainActivity.user.getLocalToFirebaseMap().get(currentTourObj);
             // get the local version of the attractions in the current local tour
             List<Attraction> currentAttractionObjs = currentTourObj.getAttractionsObj();
             // update every attraction in the current tour
             for (int j = 0; j < currentAttractionObjs.size(); j++){
-                DocumentReference currentAttractionDoc = currentTourObj.getAttractions().get(j);
+                Attraction currentAttractionObj = currentAttractionObjs.get(j);
+                DocumentReference currentAttractionDoc = currentTourObj.getLocalToFirebase().get(currentAttractionObj);
                 // database update
-                currentAttractionDoc.set(currentAttractionObjs.get(j));
+                currentAttractionDoc.set(currentAttractionObj);
             }
             currentTourDoc.set(currentTourObj);
         }

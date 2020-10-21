@@ -2,7 +2,9 @@ package com.tourtrek.data;
 
 import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class User{
 
@@ -11,6 +13,7 @@ public class User{
     private String profileImageURI;
     private List<DocumentReference> tours;
     private List<Tour> toursObj;
+    private Map<Tour, DocumentReference> localToFirebaseMap;
     private List<DocumentReference> contacts;
     // TODO perhaps a map of Tour objects and DocumentReferences would be better
 
@@ -137,5 +140,17 @@ public class User{
 
     public void setToursObj(List<Tour> toursObj) {
         this.toursObj = toursObj;
+    }
+
+    public Map<Tour, DocumentReference> getLocalToFirebaseMap() {
+        if (this.localToFirebaseMap != null)
+        {
+            return this.localToFirebaseMap;
+        }
+        return new HashMap<Tour,DocumentReference>();
+    }
+
+    public void setLocalToFirebaseMap(Map<Tour, DocumentReference> localToFirebaseMap) {
+        this.localToFirebaseMap = localToFirebaseMap;
     }
 }
