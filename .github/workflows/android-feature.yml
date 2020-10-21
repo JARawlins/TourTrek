@@ -9,8 +9,8 @@ on:
 
 jobs:
   test:
-    name: Run Unit Tests
-    runs-on: ubuntu-18.04
+    name: Run Tests
+    runs-on: ubuntu-latest
 
     steps:
     # Allows test to see the repo
@@ -22,13 +22,16 @@ jobs:
       with:
         java-version: 1.8
     
-    # Runs Unit Tests
+    # Runs Unit Test Action
     - name: Unit Tests
       run: bash ./gradlew test
     
-    # Runs Instrumentation Tests
-    - name: Instrumentation Tests
-      uses: reactivecircus/android-emulator-runner@v2
+    # Run the Firebase Test Lab Action
+    - name: Firebase Test Lab Tests
+      uses: asadmansr/Firebase-Test-Lab-Action@v1.0
       with:
-        api-level: 30
-        script: ./gradlew connectedCheck
+        arg-spec: 'firebase-tests.yml:android-pixel-4'
+      env:
+        SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+    
+      
