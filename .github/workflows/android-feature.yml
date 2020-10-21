@@ -59,7 +59,7 @@ jobs:
       run: bash ./gradlew test
   
   firebase:
-    name: Run UI tests with Firebase Test Lab
+    name: Firebase Test Lab
     needs: apk
     runs-on: ubuntu-latest
     
