@@ -20,7 +20,6 @@ public class Tour{
     private List<DocumentReference> attractions;
     private List<Attraction> attractionsObj;
     private String coverImageURI;
-    private String UID;
     private Timestamp lastModified; // used to only update recently modified attractions and tours and save on database writes
 
     /**
@@ -41,12 +40,11 @@ public class Tour{
     /**
      * Alternate constructor
      */
-    public Tour(String name, Boolean publiclyAvailable, String description, String UID){
+    public Tour(String name, Boolean publiclyAvailable, String description){
         this.startDate = Timestamp.now();
         this.name = name;
         this.description = description;
         this.publiclyAvailable = publiclyAvailable;
-        this.UID = UID;
 //        this.location = "";
 //        this.notifications = false;
 //        this.reviews = new ArrayList<>();
@@ -243,14 +241,6 @@ public class Tour{
         this.publiclyAvailable = publiclyAvailable;
     }
 
-    public String getTourUID() {
-        return this.UID;
-    }
-
-    public void setTourUID(String UID) {
-        this.UID = UID;
-    }
-
     public Boolean getPubliclyAvailable() {
         return publiclyAvailable;
     }
@@ -266,16 +256,6 @@ public class Tour{
         this.attractionsObj = attractionsObj;
     }
 
-    public String getUID() {
-        if (this.UID != null){
-            return this.UID;
-        }
-        return "";
-    }
-
-    public void setUID(String UID) {
-        this.UID = UID;
-    }
 
     public Timestamp getLastModified() {
         if (this.lastModified != null){
