@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -72,9 +73,13 @@ public class Firestore {
                 Attraction currentAttractionObj = currentAttractionObjs.get(j);
                 DocumentReference currentAttractionDoc = currentTourObj.getLocalToFirebase().get(currentAttractionObj);
                 // database update
-                currentAttractionDoc.set(currentAttractionObj);
+                if (currentAttractionObj.getLastModified().getSeconds() - Timestamp.now().getSeconds() < -5){
+                    currentAttractionDoc.set(currentAttractionObj);
+                }
             }
-            currentTourDoc.set(currentTourObj);
+            if (currentTourObj.getLastModified().getSeconds() - Timestamp.now().getSeconds() < -5){
+                currentTourDoc.set(currentTourObj);
+            }
         }
     }
 }
