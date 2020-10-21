@@ -35,7 +35,6 @@ public class TourMarketFragment extends Fragment {
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter tourMarketAdapter;
-    private RecyclerView.LayoutManager tourMarketLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
 
@@ -62,12 +61,13 @@ public class TourMarketFragment extends Fragment {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
+                        // Reference to the current tour selected
                         Tour tour = ((TourMarketAdapter)tourMarketAdapter).getTour(position);
 
-                        // Add the selected tour to the view model
+                        // Add the selected tour to the view model so we can access the tour inside the fragment
                         tourViewModel.setSelectedTour(tour);
 
-                        // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
+                        // Display the tour selected
                         final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
                         ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
                         ft.addToBackStack("TourFragment").commit();
@@ -96,10 +96,11 @@ public class TourMarketFragment extends Fragment {
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         // User linear layout manager
-        tourMarketLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager tourMarketLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(tourMarketLayoutManager);
 
-        fetchToursAsync(0);
+        // Fetch all the public tours
+        fetchToursAsync();
 
         // Specify an adapter
         tourMarketAdapter = new TourMarketAdapter(getContext());
@@ -115,51 +116,46 @@ public class TourMarketFragment extends Fragment {
     private void configureSwipeRefreshLayout(View view) {
 
         swipeRefreshLayout = view.findViewById(R.id.tour_market_srl);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchToursAsync(0);
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::fetchToursAsync);
     }
 
     /**
      * Retrieve all publicly facing tours from firestore
-     *
-     * @param page limit the number of pages to load
      */
-    private void fetchToursAsync(int page) {
+    private void fetchToursAsync() {
 
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Setup collection reference
-        CollectionReference toursReference = db.collection("Tours");
+        CollectionReference toursCollection = db.collection("Tours");
 
         // Setup basic query information
-        Query query = toursReference.whereEqualTo("publiclyAvailable", true);
+        Query query = toursCollection.whereEqualTo("publiclyAvailable", true);
 
-        db.collection("Tours")
-                .whereEqualTo("publiclyAvailable", true)
+        // Query database
+        query
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
 
+                            // For holding all our tours
                             ArrayList<Tour> tours = new ArrayList<>();
 
+                            // Convert each document into its object
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 tours.add(documentSnapshot.toObject(Tour.class));
                             }
 
                             Log.i(TAG, "Successfully retrieved " + tours.size() + " tours from the firestore");
 
+                            // Clear and add tours
                             ((TourMarketAdapter)tourMarketAdapter).clear();
-
                             ((TourMarketAdapter)tourMarketAdapter).addAll(tours);
 
+                            // Stop showing refresh decorator
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         else {

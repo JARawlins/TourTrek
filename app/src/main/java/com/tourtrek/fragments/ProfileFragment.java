@@ -6,11 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,48 +16,25 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.SavedStateHandle;
-import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.data.User;
-import com.tourtrek.transformations.CircleTransform;
 import com.tourtrek.utilities.Firestore;
-import com.tourtrek.utilities.Utilities;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
     private FirebaseAuth mAuth;
-    ImageView profileUserImageView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +47,7 @@ public class ProfileFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // Leave empty since we don't want to user to go back to another screen
+                // Leave empty
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -106,11 +81,6 @@ public class ProfileFragment extends Fragment {
             // Set profile picture
             ImageView profileUserImageView = profileFragmentView.findViewById(R.id.profile_user_iv);
 
-            Picasso.get().load(MainActivity.user.getProfileImageURI())
-                    .fit()
-                    .transform(new CircleTransform())
-                    .into(profileUserImageView);
-
             // If user clicks profile image, they can change it
             profileUserImageView.setOnClickListener(view -> {
                 Intent intent = new Intent();
@@ -134,25 +104,27 @@ public class ProfileFragment extends Fragment {
         return profileFragmentView;
     }
 
+    /**
+     * Setup listener for logout button
+     *
+     * @param view current view
+     */
     public void setupLogoutButtonHandler(final View view) {
 
         Button logoutButton = view.findViewById(R.id.profile_logout_btn);
 
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        logoutButton.setOnClickListener(v -> {
 
-                // Set the global user to null
-                MainActivity.user = null;
+            // Set the global user to null
+            MainActivity.user = null;
 
-                // Sign the user out of mAuth
-                mAuth.signOut();
+            // Sign the user out of mAuth
+            mAuth.signOut();
 
-                // Get the current navController
-                NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
+            // Get the current navController
+            NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
 
-                navController.navigate(R.id.navigation_login);
-            }
+            navController.navigate(R.id.navigation_login);
         });
     }
 
@@ -185,33 +157,26 @@ public class ProfileFragment extends Fragment {
         final UploadTask uploadTask = storageReference.putFile(selectedImage);
 
         // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
+        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
 
-                storage.getReference().child("ProfilePictures/" + imageUUID).getDownloadUrl()
-                        .addOnSuccessListener(uri -> {
-                            MainActivity.user.setProfileImageURI(uri.toString());
-                            Firestore.updateUser();
+                    storage.getReference().child("ProfilePictures/" + imageUUID).getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
 
-                            //TODO: update fragment
+                                MainActivity.user.setProfileImageURI(uri.toString());
 
-                            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                            ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
-                            ft.commit();
+                                Firestore.updateUser();
 
-                        })
-                        .addOnFailureListener(exception -> {
-                            Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
-                        });
-            }
-        });
+                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                                ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
+                                ft.commit();
+
+                            })
+                            .addOnFailureListener(exception -> {
+                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                            });
+                });
     }
 
 }

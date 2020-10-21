@@ -3,12 +3,9 @@ package com.tourtrek.fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -23,21 +20,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.FuturePersonalToursAdapter;
 import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Tour;
-import com.tourtrek.data.User;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
@@ -53,9 +47,6 @@ public class PersonalToursFragment extends Fragment {
     private RecyclerView.Adapter currentTourAdapter;
     private RecyclerView.Adapter futureTourAdapter;
     private RecyclerView.Adapter pastTourAdapter;
-    private RecyclerView.LayoutManager currentToursLayoutManager;
-    private RecyclerView.LayoutManager futureToursLayoutManager;
-    private RecyclerView.LayoutManager pastToursLayoutManager;
     private SwipeRefreshLayout currentSwipeRefreshLayout;
     private SwipeRefreshLayout futureSwipeRefreshLayout;
     private SwipeRefreshLayout pastSwipeRefreshLayout;
@@ -100,28 +91,27 @@ public class PersonalToursFragment extends Fragment {
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 
-        personalFutureToursTitleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // TODO: Replace this listener when implementing AddTourFragment
+        personalFutureToursTitleButton.setOnClickListener(
+                view -> Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show());
 
         if (MainActivity.user != null) {
 
             // Configure recycler views
             configureRecyclerViews(personalToursView);
-
             configureSwipeRefreshLayouts(personalToursView);
-
             configureOnClickRecyclerView();
 
-            // TODO: This is where we will load the users past, present and future tours
         }
 
         return personalToursView;
     }
 
+    /**
+     * Configure the recycler view
+     *
+     * @param view current view
+     */
     public void configureRecyclerViews(View view) {
 
         // Current
@@ -140,24 +130,21 @@ public class PersonalToursFragment extends Fragment {
             currentRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
             // User linear layout manager
-            currentToursLayoutManager = new LinearLayoutManager(getContext());
+            RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
             currentRecyclerView.setLayoutManager(currentToursLayoutManager);
 
-            fetchToursAsync(0, "current");
+            // Get all current tours
+            fetchToursAsync("current");
 
             // Specify an adapter
             currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
             currentRecyclerView.setAdapter(currentTourAdapter);
 
+            // Stop showing progressBar when items are loaded
             currentRecyclerView
                     .getViewTreeObserver()
                     .addOnGlobalLayoutListener(
-                            new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    ((CurrentPersonalToursAdapter)currentTourAdapter).stopLoading();
-                                }
-                            });
+                            () -> ((CurrentPersonalToursAdapter)currentTourAdapter).stopLoading());
 
         // Future
 
@@ -175,24 +162,20 @@ public class PersonalToursFragment extends Fragment {
             futureRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
             // User linear layout manager
-            futureToursLayoutManager = new LinearLayoutManager(getContext());
+            RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
             futureRecyclerView.setLayoutManager(futureToursLayoutManager);
 
-            fetchToursAsync(0, "future");
+            // Get all current tours
+            fetchToursAsync("future");
 
             // Specify an adapter
             futureTourAdapter = new FuturePersonalToursAdapter(getContext());
             futureRecyclerView.setAdapter(futureTourAdapter);
 
+            // Stop showing progressBar when items are loaded
             futureRecyclerView
                     .getViewTreeObserver()
-                    .addOnGlobalLayoutListener(
-                            new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    ((FuturePersonalToursAdapter)futureTourAdapter).stopLoading();
-                                }
-                            });
+                    .addOnGlobalLayoutListener(() -> ((FuturePersonalToursAdapter)futureTourAdapter).stopLoading());
 
         // Past
 
@@ -210,134 +193,111 @@ public class PersonalToursFragment extends Fragment {
             pastRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
             // User linear layout manager
-            pastToursLayoutManager = new LinearLayoutManager(getContext());
+            RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
             pastRecyclerView.setLayoutManager(pastToursLayoutManager);
 
-            fetchToursAsync(0, "past");
+            fetchToursAsync("past");
 
             // Specify an adapter
             pastTourAdapter = new PastPersonalToursAdapter(getContext());
             pastRecyclerView.setAdapter(pastTourAdapter);
 
+            // Stop showing progressBar when items are loaded
             pastRecyclerView
                     .getViewTreeObserver()
-                    .addOnGlobalLayoutListener(
-                            new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    ((PastPersonalToursAdapter)pastTourAdapter).stopLoading();
-                                }
-                            });
+                    .addOnGlobalLayoutListener(() -> ((PastPersonalToursAdapter)pastTourAdapter).stopLoading());
 
     }
 
+    /**
+     * Configure the swipe down to refresh function of our recycler view
+     *
+     * @param view current view
+     */
     public void configureSwipeRefreshLayouts(View view) {
 
         // Current
             currentSwipeRefreshLayout = view.findViewById(R.id.personal_current_tours_srl);
-
-            currentSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    fetchToursAsync(0, "current");
-                }
-            });
+            currentSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("current"));
 
         // Future
             futureSwipeRefreshLayout = view.findViewById(R.id.personal_future_tours_srl);
-
-            futureSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    fetchToursAsync(0, "future");
-                }
-            });
-
+            futureSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("future"));
 
         // Past
             pastSwipeRefreshLayout = view.findViewById(R.id.personal_past_tours_srl);
-
-            pastSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    fetchToursAsync(0, "past");
-                }
-            });
+            pastSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("past"));
 
     }
 
+    /**
+     * Enables the click listener for each item in our recycler view
+     */
     public void configureOnClickRecyclerView() {
 
         // Current
         ItemClickSupport.addTo(currentRecyclerView, R.layout.item_personal_tour)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                .setOnItemClickListener((recyclerView, position, v) -> {
 
-                        Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getTour(position);
+                    // Reference to the current tour selected
+                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getTour(position);
 
-                        // Add the selected tour to the view model
-                        tourViewModel.setSelectedTour(tour);
+                    // Add the selected tour to the view model so we can access the tour inside the fragment
+                    tourViewModel.setSelectedTour(tour);
 
-                        // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
-                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
-                        ft.addToBackStack("TourFragment").commit();
-                    }
+                    // Display the tour selected
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
 
         // Future
         ItemClickSupport.addTo(futureRecyclerView, R.layout.item_personal_tour)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                .setOnItemClickListener((recyclerView, position, v) -> {
 
-                        Tour tour = ((FuturePersonalToursAdapter) futureTourAdapter).getTour(position);
+                    // Reference to the current tour selected
+                    Tour tour = ((FuturePersonalToursAdapter) futureTourAdapter).getTour(position);
 
-                        // Add the selected tour to the view model
-                        tourViewModel.setSelectedTour(tour);
+                    // Add the selected tour to the view model so we can access the tour inside the fragment
+                    tourViewModel.setSelectedTour(tour);
 
-                        // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
-                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
-                        ft.addToBackStack("TourFragment").commit();
-                    }
+                    // Display the tour selected
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
 
         // Past
         ItemClickSupport.addTo(pastRecyclerView, R.layout.item_personal_tour)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                .setOnItemClickListener((recyclerView, position, v) -> {
 
-                        Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getTour(position);
+                    // Reference to the current tour selected
+                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getTour(position);
 
-                        // Add the selected tour to the view model
-                        tourViewModel.setSelectedTour(tour);
+                    // Add the selected tour to the view model so we can access the tour inside the fragment
+                    tourViewModel.setSelectedTour(tour);
 
-                        // TODO: This is where we will overlay the Tour fragment, which displays all information about the tour
-                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
-                        ft.addToBackStack("TourFragment").commit();
-                    }
+                    // Display the tour selected
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
     }
 
     /**
      * Retrieve all tours belonging to this user
      *
-     * @param page limit the number of pages to load
      * @param type type of tours to fetch
      */
-    private void fetchToursAsync(int page, String type) {
+    private void fetchToursAsync(String type) {
 
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Setup collection reference
-        CollectionReference toursReference = db.collection("Tours");
+        CollectionReference toursCollection = db.collection("Tours");
 
-        // Pull out the UID's from each documentReference
+        // Pull out the UID's of each tour that belongs to this user
         List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
@@ -345,59 +305,58 @@ public class PersonalToursFragment extends Fragment {
             }
         }
 
-        // Grab all tours in order to query
-        db.collection("Tours")
+        // Query database
+        toursCollection
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots.isEmpty()) {
-                            Log.w(TAG, "No documents found in the Tours collection");
-                        }
-                        else {
-                            // Final list of tours for this category
-                            List<Tour> usersTours = new ArrayList<>();
+                .addOnSuccessListener(queryDocumentSnapshots -> {
 
-                            // Go through each document and compare the dates
-                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.w(TAG, "No documents found in the Tours collection");
+                    }
+                    else {
 
-                                // First check that the document belongs to the user
-                                if (usersToursUIDs.contains(document.getId())) {
+                        // Final list of tours for this category
+                        List<Tour> usersTours = new ArrayList<>();
 
-                                    Timestamp tourStartDate = (Timestamp) document.get("startDate");
-                                    Timestamp now = Timestamp.now();
-                                    Long length = (Long)document.get("length");
+                        // Go through each document and compare the dates
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
 
-                                    int test = tourStartDate.compareTo(now);
+                            // First check that the document belongs to the user
+                            if (usersToursUIDs.contains(document.getId())) {
 
-                                    // Next query based on timestamp
-                                    if (type.equals("current")) { // TODO: filter based on tour length and timestamp
-//                                        usersTours.add(document.toObject(Tour.class));
-                                    }
-                                    else if (type.equals("future") && tourStartDate.compareTo(now) > 0) {
-                                        usersTours.add(document.toObject(Tour.class));
-                                    }
-                                    else if (type.equals("past") && tourStartDate.compareTo(now) < 0) {
-                                        usersTours.add(document.toObject(Tour.class));
-                                    }
+                                Timestamp tourStartDate = (Timestamp) document.get("startDate");
+                                Timestamp now = Timestamp.now();
+                                Long length = (Long)document.get("length");
+
+                                // Next query based on timestamp
+                                if (type.equals("current")) { // TODO: filter based on tour length and timestamp
+                                }
+                                else if (type.equals("future") && tourStartDate.compareTo(now) > 0) {
+                                    usersTours.add(document.toObject(Tour.class));
+                                }
+                                else if (type.equals("past") && tourStartDate.compareTo(now) < 0) {
+                                    usersTours.add(document.toObject(Tour.class));
                                 }
                             }
+                        }
 
-                            if (type.equals("current")) {
+                        switch (type) {
+
+                            case "current":
                                 ((CurrentPersonalToursAdapter) currentTourAdapter).clear();
                                 ((CurrentPersonalToursAdapter) currentTourAdapter).addAll(usersTours);
                                 currentSwipeRefreshLayout.setRefreshing(false);
-                            }
-                            else if (type.equals("future")) {
+                                break;
+                            case "future":
                                 ((FuturePersonalToursAdapter) futureTourAdapter).clear();
                                 ((FuturePersonalToursAdapter) futureTourAdapter).addAll(usersTours);
                                 futureSwipeRefreshLayout.setRefreshing(false);
-                            }
-                            else if (type.equals("past")) {
+                                break;
+                            case "past":
                                 ((PastPersonalToursAdapter) pastTourAdapter).clear();
                                 ((PastPersonalToursAdapter) pastTourAdapter).addAll(usersTours);
                                 pastSwipeRefreshLayout.setRefreshing(false);
-                            }
+                                break;
                         }
                     }
                 });

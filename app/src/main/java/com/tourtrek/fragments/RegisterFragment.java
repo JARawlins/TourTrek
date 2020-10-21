@@ -6,8 +6,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -132,19 +130,7 @@ public class RegisterFragment extends Fragment {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
 
-                                                            FragmentManager fm = getParentFragmentManager();
-
-//                                                            if (fm.getBackStackEntryAt(0).getName().equals("ToursFragment")) {
-//                                                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-//                                                                ft.replace(R.id.nav_host_fragment, new PersonalToursFragment(), "ToursFragment");
-//                                                                ft.commit();
-//                                                            }
-//                                                            else if (fm.getBackStackEntryAt(0).getName().equals("ProfileFragment")) {
-//                                                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-//                                                                ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
-//                                                                ft.commit();
-//                                                            }
-
+                                                            // Remove the last two item from the fragment back stack
                                                             getActivity().getSupportFragmentManager().popBackStack();
                                                             getActivity().getSupportFragmentManager().popBackStack();
 

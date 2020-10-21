@@ -9,8 +9,8 @@ public class User implements UserADT {
 
     private String username;
     private String email;
-    private List<DocumentReference> tours;
     private String profileImageURI;
+    private List<DocumentReference> tours;
     private List<DocumentReference> contacts;
 
     /**
