@@ -255,10 +255,6 @@ public class Tour{
         this.publiclyAvailable = publiclyAvailable;
     }
 
-    public Boolean getPubliclyAvailable() {
-        return publiclyAvailable;
-    }
-
     public List<Attraction> getAttractionsObj() {
         if (this.attractionsObj != null){
             return attractionsObj;
