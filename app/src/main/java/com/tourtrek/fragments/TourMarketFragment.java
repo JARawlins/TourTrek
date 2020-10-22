@@ -38,7 +38,7 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter tourMarketAdapter;
+    private TourMarketAdapter tourMarketAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
 
@@ -207,6 +207,7 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        tourMarketAdapter.getFilter().filter(newText);
         return false;
     }
 }
