@@ -7,7 +7,6 @@ on:
       - '!master'
       - '!release*'
 
-
 jobs:
   
   apk:
