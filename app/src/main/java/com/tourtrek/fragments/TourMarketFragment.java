@@ -34,7 +34,7 @@ import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 
-public class TourMarketFragment extends Fragment {
+public class TourMarketFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
@@ -178,8 +178,14 @@ public class TourMarketFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) item.getActionView();
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint("Search");
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+        super.onCreateOptionsMenu(menu, inflater);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -193,4 +199,15 @@ public class TourMarketFragment extends Fragment {
         });
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
 }
+
