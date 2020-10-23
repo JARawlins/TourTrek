@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Tour{
-//TODO inheritance to remove duplicate code - a Tour object will have its own variables from the superclass including getters and setters
     private String name;
     private Timestamp startDate;
     private String location;
@@ -20,9 +19,7 @@ public class Tour{
     private String description;
     private Boolean publiclyAvailable;
     private List<DocumentReference> attractions;
-    private List<Attraction> attractionsObj;
     private String coverImageURI;
-    private Map<Attraction, DocumentReference> localToFirebaseMap;
 
     /**
      * Empty constructor needed for Firestore
@@ -243,27 +240,4 @@ public class Tour{
         this.publiclyAvailable = publiclyAvailable;
     }
 
-    public List<Attraction> getAttractionsObj() {
-        if (this.attractionsObj != null){
-            return attractionsObj;
-        }
-        return new ArrayList<Attraction>();
-    }
-
-    public void setAttractionsObj(List<Attraction> attractionsObj) {
-        this.attractionsObj = attractionsObj;
-    }
-
-
-    public Map<Attraction, DocumentReference> getLocalToFirebase() {
-        if (this.localToFirebaseMap != null)
-        {
-            return this.localToFirebaseMap;
-        }
-        return new HashMap<Attraction,DocumentReference>();
-    }
-
-    public void setLocalToFirebase(Map<Attraction, DocumentReference> localToFirebaseMap) {
-        this.localToFirebaseMap = localToFirebaseMap;
-    }
 }

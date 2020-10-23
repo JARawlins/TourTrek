@@ -12,10 +12,7 @@ public class User{
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
-    private List<Tour> toursObj;
-    private Map<Tour, DocumentReference> localToFirebaseMap;
     private List<DocumentReference> contacts;
-    // TODO perhaps a map of Tour objects and DocumentReferences would be better
 
     /**
      * Empty constructor needed for firestore
@@ -131,26 +128,4 @@ public class User{
         this.contacts = contacts;
     }
 
-    public List<Tour> getToursObj() {
-        if (this.toursObj != null){
-            return this.toursObj;
-        }
-        return new ArrayList<Tour>();
-    }
-
-    public void setToursObj(List<Tour> toursObj) {
-        this.toursObj = toursObj;
-    }
-
-    public Map<Tour, DocumentReference> getLocalToFirebaseMap() {
-        if (this.localToFirebaseMap != null)
-        {
-            return this.localToFirebaseMap;
-        }
-        return new HashMap<Tour,DocumentReference>();
-    }
-
-    public void setLocalToFirebaseMap(Map<Tour, DocumentReference> localToFirebaseMap) {
-        this.localToFirebaseMap = localToFirebaseMap;
-    }
 }
