@@ -8,7 +8,8 @@ import java.util.UUID;
 public class Attraction {
 
     private List<String> reviews;
-    private Location extendedLocation;
+    //private Location extendedLocation;
+    private String location;
     private float cost;
     private String name;
     private String description;
@@ -75,16 +76,16 @@ public class Attraction {
         this.reviews = reviews;
     }
 
-    public Location getExtendedLocation() {
-        if (extendedLocation != null){
-            return extendedLocation;
-        }
-        return new Location();
-    }
-
-    public void setExtendedLocation(Location extendedLocation) {
-        this.extendedLocation = extendedLocation;
-    }
+//    public Location getExtendedLocation() {
+//        if (extendedLocation != null){
+//            return extendedLocation;
+//        }
+//        return new Location();
+//    }
+//
+//    public void setExtendedLocation(Location extendedLocation) {
+//        this.extendedLocation = extendedLocation;
+//    }
 
     public String getName() {
         if (this.name != null){
@@ -117,5 +118,16 @@ public class Attraction {
 
     public void setAttractionUID(String attractionUID) {
         this.attractionUID = attractionUID;
+    }
+
+    public String getLocation() {
+        if (this.location != null){
+            return this.location;
+        }
+        return this.location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
