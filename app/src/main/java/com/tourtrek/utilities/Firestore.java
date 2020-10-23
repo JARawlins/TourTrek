@@ -73,13 +73,10 @@ public class Firestore {
                 Attraction currentAttractionObj = currentAttractionObjs.get(j);
                 DocumentReference currentAttractionDoc = currentTourObj.getLocalToFirebase().get(currentAttractionObj);
                 // database update
-                if (currentAttractionObj.getLastModified().getSeconds() - Timestamp.now().getSeconds() < -5){
-                    currentAttractionDoc.set(currentAttractionObj);
-                }
+                currentAttractionDoc.set(currentAttractionObj);
+
             }
-            if (currentTourObj.getLastModified().getSeconds() - Timestamp.now().getSeconds() < -5){
-                currentTourDoc.set(currentTourObj);
-            }
+            currentTourDoc.set(currentTourObj);
         }
     }
 }

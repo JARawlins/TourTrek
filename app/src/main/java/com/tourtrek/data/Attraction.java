@@ -14,7 +14,6 @@ public class Attraction {
     private float cost;
     private String name;
     private String description;
-    private Timestamp lastModified; // used to only update recently modified attractions and tours and save on database writes
 
     /**
      * Attraction constructor, default
@@ -53,7 +52,6 @@ public class Attraction {
      * @param cost
      */
     public void setCost(float cost) {
-        this.lastModified = Timestamp.now();
         this.cost = cost;
     }
 
@@ -75,7 +73,6 @@ public class Attraction {
      * @param reviews list of reviews for the tour
      */
     public void setReviews(List<String> reviews) {
-        this.lastModified = Timestamp.now();
         this.reviews = reviews;
     }
 
@@ -87,7 +84,6 @@ public class Attraction {
     }
 
     public void setExtendedLocation(Location extendedLocation) {
-        this.lastModified = Timestamp.now();
         this.extendedLocation = extendedLocation;
     }
 
@@ -99,7 +95,6 @@ public class Attraction {
     }
 
     public void setName(String name) {
-        this.lastModified = Timestamp.now();
         this.name = name;
     }
 
@@ -111,18 +106,7 @@ public class Attraction {
     }
 
     public void setDescription(String description) {
-        this.lastModified = Timestamp.now();
         this.description = description;
     }
 
-    public Timestamp getLastModified() {
-        if (this.lastModified != null){
-            return this.lastModified;
-        }
-        return Timestamp.now();
-    }
-
-    public void setLastModified(Timestamp lastModified) {
-        this.lastModified = lastModified;
-    }
 }
