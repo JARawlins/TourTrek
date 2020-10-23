@@ -177,8 +177,22 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.bottom_nav_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        MenuItem.OnActionExpandListener onActionExpandListener = new
+                MenuItem.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        return true;
+                    }
+                };
+        menu.findItem(R.id.action_search).setOnActionExpandListener(onActionExpandListener);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
         searchView.setQueryHint("Search");
@@ -186,18 +200,7 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
         super.onCreateOptionsMenu(menu, inflater);
 
         super.onCreateOptionsMenu(menu, inflater);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
