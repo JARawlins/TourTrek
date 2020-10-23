@@ -2,10 +2,8 @@ package com.tourtrek.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentReference;
 
 public class Attraction {
 
@@ -14,6 +12,7 @@ public class Attraction {
     private float cost;
     private String name;
     private String description;
+    private String attractionUID; // not user-bound; universal unique ID
 
     /**
      * Attraction constructor, default
@@ -109,4 +108,14 @@ public class Attraction {
         this.description = description;
     }
 
+    public String getAttractionUID() {
+        if (this.attractionUID != null){
+            return attractionUID;
+        }
+        return UUID.randomUUID().toString();
+    }
+
+    public void setAttractionUID(String attractionUID) {
+        this.attractionUID = attractionUID;
+    }
 }

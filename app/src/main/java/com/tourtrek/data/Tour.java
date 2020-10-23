@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class Tour{
     private String name;
@@ -20,6 +21,7 @@ public class Tour{
     private Boolean publiclyAvailable;
     private List<DocumentReference> attractions;
     private String coverImageURI;
+    private String tourUID; // not user-bound; universal unique ID
 
     /**
      * Empty constructor needed for Firestore
@@ -240,4 +242,14 @@ public class Tour{
         this.publiclyAvailable = publiclyAvailable;
     }
 
+    public String getTourUID() {
+        if (this.tourUID != null){
+            return this.tourUID;
+        }
+        return UUID.randomUUID().toString();
+    }
+
+    public void setTourUID(String tourUID) {
+        this.tourUID = tourUID;
+    }
 }
