@@ -13,6 +13,7 @@ public class User{
     private String profileImageURI;
     private List<DocumentReference> tours;
     private List<DocumentReference> contacts;
+    private DocumentReference currentTour; // to be updated when the user selects a tour
 
     /**
      * Empty constructor needed for firestore
@@ -128,4 +129,11 @@ public class User{
         this.contacts = contacts;
     }
 
+    public DocumentReference getCurrentTour() {
+        return currentTour;
+    }
+
+    public void setCurrentTour(DocumentReference currentTour) {
+        this.currentTour = currentTour;
+    }
 }

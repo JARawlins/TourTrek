@@ -10,7 +10,7 @@ public class Attraction {
     private List<String> reviews;
     //private Location extendedLocation;
     private String location;
-    private float cost;
+    private int cost;
     private String name;
     private String description;
     private String attractionUID; // not user-bound; universal unique ID
@@ -29,10 +29,12 @@ public class Attraction {
     /**
      * Attraction constructor, detailed
      */
-    public Attraction(String name, String description){
+    public Attraction(String name, String description, int cost, String location){
 //        this.reviews = new ArrayList<String>();
 //        this.extendedLocation = new Location();
 //        this.cost = 0;
+        this.location = location;
+        this.cost = cost;
         this.name = name;
         this.description = description;
     }
@@ -42,7 +44,7 @@ public class Attraction {
      *
      * @return cost of this attraction
      */
-    public float getCost() {
+    public int getCost() {
         return this.cost;
     }
 
@@ -51,7 +53,7 @@ public class Attraction {
      *
      * @param cost
      */
-    public void setCost(float cost) {
+    public void setCost(int cost) {
         this.cost = cost;
     }
 
