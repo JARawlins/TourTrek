@@ -1,6 +1,7 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,7 +51,6 @@ public class TourFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -57,7 +58,6 @@ public class TourFragment extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         };
-
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
@@ -74,12 +74,16 @@ public class TourFragment extends Fragment {
         tourNameTextView.setText(tour.getName());
         ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
-
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
-        // TODO also create a button which directs to addAttractionFragment when pressed
-
-
+        // Create a button which directs to addAttractionFragment when pressed
+        Button tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
+        // When the button is clicked, switch to the AddAttractionFragment
+        tour_attractions_btn.setOnClickListener(v -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
+            ft.addToBackStack("AdAttractionFragment").commit();
+        });
         return tourView;
     }
 
@@ -102,8 +106,6 @@ public class TourFragment extends Fragment {
         // User linear layout manager
         RecyclerView.LayoutManager attractionsLayoutManager = new LinearLayoutManager(getContext());
         attractionsView.setLayoutManager(attractionsLayoutManager);
-
-
         // Specify an adapter
         attractionsAdapter = new CurrentTourAttractionsAdapter(getContext());
         // get the tour's list of document references as a list of attractions
@@ -116,7 +118,6 @@ public class TourFragment extends Fragment {
         ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(attractions);
         // set the adapter
         attractionsView.setAdapter(attractionsAdapter);
-
         // Stop showing progressBar when items are loaded
         attractionsView
                 .getViewTreeObserver()
