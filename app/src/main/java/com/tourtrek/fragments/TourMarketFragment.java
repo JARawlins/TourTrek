@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -170,20 +171,16 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.top_app_bar, menu);
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(this);
-        searchView.setQueryHint("Search tours here");
+        menu.findItem(R.id.search);
 
-        super.onCreateOptionsMenu(menu, inflater);
 
         super.onCreateOptionsMenu(menu, inflater);
 
@@ -209,5 +206,16 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
     public boolean onMenuItemActionCollapse(MenuItem item) {
         return true;
     }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
+    }
+
+
+
+
+
 }
 
