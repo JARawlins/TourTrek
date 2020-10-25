@@ -34,7 +34,7 @@ import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 
-public class TourMarketFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class TourMarketFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
@@ -177,8 +177,8 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
+        inflater.inflate(R.menu.top_app_bar, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
         searchView.setQueryHint("Search tours here");
@@ -198,6 +198,16 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
     public boolean onQueryTextChange(String newText) {
         tourMarketAdapter.getFilter().filter(newText);
         return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        return true;
     }
 }
 
