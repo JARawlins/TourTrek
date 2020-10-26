@@ -95,6 +95,10 @@ public class PersonalToursFragment extends Fragment {
         personalFutureToursTitleButton.setOnClickListener(
                 view -> Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show());
 
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+           // ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
+            ft.addToBackStack("AddTourFragment").commit();
+
         if (MainActivity.user != null) {
 
             // Configure recycler views
