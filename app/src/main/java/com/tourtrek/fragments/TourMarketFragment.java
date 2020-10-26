@@ -1,24 +1,19 @@
 package com.tourtrek.fragments;
 
-import android.annotation.SuppressLint;
-import android.app.SearchManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
+
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.view.ActionProvider;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -42,13 +37,12 @@ import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
-public class TourMarketFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class TourMarketFragment extends Fragment {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
-    private TourMarketAdapter tourMarketAdapter;
+    private RecyclerView.Adapter tourMarketAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
 
@@ -198,7 +192,7 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                tourMarketAdapter.getFilter().filter(newText);
+                ((TourMarketAdapter)tourMarketAdapter).getFilter().filter(newText);
                 return true;
             }
         });
@@ -208,26 +202,7 @@ public class TourMarketFragment extends Fragment implements SearchView.OnQueryTe
 
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        tourMarketAdapter.getFilter().filter(newText);
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        return true;
-    }
     @Override
     public void onResume() {
 
