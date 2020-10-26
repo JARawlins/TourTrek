@@ -8,8 +8,5 @@
         android:title="Search tours"
         android:icon="@drawable/ic_search"
         app:showAsAction="always"
-        app:actionViewClass="android.widget.SearchView" />
-
-
-
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 </menu>
