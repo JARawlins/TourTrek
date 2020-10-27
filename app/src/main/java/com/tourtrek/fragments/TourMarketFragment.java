@@ -6,14 +6,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,13 +36,13 @@ import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 public class TourMarketFragment extends Fragment {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter tourMarketAdapter;
+    private TourMarketAdapter tourMarketAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
 
@@ -70,7 +70,7 @@ public class TourMarketFragment extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
                         // Reference to the current tour selected
-                        Tour tour = ((TourMarketAdapter)tourMarketAdapter).getTour(position);
+                        Tour tour = tourMarketAdapter.getTour(position);
 
                         // Add the selected tour to the view model so we can access the tour inside the fragment
                         tourViewModel.setSelectedTour(tour);
@@ -160,8 +160,8 @@ public class TourMarketFragment extends Fragment {
                             Log.i(TAG, "Successfully retrieved " + tours.size() + " tours from the firestore");
 
                             // Clear and add tours
-                            ((TourMarketAdapter)tourMarketAdapter).clear();
-                            ((TourMarketAdapter)tourMarketAdapter).addAll(tours);
+                            (tourMarketAdapter).clear();
+                            (tourMarketAdapter).addAll(tours);
 
                             // Stop showing refresh decorator
                             swipeRefreshLayout.setRefreshing(false);
@@ -184,15 +184,61 @@ public class TourMarketFragment extends Fragment {
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem item = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) item.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
+                List<Tour> filteredList = new ArrayList<>();
+                if(query == null || query.length() == 0){
+                    filteredList.addAll(data);
+                    tourMarketAdapter.addAll(filteredList);
+                }else  {
+                    String key = query.toLowerCase();
+                    for(Tour tour: data){
+                        if(tour.getName().toLowerCase().contains(key)){
+                            filteredList.add(tour);
+                        }
+                    }
+                }
+                tourMarketAdapter.clear();
+                if (tourMarketAdapter.getToursDataSet().size() == 0){
+                    tourMarketAdapter.addAll(filteredList);
+                }
+                tourMarketAdapter.addAll(filteredList);
+
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                ((TourMarketAdapter)tourMarketAdapter).getFilter().filter(newText);
+
+
+                ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
+                List<Tour> filteredList = new ArrayList<>();
+                if(newText == null || newText.length() == 0){
+                    filteredList.addAll(data);
+                    tourMarketAdapter.clear();
+                    tourMarketAdapter.addAll(filteredList);
+                    if (newText != null){
+                        System.out.println(newText.length());
+                    }
+                    System.out.println(data);
+                }else  {
+                    //String key = newText.toLowerCase();
+                    for(Tour tour: data){
+                        if(tour.getName().toLowerCase().contains(newText)){
+                            filteredList.add(tour);
+                        }
+                    }
+                }
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(filteredList);
+
+                //tourMarketAdapter.getFilter().filter(newText);
+
+                //System.out.println(tourMarketAdapter.getItemCount());
+
                 return true;
             }
         });
@@ -201,7 +247,6 @@ public class TourMarketFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
 
     }
-
 
     @Override
     public void onResume() {
