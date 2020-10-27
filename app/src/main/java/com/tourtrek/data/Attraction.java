@@ -13,7 +13,7 @@ public class Attraction {
     private int cost;
     private String name;
     private String description;
-    private String attractionUID; // not user-bound; universal unique ID
+    private String attractionUID;
 
     /**
      * Attraction constructor, default
@@ -29,7 +29,7 @@ public class Attraction {
     /**
      * Attraction constructor, detailed
      */
-    public Attraction(String name, String description, int cost, String location){
+    public Attraction(String name, String description, int cost, String location, String UID){
 //        this.reviews = new ArrayList<String>();
 //        this.extendedLocation = new Location();
 //        this.cost = 0;
@@ -37,6 +37,7 @@ public class Attraction {
         this.cost = cost;
         this.name = name;
         this.description = description;
+        this.attractionUID = UID;
     }
 
     /**

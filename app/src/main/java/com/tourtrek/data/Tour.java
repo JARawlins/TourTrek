@@ -40,6 +40,7 @@ public class Tour{
 
     /**
      * Alternate constructor
+     * To get the String UID, create a new document. Apply the getID method to its document reference.
      */
     public Tour(String name, Boolean publiclyAvailable, String description){
         this.startDate = Timestamp.now();
@@ -252,4 +253,5 @@ public class Tour{
     public void setTourUID(String tourUID) {
         this.tourUID = tourUID;
     }
+
 }

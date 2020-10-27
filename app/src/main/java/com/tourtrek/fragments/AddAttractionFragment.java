@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,13 +18,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
+import com.tourtrek.adapters.FuturePersonalToursAdapter;
+import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.viewModels.TourViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
@@ -35,14 +46,16 @@ public class AddAttractionFragment extends Fragment {
 
     private static final String TAG = "AddAttractionFragment";
     private FirebaseAuth mAuth;
-    private String locationHint = "Address in the form: 330 N. Orchard St., Madison, WI, USA";
-    private String costHint = "US dollar cost estimate";
-    private String nameHint = "Attraction name: e.g. Hershel's donut shop, Road Runner Inn, etc.";
-    private String descriptionHint = "Description: e.g. Hershel's donut shop has an awesome array of sweet delights.";
+    private String locationHint = "330 N. Orchard St., Madison, WI, USA";
+    private String costHint = "0";
+    private String nameHint = "WID";
+    private String descriptionHint = "Research center";
     private EditText locationText;
     private EditText costText;
     private EditText nameText;
     private EditText descriptionText;
+    private Tour tour;
+    private TourViewModel tourViewModel;
     /**
      * Default for proper back button usage
      */
@@ -69,8 +82,12 @@ public class AddAttractionFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        // Initialize tour view model to get the current tour
+        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.add_attraction_fragment, container, false);
+        // Grab the tour that was selected
+        this.tour = tourViewModel.getSelectedTour();
 
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
@@ -111,8 +128,9 @@ public class AddAttractionFragment extends Fragment {
             // build the new attraction from the input information
             Attraction attr = new Attraction();
             // TODO error if the location does not contain the right kind of information
-            if (inputName != null && !inputName.equals("")){
+            if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")){
                 attr.setName(inputName);
+                attr.setLocation(inputLocation);
                 // proceed only if the other text fields have been populated
                 if (inputDescription != null && !inputDescription.equals("")){
                     attr.setDescription(inputDescription);
@@ -120,12 +138,8 @@ public class AddAttractionFragment extends Fragment {
                 if (inputCost != null && !inputCost.equals("")){
                     attr.setCost(Integer.parseInt(inputCost));
                 }
-                if (inputLocation != null && !inputLocation.equals("")){
-                    attr.setLocation(inputLocation);
-                }
                 // add the attraction to Firestore
                 addToFirestore(attr);
-
                 // go back once the button is pressed
                 getActivity().getSupportFragmentManager().popBackStack();
             }
@@ -136,37 +150,35 @@ public class AddAttractionFragment extends Fragment {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final DocumentReference newAttractionDoc = db.collection("Attractions").document();     // omit the ID so that Firestore generates a unique one
         newAttractionDoc.set(attraction) // write the attraction to the new document
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "Attraction written to firestore");
+                .addOnCompleteListener(task -> {
+                    Log.d(TAG, "Attraction written to firestore");
 
-                        Tour currentTour = MainActivity.user.getCurrentTour().get().getResult().toObject(Tour.class); // get a Tour copy of the document
-                        currentTour.getAttractions().add(newAttractionDoc); // Add the new attraction to the Tour
-                        // Update the Firestore document with the new Tour object data
-                        MainActivity.user.getCurrentTour().set(currentTour);
-
-                        //finish();
-                    }
+                    // Tour currentTour = MainActivity.user.getCurrentTour().get().getResult().toObject(Tour.class); // get a Tour copy of the document
+                    this.tour.getAttractions().add(newAttractionDoc); // Add the new attraction to the Tour
+                    syncTour();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                .addOnFailureListener(e -> {
 
-                    }
                 })
 
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+                .addOnSuccessListener(aVoid -> {
 
-                    }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document");
-                    }
-                });
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
+
+    /**
+     * Retrieve all tours belonging to this user
+     *
+     */
+    private void syncTour() {
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Setup collection reference
+        CollectionReference toursCollection = db.collection("Tours");
+        toursCollection.document(this.tour.getTourUID()).set(this.tour).addOnCompleteListener(v ->
+        {
+            Log.d(TAG, "Tour written");
+        });
     }
 }
