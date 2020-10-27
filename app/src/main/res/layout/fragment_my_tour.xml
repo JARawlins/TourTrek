@@ -35,6 +35,20 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+                <Button
+                    android:id="@+id/tour_attractions_btn"
+                    android:layout_width="393dp"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:background="#DDDDDD"
+                    android:gravity="center"
+                    android:text="Add Attraction"
+                    android:textAllCaps="false"
+                    android:textSize="18sp" />
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
@@ -66,7 +80,7 @@
                     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                         android:id="@+id/attractions_srl"
                         android:layout_width="match_parent"
-                        android:layout_height="381dp">
+                        android:layout_height="257dp">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/tour_attractions_rv"

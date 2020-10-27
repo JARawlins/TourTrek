@@ -36,9 +36,9 @@ import com.tourtrek.viewModels.TourViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TourFragment extends Fragment {
+public class MyTourFragment extends Fragment {
 
-    private static final String TAG = "TourFragment";
+    private static final String TAG = "MyTourFragment";
     private TourViewModel tourViewModel;
     private Tour tour;
     private RecyclerView attractionsView;
@@ -64,13 +64,21 @@ public class TourFragment extends Fragment {
         // Initialize tourMarketViewModel to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
         // Grab a reference to the current view
-        View tourView = inflater.inflate(R.layout.tour_fragment, container, false);
+        View tourView = inflater.inflate(R.layout.fragment_my_tour, container, false);
         // Grab the tour that was selected
         this.tour = tourViewModel.getSelectedTour();
         TextView tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
         tourNameTextView.setText(tour.getName());
         ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
+        // Create a button which directs to addAttractionFragment when pressed
+        Button tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
+        // When the button is clicked, switch to the AddAttractionFragment
+        tour_attractions_btn.setOnClickListener(v -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
+            ft.addToBackStack("AdAttractionFragment").commit();
+        });
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
@@ -177,3 +185,4 @@ public class TourFragment extends Fragment {
     }
 
 }
+
