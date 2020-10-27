@@ -247,8 +247,8 @@ public class PersonalToursFragment extends Fragment {
 
                     // Display the tour selected
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                    ft.replace(R.id.nav_host_fragment, new MyTourFragment(), "MyTourFragment");
-                    ft.addToBackStack("MyTourFragment").commit();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
 
         // Future
@@ -263,8 +263,8 @@ public class PersonalToursFragment extends Fragment {
 
                     // Display the tour selected
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                    ft.replace(R.id.nav_host_fragment, new MyTourFragment(), "MyTourFragment");
-                    ft.addToBackStack("MyTourFragment").commit();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
 
         // Past
@@ -279,8 +279,8 @@ public class PersonalToursFragment extends Fragment {
 
                     // Display the tour selected
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                    ft.replace(R.id.nav_host_fragment, new MyTourFragment(), "MyTourFragment");
-                    ft.addToBackStack("MyTourFragment").commit();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
     }
 

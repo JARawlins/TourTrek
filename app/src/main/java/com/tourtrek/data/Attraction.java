@@ -1,12 +1,13 @@
 package com.tourtrek.data;
 
+import com.google.firebase.Timestamp;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
 public class Attraction {
-
     private List<String> reviews;
     //private Location extendedLocation;
     private String location;
@@ -14,6 +15,8 @@ public class Attraction {
     private String name;
     private String description;
     private String attractionUID;
+    private Timestamp startDate;
+    private Timestamp endDate;
 
     /**
      * Attraction constructor, default
@@ -132,5 +135,27 @@ public class Attraction {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Timestamp getStartDate() {
+        if (this.startDate != null) {
+            return startDate;
+        }
+        return Timestamp.now();
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+
+    public Timestamp getEndDate() {
+        if (this.endDate != null) {
+            return endDate;
+        }
+        return Timestamp.now();
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
     }
 }

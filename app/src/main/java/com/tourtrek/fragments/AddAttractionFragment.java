@@ -50,10 +50,14 @@ public class AddAttractionFragment extends Fragment {
     private String costHint = "0";
     private String nameHint = "WID";
     private String descriptionHint = "Research center";
+    private String startHint = "Oct. 10th,2020 9am";
+    private String endHint = "Oct. 10th,2020 10am";
     private EditText locationText;
     private EditText costText;
     private EditText nameText;
     private EditText descriptionText;
+    private EditText startText;
+    private EditText endText;
     private Tour tour;
     private TourViewModel tourViewModel;
     /**
@@ -98,6 +102,10 @@ public class AddAttractionFragment extends Fragment {
         nameText.setHint(nameHint);
         descriptionText = addAttractionView.findViewById(R.id.attraction_description_et);
         descriptionText.setHint(descriptionHint);
+        startText = addAttractionView.findViewById(R.id.attraction_start_et);
+        startText.setHint(startHint);
+        endText = addAttractionView.findViewById(R.id.attraction_end_et);
+        endText.setHint(endHint);
 
         // create the update button
         Button addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
@@ -125,6 +133,8 @@ public class AddAttractionFragment extends Fragment {
             String inputCost = costText.getText().toString();
             String inputName = nameText.getText().toString();
             String inputDescription = descriptionText.getText().toString();
+            String inputStart = startText.getText().toString();
+            String inputEnd = endText.getText().toString();
             // build the new attraction from the input information
             Attraction attr = new Attraction();
             // TODO error if the location does not contain the right kind of information
@@ -138,6 +148,7 @@ public class AddAttractionFragment extends Fragment {
                 if (inputCost != null && !inputCost.equals("")){
                     attr.setCost(Integer.parseInt(inputCost));
                 }
+                // TODO figure out how to process user time and date information into a Date or Timestamp object
                 // add the attraction to Firestore
                 addToFirestore(attr);
                 // go back once the button is pressed
