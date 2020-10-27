@@ -22,13 +22,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
+import com.tourtrek.adapters.FuturePersonalToursAdapter;
+import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
@@ -44,6 +48,7 @@ public class MyTourFragment extends Fragment {
     private RecyclerView attractionsView;
     private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private Button tour_attractions_btn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +77,9 @@ public class MyTourFragment extends Fragment {
         ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
         // Create a button which directs to addAttractionFragment when pressed
-        Button tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
+        tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
+        tour_attractions_btn.setVisibility(View.INVISIBLE);
+        tourIsUsers(this.tour);
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -91,7 +98,6 @@ public class MyTourFragment extends Fragment {
      * @param view current view
      */
     public void configureRecyclerViews(View view) {
-
         // Get our recycler view from the layout
         attractionsView = view.findViewById(R.id.tour_attractions_rv);
         // Improves performance because content does not change size
@@ -184,5 +190,40 @@ public class MyTourFragment extends Fragment {
 
     }
 
+    /**
+     * If the tour belongs to the user, the button to add an attraction is made visible.
+     * @param currentTour
+     */
+    public void tourIsUsers(Tour currentTour){
+        // query the Tours collection reference
+        // process the result and confirm that there is a tour with the ID of the current tour in the user's list of tours
+
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Setup collection reference
+        CollectionReference toursCollection = db.collection("Tours");
+        // Pull out the UID's of each tour that belongs to this user
+        List<String> usersToursUIDs = new ArrayList<>();
+        if (!MainActivity.user.getTours().isEmpty()) {
+            for (DocumentReference documentReference : MainActivity.user.getTours()) {
+                usersToursUIDs.add(documentReference.getId());
+            }
+        }
+        // Query database
+        toursCollection
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.w(TAG, "No documents found in the Tours collection");
+                    }
+                    else {
+                        System.out.println(usersToursUIDs);
+                        // First check that the document belongs to the user
+                        if (usersToursUIDs.contains(this.tour.getTourUID())) {
+                            this.tour_attractions_btn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+    }
 }
 
