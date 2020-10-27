@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,18 +22,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
-import com.tourtrek.adapters.FuturePersonalToursAdapter;
-import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
@@ -47,6 +43,7 @@ public class TourFragment extends Fragment {
     private Tour tour;
     private RecyclerView attractionsView;
     private RecyclerView.Adapter attractionsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,14 +105,9 @@ public class TourFragment extends Fragment {
         attractionsView.setLayoutManager(attractionsLayoutManager);
         // Specify an adapter
         attractionsAdapter = new CurrentTourAttractionsAdapter(getContext());
-        // get the tour's list of document references as a list of attractions
-        List<Attraction> attractions = new ArrayList<>();
-        List<DocumentReference> attractionReferences = this.tour.getAttractions();
-        for (DocumentReference attrRef : attractionReferences){
-            attractions.add(attrRef.get().getResult().toObject(Attraction.class));
-        }
-        // add data to the adapter
-        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(attractions);
+
+        fetchAttractionsAsync();
+
         // set the adapter
         attractionsView.setAdapter(attractionsAdapter);
         // Stop showing progressBar when items are loaded
@@ -130,4 +122,76 @@ public class TourFragment extends Fragment {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle(tour.getName());
     }
+    /**
+     * Retrieve all attractions belonging to this user
+     *
+     */
+    private void fetchAttractionsAsync() {
+
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Setup collection reference
+        CollectionReference attractionsCollection = db.collection("Attractions");
+
+        // Pull out the UID's of each tour that belongs to this user
+        List<String> usersAttractionUIDs = new ArrayList<>();
+        if (!tour.getAttractions().isEmpty()) {
+            for (DocumentReference documentReference : tour.getAttractions()) {
+                usersAttractionUIDs.add(documentReference.getId());
+            }
+        }
+
+        // Query database
+        attractionsCollection
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.w(TAG, "No documents found in the Attractions collection for this user");
+                    }
+                    else {
+
+                        // Final list of tours for this category
+                        List<Attraction> usersAttractions = new ArrayList<>();
+
+                        // Go through each document and compare the dates
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+
+                            // First check that the document belongs to the user
+                            if (usersAttractionUIDs.contains(document.getId())) {
+                                usersAttractions.add(document.toObject(Attraction.class));
+                            }
+                        }
+
+                        ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
+                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
+//                        currentSwipeRefreshLayout.setRefreshing(false);
+
+                    }
+                });
+    }
+
+//    /**
+//     * Configure the swipe down to refresh function of our recycler view
+//     *
+//     * @param view current view
+//     */
+//    public void configureSwipeRefreshLayouts(View view) {
+//
+//        // Current
+//        swipeRefreshLayout = view.findViewById(R.id.personal_current_tours_srl);
+//        currentSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("current"));
+//
+//        // Future
+//        futureSwipeRefreshLayout = view.findViewById(R.id.personal_future_tours_srl);
+//        futureSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("future"));
+//
+//        // Past
+//        pastSwipeRefreshLayout = view.findViewById(R.id.attractions_srl);
+//        pastSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("past"));
+//
+//    }
+
 }
+

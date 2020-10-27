@@ -17,14 +17,12 @@
     <TextView
         android:id="@+id/tour_tour_name_tv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="50dp"
         android:text="Example Tour"
-        android:paddingTop="20dp"
         android:textAlignment="center"
+        android:paddingTop="10dp"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tour_cover_iv"
         />
@@ -32,37 +30,42 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tour_attractions_rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tour_attractions_btn"
+        />
 
     <LinearLayout
-        android:id="@+id/tour_attractions_loading_container"
+        android:id="@+id/attractions_loading_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="visible">
 
-        <ProgressBar
-            android:id="@+id/tour_attraction_loading_pb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
         <TextView
-            android:id="@+id/tour_attractions_loading_tv"
+            android:id="@+id/attractions_loading_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="Loading Future Tours"
-            android:textSize="25sp" />
+            android:text="Loading Tours"
+            android:textSize="30sp"
+            android:layout_marginBottom="20dp" />
 
-        <Button
-            android:id="@+id/tour_attractions_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+        <ProgressBar
+            android:id="@+id/attractions_loading_pb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
+
+
+    <Button
+        android:id="@+id/tour_attractions_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Button"
+        app:layout_constraintTop_toBottomOf="@id/tour_tour_name_tv"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

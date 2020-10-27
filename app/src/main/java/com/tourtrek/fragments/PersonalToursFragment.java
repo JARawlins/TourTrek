@@ -225,7 +225,7 @@ public class PersonalToursFragment extends Fragment {
             futureSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("future"));
 
         // Past
-            pastSwipeRefreshLayout = view.findViewById(R.id.personal_past_tours_srl);
+            pastSwipeRefreshLayout = view.findViewById(R.id.attractions_srl);
             pastSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("past"));
 
     }

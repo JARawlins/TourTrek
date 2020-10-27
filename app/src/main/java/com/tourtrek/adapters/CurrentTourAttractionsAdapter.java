@@ -32,13 +32,13 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
 
     public static class CurrentAttractionsViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tourName;
-        public TextView location;
+        public TextView attractionName;
+        public TextView attractionLocation;
 
         public CurrentAttractionsViewHolder (View view) {
             super(view);
-            //this.tourName = view.findViewById(R.id.item_personal_tour_name);
-            //this.location = view.findViewById(R.id.item_personal_tour_location);
+            this.attractionName = view.findViewById(R.id.item_attraction_name_tv);
+            this.attractionLocation = view.findViewById(R.id.item_attraction_location_tv);
         }
 
     }
@@ -51,7 +51,7 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     @NonNull
     @Override
     public CurrentAttractionsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_personal_tour, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_attraction, parent, false);
         return new CurrentAttractionsViewHolder(view);
     }
 
@@ -59,13 +59,13 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     //@Override
     public void onBindViewHolder(@NonNull CurrentTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
 
-        ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.VISIBLE);
+        ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.VISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.INVISIBLE);
 
-        // holder.tourName.setText(currentPersonalToursDataSet.get(position).getName());
-        // holder.location.setText(currentPersonalToursDataSet.get(position).getLocation());
+         holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
+//         holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
 
-        ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.INVISIBLE);
+        ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);
 
     }
@@ -121,8 +121,8 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     public void stopLoading() {
-        if (((MainActivity) context).findViewById(R.id.tour_attractions_loading_container) != null) {
-            ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.INVISIBLE);
+        if (((MainActivity) context).findViewById(R.id.attractions_loading_container) != null) {
+            ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
             ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);
         }
     }
