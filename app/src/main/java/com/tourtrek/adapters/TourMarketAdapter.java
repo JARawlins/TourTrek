@@ -35,7 +35,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     private static final String TAG = "TourMarketAdapter";
     private List<Tour> toursDataSet;
     private final Context context;
-    public List<Tour> toursDataSet2;
+    private List<Tour> toursDataSetCopy;
 
     @Override
     public Filter getFilter() {
@@ -48,10 +48,10 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
             List<Tour> filteredList = new ArrayList<>();
 
             if(constraint == null || constraint.length() == 0){
-                filteredList.addAll(toursDataSet2);
-            }else  {
+                filteredList.addAll(toursDataSetCopy);
+            } else {
                 String key = constraint.toString().toLowerCase().trim();
-                for(Tour tour: toursDataSet2){
+                for(Tour tour: toursDataSetCopy){
                     if(tour.getName().toLowerCase().contains(key)){
                         filteredList.add(tour);
                     }
@@ -92,7 +92,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
      */
     public TourMarketAdapter(Context context) {
         this.toursDataSet = new ArrayList<>();
-        this.toursDataSet2 = new ArrayList<>(toursDataSet);
+        this.toursDataSetCopy = new ArrayList<>(toursDataSet);
         this.context = context;
     }
 
@@ -180,13 +180,12 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         notifyDataSetChanged();
     }
 
-
-
-    public List<Tour> getToursDataSet() {
-        return toursDataSet2;
+    public void copyTours(List<Tour> dataSet){
+        this.toursDataSetCopy.addAll(dataSet);
     }
 
-
-
+    public List<Tour> getToursDataSet() {
+        return toursDataSetCopy;
+    }
 
 }

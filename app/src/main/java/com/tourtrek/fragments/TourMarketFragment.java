@@ -162,7 +162,7 @@ public class TourMarketFragment extends Fragment {
                             // Clear and add tours
                             (tourMarketAdapter).clear();
                             (tourMarketAdapter).addAll(tours);
-                            tourMarketAdapter.toursDataSet2 = new ArrayList<>(tours);
+                            tourMarketAdapter.copyTours(tours);
 
                             // Stop showing refresh decorator
                             swipeRefreshLayout.setRefreshing(false);
@@ -182,8 +182,8 @@ public class TourMarketFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
-        MenuItem item = menu.findItem(R.id.search);
+        inflater.inflate(R.menu.tour_market_search_menu, menu);
+        MenuItem item = menu.findItem(R.id.tour_market_search_itm);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
