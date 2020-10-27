@@ -93,11 +93,14 @@ public class PersonalToursFragment extends Fragment {
 
         // TODO: Replace this listener when implementing AddTourFragment
         personalFutureToursTitleButton.setOnClickListener(
-                view -> Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show());
+                view -> {
 
-            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-           // ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
-            ft.addToBackStack("AddTourFragment").commit();
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
+                    ft.addToBackStack("AddTourFragment").commit();
+                });
+
+
 
         if (MainActivity.user != null) {
 

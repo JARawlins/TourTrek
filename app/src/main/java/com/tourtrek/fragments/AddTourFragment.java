@@ -1,19 +1,40 @@
 package com.tourtrek.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.TourViewModel;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -54,70 +75,106 @@ public class AddTourFragment extends Fragment {
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
-        configureRecyclerView(addTourView);
-        configureOnClickRecyclerView();
+        Button editTourSaveButton = addTourView.findViewById(R.id.edit_tour_save_bt);
+
+        editTourSaveButton.setOnClickListener(new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+
+
+            // Instantiate all fields in add Tour
+
+            final EditText tourNameEditText = addTourView.findViewById(R.id.edit_tour_tour_name_ct);
+            final CheckBox publicCheckBox = addTourView.findViewById(R.id.edit_tour_public_cb);
+            final CheckBox notificationCheckBox = addTourView.findViewById(R.id.edit_tour_notifications_cb);
+            final EditText startDateEditText = addTourView.findViewById(R.id.edit_tour_startDate_ct);
+            final EditText locationEditText = addTourView.findViewById(R.id.edit_tour_tour_location_ct);
+            final EditText lengthEditText = addTourView.findViewById(R.id.edit_tour_length_ct);
+            final TextView errorTextView = addTourView.findViewById(R.id.edit_tour_error_tv);
+            final ProgressBar loadingProgressBar = addTourView.findViewById(R.id.edit_tour_loading_pb);
+
+            // Close keyboard
+            Utilities.hideKeyboard(getActivity());
+
+            // Start loading the progress circle
+            loadingProgressBar.setVisibility(View.VISIBLE);
+
+
+
+            final String name =  tourNameEditText.getText().toString();
+            final String location = locationEditText.getText().toString();
+            final boolean isPublic = publicCheckBox.isChecked();
+            final boolean notificationIsOn = notificationCheckBox.isChecked();
+            final Integer length = Integer.parseInt(lengthEditText.getText().toString());
+            String str_date=startDateEditText.getText().toString();
+            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            try {
+                Date date = (Date)formatter.parse(str_date);
+                final Timestamp startDate = new Timestamp(date);
+                // Check to make sure some input was entered
+                if (name.equals("") ) {
+                    // Show error to user
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Not all fields entered");
+
+                    // Stop loading progress circle
+                    loadingProgressBar.setVisibility(View.GONE);
+                }
+
+                else {
+
+                    final Tour tour = new Tour();
+
+                    tour.setName(name);
+                    tour.setLocation(location);
+                    tour.setLength(length.longValue());
+                    tour.setNotifications(notificationIsOn);
+                    tour.setPubliclyAvailable(isPublic);
+                    tour.setStartDate(startDate);
+                    tour.setAttractions(new ArrayList<DocumentReference>());
+                    String tourUID = UUID.randomUUID().toString();
+
+
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    db.collection("Tours").document(tourUID)
+                            .set(tour)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.d(TAG, "Tour written to firestore ");
+
+                                    DocumentReference documentReference = db.collection("Tours").document(tourUID);
+
+                                    // Add the tour reference to the user
+
+                                    MainActivity.user.addTourToTours(documentReference);
+
+                                    // Update the user
+                                    Firestore.updateUser();
+
+                                    getActivity().getSupportFragmentManager().popBackStack();
+
+                                    // Stop loading progress circle
+                                    loadingProgressBar.setVisibility(View.GONE);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error saving hive to firestore");
+                                }
+                            });
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    });
 
         return addTourView;
     }
-
-
-    /**
-     * Enables the click listener for each item in our recycler view
-     */
-    private void configureOnClickRecyclerView() {
-        ItemClickSupport.addTo(recyclerView, R.layout.item_tour)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-                        // Reference to the current tour selected
-                        Tour tour = ((TourMarketAdapter)addTourAdapter).getTour(position);
-
-                        // Add the selected tour to the view model so we can access the tour inside the fragment
-                        tourViewModel.setSelectedTour(tour);
-
-                        // Display the tour selected
-                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
-                        ft.addToBackStack("TourFragment").commit();
-                    }
-                });
-    }
-
-    /**
-     * Configure the recycler view
-     *
-     * @param view current view
-     */
-    private void configureRecyclerView(View view) {
-
-        // Get our recycler view from the layout
-        recyclerView = view.findViewById(R.id.tour_market_rv);
-
-        // Improves performance because content does not change size
-        recyclerView.setHasFixedSize(true);
-
-        // Only load 10 tours before loading more
-        recyclerView.setItemViewCacheSize(10);
-
-        // Enable drawing cache
-        recyclerView.setDrawingCacheEnabled(true);
-        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-        // User linear layout manager
-        RecyclerView.LayoutManager tourMarketLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(tourMarketLayoutManager);
-
-
-        // Specify an adapter
-        addTourAdapter = new TourMarketAdapter(getContext());
-        recyclerView.setAdapter(addTourAdapter);
-
-    }
-
-
-
-
 
     @Override
     public void onResume() {

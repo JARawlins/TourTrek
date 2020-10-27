@@ -97,4 +97,18 @@ public class User {
     public void setTours(List<DocumentReference> tours) {
         this.tours = tours;
     }
+
+
+    /**
+     * Add tour reference to the user
+     *
+     * @param tourDocument tourDocument to add
+     */
+    public void addTourToTours(DocumentReference tourDocument){
+        if (this.tours == null) {
+            this.tours = new ArrayList<DocumentReference>();
+        }
+
+        this.tours.add(tourDocument);
+    }
 }
