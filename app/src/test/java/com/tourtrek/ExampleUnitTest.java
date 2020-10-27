@@ -1,5 +1,13 @@
 package com.tourtrek;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.core.app.ActivityScenario;
+
+import com.tourtrek.activities.MainActivity;
+import com.tourtrek.fragments.LoginFragment;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,8 +18,23 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
+
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void testLoginFragment() {
+
+        Fragment loginFragment = new LoginFragment();
+
+        String email = "test@gmail.com";
+        String password = "password";
+
+        ActivityScenario scenario = ActivityScenario.launch(MainActivity.class);
+
+    }
+
+
 }
