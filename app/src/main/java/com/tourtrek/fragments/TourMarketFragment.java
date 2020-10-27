@@ -162,6 +162,7 @@ public class TourMarketFragment extends Fragment {
                             // Clear and add tours
                             (tourMarketAdapter).clear();
                             (tourMarketAdapter).addAll(tours);
+                            tourMarketAdapter.toursDataSet2 = new ArrayList<>(tours);
 
                             // Stop showing refresh decorator
                             swipeRefreshLayout.setRefreshing(false);
@@ -192,6 +193,7 @@ public class TourMarketFragment extends Fragment {
                 List<Tour> filteredList = new ArrayList<>();
                 if(query == null || query.length() == 0){
                     filteredList.addAll(data);
+                    tourMarketAdapter.clear();
                     tourMarketAdapter.addAll(filteredList);
                 }else  {
                     String key = query.toLowerCase();
@@ -202,9 +204,6 @@ public class TourMarketFragment extends Fragment {
                     }
                 }
                 tourMarketAdapter.clear();
-                if (tourMarketAdapter.getToursDataSet().size() == 0){
-                    tourMarketAdapter.addAll(filteredList);
-                }
                 tourMarketAdapter.addAll(filteredList);
 
                 return true;
@@ -220,24 +219,16 @@ public class TourMarketFragment extends Fragment {
                     filteredList.addAll(data);
                     tourMarketAdapter.clear();
                     tourMarketAdapter.addAll(filteredList);
-                    if (newText != null){
-                        System.out.println(newText.length());
-                    }
-                    System.out.println(data);
                 }else  {
-                    //String key = newText.toLowerCase();
+                    String key = newText.toLowerCase();
                     for(Tour tour: data){
-                        if(tour.getName().toLowerCase().contains(newText)){
+                        if(tour.getName().toLowerCase().contains(key)){
                             filteredList.add(tour);
                         }
                     }
                 }
                 tourMarketAdapter.clear();
                 tourMarketAdapter.addAll(filteredList);
-
-                //tourMarketAdapter.getFilter().filter(newText);
-
-                //System.out.println(tourMarketAdapter.getItemCount());
 
                 return true;
             }

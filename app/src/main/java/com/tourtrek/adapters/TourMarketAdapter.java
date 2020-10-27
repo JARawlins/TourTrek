@@ -180,18 +180,10 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         notifyDataSetChanged();
     }
 
-    /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
-     */
-    public void update(List<Tour> dataSet) {
-        this.toursDataSet.addAll(dataSet);
-        //notifyDataSetChanged();
-    }
+
 
     public List<Tour> getToursDataSet() {
-        return toursDataSet;
+        return toursDataSet2;
     }
 
 
