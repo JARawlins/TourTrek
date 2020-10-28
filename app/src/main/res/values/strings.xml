@@ -18,5 +18,11 @@
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
+    
+    <string-array name="categories">
+        <item>Name</item>
+        <item>Location</item>
+        <item>Duration</item>
+    </string-array>
 
 </resources>

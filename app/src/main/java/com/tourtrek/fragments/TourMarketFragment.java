@@ -1,5 +1,6 @@
 package com.tourtrek.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,9 +10,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 
 import androidx.fragment.app.Fragment;
@@ -32,13 +37,16 @@ import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.data.TourLengthSorter;
+import com.tourtrek.data.TourLocationSorter;
+import com.tourtrek.data.TourNameSorter;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TourMarketFragment extends Fragment {
+public class TourMarketFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
@@ -52,6 +60,12 @@ public class TourMarketFragment extends Fragment {
 
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        Spinner spinner = tourMarketView.findViewById(R.id.tour_market_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(), R.array.categories,
+                android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
 
         configureRecyclerView(tourMarketView);
         configureSwipeRefreshLayout(tourMarketView);
@@ -247,8 +261,42 @@ public class TourMarketFragment extends Fragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
+        List<Tour> result = new ArrayList<>();
+        List<Tour> temp = new ArrayList<>(data);
 
+        String key = (String) parent.getItemAtPosition(position);
+        switch (key){
+            case "Name":
+                System.out.println(key);
+                temp.sort(new TourNameSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+                break;
+            case "Location":
+                System.out.println(key);
+                temp.sort(new TourLocationSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+                break;
+            case "Duration":
+                System.out.println(key);
+                temp.sort(new TourLengthSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+                break;
+            default:
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+        }
+    }
 
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
+    }
 }
 

@@ -47,7 +47,7 @@
 
     </LinearLayout>
 
-    <Spinner android:id="@+id/spinner_tour_market"
+    <Spinner android:id="@+id/tour_market_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop ="true"
