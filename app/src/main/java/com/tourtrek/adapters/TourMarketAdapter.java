@@ -47,7 +47,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Tour> filteredList = new ArrayList<>();
 
-            if(constraint == null || constraint.length() == 0){
+            if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(toursDataSetCopy);
             } else {
                 String key = constraint.toString().toLowerCase().trim();

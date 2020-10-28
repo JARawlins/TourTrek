@@ -44,6 +44,8 @@ import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class TourMarketFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -205,11 +207,11 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
             public boolean onQueryTextSubmit(String query) {
                 ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
                 List<Tour> filteredList = new ArrayList<>();
-                if(query == null || query.length() == 0){
+                if (query == null || query.length() == 0) {
                     filteredList.addAll(data);
                     tourMarketAdapter.clear();
                     tourMarketAdapter.addAll(filteredList);
-                }else  {
+                } else {
                     String key = query.toLowerCase();
                     for(Tour tour: data){
                         if(tour.getName().toLowerCase().contains(key)){
@@ -219,21 +221,18 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                 }
                 tourMarketAdapter.clear();
                 tourMarketAdapter.addAll(filteredList);
-
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
-
                 ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
                 List<Tour> filteredList = new ArrayList<>();
-                if(newText == null || newText.length() == 0){
+                if (newText == null || newText.length() == 0) {
                     filteredList.addAll(data);
                     tourMarketAdapter.clear();
                     tourMarketAdapter.addAll(filteredList);
-                }else  {
+                } else {
                     String key = newText.toLowerCase();
                     for(Tour tour: data){
                         if(tour.getName().toLowerCase().contains(key)){
@@ -247,15 +246,11 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                 return true;
             }
         });
-
-       
         super.onCreateOptionsMenu(menu, inflater);
-
     }
 
     @Override
     public void onResume() {
-
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
     }
@@ -266,7 +261,6 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
         List<Tour> temp = new ArrayList<>(data);
-
         String key = (String) parent.getItemAtPosition(position);
         switch (key){
             case "Name Ascending":
@@ -284,6 +278,27 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
             case "Duration Ascending":
                 System.out.println(key);
                 temp.sort(new TourLengthSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+                break;
+            case "Name Descending":
+                System.out.println(key);
+                temp.sort(new TourNameSorter());
+                Collections.reverse(temp);
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+                break;
+            case "Location Descending":
+                System.out.println(key);
+                temp.sort(new TourLocationSorter());
+                Collections.reverse(temp);
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp);
+                break;
+            case "Duration Descending":
+                System.out.println(key);
+                temp.sort(new TourLengthSorter());
+                Collections.reverse(temp);
                 tourMarketAdapter.clear();
                 tourMarketAdapter.addAll(temp);
                 break;

@@ -24,6 +24,9 @@
         <item>Name Ascending</item>
         <item>Location Ascending</item>
         <item>Duration Ascending</item>
+        <item>Name Descending</item>
+        <item>Location Descending</item>
+        <item>Duration Descending</item>
     </string-array>
 
 </resources>
