@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -94,6 +95,8 @@ public class PersonalToursFragment extends Fragment {
         // TODO: Replace this listener when implementing AddTourFragment
         personalFutureToursTitleButton.setOnClickListener(
                 view -> {
+
+                    FragmentManager fm = getParentFragmentManager();
 
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
                     ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
