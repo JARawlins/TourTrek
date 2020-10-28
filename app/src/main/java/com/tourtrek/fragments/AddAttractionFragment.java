@@ -14,27 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
-import com.tourtrek.adapters.FuturePersonalToursAdapter;
-import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
@@ -46,12 +39,12 @@ public class AddAttractionFragment extends Fragment {
 
     private static final String TAG = "AddAttractionFragment";
     private FirebaseAuth mAuth;
-    private String locationHint = "330 N. Orchard St., Madison, WI, USA";
-    private String costHint = "0";
-    private String nameHint = "WID";
-    private String descriptionHint = "Research center";
-    private String startHint = "Oct. 10th,2020 9am";
-    private String endHint = "Oct. 10th,2020 10am";
+    private String locationHint = "Address: eg 330 N. Orchard St., Madison, WI, USA";
+    private String costHint = "Cost: integer dollar amount";
+    private String nameHint = "Name";
+    private String descriptionHint = "Description";
+    private String startHint = "Beginning date: dd-MM-yyyyTHH:mm";
+    private String endHint = "Ending date: dd-MM-yyyyTHH:mm";
     private EditText locationText;
     private EditText costText;
     private EditText nameText;
@@ -60,6 +53,8 @@ public class AddAttractionFragment extends Fragment {
     private EditText endText;
     private Tour tour;
     private TourViewModel tourViewModel;
+
+
     /**
      * Default for proper back button usage
      */
@@ -137,6 +132,12 @@ public class AddAttractionFragment extends Fragment {
             String inputEnd = endText.getText().toString();
             // build the new attraction from the input information
             Attraction attr = new Attraction();
+            // process date inputs
+            try {
+                getDates(inputStart, inputEnd, attr);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             // TODO error if the location does not contain the right kind of information
             if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")){
                 attr.setName(inputName);
@@ -159,7 +160,8 @@ public class AddAttractionFragment extends Fragment {
 
     private void addToFirestore(Attraction attraction){
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final DocumentReference newAttractionDoc = db.collection("Attractions").document();     // omit the ID so that Firestore generates a unique one
+        final DocumentReference newAttractionDoc = db.collection("Attractions").document();
+        attraction.setAttractionUID(newAttractionDoc.getId());// omit the ID so that Firestore generates a unique one
         newAttractionDoc.set(attraction) // write the attraction to the new document
                 .addOnCompleteListener(task -> {
                     Log.d(TAG, "Attraction written to firestore");
@@ -180,16 +182,25 @@ public class AddAttractionFragment extends Fragment {
 
     /**
      * Retrieve all tours belonging to this user
-     *
+     *https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
      */
     private void syncTour() {
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
-        toursCollection.document(this.tour.getTourUID()).set(this.tour).addOnCompleteListener(v ->
+        toursCollection.document(this.tour.getTourUID()).set(this.tour).addOnSuccessListener(v->
         {
             Log.d(TAG, "Tour written");
         });
+    }
+
+    private void getDates(String startDateStr, String endDateStr, Attraction attraction) throws ParseException {
+        //DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
+        final Timestamp startDate = new Timestamp((Date) formatter.parse(startDateStr));
+        final Timestamp endDate = new Timestamp((Date) formatter.parse(endDateStr));
+        attraction.setStartDate(startDate);
+        attraction.setEndDate(endDate);
     }
 }
