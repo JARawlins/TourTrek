@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.data.User;
+import com.tourtrek.fragments.FragmentFactoryImpl;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Initialize Fragment Factory
+        getSupportFragmentManager().setFragmentFactory(new FragmentFactoryImpl());
 
         super.onCreate(savedInstanceState);
 
