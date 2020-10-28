@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,6 +41,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -90,14 +92,14 @@ public class AddTourFragment extends Fragment {
             final EditText startDateEditText = addTourView.findViewById(R.id.edit_tour_startDate_ct);
             final EditText locationEditText = addTourView.findViewById(R.id.edit_tour_tour_location_ct);
             final EditText lengthEditText = addTourView.findViewById(R.id.edit_tour_length_ct);
-            final TextView errorTextView = addTourView.findViewById(R.id.edit_tour_error_tv);
-            final ProgressBar loadingProgressBar = addTourView.findViewById(R.id.edit_tour_loading_pb);
+//            final TextView errorTextView = addTourView.findViewById(R.id.edit_tour_error_tv);
+//            final ProgressBar loadingProgressBar = addTourView.findViewById(R.id.edit_tour_loading_pb);
 
             // Close keyboard
             Utilities.hideKeyboard(getActivity());
 
             // Start loading the progress circle
-            loadingProgressBar.setVisibility(View.VISIBLE);
+//            loadingProgressBar.setVisibility(View.VISIBLE);
 
 
 
@@ -113,12 +115,12 @@ public class AddTourFragment extends Fragment {
                 final Timestamp startDate = new Timestamp(date);
                 // Check to make sure some input was entered
                 if (name.equals("") ) {
-                    // Show error to user
-                    errorTextView.setVisibility(View.VISIBLE);
-                    errorTextView.setText("Not all fields entered");
-
-                    // Stop loading progress circle
-                    loadingProgressBar.setVisibility(View.GONE);
+//                    // Show error to user
+//                    errorTextView.setVisibility(View.VISIBLE);
+//                    errorTextView.setText("Not all fields entered");
+//
+//                    // Stop loading progress circle
+//                    loadingProgressBar.setVisibility(View.GONE);
                 }
 
                 else {
@@ -132,22 +134,18 @@ public class AddTourFragment extends Fragment {
                     tour.setPubliclyAvailable(isPublic);
                     tour.setStartDate(startDate);
                     tour.setAttractions(new ArrayList<DocumentReference>());
-                    String tourUID = UUID.randomUUID().toString();
 
 
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                    db.collection("Tours").document(tourUID)
-                            .set(tour)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    db.collection("Tours")
+                            .add(tour)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                                public void onSuccess(DocumentReference documentReference) {
                                     Log.d(TAG, "Tour written to firestore ");
 
-                                    DocumentReference documentReference = db.collection("Tours").document(tourUID);
-
                                     // Add the tour reference to the user
-
                                     MainActivity.user.addTourToTours(documentReference);
 
                                     // Update the user
@@ -156,7 +154,8 @@ public class AddTourFragment extends Fragment {
                                     getActivity().getSupportFragmentManager().popBackStack();
 
                                     // Stop loading progress circle
-                                    loadingProgressBar.setVisibility(View.GONE);
+//                                    loadingProgressBar.setVisibility(View.GONE);
+
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
@@ -165,6 +164,7 @@ public class AddTourFragment extends Fragment {
                                     Log.w(TAG, "Error saving hive to firestore");
                                 }
                             });
+
                 }
 
             } catch (ParseException e) {
