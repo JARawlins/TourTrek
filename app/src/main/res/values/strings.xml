@@ -20,9 +20,10 @@
     <!--    <string name=""></string>-->
     
     <string-array name="categories">
-        <item>Name</item>
-        <item>Location</item>
-        <item>Duration</item>
+        <item>Sort by</item>
+        <item>Name Ascending</item>
+        <item>Location Ascending</item>
+        <item>Duration Ascending</item>
     </string-array>
 
 </resources>

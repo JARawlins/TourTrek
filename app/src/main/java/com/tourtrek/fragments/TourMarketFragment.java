@@ -265,24 +265,23 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
-        List<Tour> result = new ArrayList<>();
         List<Tour> temp = new ArrayList<>(data);
 
         String key = (String) parent.getItemAtPosition(position);
         switch (key){
-            case "Name":
+            case "Name Ascending":
                 System.out.println(key);
                 temp.sort(new TourNameSorter());
                 tourMarketAdapter.clear();
                 tourMarketAdapter.addAll(temp);
                 break;
-            case "Location":
+            case "Location Ascending":
                 System.out.println(key);
                 temp.sort(new TourLocationSorter());
                 tourMarketAdapter.clear();
                 tourMarketAdapter.addAll(temp);
                 break;
-            case "Duration":
+            case "Duration Ascending":
                 System.out.println(key);
                 temp.sort(new TourLengthSorter());
                 tourMarketAdapter.clear();
