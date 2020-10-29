@@ -183,7 +183,7 @@ public class AddAttractionFragment extends Fragment {
 
                     // if an attraction is added to an existing tour
                     if (fragmentManager.findFragmentByTag("AddTourFragment") == null){
-                        syncTour(tourViewModel.getSelectedTour());
+                        syncTour();
                     }
                     // else an attraction is not being added to an existing tour - do nothing, the tourViewModel is already updated for use in adding a tour
                 })
@@ -201,14 +201,13 @@ public class AddAttractionFragment extends Fragment {
      * Retrieve all tours belonging to this user
      * This method assumes a tour is already created and has a properly filled UID field
      *https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-     * @param tour
      */
-    private void syncTour(Tour tour) {
+    private void syncTour() {
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
-        toursCollection.document(tour.getTourUID()).set(tour).addOnSuccessListener(v->
+        toursCollection.document(tourViewModel.getSelectedTour().getTourUID()).set(tourViewModel.getSelectedTour()).addOnSuccessListener(v->
         {
             Log.d(TAG, "Tour written");
         });
