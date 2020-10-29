@@ -111,10 +111,13 @@ public class TourFragment extends Fragment {
         // set up fields to be made visible or invisible
         tourNameTextView.setEnabled(false);
         tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
+        tourLocation.setText(tourViewModel.getSelectedTour().getLocation());
         tourLocation.setEnabled(false);
         tourCost = tourView.findViewById(R.id.edit_tour_cost_et);
+        tourCost.setText(Float.toString(tourViewModel.getSelectedTour().getCost()));
         tourCost.setEnabled(false);
         timeText = tourView.findViewById(R.id.edit_tour_time_et);
+        timeText.setText(Long.toString(tourViewModel.getSelectedTour().getLength()));
         timeText.setEnabled(false);
         edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
