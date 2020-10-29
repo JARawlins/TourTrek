@@ -89,15 +89,12 @@ public class AddAttractionFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Initialize tour view model to get the current tour
-        tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
-
+        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
         fragmentManager = getActivity().getSupportFragmentManager();
-
         // Grab a reference to the current view
-        View addAttractionView = inflater.inflate(R.layout.add_attraction_fragment, container, false);
-
-
-
+        View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
+        // Grab the tour that was selected
+        // this.tour = tourViewModel.getSelectedTour(); // TODO refer to the tour in the view model directly until you save to the database
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
         locationText.setHint(locationHint);
@@ -107,16 +104,14 @@ public class AddAttractionFragment extends Fragment {
         nameText.setHint(nameHint);
         descriptionText = addAttractionView.findViewById(R.id.attraction_description_et);
         descriptionText.setHint(descriptionHint);
-        startText = addAttractionView.findViewById(R.id.attraction_start_et);
+        startText = addAttractionView.findViewById(R.id.attraction_time_start_et);
         startText.setHint(startHint);
-        endText = addAttractionView.findViewById(R.id.attraction_end_et);
+        endText = addAttractionView.findViewById(R.id.attraction_time_end_et);
         endText.setHint(endHint);
-
         // create the update button
         Button addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
         // set up the action to carry out via the update button
         setUpAddAttractionBtn(addAttractionButton);
-
         return addAttractionView;
     }
 
