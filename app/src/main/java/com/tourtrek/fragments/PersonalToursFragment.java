@@ -68,24 +68,17 @@ public class PersonalToursFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        // Get the current nav backstack
-        NavController navController = NavHostFragment.findNavController(this);
-
-        // Display login screen if no user was previous logged in
-        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
-            navController.navigate(R.id.navigation_login);
-        }
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        // Display login screen if no user was previous logged in
+        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
+            return personalToursView;
+        }
 
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
@@ -105,14 +98,10 @@ public class PersonalToursFragment extends Fragment {
 
 
 
-        if (MainActivity.user != null) {
-
-            // Configure recycler views
-            configureRecyclerViews(personalToursView);
-            configureSwipeRefreshLayouts(personalToursView);
-            configureOnClickRecyclerView();
-
-        }
+        // Configure recycler views
+        configureRecyclerViews(personalToursView);
+        configureSwipeRefreshLayouts(personalToursView);
+        configureOnClickRecyclerView();
 
         return personalToursView;
     }
