@@ -18,10 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +48,14 @@ public class TourFragment extends Fragment {
     private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button tour_attractions_btn;
+    private EditText tourLocation;
+    private EditText tourCost;
+    private EditText timeText;
+    private EditText tourNameTextView;
+    private Button edit_tour_update_btn;
+    private Button edit_tour_share_btn;
+    private Button edit_tour_picture_btn;
+
     private Button tour_edit_btn;
 
     @Override
@@ -74,8 +85,6 @@ public class TourFragment extends Fragment {
         ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
         // Create a button which directs to addAttractionFragment when pressed
-        tour_edit_btn = tourView.findViewById(R.id.tour_edit_btn);
-        // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
         tourIsUsers(this.tour);
@@ -85,13 +94,21 @@ public class TourFragment extends Fragment {
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
             ft.addToBackStack("AdAttractionFragment").commit();
         });
-        // When the button is clicked, switch to the EditTourFragment
-        tour_edit_btn.setOnClickListener(v -> {
-            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new EditTourFragment(), "EditTourFragment");
-            ft.addToBackStack("EditTourFragment").commit();
-        });
+        // set up fields to be made visible or invisible
+        tourNameTextView.setEnabled(false);
+        tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
+        tourLocation.setEnabled(false);
+        tourCost = tourView.findViewById(R.id.edit_tour_cost_et);
+        tourCost.setEnabled(false);
+        timeText = tourView.findViewById(R.id.edit_tour_time_et);
+        timeText.setEnabled(false);
 
+        edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
+        edit_tour_update_btn.setVisibility(View.INVISIBLE);
+        edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);
+        edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
+        edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
+        edit_tour_picture_btn.setVisibility(View.INVISIBLE);
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
@@ -227,7 +244,12 @@ public class TourFragment extends Fragment {
                         // First check that the document belongs to the user
                         if (usersToursUIDs.contains(this.tour.getTourUID())) {
                             this.tour_attractions_btn.setVisibility(View.VISIBLE);
-                            this.tour_edit_btn.setVisibility(View.VISIBLE);
+                            tourNameTextView.setEnabled(true);
+                            tourLocation.setEnabled(true);
+                            tourCost.setEnabled(true);
+                            timeText.setEnabled(true);
+                            edit_tour_update_btn.setVisibility(View.VISIBLE);
+                            edit_tour_picture_btn.setVisibility(View.VISIBLE);
                         }
                     }
                 });

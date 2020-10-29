@@ -88,12 +88,11 @@ public class AddAttractionFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
-        fragmentManager =getActivity().getSupportFragmentManager();
-
         // Initialize tour view model to get the current tour
         tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.add_attraction_fragment, container, false);
 
@@ -157,7 +156,6 @@ public class AddAttractionFragment extends Fragment {
                 // TODO figure out how to process user time and date information into a Date or Timestamp object
                 // add the attraction to Firestore
                 addToFirestore(attr);
-
                 // go back once the button is pressed
                 getActivity().getSupportFragmentManager().popBackStack();
             }
@@ -176,7 +174,7 @@ public class AddAttractionFragment extends Fragment {
 
 
                     if (fragmentManager.findFragmentByTag("AddTourFragment") == null) {
-                        syncTour(tourViewModel.getSelectedTour());
+                        syncTour();
                     }
 
                 })
@@ -194,13 +192,12 @@ public class AddAttractionFragment extends Fragment {
      * Retrieve all tours belonging to this user
      *
      */
-    private void syncTour(Tour tour) {
+    private void syncTour() {
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
-
-        toursCollection.document(tour.getTourUID()).set(tour).addOnCompleteListener(v ->
+        toursCollection.document(tourViewModel.getSelectedTour().getTourUID()).set(tourViewModel.getSelectedTour()).addOnCompleteListener(v ->
         {
             Log.d(TAG, "Tour written");
         });
