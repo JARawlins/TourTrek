@@ -12,7 +12,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.data.User;
-import com.tourtrek.fragments.FragmentFactoryImpl;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,15 +31,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Initialize Fragment Factory
-        getSupportFragmentManager().setFragmentFactory(new FragmentFactoryImpl());
-
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
 
-//        mAuth.signOut();
-//        MainActivity.user = null;
         // If the user was previously logged in, load their information here
         if (mAuth.getCurrentUser() != null) {
 

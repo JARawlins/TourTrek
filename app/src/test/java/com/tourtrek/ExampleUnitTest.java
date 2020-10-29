@@ -24,17 +24,4 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void testLoginFragment() {
-
-        Fragment loginFragment = new LoginFragment();
-
-        String email = "test@gmail.com";
-        String password = "password";
-
-        ActivityScenario scenario = ActivityScenario.launch(MainActivity.class);
-
-    }
-
-
 }
