@@ -12,6 +12,12 @@
     <string name="prompt_username">Username</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_edit_tour_name">Tour name: </string>
+    <string name="fragment_edit_tour_location">Location: </string>
+    <string name="fragment_edit_tour_length">Length: </string>
+    <string name="fragment_edit_tour_startDate">Start Date: </string>
+    <string name="fragment_edit_tour_notifications">Notifications</string>
+    <string name="fragment_edit_tour_public">Public</string>
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
