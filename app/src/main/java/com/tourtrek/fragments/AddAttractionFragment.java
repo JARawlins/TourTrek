@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
@@ -60,6 +61,7 @@ public class AddAttractionFragment extends Fragment {
     private EditText endText;
     private Tour tour;
     private TourViewModel tourViewModel;
+    private FragmentManager fragmentManager;
     /**
      * Default for proper back button usage
      */
@@ -86,12 +88,16 @@ public class AddAttractionFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+
+        fragmentManager =getActivity().getSupportFragmentManager();
+
         // Initialize tour view model to get the current tour
-        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
         // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.add_attraction_fragment, container, false);
-        // Grab the tour that was selected
-        this.tour = tourViewModel.getSelectedTour();
+
+
 
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
@@ -151,6 +157,7 @@ public class AddAttractionFragment extends Fragment {
                 // TODO figure out how to process user time and date information into a Date or Timestamp object
                 // add the attraction to Firestore
                 addToFirestore(attr);
+
                 // go back once the button is pressed
                 getActivity().getSupportFragmentManager().popBackStack();
             }
@@ -165,8 +172,13 @@ public class AddAttractionFragment extends Fragment {
                     Log.d(TAG, "Attraction written to firestore");
 
                     // Tour currentTour = MainActivity.user.getCurrentTour().get().getResult().toObject(Tour.class); // get a Tour copy of the document
-                    this.tour.getAttractions().add(newAttractionDoc); // Add the new attraction to the Tour
-                    syncTour();
+                    tourViewModel.getSelectedTour().addAttractionToAttractions(newAttractionDoc); // Add the new attraction to the Tour
+
+
+                    if (fragmentManager.findFragmentByTag("AddTourFragment") == null) {
+                        syncTour(tourViewModel.getSelectedTour());
+                    }
+
                 })
                 .addOnFailureListener(e -> {
 
@@ -182,12 +194,13 @@ public class AddAttractionFragment extends Fragment {
      * Retrieve all tours belonging to this user
      *
      */
-    private void syncTour() {
+    private void syncTour(Tour tour) {
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
-        toursCollection.document(this.tour.getTourUID()).set(this.tour).addOnCompleteListener(v ->
+
+        toursCollection.document(tour.getTourUID()).set(tour).addOnCompleteListener(v ->
         {
             Log.d(TAG, "Tour written");
         });

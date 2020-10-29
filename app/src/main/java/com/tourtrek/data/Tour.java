@@ -117,6 +117,13 @@ public class Tour{
         this.attractions = attractions;
     }
 
+    public void addAttractionToAttractions(DocumentReference attraction) {
+        if (this.attractions != null){
+            this.attractions = new ArrayList<>();
+        }
+        this.attractions.add(attraction);
+    }
+
     /**
      * Getter for startDate
      *

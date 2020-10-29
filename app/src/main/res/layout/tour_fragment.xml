@@ -27,7 +27,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1">
 
             <LinearLayout
@@ -36,9 +36,17 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/tour_edit_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Edit"
+                    android:visibility="gone"/>
+
+                <Button
                     android:id="@+id/tour_attractions_btn"
-                    android:layout_width="393dp"
-                    android:layout_height="1dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
@@ -48,6 +56,8 @@
                     android:text="Add Attraction"
                     android:textAllCaps="false"
                     android:textSize="18sp" />
+
+
 
                 <FrameLayout
                     android:layout_width="match_parent"

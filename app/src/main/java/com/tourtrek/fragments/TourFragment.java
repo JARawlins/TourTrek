@@ -45,6 +45,7 @@ public class TourFragment extends Fragment {
     private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button tour_attractions_btn;
+    private Button tour_edit_btn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class TourFragment extends Fragment {
         ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
         // Create a button which directs to addAttractionFragment when pressed
+        tour_edit_btn = tourView.findViewById(R.id.tour_edit_btn);
+        // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
         tourIsUsers(this.tour);
@@ -82,6 +85,13 @@ public class TourFragment extends Fragment {
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
             ft.addToBackStack("AdAttractionFragment").commit();
         });
+        // When the button is clicked, switch to the EditTourFragment
+        tour_edit_btn.setOnClickListener(v -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new EditTourFragment(), "EditTourFragment");
+            ft.addToBackStack("EditTourFragment").commit();
+        });
+
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
@@ -217,6 +227,7 @@ public class TourFragment extends Fragment {
                         // First check that the document belongs to the user
                         if (usersToursUIDs.contains(this.tour.getTourUID())) {
                             this.tour_attractions_btn.setVisibility(View.VISIBLE);
+                            this.tour_edit_btn.setVisibility(View.VISIBLE);
                         }
                     }
                 });
