@@ -40,9 +40,6 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get instance of Firebase Authentication
-        mAuth = FirebaseAuth.getInstance();
-
         // Setup a callback for the back button being pressed
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -51,52 +48,44 @@ public class ProfileFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-
-        // Get the current nav backstack
-        NavController navController = NavHostFragment.findNavController(this);
-
-        // Display login screen if no user was previous logged in
-        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
-            navController.navigate(R.id.navigation_login);
-        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
         View profileFragmentView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        /*
-        FIXME: Unfortunately we need to do this because this fragments entire lifecycle is called even if we overlay the
-        FIXME: login fragment on top of it. If somebody can figure out a better way of doing this, please implement.
-         */
-        if (MainActivity.user != null) {
+        // Get instance of Firebase Authentication
+        mAuth = FirebaseAuth.getInstance();
 
-            // TODO: This is where we will load the users information into their profile
-
-            // Set the users username on their profile
-            TextView usernameTextView = profileFragmentView.findViewById(R.id.profile_username_tv);
-            usernameTextView.setText(MainActivity.user.getUsername());
-
-            // Set profile picture
-            ImageView profileUserImageView = profileFragmentView.findViewById(R.id.profile_user_iv);
-
-            // If user clicks profile image, they can change it
-            profileUserImageView.setOnClickListener(view -> {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                int PICK_IMAGE = 1;
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-            });
-
-            Glide.with(this)
-                    .load(MainActivity.user.getProfileImageURI())
-                    .placeholder(R.drawable.ic_profile_black)
-                    .circleCrop()
-                    .into(profileUserImageView);
-
+        // Display login screen if no user was previous logged in
+        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
+            return profileFragmentView;
         }
+
+        // TODO: This is where we will load the users information into their profile
+
+        // Set the users username on their profile
+        TextView usernameTextView = profileFragmentView.findViewById(R.id.profile_username_tv);
+        usernameTextView.setText(MainActivity.user.getUsername());
+
+        // Set profile picture
+        ImageView profileUserImageView = profileFragmentView.findViewById(R.id.profile_user_iv);
+
+        // If user clicks profile image, they can change it
+        profileUserImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
+
+        Glide.with(this)
+                .load(MainActivity.user.getProfileImageURI())
+                .placeholder(R.drawable.ic_profile_black)
+                .circleCrop()
+                .into(profileUserImageView);
 
         // Setup handler for logout button
         setupLogoutButtonHandler(profileFragmentView);

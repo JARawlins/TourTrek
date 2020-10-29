@@ -11,6 +11,8 @@ public class User {
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
+    private List<DocumentReference> contacts;
+    private DocumentReference currentTour; // to be updated when the user selects a tour
 
     /**
      * Empty constructor needed for firestore
@@ -29,7 +31,10 @@ public class User {
      * @return current username
      */
     public String getUsername() {
-        return username;
+        if (this.username != null){
+            return this.username;
+        }
+        return "";
     }
 
     /**
@@ -96,5 +101,38 @@ public class User {
      */
     public void setTours(List<DocumentReference> tours) {
         this.tours = tours;
+    }
+
+    public List<DocumentReference> getContacts() {
+        if (this.contacts == null){
+            this.contacts = new ArrayList<>();
+        }
+        return this.contacts;
+    }
+
+    public void setContacts(List<DocumentReference> contacts) {
+        this.contacts = contacts;
+    }
+
+    public DocumentReference getCurrentTour() {
+        return currentTour;
+    }
+
+    public void setCurrentTour(DocumentReference currentTour) {
+        this.currentTour = currentTour;
+    }
+
+
+    /**
+     * Add tour reference to the user
+     *
+     * @param tourDocument tourDocument to add
+     */
+    public void addTourToTours(DocumentReference tourDocument){
+        if (this.tours == null) {
+            this.tours = new ArrayList<DocumentReference>();
+        }
+
+        this.tours.add(tourDocument);
     }
 }

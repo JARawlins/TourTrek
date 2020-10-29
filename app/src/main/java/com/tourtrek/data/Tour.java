@@ -1,25 +1,58 @@
 package com.tourtrek.data;
 
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class Tour {
-
+public class Tour{
     private String name;
-    private Boolean publiclyAvailable;
-    private Boolean notifications;
-    private String coverImageURI;
-    private List<DocumentReference> attractions;
     private Timestamp startDate;
     private String location;
     private Long length;
+    private float cost;
+    private Boolean notifications;
+    private List<String> reviews;
+    private String description;
+    private Boolean publiclyAvailable;
+    private List<DocumentReference> attractions;
+    private String coverImageURI;
+    private String tourUID; // not user-bound; universal unique ID
 
     /**
-     * Empty constructor needed for firestore
+     * Empty constructor needed for Firestore
      */
-    public Tour() {}
+    public Tour() {
+        this.startDate = Timestamp.now();
+//        this.name = "";
+//        this.location = "";
+//        this.notifications = false;
+//        this.reviews = new ArrayList<>();
+//        this.description = "";
+//        this.publiclyAvailable = false;
+//        this.attractions = new ArrayList<>();
+//        this.coverImageURI = "";
+    }
+
+    /**
+     * Alternate constructor
+     * To get the String UID, create a new document. Apply the getID method to its document reference.
+     */
+    public Tour(String name, Boolean publiclyAvailable, String description){
+        this.startDate = Timestamp.now();
+        this.name = name;
+        this.description = description;
+        this.publiclyAvailable = publiclyAvailable;
+//        this.location = "";
+//        this.notifications = false;
+//        this.reviews = new ArrayList<>();
+//        this.attractions = new ArrayList<>();
+//        this.coverImageURI = "";
+    }
 
     /**
      * Getter for name
@@ -27,7 +60,10 @@ public class Tour {
      * @return current name
      */
     public String getName() {
-        return name;
+        if (this.name != null){
+            return this.name;
+        }
+        return "";
     }
 
     /**
@@ -40,30 +76,15 @@ public class Tour {
     }
 
     /**
-     * Getter for publiclyAvailable
-     *
-     * @return current publiclyAvailable
-     */
-    public Boolean isPubliclyAvailable() {
-        return publiclyAvailable;
-    }
-
-    /**
-     * Setter for publiclyAvailable
-     *
-     * @param publiclyAvailable publiclyAvailable to set
-     */
-    public void setPubliclyAvailable(Boolean publiclyAvailable) {
-        this.publiclyAvailable = publiclyAvailable;
-    }
-
-    /**
      * Getter for coverImageURI
      *
      * @return current coverImageURI
      */
     public String getCoverImageURI() {
-        return coverImageURI;
+        if (this.coverImageURI != null){
+            return this.coverImageURI;
+        }
+        return "";
     }
 
     /**
@@ -81,7 +102,10 @@ public class Tour {
      * @return current attractions
      */
     public List<DocumentReference> getAttractions() {
-        return attractions;
+        if (this.attractions != null){
+            return this.attractions;
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -93,13 +117,23 @@ public class Tour {
         this.attractions = attractions;
     }
 
+    public void addAttractionToAttractions(DocumentReference attraction) {
+        if (this.attractions == null){
+            this.attractions = new ArrayList<>();
+        }
+        this.attractions.add(attraction);
+    }
+
     /**
      * Getter for startDate
      *
      * @return current startDate
      */
     public Timestamp getStartDate() {
-        return startDate;
+        if (this.startDate != null){
+            return this.startDate;
+        }
+        return Timestamp.now();
     }
 
     /**
@@ -135,7 +169,10 @@ public class Tour {
      * @return current location
      */
     public String getLocation() {
-        return location;
+        if (this.location != null){
+            return this.location;
+        }
+        return "";
     }
 
     /**
@@ -164,4 +201,61 @@ public class Tour {
     public void setLength(Long length) {
         this.length = length;
     }
+
+    public float getCost() {
+        return this.cost;
+    }
+
+    public void setCost(float cost) {
+        this.cost = cost;
+    }
+
+    public List<String> getReviews() {
+        if (this.reviews == null){
+            return new ArrayList<>();
+        }
+        return this.reviews;
+    }
+
+    public void setReviews(List<String> reviews) {
+        this.reviews = reviews;
+    }
+
+    public String getDescription() {
+        if (this.description != null){
+            return this.description;
+        }
+        return "";
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Getter for publiclyAvailable
+     *
+     * @return current publiclyAvailable
+     */
+    public Boolean isPubliclyAvailable() {
+        return publiclyAvailable;
+    }
+
+    /**
+     * Setter for publiclyAvailable
+     *
+     * @param publiclyAvailable publiclyAvailable to set
+     */
+    public void setPubliclyAvailable(Boolean publiclyAvailable) {
+        this.publiclyAvailable = publiclyAvailable;
+    }
+
+    public String getTourUID() {
+        return tourUID;
+    }
+
+    public void setTourUID(String tourUID) {
+        this.tourUID = tourUID;
+    }
+
 }
