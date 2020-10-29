@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,6 +69,7 @@ public class TourFragment extends Fragment {
     private Button edit_tour_picture_btn;
     private FragmentManager fragmentManager;
     private Context mHandler;
+    private ImageView coverImageView;
 
     private Button tour_edit_btn;
 
@@ -123,7 +125,7 @@ public class TourFragment extends Fragment {
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
         edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);
         edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
-        ImageView tourCoverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
+        coverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
         edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
         edit_tour_picture_btn.setVisibility(View.INVISIBLE);
         edit_tour_picture_btn.setOnClickListener(view -> {
@@ -134,7 +136,7 @@ public class TourFragment extends Fragment {
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
 
-        Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
+        Glide.with(getContext()).load(tour.getCoverImageURI()).into(coverImageView);
 
 
         setupUpdateTourButton(tourView);
@@ -301,6 +303,11 @@ public class TourFragment extends Fragment {
 
         if(resultCode == Activity.RESULT_OK) {
             assert imageReturnedIntent != null;
+
+            Glide.with(this)
+                    .load(imageReturnedIntent.getData())
+                    .placeholder(R.drawable.default_image)
+                    .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
         }
     }
@@ -332,20 +339,6 @@ public class TourFragment extends Fragment {
                             .addOnSuccessListener(uri -> {
 
                                 tour.setCoverImageURI(uri.toString());
-
-                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                                db.collection("Tours") .document(tour.getTourUID()).set(tour)
-                                        .addOnSuccessListener(w ->{
-                                            Log.d(TAG, "Tour written to firestore ");
-
-                                            // Update the user
-                                            Firestore.updateUser();
-
-                                            //getActivity().getSupportFragmentManager().popBackStack();
-                                        }).addOnFailureListener(a -> {
-                                    Log.w(TAG, "Error saving hive to firestore");
-                                });
 
 
                                 //getActivity().getSupportFragmentManager().popBackStack();
@@ -384,6 +377,8 @@ public class TourFragment extends Fragment {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "Successfully updated tour in firestore");
+
+                            Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
                         }
                     });
         });
