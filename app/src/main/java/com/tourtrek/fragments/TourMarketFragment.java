@@ -263,10 +263,10 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         String key = (String) parent.getItemAtPosition(position);
         switch (key){
             case "Name Ascending":
-                List<Tour> temp = new ArrayList<>(data);
-                temp.sort(new TourNameSorter());
+                List<Tour> temp1 = new ArrayList<>(data);
+                temp1.sort(new TourNameSorter());
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp1);
                 break;
             case "Location Ascending":
                 List<Tour> temp2 = new ArrayList<>(data);
