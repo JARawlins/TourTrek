@@ -70,7 +70,7 @@ public class LoginFragmentTest {
         onView(withId(R.id.login_email_et)).perform(typeText("doesNotExist@gmail.com"));
         onView(withId(R.id.login_password_et)).perform(typeText("password"));
         onView(withId(R.id.login_login_btn)).perform(click());
-        Thread.sleep(1000); // Need to sleep the thread while we wait for text
+        onView(isRoot()).perform(waitId(R.id.login_error_tv, TimeUnit.SECONDS.toMillis(15)));
         onView(withId(R.id.login_error_tv)).check(matches(withText("There is no user record corresponding to this identifier. The user may have been deleted.")));
     }
 

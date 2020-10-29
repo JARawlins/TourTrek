@@ -1,13 +1,5 @@
 package com.tourtrek;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ActivityScenario;
-
-import com.tourtrek.activities.MainActivity;
-import com.tourtrek.fragments.LoginFragment;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;
