@@ -1,12 +1,14 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -63,6 +66,8 @@ public class TourFragment extends Fragment {
     private Button edit_tour_update_btn;
     private Button edit_tour_share_btn;
     private Button edit_tour_picture_btn;
+    private FragmentManager fragmentManager;
+    private Context mHandler;
 
     private Button tour_edit_btn;
 
@@ -83,6 +88,8 @@ public class TourFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Initialize tourMarketViewModel to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        mHandler = getContext();
+        fragmentManager = getActivity().getSupportFragmentManager();
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.fragment_edit_tour, container, false);
         // Grab the tour that was selected
@@ -125,6 +132,9 @@ public class TourFragment extends Fragment {
         });
 
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
+
+
+        setupUpdateTourButton(tourView);
 
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
@@ -263,15 +273,20 @@ public class TourFragment extends Fragment {
                     }
                     else {
                         System.out.println(usersToursUIDs);
-                        // First check that the document belongs to the user
-                        if (usersToursUIDs.contains(this.tour.getTourUID())) {
-                            this.tour_attractions_btn.setVisibility(View.VISIBLE);
-                            tourNameTextView.setEnabled(true);
-                            tourLocation.setEnabled(true);
-                            tourCost.setEnabled(true);
-                            timeText.setEnabled(true);
-                            edit_tour_update_btn.setVisibility(View.VISIBLE);
-                            edit_tour_picture_btn.setVisibility(View.VISIBLE);
+
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+
+                            if (usersToursUIDs.contains(document.getId())){
+
+                                this.tour_attractions_btn.setVisibility(View.VISIBLE);
+                                tourNameTextView.setEnabled(true);
+                                tourLocation.setEnabled(true);
+                                tourCost.setEnabled(true);
+                                timeText.setEnabled(true);
+                                edit_tour_update_btn.setVisibility(View.VISIBLE);
+                                edit_tour_picture_btn.setVisibility(View.VISIBLE);
+
+                            }
                         }
                     }
                 });
@@ -337,6 +352,38 @@ public class TourFragment extends Fragment {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
                 });
+    }
+
+    public void setupUpdateTourButton(View view) {
+
+        Button editTourUpdateButton = view.findViewById(R.id.edit_tour_update_btn);
+
+        editTourUpdateButton.setOnClickListener(view1 -> {
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            EditText tourNameEditText = view.findViewById(R.id.edit_tour_name_et);
+            tourViewModel.getSelectedTour().setName(tourNameEditText.getText().toString());
+
+            EditText tourLocationEditText = view.findViewById(R.id.edit_tour_location_et);
+            tourViewModel.getSelectedTour().setLocation(tourLocationEditText.getText().toString());
+
+            EditText tourCostEditText = view.findViewById(R.id.edit_tour_cost_et);
+            tourViewModel.getSelectedTour().setCost(Float.parseFloat(tourCostEditText.getText().toString()));
+
+            EditText tourLengthEditText = view.findViewById(R.id.edit_tour_time_et);
+            tourViewModel.getSelectedTour().setLength(Long.parseLong(tourLengthEditText.getText().toString()));
+
+
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                    .set(tourViewModel.getSelectedTour())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "Successfully updated tour in firestore");
+                        }
+                    });
+        });
     }
 }
 
