@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -43,7 +45,7 @@ public class TourFragment extends Fragment {
     private TourViewModel tourViewModel;
     private Tour tour;
     private RecyclerView attractionsView;
-    private RecyclerView.Adapter attractionsAdapter;
+    public static RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button tour_attractions_btn;
     private EditText tourLocation;
@@ -53,6 +55,7 @@ public class TourFragment extends Fragment {
     private Button edit_tour_update_btn;
     private Button edit_tour_share_btn;
     private Button edit_tour_picture_btn;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +72,6 @@ public class TourFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         // Initialize tourMarketViewModel to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
         // Grab a reference to the current view
@@ -89,7 +91,7 @@ public class TourFragment extends Fragment {
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
-            ft.addToBackStack("AdAttractionFragment").commit();
+            ft.addToBackStack("AddAttractionFragment").commit();
         });
         // set up fields to be made visible or invisible
         tourNameTextView.setEnabled(false);
@@ -146,7 +148,22 @@ public class TourFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // this makes sure that the recycler view updates without manually needing to refresh it
+        // attractionsAdapter.notifyDataSetChanged();
         ((MainActivity) getActivity()).setActionBarTitle(tour.getName());
+
+//        // update the recycler view
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        db.collection("Attractions").document(tourViewModel.getSelectedTour().getAttractions().get(tourViewModel.getSelectedTour().getAttractions().size() - 1).getId())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        Attraction attraction = task.getResult().toObject(Attraction.class);
+//                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addNewData(attraction);
+//                    }
+//                });
+
     }
     /**
      * Retrieve all attractions belonging to this user

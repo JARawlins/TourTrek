@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
@@ -28,6 +29,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
@@ -53,6 +55,7 @@ public class AddAttractionFragment extends Fragment {
     private EditText endText;
     private Tour tour;
     private TourViewModel tourViewModel;
+    private FragmentManager fragmentManager;
 
 
     /**
@@ -83,10 +86,13 @@ public class AddAttractionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Initialize tour view model to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
         // Grab the tour that was selected
-        this.tour = tourViewModel.getSelectedTour();
+        // this.tour = tourViewModel.getSelectedTour(); // TODO refer to the tour in the view model directly until you save to the database
 
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
@@ -167,9 +173,19 @@ public class AddAttractionFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     Log.d(TAG, "Attraction written to firestore");
 
+                    List<DocumentReference> attractions = tourViewModel.getSelectedTour().getAttractions();
+                    attractions.add(newAttractionDoc);
+
                     // Tour currentTour = MainActivity.user.getCurrentTour().get().getResult().toObject(Tour.class); // get a Tour copy of the document
-                    this.tour.getAttractions().add(newAttractionDoc); // Add the new attraction to the Tour
-                    syncTour();
+                    // this.tour.getAttractions().add(newAttractionDoc); // Add the new attraction to the Tour
+                    //tourViewModel.getSelectedTour().getAttractions().add(newAttractionDoc);
+                    tourViewModel.getSelectedTour().setAttractions(attractions);
+
+                    // if an attraction is added to an existing tour
+                    if (fragmentManager.findFragmentByTag("AddTourFragment") == null){
+                        syncTour(tourViewModel.getSelectedTour());
+                    }
+                    // else an attraction is not being added to an existing tour - do nothing, the tourViewModel is already updated for use in adding a tour
                 })
                 .addOnFailureListener(e -> {
 
@@ -183,14 +199,16 @@ public class AddAttractionFragment extends Fragment {
 
     /**
      * Retrieve all tours belonging to this user
+     * This method assumes a tour is already created and has a properly filled UID field
      *https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+     * @param tour
      */
-    private void syncTour() {
+    private void syncTour(Tour tour) {
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
-        toursCollection.document(this.tour.getTourUID()).set(this.tour).addOnSuccessListener(v->
+        toursCollection.document(tour.getTourUID()).set(tour).addOnSuccessListener(v->
         {
             Log.d(TAG, "Tour written");
         });
