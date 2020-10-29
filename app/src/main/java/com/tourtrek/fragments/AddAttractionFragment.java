@@ -84,7 +84,7 @@ public class AddAttractionFragment extends Fragment {
         // Initialize tour view model to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
         // Grab a reference to the current view
-        View addAttractionView = inflater.inflate(R.layout.add_attraction_fragment, container, false);
+        View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
         // Grab the tour that was selected
         this.tour = tourViewModel.getSelectedTour();
 
@@ -97,9 +97,9 @@ public class AddAttractionFragment extends Fragment {
         nameText.setHint(nameHint);
         descriptionText = addAttractionView.findViewById(R.id.attraction_description_et);
         descriptionText.setHint(descriptionHint);
-        startText = addAttractionView.findViewById(R.id.attraction_start_et);
+        startText = addAttractionView.findViewById(R.id.attraction_time_start_et);
         startText.setHint(startHint);
-        endText = addAttractionView.findViewById(R.id.attraction_end_et);
+        endText = addAttractionView.findViewById(R.id.attraction_time_end_et);
         endText.setHint(endHint);
 
         // create the update button

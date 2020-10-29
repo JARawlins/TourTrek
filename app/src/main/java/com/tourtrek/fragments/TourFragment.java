@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -65,15 +66,16 @@ public class TourFragment extends Fragment {
         // Initialize tourMarketViewModel to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
         // Grab a reference to the current view
-        View tourView = inflater.inflate(R.layout.tour_fragment, container, false);
+        View tourView = inflater.inflate(R.layout.fragment_edit_tour, container, false);
         // Grab the tour that was selected
         this.tour = tourViewModel.getSelectedTour();
-        TextView tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
+        // tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
+        EditText tourNameTextView = tourView.findViewById(R.id.edit_tour_name_et);
         tourNameTextView.setText(tour.getName());
-        ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
+        ImageView tourCoverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
         // Create a button which directs to addAttractionFragment when pressed
-        tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
+        tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
         tourIsUsers(this.tour);
         // When the button is clicked, switch to the AddAttractionFragment
