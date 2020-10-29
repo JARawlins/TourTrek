@@ -181,11 +181,11 @@ public class AddAttractionFragment extends Fragment {
                     //tourViewModel.getSelectedTour().getAttractions().add(newAttractionDoc);
                     tourViewModel.getSelectedTour().setAttractions(attractions);
 
-                    // if an attraction is added to an existing tour
-                    if (fragmentManager.findFragmentByTag("AddTourFragment") == null){
+                    // if an attraction is added to an existing tour - existing tours will have UIDs
+                    if (tourViewModel.getSelectedTour().getTourUID() != null){
                         syncTour();
                     }
-                    // else an attraction is not being added to an existing tour - do nothing, the tourViewModel is already updated for use in adding a tour
+
                 })
                 .addOnFailureListener(e -> {
 
