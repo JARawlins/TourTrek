@@ -69,7 +69,7 @@
                 android:inputType="text"
                 android:selectAllOnFocus="true"
                 android:textColorHint="@color/colorAccent"
-                android:textSize="50dp"
+                android:textSize="30dp"
                 android:textStyle="bold" />
 
             <EditText

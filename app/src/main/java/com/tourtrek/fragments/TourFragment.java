@@ -46,6 +46,11 @@ public class TourFragment extends Fragment {
     private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button tour_attractions_btn;
+    private EditText tourLocation;
+    private EditText tourCost;
+    private EditText timeText;
+    private EditText tourNameTextView;
+    private Button edit_tour_update_btn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +75,7 @@ public class TourFragment extends Fragment {
         // Grab the tour that was selected
         this.tour = tourViewModel.getSelectedTour();
         // tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
-        EditText tourNameTextView = tourView.findViewById(R.id.edit_tour_name_et);
+        tourNameTextView = tourView.findViewById(R.id.edit_tour_name_et);
         tourNameTextView.setText(tour.getName());
         ImageView tourCoverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
@@ -84,9 +89,22 @@ public class TourFragment extends Fragment {
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
             ft.addToBackStack("AdAttractionFragment").commit();
         });
+        // set up fields to be made visible or invisible
+        tourNameTextView.setEnabled(false);
+        tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
+        tourLocation.setEnabled(false);
+        tourCost = tourView.findViewById(R.id.edit_tour_cost_et);
+        tourCost.setEnabled(false);
+        timeText = tourView.findViewById(R.id.edit_tour_time_et);
+        timeText.setEnabled(false);
+
+        edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
+        edit_tour_update_btn.setVisibility(View.INVISIBLE);
+
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
+
         return tourView;
     }
 
@@ -219,6 +237,11 @@ public class TourFragment extends Fragment {
                         // First check that the document belongs to the user
                         if (usersToursUIDs.contains(this.tour.getTourUID())) {
                             this.tour_attractions_btn.setVisibility(View.VISIBLE);
+                            tourNameTextView.setEnabled(true);
+                            tourLocation.setEnabled(true);
+                            tourCost.setEnabled(true);
+                            timeText.setEnabled(true);
+                            edit_tour_update_btn.setVisibility(View.VISIBLE);
                         }
                     }
                 });
