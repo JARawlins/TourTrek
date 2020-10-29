@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -67,24 +68,17 @@ public class PersonalToursFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        // Get the current nav backstack
-        NavController navController = NavHostFragment.findNavController(this);
-
-        // Display login screen if no user was previous logged in
-        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
-            navController.navigate(R.id.navigation_login);
-        }
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        // Display login screen if no user was previous logged in
+        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
+            return personalToursView;
+        }
 
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
@@ -93,16 +87,21 @@ public class PersonalToursFragment extends Fragment {
 
         // TODO: Replace this listener when implementing AddTourFragment
         personalFutureToursTitleButton.setOnClickListener(
-                view -> Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show());
+                view -> {
 
-        if (MainActivity.user != null) {
+                    FragmentManager fm = getParentFragmentManager();
 
-            // Configure recycler views
-            configureRecyclerViews(personalToursView);
-            configureSwipeRefreshLayouts(personalToursView);
-            configureOnClickRecyclerView();
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
+                    ft.addToBackStack("AddTourFragment").commit();
+                });
 
-        }
+
+
+        // Configure recycler views
+        configureRecyclerViews(personalToursView);
+        configureSwipeRefreshLayouts(personalToursView);
+        configureOnClickRecyclerView();
 
         return personalToursView;
     }

@@ -15,13 +15,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
+import com.tourtrek.adapters.FuturePersonalToursAdapter;
+import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
@@ -56,8 +64,6 @@ public class AddAttractionFragment extends Fragment {
     private Tour tour;
     private TourViewModel tourViewModel;
     private FragmentManager fragmentManager;
-
-
     /**
      * Default for proper back button usage
      */
@@ -86,14 +92,11 @@ public class AddAttractionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Initialize tour view model to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
-
         fragmentManager = getActivity().getSupportFragmentManager();
-
         // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
         // Grab the tour that was selected
         // this.tour = tourViewModel.getSelectedTour(); // TODO refer to the tour in the view model directly until you save to the database
-
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
         locationText.setHint(locationHint);
@@ -107,12 +110,10 @@ public class AddAttractionFragment extends Fragment {
         startText.setHint(startHint);
         endText = addAttractionView.findViewById(R.id.attraction_time_end_et);
         endText.setHint(endHint);
-
         // create the update button
         Button addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
         // set up the action to carry out via the update button
         setUpAddAttractionBtn(addAttractionButton);
-
         return addAttractionView;
     }
 
@@ -153,7 +154,6 @@ public class AddAttractionFragment extends Fragment {
                     attr.setDescription(inputDescription);
                 }
                 if (inputCost != null && !inputCost.equals("")){
-                    //attr.setCost(Integer.parseInt(inputCost));
                     attr.setCost(Integer.parseInt(inputCost));
                 }
                 // TODO figure out how to process user time and date information into a Date or Timestamp object
@@ -185,7 +185,7 @@ public class AddAttractionFragment extends Fragment {
                     if (tourViewModel.getSelectedTour().getTourUID() != null){
                         syncTour();
                     }
-
+                    // else an attraction is not being added to an existing tour - do nothing, the tourViewModel is already updated for use in adding a tour
                 })
                 .addOnFailureListener(e -> {
 
@@ -207,7 +207,7 @@ public class AddAttractionFragment extends Fragment {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
-        toursCollection.document(tourViewModel.getSelectedTour().getTourUID()).set(tourViewModel.getSelectedTour()).addOnSuccessListener(v->
+        toursCollection.document(tourViewModel.getSelectedTour().getTourUID()).set(tourViewModel.getSelectedTour()).addOnCompleteListener(v ->
         {
             Log.d(TAG, "Tour written");
         });

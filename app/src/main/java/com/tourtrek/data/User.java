@@ -1,12 +1,11 @@
 package com.tourtrek.data;
 
 import com.google.firebase.firestore.DocumentReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class User{
+import java.util.ArrayList;
+import java.util.List;
+
+public class User {
 
     private String username;
     private String email;
@@ -18,20 +17,12 @@ public class User{
     /**
      * Empty constructor needed for firestore
      */
-    public User() {
-//        this.username = "";
-//        this.email = "";
-//        this.tours = new ArrayList<>();
-//        this.profileImageURI = "";
-//        this.contacts = new ArrayList<>();
-    }
+    public User() {}
 
     public User(String username, String email) {
         this.username = username;
         this.email = email;
-//        this.tours = new ArrayList<>();
-//        this.profileImageURI = "";
-//        this.contacts = new ArrayList<>();
+        this.tours = new ArrayList<DocumentReference>();
     }
 
     /**
@@ -61,10 +52,7 @@ public class User{
      * @return current email
      */
     public String getEmail() {
-        if (this.email != null){
-            return this.email;
-        }
-        return "";
+        return email;
     }
 
     /**
@@ -82,10 +70,7 @@ public class User{
      * @return current profileImageURI
      */
     public String getProfileImageURI() {
-        if (this.profileImageURI != null){
-            return this.profileImageURI;
-        }
-        return "";
+        return profileImageURI;
     }
 
     /**
@@ -106,7 +91,7 @@ public class User{
         if (this.tours == null){
             this.tours = new ArrayList<>();
         }
-        return this.tours;
+        return tours;
     }
 
     /**
@@ -135,5 +120,19 @@ public class User{
 
     public void setCurrentTour(DocumentReference currentTour) {
         this.currentTour = currentTour;
+    }
+
+
+    /**
+     * Add tour reference to the user
+     *
+     * @param tourDocument tourDocument to add
+     */
+    public void addTourToTours(DocumentReference tourDocument){
+        if (this.tours == null) {
+            this.tours = new ArrayList<DocumentReference>();
+        }
+
+        this.tours.add(tourDocument);
     }
 }

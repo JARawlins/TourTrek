@@ -1,9 +1,14 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,20 +29,26 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.Firestore;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TourFragment extends Fragment {
 
@@ -45,7 +56,7 @@ public class TourFragment extends Fragment {
     private TourViewModel tourViewModel;
     private Tour tour;
     private RecyclerView attractionsView;
-    public static RecyclerView.Adapter attractionsAdapter;
+    private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button tour_attractions_btn;
     private EditText tourLocation;
@@ -55,7 +66,10 @@ public class TourFragment extends Fragment {
     private Button edit_tour_update_btn;
     private Button edit_tour_share_btn;
     private Button edit_tour_picture_btn;
+    private FragmentManager fragmentManager;
+    private Context mHandler;
 
+    private Button tour_edit_btn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +88,8 @@ public class TourFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Initialize tourMarketViewModel to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        mHandler = getContext();
+        fragmentManager = getActivity().getSupportFragmentManager();
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.fragment_edit_tour, container, false);
         // Grab the tour that was selected
@@ -86,7 +102,6 @@ public class TourFragment extends Fragment {
         // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
-        tourIsUsers(this.tour);
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -96,23 +111,42 @@ public class TourFragment extends Fragment {
         // set up fields to be made visible or invisible
         tourNameTextView.setEnabled(false);
         tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
+        tourLocation.setText(tourViewModel.getSelectedTour().getLocation());
         tourLocation.setEnabled(false);
         tourCost = tourView.findViewById(R.id.edit_tour_cost_et);
+        tourCost.setText(Float.toString(tourViewModel.getSelectedTour().getCost()));
         tourCost.setEnabled(false);
         timeText = tourView.findViewById(R.id.edit_tour_time_et);
+        timeText.setText(Long.toString(tourViewModel.getSelectedTour().getLength()));
         timeText.setEnabled(false);
-
         edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
         edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);
         edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
         edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
         edit_tour_picture_btn.setVisibility(View.INVISIBLE);
+
+        tourIsUsers(tourViewModel.getSelectedTour());
+
+        setUpEditPictureBtn(edit_tour_picture_btn);
+
+        setupUpdateTourButton(tourView);
+
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
-
         return tourView;
+    }
+
+
+    private void setUpEditPictureBtn(Button editPictureBtn){
+        editPictureBtn.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
     }
 
     /**
@@ -148,22 +182,7 @@ public class TourFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // this makes sure that the recycler view updates without manually needing to refresh it
-        // attractionsAdapter.notifyDataSetChanged();
         ((MainActivity) getActivity()).setActionBarTitle(tour.getName());
-
-//        // update the recycler view
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        db.collection("Attractions").document(tourViewModel.getSelectedTour().getAttractions().get(tourViewModel.getSelectedTour().getAttractions().size() - 1).getId())
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        Attraction attraction = task.getResult().toObject(Attraction.class);
-//                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addNewData(attraction);
-//                    }
-//                });
-
     }
     /**
      * Retrieve all attractions belonging to this user
@@ -240,6 +259,7 @@ public class TourFragment extends Fragment {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
+
         // Pull out the UID's of each tour that belongs to this user
         List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
@@ -247,27 +267,97 @@ public class TourFragment extends Fragment {
                 usersToursUIDs.add(documentReference.getId());
             }
         }
-        // Query database
-        toursCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Tours collection");
-                    }
-                    else {
-                        System.out.println(usersToursUIDs);
-                        // First check that the document belongs to the user
-                        if (usersToursUIDs.contains(this.tour.getTourUID())) {
-                            this.tour_attractions_btn.setVisibility(View.VISIBLE);
-                            tourNameTextView.setEnabled(true);
-                            tourLocation.setEnabled(true);
-                            tourCost.setEnabled(true);
-                            timeText.setEnabled(true);
-                            edit_tour_update_btn.setVisibility(View.VISIBLE);
-                            edit_tour_picture_btn.setVisibility(View.VISIBLE);
-                        }
-                    }
+
+        if (usersToursUIDs.contains(tourViewModel.getSelectedTour().getTourUID())) {
+            this.tour_attractions_btn.setVisibility(View.VISIBLE);
+            tourNameTextView.setEnabled(true);
+            tourLocation.setEnabled(true);
+            tourCost.setEnabled(true);
+            timeText.setEnabled(true);
+            edit_tour_update_btn.setVisibility(View.VISIBLE);
+            edit_tour_picture_btn.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        if(resultCode == Activity.RESULT_OK) {
+            assert imageReturnedIntent != null;
+            uploadImageToDatabase(imageReturnedIntent);
+        }
+    }
+
+    /**
+     * Uploads an image to the Profile Images cloud storage.
+     *
+     * @param imageReturnedIntent intent of the image being saved
+     */
+    public void uploadImageToDatabase(Intent imageReturnedIntent) {
+
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Uri to the image
+        Uri selectedImage = imageReturnedIntent.getData();
+
+        final UUID imageUUID = UUID.randomUUID();
+
+        final StorageReference storageReference = storage.getReference().child("TourCoverPictures/" + imageUUID);
+
+        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
+
+                    storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+
+                                tour.setCoverImageURI(uri.toString());
+
+                                Firestore.updateUser();
+
+                                getActivity().getSupportFragmentManager().popBackStack();
+
+                            })
+                            .addOnFailureListener(exception -> {
+                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                            });
                 });
+    }
+
+    public void setupUpdateTourButton(View view) {
+
+        Button editTourUpdateButton = view.findViewById(R.id.edit_tour_update_btn);
+
+        editTourUpdateButton.setOnClickListener(view1 -> {
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            EditText tourNameEditText = view.findViewById(R.id.edit_tour_name_et);
+            tourViewModel.getSelectedTour().setName(tourNameEditText.getText().toString());
+
+            EditText tourLocationEditText = view.findViewById(R.id.edit_tour_location_et);
+            tourViewModel.getSelectedTour().setLocation(tourLocationEditText.getText().toString());
+
+            EditText tourCostEditText = view.findViewById(R.id.edit_tour_cost_et);
+            tourViewModel.getSelectedTour().setCost(Float.parseFloat(tourCostEditText.getText().toString()));
+
+            EditText tourLengthEditText = view.findViewById(R.id.edit_tour_time_et);
+            tourViewModel.getSelectedTour().setLength(Long.parseLong(tourLengthEditText.getText().toString()));
+
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                    .set(tourViewModel.getSelectedTour())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "Successfully updated tour in firestore");
+                        }
+                    });
+        });
     }
 }
 
