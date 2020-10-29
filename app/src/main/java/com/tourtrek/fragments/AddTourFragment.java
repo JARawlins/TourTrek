@@ -180,6 +180,7 @@ public class AddTourFragment extends Fragment {
 
                         DocumentReference tourRef = db.collection("Tours").document();
                         tourViewModel.getSelectedTour().setTourUID(tourRef.getId());
+                        Log.i(TAG, tourViewModel.getSelectedTour().getTourUID());
 
                         db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).
                                 set(tourViewModel.getSelectedTour()).addOnSuccessListener(w -> {
