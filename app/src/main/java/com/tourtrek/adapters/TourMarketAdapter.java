@@ -92,7 +92,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
      */
     public TourMarketAdapter(Context context) {
         this.toursDataSet = new ArrayList<>();
-        this.toursDataSetCopy = new ArrayList<>(toursDataSet);
+        this.toursDataSetCopy = new ArrayList<>();
         this.context = context;
     }
 
