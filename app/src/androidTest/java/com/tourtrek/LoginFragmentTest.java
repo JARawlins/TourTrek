@@ -54,7 +54,6 @@ public class LoginFragmentTest {
 
         // If any user is logged in, make sure to log them out
         try {
-            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
@@ -70,7 +69,7 @@ public class LoginFragmentTest {
         onView(withId(R.id.login_email_et)).perform(typeText("doesNotExist@gmail.com"));
         onView(withId(R.id.login_password_et)).perform(typeText("password"));
         onView(withId(R.id.login_login_btn)).perform(click());
-        onView(isRoot()).perform(waitId(R.id.login_error_tv, TimeUnit.SECONDS.toMillis(15)));
+        onView(isRoot()).perform(waitId(R.id.login_error_tv, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.login_error_tv)).check(matches(withText("There is no user record corresponding to this identifier. The user may have been deleted.")));
     }
 

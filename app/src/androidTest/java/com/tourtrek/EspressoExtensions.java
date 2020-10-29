@@ -41,6 +41,11 @@ public class EspressoExtensions {
                     for (View child : TreeIterables.breadthFirstViewTraversal(view)) {
                         // found view with required ID
                         if (viewMatcher.matches(child)) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             return;
                         }
                     }
@@ -58,5 +63,4 @@ public class EspressoExtensions {
             }
         };
     }
-
 }
