@@ -73,26 +73,26 @@ public class TourFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         // Initialize tourMarketViewModel to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
         // Grab a reference to the current view
-        View tourView = inflater.inflate(R.layout.tour_fragment, container, false);
+        View tourView = inflater.inflate(R.layout.fragment_edit_tour, container, false);
         // Grab the tour that was selected
         this.tour = tourViewModel.getSelectedTour();
-        TextView tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
+        // tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
+        tourNameTextView = tourView.findViewById(R.id.edit_tour_name_et);
         tourNameTextView.setText(tour.getName());
-        ImageView tourCoverImageView = tourView.findViewById(R.id.tour_cover_iv);
+        ImageView tourCoverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
         // Create a button which directs to addAttractionFragment when pressed
-        tour_attractions_btn = tourView.findViewById(R.id.tour_attractions_btn);
+        tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
         tourIsUsers(this.tour);
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
-            ft.addToBackStack("AdAttractionFragment").commit();
+            ft.addToBackStack("AddAttractionFragment").commit();
         });
         // set up fields to be made visible or invisible
         tourNameTextView.setEnabled(false);
@@ -102,7 +102,6 @@ public class TourFragment extends Fragment {
         tourCost.setEnabled(false);
         timeText = tourView.findViewById(R.id.edit_tour_time_et);
         timeText.setEnabled(false);
-
         edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
         edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);

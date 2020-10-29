@@ -1,9 +1,7 @@
 package com.tourtrek.fragments;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +11,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -29,7 +22,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.EditTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
@@ -84,7 +76,7 @@ public class EditTourFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View editTourView = inflater.inflate(R.layout.fragment_edit_tour, container, false);
+        View editTourView = inflater.inflate(R.layout.fragment_edit_tour2, container, false);
 
 
 
@@ -109,22 +101,22 @@ public class EditTourFragment extends Fragment {
         }
 
 
-        EditText tourNameEditText = editTourView.findViewById(R.id.edit_tour_tour_name_ct);
+        EditText tourNameEditText = editTourView.findViewById(R.id.edit_tour_2_tour_name_ct);
         tourNameEditText.setText(tour.getName());
         ImageView tourCoverImageView = editTourView.findViewById(R.id.edit_tour_cover_iv);
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
-        EditText tourLocationEditText = editTourView.findViewById(R.id.edit_tour_tour_location_ct);
+        EditText tourLocationEditText = editTourView.findViewById(R.id.edit_tour_2_tour_location_ct);
         tourLocationEditText.setText(tour.getLocation());
-        EditText tourLengthEditText = editTourView.findViewById(R.id.edit_tour_length_ct);
+        EditText tourLengthEditText = editTourView.findViewById(R.id.edit_tour_2_length_ct);
         tourLengthEditText.setText(tour.getLength().toString());
-        EditText tourStartEditText = editTourView.findViewById(R.id.edit_tour_startDate_ct);
+        EditText tourStartEditText = editTourView.findViewById(R.id.edit_tour_2_startDate_ct);
         Timestamp ts = tour.getStartDate();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String tourStartDate = df.format(ts.toDate());
         tourStartEditText.setText(tourStartDate);
-        CheckBox tourIsPublic = editTourView.findViewById(R.id.edit_tour_public_cb);
+        CheckBox tourIsPublic = editTourView.findViewById(R.id.edit_tour_2_public_cb);
         tourIsPublic.setChecked(tour.isPubliclyAvailable());
-        CheckBox tourNotification = editTourView.findViewById(R.id.edit_tour_notifications_cb);
+        CheckBox tourNotification = editTourView.findViewById(R.id.edit_tour_2_notifications_cb);
         tourNotification.setChecked(tour.getNotifications());
 
 
@@ -136,7 +128,7 @@ public class EditTourFragment extends Fragment {
 
 
         // Create a button which directs to addAttractionFragment when pressed
-        Button tour_attractions_btn= editTourView.findViewById(R.id.edit_tour_add_attraction_bt);
+        Button tour_attractions_btn= editTourView.findViewById(R.id.edit_tour_2_add_attraction_bt);
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -158,7 +150,7 @@ public class EditTourFragment extends Fragment {
 //            ft.addToBackStack("AdAttractionFragment").commit();
 //        });
 
-        Button editTourSaveButton = editTourView.findViewById(R.id.edit_tour_save_bt);
+        Button editTourSaveButton = editTourView.findViewById(R.id.edit_tour_2_save_bt);
 
         editTourSaveButton.setOnClickListener(new View.OnClickListener(){
         @Override
@@ -167,12 +159,12 @@ public class EditTourFragment extends Fragment {
 
             // Instantiate all fields in add Tour
 
-            final EditText tourNameEditText = editTourView.findViewById(R.id.edit_tour_tour_name_ct);
-            final CheckBox publicCheckBox = editTourView.findViewById(R.id.edit_tour_public_cb);
-            final CheckBox notificationCheckBox = editTourView.findViewById(R.id.edit_tour_notifications_cb);
-            final EditText startDateEditText = editTourView.findViewById(R.id.edit_tour_startDate_ct);
-            final EditText locationEditText = editTourView.findViewById(R.id.edit_tour_tour_location_ct);
-            final EditText lengthEditText = editTourView.findViewById(R.id.edit_tour_length_ct);
+            final EditText tourNameEditText = editTourView.findViewById(R.id.edit_tour_2_tour_name_ct);
+            final CheckBox publicCheckBox = editTourView.findViewById(R.id.edit_tour_2_public_cb);
+            final CheckBox notificationCheckBox = editTourView.findViewById(R.id.edit_tour_2_notifications_cb);
+            final EditText startDateEditText = editTourView.findViewById(R.id.edit_tour_2_startDate_ct);
+            final EditText locationEditText = editTourView.findViewById(R.id.edit_tour_2_tour_location_ct);
+            final EditText lengthEditText = editTourView.findViewById(R.id.edit_tour_2_length_ct);
 //            final TextView errorTextView = editTourView.findViewById(R.id.edit_tour_error_tv);
 //            final ProgressBar loadingProgressBar = addTourView.findViewById(R.id.edit_tour_loading_pb);
 
@@ -258,7 +250,7 @@ public class EditTourFragment extends Fragment {
      */
     public void configureRecyclerViews(View view) {
         // Get our recycler view from the layout
-        attractionsView = view.findViewById(R.id.current_tour_attractions_rv);
+        attractionsView = view.findViewById(R.id.edit_tour_2_attractions_rv);
         // Improves performance because content does not change size
         attractionsView.setHasFixedSize(true);
         // Only load 10 tours before loading more
@@ -341,7 +333,7 @@ public class EditTourFragment extends Fragment {
     public void configureSwipeRefreshLayouts(View view) {
 
         // Current
-        swipeRefreshLayout = view.findViewById(R.id.current_tour_attractions_srl);
+        swipeRefreshLayout = view.findViewById(R.id.edit_tour_2_attractions_srl);
         swipeRefreshLayout.setOnRefreshListener(() -> fetchAttractionsAsync());
 
     }

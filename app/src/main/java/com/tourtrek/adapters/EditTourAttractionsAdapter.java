@@ -55,13 +55,13 @@ public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAtt
     public void onBindViewHolder(@NonNull EditTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
 
        // ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.VISIBLE);
-        ((MainActivity) context).findViewById(R.id.current_tour_attractions_srl).setVisibility(View.INVISIBLE);
+        ((MainActivity) context).findViewById(R.id.edit_tour_2_attractions_srl).setVisibility(View.INVISIBLE);
 
          holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
          holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
 
         //((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
-        ((MainActivity) context).findViewById(R.id.current_tour_attractions_srl).setVisibility(View.VISIBLE);
+        ((MainActivity) context).findViewById(R.id.edit_tour_2_attractions_srl).setVisibility(View.VISIBLE);
 
     }
 

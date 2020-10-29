@@ -118,7 +118,7 @@ public class Tour{
     }
 
     public void addAttractionToAttractions(DocumentReference attraction) {
-        if (this.attractions != null){
+        if (this.attractions == null){
             this.attractions = new ArrayList<>();
         }
         this.attractions.add(attraction);
