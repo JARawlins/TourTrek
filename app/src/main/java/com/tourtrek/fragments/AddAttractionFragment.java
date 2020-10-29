@@ -168,7 +168,7 @@ public class AddAttractionFragment extends Fragment {
                     tourViewModel.getSelectedTour().addAttractionToAttractions(newAttractionDoc); // Add the new attraction to the Tour
 
 
-                    if (fragmentManager.findFragmentByTag("AddTourFragment") == null) {
+                    if (tourViewModel.getSelectedTour().getTourUID() != null) {
                         syncTour();
                     }
 

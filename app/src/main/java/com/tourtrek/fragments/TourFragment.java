@@ -4,6 +4,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,15 +32,20 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.Firestore;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TourFragment extends Fragment {
 
@@ -108,10 +116,23 @@ public class TourFragment extends Fragment {
         edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
         edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
         edit_tour_picture_btn.setVisibility(View.INVISIBLE);
+        setUpEditPictureBtn(edit_tour_picture_btn);
+
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
         return tourView;
+    }
+
+
+    private void setUpEditPictureBtn(Button editPictureBtn){
+        editPictureBtn.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
     }
 
     /**
@@ -251,6 +272,55 @@ public class TourFragment extends Fragment {
                             edit_tour_picture_btn.setVisibility(View.VISIBLE);
                         }
                     }
+                });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        if(resultCode == Activity.RESULT_OK) {
+            assert imageReturnedIntent != null;
+            uploadImageToDatabase(imageReturnedIntent);
+        }
+    }
+
+    /**
+     * Uploads an image to the Profile Images cloud storage.
+     *
+     * @param imageReturnedIntent intent of the image being saved
+     */
+    public void uploadImageToDatabase(Intent imageReturnedIntent) {
+
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Uri to the image
+        Uri selectedImage = imageReturnedIntent.getData();
+
+        final UUID imageUUID = UUID.randomUUID();
+
+        final StorageReference storageReference = storage.getReference().child("TourCoverPictures/" + imageUUID);
+
+        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
+
+                    storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+
+                                tour.setCoverImageURI(uri.toString());
+
+                                Firestore.updateUser();
+
+                                getActivity().getSupportFragmentManager().popBackStack();
+
+                            })
+                            .addOnFailureListener(exception -> {
+                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                            });
                 });
     }
 }

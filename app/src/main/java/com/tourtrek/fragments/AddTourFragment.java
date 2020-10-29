@@ -380,7 +380,7 @@ public class AddTourFragment extends Fragment {
 
         final UUID imageUUID = UUID.randomUUID();
 
-        final StorageReference storageReference = storage.getReference().child("ProfilePictures/" + imageUUID);
+        final StorageReference storageReference = storage.getReference().child("TourCoverPictures/" + imageUUID);
 
         final UploadTask uploadTask = storageReference.putFile(selectedImage);
 
@@ -389,16 +389,14 @@ public class AddTourFragment extends Fragment {
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
 
-                    storage.getReference().child("ProfilePictures/" + imageUUID).getDownloadUrl()
+                    storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
 
-                                MainActivity.user.setProfileImageURI(uri.toString());
+                                tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
 
                                 Firestore.updateUser();
 
-                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                                ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
-                                ft.commit();
+                                getActivity().getSupportFragmentManager().popBackStack();
 
                             })
                             .addOnFailureListener(exception -> {
