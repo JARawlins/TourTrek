@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@color/colorSecondaryLight"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ProgressBar
+                android:id="@+id/attraction_loading_pb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/attraction_name_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:hint="Attraction Name"
+                android:inputType="text"
+                android:selectAllOnFocus="true"
+                android:textColorHint="@color/colorAccent"
+                android:textSize="40dp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorSecondaryLight" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:text="Location:"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorSecondaryLight" />
+
+            <EditText
+                android:id="@+id/attraction_location_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:hint="City, State"
+                android:selectAllOnFocus="true"
+                android:textColorHint="@color/colorAccent"
+                app:backgroundTint="@color/colorPrimaryDark" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:text="Cost of Event:"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorPrimaryDark" />
+
+            <EditText
+                android:id="@+id/attraction_cost_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:hint="Cost in $"
+                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
+                android:textColorHint="@color/colorAccent"
+                app:backgroundTint="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/attraction_description_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:text="Description"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorSecondaryLight" />
+
+            <EditText
+                android:id="@+id/attraction_description_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:hint="Details"
+                android:selectAllOnFocus="true"
+                android:textColorHint="@color/colorAccent"
+                app:backgroundTint="@color/colorPrimaryDark" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:text="Time of Attraction/Event:"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/attraction_error_tv"
+                android:layout_width="283dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:weightSum="1.0">
+
+                <EditText
+                    android:id="@+id/attraction_time_start_et"
+                    android:layout_width="157dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="0.33"
+                    android:hint="Time Start"
+                    android:textColorHint="@color/colorAccent"
+                    app:backgroundTint="@color/colorPrimaryDark" /><![CDATA[
+                android:selectAllOnFocus="true"/>
+
+                ]]>
+
+                <EditText
+                    android:id="@+id/attraction_time_end_et"
+                    android:layout_width="194dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="31dp"
+                    android:layout_weight="0.33"
+                    android:hint="Time End"
+                    android:textColorHint="@color/colorAccent"
+                    app:backgroundTint="@color/colorPrimaryDark" /><![CDATA[
+
+
+
+
+
+                android:selectAllOnFocus="true"/>
+
+
+
+            ]]>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/attraction_add_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:background="@color/colorPrimaryDark"
+                android:enabled="true"
+                android:text="Add Attraction"
+                android:textAllCaps="false"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
