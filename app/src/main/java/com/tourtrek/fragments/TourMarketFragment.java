@@ -260,51 +260,52 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
-        List<Tour> temp = new ArrayList<>(data);
         String key = (String) parent.getItemAtPosition(position);
         switch (key){
             case "Name Ascending":
-                System.out.println(key);
+                List<Tour> temp = new ArrayList<>(data);
                 temp.sort(new TourNameSorter());
                 tourMarketAdapter.clear();
                 tourMarketAdapter.addAll(temp);
                 break;
             case "Location Ascending":
-                System.out.println(key);
-                temp.sort(new TourLocationSorter());
+                List<Tour> temp2 = new ArrayList<>(data);
+                temp2.sort(new TourLocationSorter());
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp2);
                 break;
             case "Duration Ascending":
-                System.out.println(key);
-                temp.sort(new TourLengthSorter());
+                List<Tour> temp3 = new ArrayList<>(data);
+                temp3.sort(new TourLengthSorter());
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp3);
                 break;
             case "Name Descending":
-                System.out.println(key);
-                temp.sort(new TourNameSorter());
-                Collections.reverse(temp);
+                List<Tour> temp4 = new ArrayList<>(data);
+                temp4.sort(new TourNameSorter());
+                Collections.reverse(temp4);
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp4);
                 break;
             case "Location Descending":
-                System.out.println(key);
-                temp.sort(new TourLocationSorter());
-                Collections.reverse(temp);
+                List<Tour> temp5 = new ArrayList<>(data);
+                temp5.sort(new TourLocationSorter());
+                Collections.reverse(temp5);
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp5);
                 break;
             case "Duration Descending":
                 System.out.println(key);
-                temp.sort(new TourLengthSorter());
-                Collections.reverse(temp);
+                List<Tour> temp6 = new ArrayList<>(data);
+                temp6.sort(new TourLengthSorter());
+                Collections.reverse(temp6);
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp6);
                 break;
             default:
+                List<Tour> temp0 = new ArrayList<>(data);
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp0);
         }
     }
 
