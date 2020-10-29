@@ -41,8 +41,8 @@ public class AddAttractionFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String locationHint = "Address: eg 330 N. Orchard St., Madison, WI, USA";
     private String costHint = "Cost: integer dollar amount";
-    private String nameHint = "Name";
-    private String descriptionHint = "Description";
+    private String nameHint = "Name here";
+    private String descriptionHint = "";
     private String startHint = "Beginning date: dd-MM-yyyyTHH:mm";
     private String endHint = "Ending date: dd-MM-yyyyTHH:mm";
     private EditText locationText;
@@ -147,6 +147,7 @@ public class AddAttractionFragment extends Fragment {
                     attr.setDescription(inputDescription);
                 }
                 if (inputCost != null && !inputCost.equals("")){
+                    //attr.setCost(Integer.parseInt(inputCost));
                     attr.setCost(Integer.parseInt(inputCost));
                 }
                 // TODO figure out how to process user time and date information into a Date or Timestamp object

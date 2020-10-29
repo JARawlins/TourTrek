@@ -51,6 +51,8 @@ public class TourFragment extends Fragment {
     private EditText timeText;
     private EditText tourNameTextView;
     private Button edit_tour_update_btn;
+    private Button edit_tour_share_btn;
+    private Button edit_tour_picture_btn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,7 +102,10 @@ public class TourFragment extends Fragment {
 
         edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
-
+        edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);
+        edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
+        edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
+        edit_tour_picture_btn.setVisibility(View.INVISIBLE);
         // set up the recycler view of attractions
         configureRecyclerViews(tourView);
         configureSwipeRefreshLayouts(tourView);
@@ -242,6 +247,7 @@ public class TourFragment extends Fragment {
                             tourCost.setEnabled(true);
                             timeText.setEnabled(true);
                             edit_tour_update_btn.setVisibility(View.VISIBLE);
+                            edit_tour_picture_btn.setVisibility(View.VISIBLE);
                         }
                     }
                 });
