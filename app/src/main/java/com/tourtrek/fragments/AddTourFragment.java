@@ -1,5 +1,8 @@
 package com.tourtrek.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,14 +11,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.EditTourAttractionsAdapter;
@@ -28,7 +37,10 @@ import com.tourtrek.viewModels.TourViewModel;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -36,14 +48,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class AddTourFragment extends Fragment {
 
     private static final String TAG = "AddTourFragment";
     private TourViewModel tourViewModel;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter editTourAttractionsAdapter;
+    private EditTourAttractionsAdapter attractionsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView attractionsView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,13 +88,33 @@ public class AddTourFragment extends Fragment {
         tourViewModel.getSelectedTour().setName("Test");
 
         // Create a button which directs to addAttractionFragment when pressed
-        Button tour_attractions_btn= addTourView.findViewById(R.id.edit_tour_2_add_attraction_bt);
+        Button tour_attractions_btn = addTourView.findViewById(R.id.edit_tour_2_add_attraction_bt);
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
             ft.addToBackStack("AddAttractionFragment").commit();
         });
+
+        // Set profile picture
+        ImageView tourCoverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
+
+        // If user clicks profile image, they can change it
+        tourCoverImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
+
+        Glide.with(this)
+                .load(MainActivity.user.getProfileImageURI())
+                .placeholder(R.drawable.default_image)
+                .circleCrop()
+                .into(tourCoverImageView);
+
+
 
 
 
@@ -196,7 +231,107 @@ public class AddTourFragment extends Fragment {
     });
         System.out.println(MainActivity.user.getTours());
 
+
+
+        // set up the recycler view of attractions
+        configureRecyclerViews(addTourView);
+        configureSwipeRefreshLayouts(addTourView);
         return addTourView;
+    }
+
+    /**
+     * Configure the recycler view
+     *
+     * @param view current view
+     */
+    public void configureRecyclerViews(View view) {
+        // Get our recycler view from the layout
+        attractionsView = view.findViewById(R.id.edit_tour_2_attractions_rv);
+        // Improves performance because content does not change size
+        attractionsView.setHasFixedSize(true);
+        // Only load 10 tours before loading more
+        attractionsView.setItemViewCacheSize(10);
+        // Enable drawing cache
+        attractionsView.setDrawingCacheEnabled(true);
+        attractionsView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // User linear layout manager
+        RecyclerView.LayoutManager attractionsLayoutManager = new LinearLayoutManager(getContext());
+        attractionsView.setLayoutManager(attractionsLayoutManager);
+        // Specify an adapter
+        attractionsAdapter = new EditTourAttractionsAdapter(getContext());
+//        attractionsAdapter = new EditTourAttractionsAdapter(getContext());
+        fetchAttractionsAsync();
+        // set the adapter
+        attractionsView.setAdapter(attractionsAdapter);
+//        // Stop showing progressBar when items are loaded
+//        attractionsView
+//                .getViewTreeObserver()
+//                .addOnGlobalLayoutListener(
+//                        ((CurrentTourAttractionsAdapter) attractionsAdapter)::stopLoading);
+    }
+
+
+    /**
+     * Retrieve all attractions belonging to this user
+     *
+     */
+    private void fetchAttractionsAsync() {
+
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Setup collection reference
+        CollectionReference attractionsCollection = db.collection("Attractions");
+
+        // Pull out the UID's of each tour that belongs to this user
+        List<String> usersAttractionUIDs = new ArrayList<>();
+        if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
+            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                usersAttractionUIDs.add(documentReference.getId());
+            }
+        }
+
+        // Query database
+        attractionsCollection
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.w(TAG, "No documents found in the Attractions collection for this user");
+                    }
+                    else {
+
+                        // Final list of tours for this category
+                        List<Attraction> usersAttractions = new ArrayList<>();
+
+                        // Go through each document and compare the dates
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+
+                            // First check that the document belongs to the user
+                            if (usersAttractionUIDs.contains(document.getId())) {
+                                usersAttractions.add(document.toObject(Attraction.class));
+                            }
+                        }
+
+                        ((EditTourAttractionsAdapter) attractionsAdapter).clear();
+                        ((EditTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
+                        swipeRefreshLayout.setRefreshing(false);
+
+                    }
+                });
+    }
+
+    /**
+     * Configure the swipe down to refresh function of our recycler view
+     *
+     * @param view current view
+     */
+    public void configureSwipeRefreshLayouts(View view) {
+
+        // Current
+        swipeRefreshLayout = view.findViewById(R.id.edit_tour_2_attractions_srl);
+        swipeRefreshLayout.setOnRefreshListener(() -> fetchAttractionsAsync());
+
     }
 
     @Override
@@ -218,5 +353,56 @@ public class AddTourFragment extends Fragment {
 //
 //                    }
 //                });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        if(resultCode == Activity.RESULT_OK) {
+            assert imageReturnedIntent != null;
+            uploadImageToDatabase(imageReturnedIntent);
+        }
+    }
+
+    /**
+     * Uploads an image to the Profile Images cloud storage.
+     *
+     * @param imageReturnedIntent intent of the image being saved
+     */
+    public void uploadImageToDatabase(Intent imageReturnedIntent) {
+
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Uri to the image
+        Uri selectedImage = imageReturnedIntent.getData();
+
+        final UUID imageUUID = UUID.randomUUID();
+
+        final StorageReference storageReference = storage.getReference().child("ProfilePictures/" + imageUUID);
+
+        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
+
+                    storage.getReference().child("ProfilePictures/" + imageUUID).getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+
+                                MainActivity.user.setProfileImageURI(uri.toString());
+
+                                Firestore.updateUser();
+
+                                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                                ft.replace(R.id.nav_host_fragment, new ProfileFragment(), "ProfileFragment");
+                                ft.commit();
+
+                            })
+                            .addOnFailureListener(exception -> {
+                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                            });
+                });
     }
 }

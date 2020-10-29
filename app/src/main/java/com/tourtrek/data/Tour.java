@@ -251,10 +251,7 @@ public class Tour{
     }
 
     public String getTourUID() {
-        if (this.tourUID != null){
             return this.tourUID;
-        }
-        return UUID.randomUUID().toString();
     }
 
     public void setTourUID(String tourUID) {
