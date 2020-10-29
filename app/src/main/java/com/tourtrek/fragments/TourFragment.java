@@ -102,7 +102,6 @@ public class TourFragment extends Fragment {
         // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
-        tourIsUsers(this.tour);
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -126,8 +125,10 @@ public class TourFragment extends Fragment {
         edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
         edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
         edit_tour_picture_btn.setVisibility(View.INVISIBLE);
-        setUpEditPictureBtn(edit_tour_picture_btn);
 
+        tourIsUsers(tourViewModel.getSelectedTour());
+
+        setUpEditPictureBtn(edit_tour_picture_btn);
 
         setupUpdateTourButton(tourView);
 
@@ -258,6 +259,7 @@ public class TourFragment extends Fragment {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
+
         // Pull out the UID's of each tour that belongs to this user
         List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
@@ -265,32 +267,17 @@ public class TourFragment extends Fragment {
                 usersToursUIDs.add(documentReference.getId());
             }
         }
-        // Query database
-        toursCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Tours collection");
-                    }
-                    else {
-                        System.out.println(usersToursUIDs);
 
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+        if (usersToursUIDs.contains(tourViewModel.getSelectedTour().getTourUID())) {
+            this.tour_attractions_btn.setVisibility(View.VISIBLE);
+            tourNameTextView.setEnabled(true);
+            tourLocation.setEnabled(true);
+            tourCost.setEnabled(true);
+            timeText.setEnabled(true);
+            edit_tour_update_btn.setVisibility(View.VISIBLE);
+            edit_tour_picture_btn.setVisibility(View.VISIBLE);
+        }
 
-                            if (usersToursUIDs.contains(document.getId())){
-
-                                this.tour_attractions_btn.setVisibility(View.VISIBLE);
-                                tourNameTextView.setEnabled(true);
-                                tourLocation.setEnabled(true);
-                                tourCost.setEnabled(true);
-                                timeText.setEnabled(true);
-                                edit_tour_update_btn.setVisibility(View.VISIBLE);
-                                edit_tour_picture_btn.setVisibility(View.VISIBLE);
-
-                            }
-                        }
-                    }
-                });
     }
 
     @Override
@@ -361,7 +348,6 @@ public class TourFragment extends Fragment {
 
             EditText tourLengthEditText = view.findViewById(R.id.edit_tour_time_et);
             tourViewModel.getSelectedTour().setLength(Long.parseLong(tourLengthEditText.getText().toString()));
-
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
