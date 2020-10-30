@@ -104,6 +104,12 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
                     }
                 })
                 .into(holder.coverImage);
+
+        if (position == getItemCount() - 1) {
+            ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
+            ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override

@@ -64,8 +64,10 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
         holder.tourName.setText(currentPersonalToursDataSet.get(position).getName());
         holder.location.setText(currentPersonalToursDataSet.get(position).getLocation());
 
-        ((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container).setVisibility(View.INVISIBLE);
-        ((MainActivity) context).findViewById(R.id.personal_current_tours_rv).setVisibility(View.VISIBLE);
+        if (position == getItemCount() - 1) {
+            ((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container).setVisibility(View.INVISIBLE);
+            ((MainActivity) context).findViewById(R.id.personal_current_tours_rv).setVisibility(View.VISIBLE);
+        }
 
     }
 
