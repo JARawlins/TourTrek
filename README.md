@@ -17,7 +17,8 @@ TourTrek is an android application developer for those who love to explore new p
 
 ### Requirements
 
--[Android Studio 4.1](https://developer.android.com/studio/index.html)
+-[Android Studio 4.1](https://developer.android.com/studio/index.html) 
+
 -[Git](https://git-scm.com/downloads)
 
 ### Setup
