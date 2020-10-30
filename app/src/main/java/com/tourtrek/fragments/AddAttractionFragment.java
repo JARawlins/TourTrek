@@ -91,8 +91,6 @@ public class AddAttractionFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    // TODO between onViewCreated and onCreateView, set up the backend to your layout
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -107,7 +105,6 @@ public class AddAttractionFragment extends Fragment {
         // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
         // Grab the tour that was selected
-        // this.tour = tourViewModel.getSelectedTour(); // TODO refer to the tour in the view model directly until you save to the database
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
         locationText.setHint(locationHint);
@@ -140,8 +137,6 @@ public class AddAttractionFragment extends Fragment {
     }
 
     private void setUpAddAttractionBtn(Button addAttractionBtn){
-        // add the attraction to the Firestore in the same way that a Hive would be added to an Apiary in Hive Management, but allow Firestore to create the ID
-        // a private helper method for adding to the Firestore will probably be handy here
         addAttractionBtn.setOnClickListener(v -> {
             // first get the information from each EditText
             String inputLocation = locationText.getText().toString();
@@ -158,9 +153,7 @@ public class AddAttractionFragment extends Fragment {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-//            if (inputName != null){
-//                isDuplicateAttraction(inputName);
-//            }
+
             // make the error text visible when the user does not provide appropriate inputs
             if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")
                 && inputStart != null && !inputStart.equals("") && inputEnd != null && !inputEnd.equals("")){
@@ -196,12 +189,7 @@ public class AddAttractionFragment extends Fragment {
 
                     List<DocumentReference> attractions = tourViewModel.getSelectedTour().getAttractions();
                     attractions.add(newAttractionDoc);
-
-                    // Tour currentTour = MainActivity.user.getCurrentTour().get().getResult().toObject(Tour.class); // get a Tour copy of the document
-                    // this.tour.getAttractions().add(newAttractionDoc); // Add the new attraction to the Tour
-                    //tourViewModel.getSelectedTour().getAttractions().add(newAttractionDoc);
                     tourViewModel.getSelectedTour().setAttractions(attractions);
-
                     // if an attraction is added to an existing tour - existing tours will have UIDs
                     if (tourViewModel.getSelectedTour().getTourUID() != null){
                         syncTour();
@@ -243,45 +231,5 @@ public class AddAttractionFragment extends Fragment {
         attraction.setEndDate(endDate);
     }
 
-//    private void isDuplicateAttraction (String inputName) {
-//        // Get instance of firestore
-//        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        // Setup collection reference
-//        CollectionReference attractionsCollection = db.collection("Attractions");
-//        // Pull out the UID's of each attraction that belongs to this user
-//        List<String> usersAttractionsUIDs = new ArrayList<>();
-//        Task<DocumentSnapshot> task;
-//        if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
-//            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
-//                usersAttractionsUIDs.add(documentReference.getId());
-//            }
-//        }
-//        // Query database
-//        attractionsCollection
-//                .get()
-//                .addOnSuccessListener(queryDocumentSnapshots -> {
-//                    ArrayList<String> names = new ArrayList<String>();
-//                    if (queryDocumentSnapshots.isEmpty()) {
-//                        Log.w(TAG, "No documents found in the Attractions collection for this user");
-//                    } else {
-//                        // Go through each document and compare the dates
-//                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-//                            // First check that the document in referenced by the user's current tour
-//                            if (usersAttractionsUIDs.contains(document.getId())) {
-//                                names.add(document.toObject(Attraction.class).getName());
-//                            }
-//                        }
-//                        if (names.contains(inputName)){
-//                            errorText.setText("No duplicate names are allowed.");
-//                            //addAttractionButton.setEnabled(false);
-//                        }
-//                        else{
-//                            errorText.setText("");
-//                        }
-//                        errorText.setVisibility(View.VISIBLE);
-//                    }
-//                });
-//        //return attrNames.getUsersAttrNames().contains(inputName);
-//    }
 
 }
