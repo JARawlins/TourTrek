@@ -59,6 +59,7 @@ public class AddTourFragment extends Fragment {
     private EditTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView attractionsView;
+    private ImageView coverImageView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,10 +98,10 @@ public class AddTourFragment extends Fragment {
         });
 
         // Set profile picture
-        ImageView tourCoverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
+        coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
 
         // If user clicks profile image, they can change it
-        tourCoverImageView.setOnClickListener(view -> {
+        coverImageView.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
