@@ -1,83 +1,103 @@
 package com.tourtrek.activities;
 
-
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.runner.AndroidJUnit4;
-
 import com.tourtrek.R;
+import com.tourtrek.activities.MainActivity;
+import com.tourtrek.fragments.LoginFragment;
+import com.tourtrek.fragments.ProfileFragment;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.DataInteraction;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.IdlingResource;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+
 import java.util.concurrent.TimeUnit;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
+import static androidx.test.espresso.matcher.ViewMatchers.*;
+import static androidx.test.espresso.Espresso.*;
+import static androidx.test.espresso.action.ViewActions.*;
+import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static com.tourtrek.EspressoExtensions.waitId;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.is;
 
-@LargeTest
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class TourMarketFragmentTest {
 
+    public static final String TAG = "LoginFragmentTest";
+    private ActivityScenario mainActivityScenario;
+
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
+
+    @Before
+    public void setup() {
+
+        mainActivityScenario = mainActivityScenarioRule.getScenario();
+
+        // If any user is logged in, make sure to log them out
+        try {
+            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+            onView(withId(R.id.navigation_profile)).perform(click());
+            onView(withId(R.id.profile_logout_btn)).perform(click());
+        } catch (Exception NoMatchingViewException) {
+            Log.w(TAG, "No user is not logged in, continuing test execution");
+        } finally {
+            onView(withId(R.id.navigation_tours)).perform(click());
+        }
+
+    }
+
 
     @Test
-    public void tourMarketFragmentTest() {
-        ViewInteraction bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_tour_market), withContentDescription("Tour Market"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.nav_view),
-                                        0),
-                                0),
-                        isDisplayed()));
-        bottomNavigationItemView.perform(click());
+    public void TestSortAscending() {
+        onView(withId(R.id.navigation_tour_market)).perform(click());
+        onView(isRoot()).perform(waitId(R.id.tour_market_spinner, TimeUnit.SECONDS.toMillis(1000)));
+        onView(withId(R.id.tour_market_spinner)).perform(click());
+        onView(isRoot()).perform(waitId(R.id.tour_market_spinner, TimeUnit.SECONDS.toMillis(1000)));
 
-        ViewInteraction bottomNavigationItemView2 = onView(
-                allOf(withId(R.id.navigation_tours), withContentDescription("Tours"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.nav_view),
-                                        0),
-                                1),
-                        isDisplayed()));
-        bottomNavigationItemView2.perform(click());
+        DataInteraction appCompatCheckedTextView = onData(anything())
+                .inAdapterView(childAtPosition(
+                        withClassName(is("android.widget.PopupWindow$PopupBackgroundView")),
+                        0))
+                .atPosition(2);
+        appCompatCheckedTextView.perform(click());
 
-        ViewInteraction bottomNavigationItemView3 = onView(
-                allOf(withId(R.id.navigation_tour_market), withContentDescription("Tour Market"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.nav_view),
-                                        0),
-                                0),
+        ViewInteraction recyclerView = onView(
+                allOf(withId(R.id.tour_market_rv),
+                        withParent(allOf(withId(R.id.tour_market_srl),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
                         isDisplayed()));
-        bottomNavigationItemView3.perform(click());
-        onView(isRoot()).perform(waitId(R.id.tour_market_search_itm, TimeUnit.SECONDS.toMillis(1000)));
-        ViewInteraction imageView = onView(
-                allOf(withId(R.id.search_button), withContentDescription("Search"),
-                        withParent(allOf(withId(R.id.search_bar),
-                                withParent(withId(R.id.tour_market_search_itm)))),
-                        isDisplayed()));
-        imageView.check(matches(isDisplayed()));
+        recyclerView.check(matches(isDisplayed()));
+
     }
+
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -97,4 +117,7 @@ public class TourMarketFragmentTest {
             }
         };
     }
+
+
+
 }
