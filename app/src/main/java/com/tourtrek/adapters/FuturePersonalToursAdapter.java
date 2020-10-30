@@ -61,10 +61,8 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
         holder.tourName.setText(futurePersonalToursDataSet.get(position).getName());
         holder.location.setText(futurePersonalToursDataSet.get(position).getLocation());
 
-        if (position == getItemCount() - 1) {
-            ((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container).setVisibility(View.INVISIBLE);
-            ((MainActivity) context).findViewById(R.id.personal_future_tours_rv).setVisibility(View.VISIBLE);
-        }
+        ((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container).setVisibility(View.INVISIBLE);
+        ((MainActivity) context).findViewById(R.id.personal_future_tours_rv).setVisibility(View.VISIBLE);
     }
 
     @Override

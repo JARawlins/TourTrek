@@ -62,10 +62,8 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
         holder.tourName.setText(pastPersonalToursDataSet.get(position).getName());
         holder.location.setText(pastPersonalToursDataSet.get(position).getLocation());
 
-        if (position == getItemCount() - 1) {
-            ((MainActivity) context).findViewById(R.id.personal_past_tours_loading_container).setVisibility(View.INVISIBLE);
-            ((MainActivity) context).findViewById(R.id.personal_past_tours_rv).setVisibility(View.VISIBLE);
-        }
+        ((MainActivity) context).findViewById(R.id.personal_past_tours_loading_container).setVisibility(View.INVISIBLE);
+        ((MainActivity) context).findViewById(R.id.personal_past_tours_rv).setVisibility(View.VISIBLE);
     }
 
     @Override

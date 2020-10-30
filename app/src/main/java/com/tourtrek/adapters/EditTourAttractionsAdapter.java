@@ -59,9 +59,6 @@ public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAtt
          holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
          holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
 
-        if (position == getItemCount() - 1) {
-            ((MainActivity) context).findViewById(R.id.edit_tour_2_attractions_srl).setVisibility(View.VISIBLE);
-        }
 
         ((MainActivity) context).findViewById(R.id.edit_tour_2_attractions_srl).setVisibility(View.VISIBLE);
 
