@@ -30,46 +30,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.TourMarketViewHolder> implements Filterable{
+public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.TourMarketViewHolder> {
 
     private static final String TAG = "TourMarketAdapter";
     private List<Tour> toursDataSet;
     private final Context context;
     private List<Tour> toursDataSetCopy;
+    private List<Tour> toursDataSetFiltered;
 
-    @Override
-    public Filter getFilter() {
-        return searchFilter;
-    }
 
-    private Filter searchFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<Tour> filteredList = new ArrayList<>();
-
-            if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(toursDataSetCopy);
-            } else {
-                String key = constraint.toString().toLowerCase().trim();
-                for(Tour tour: toursDataSetCopy){
-                    if(tour.getName().toLowerCase().contains(key)){
-                        filteredList.add(tour);
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            toursDataSet.clear();
-            toursDataSet.addAll((List)results.values);
-            notifyDataSetChanged();
-        }
-    };
 
 
     public static class TourMarketViewHolder extends RecyclerView.ViewHolder {
@@ -94,6 +63,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         this.toursDataSet = new ArrayList<>();
         this.toursDataSetCopy = new ArrayList<>();
         this.context = context;
+        this.toursDataSetFiltered = new ArrayList<>();
     }
 
     @NonNull
@@ -167,6 +137,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
      */
     public void clear() {
         toursDataSet.clear();
+        toursDataSet = new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -181,11 +152,22 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     }
 
     public void copyTours(List<Tour> dataSet){
-        this.toursDataSetCopy.addAll(dataSet);
+        this.toursDataSetFiltered = new ArrayList<>(dataSet);
+        this.toursDataSetCopy = new ArrayList<>(dataSet);
     }
 
     public List<Tour> getToursDataSet() {
         return toursDataSetCopy;
+    }
+
+    public List<Tour> getToursDataSetFiltered() {
+        //if (toursDataSetFiltered.size() != 0)
+            //return toursDataSetFiltered;
+        return toursDataSetFiltered;
+    }
+
+    public void setToursDataSetFiltered(List<Tour> dataSet){
+        this.toursDataSetFiltered = dataSet;
     }
 
 }
