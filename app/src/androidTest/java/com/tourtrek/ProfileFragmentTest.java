@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.tourtrek.EspressoExtensions.waitId;
+import static org.hamcrest.Matchers.allOf;
 
 public class ProfileFragmentTest {
 
@@ -49,19 +50,25 @@ public class ProfileFragmentTest {
             //then log into test profile
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(withId(R.id.login_email_et)).perform(typeText("robert@gmail.com"));
+            Espresso.closeSoftKeyboard();
             onView(withId(R.id.login_password_et)).perform(typeText("password"));
-            onView(withId(R.id.login_register_btn)).perform(click());
+            Espresso.closeSoftKeyboard();
+            onView(withId(R.id.login_login_btn)).perform(click());
+            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.navigation_profile)).perform(click());
         }
     }
-//        @Test
-//        public void TestLogOut() {
-//        onView(withId(R.id.profile_logout_btn)).perform(click());
-//        onView(allOf(withId(R.id.login_container), withText("Register")));
-//
-//         }
+    @Test
+    public void TestLogOut() {
+        onView(withId(R.id.profile_logout_btn)).perform(click());
+       // onData(allOf(withId(R.id.login_container), withText("Register")));
+        onView(withId(R.id.login_register_btn)).check(matches(withText("Register")));
+    }
 
-//    private Matcher<View> allOf(Matcher<View> withId, Matcher<View> register) {
+//    @Test
+//    public void ChangePicture() {
+//        onView(withId(R.id.profile_user_iv)).perform(click());
+//        onView(withId(R.id.login_register_btn)).check(matches(withText("Register")));
 //    }
 
 }

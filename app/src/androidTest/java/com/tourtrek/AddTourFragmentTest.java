@@ -48,8 +48,10 @@ public class AddTourFragmentTest {
             //then log into test profile
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(withId(R.id.login_email_et)).perform(typeText("robert@gmail.com"));
+            Espresso.closeSoftKeyboard();
             onView(withId(R.id.login_password_et)).perform(typeText("password"));
-            onView(withId(R.id.login_register_btn)).perform(click());
+            Espresso.closeSoftKeyboard();
+            onView(withId(R.id.login_login_btn)).perform(click());
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
         }
@@ -58,6 +60,23 @@ public class AddTourFragmentTest {
 
     @Test
     public void CreateTourWithNoName() {
+        onView(withId(R.id.edit_tour_2_tour_name_ct)).perform(typeText(""));
+        Espresso.closeSoftKeyboard();
+        onView(withId(R.id.edit_tour_2_tour_location_ct)).perform(typeText("Test"));
+        Espresso.closeSoftKeyboard();
+        onView(withId(R.id.edit_tour_2_length_ct)).perform(typeText("12"));
+        Espresso.closeSoftKeyboard();
+        onView(withId(R.id.edit_tour_2_startDate_ct)).perform(typeText("01-01-2021"));
+        Espresso.closeSoftKeyboard();
+        onView(withId(R.id.edit_tour_2_save_bt)).perform(scrollTo());
+        onView(withId(R.id.edit_tour_2_save_bt)).perform(click());
+        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
+
+    }
+
+    @Test
+    public void CheckIfTourGetsCreated() {
         onView(withId(R.id.edit_tour_2_tour_name_ct)).perform(typeText("Test"));
         onView(withId(R.id.edit_tour_2_tour_location_ct)).perform(typeText("Test"));
         onView(withId(R.id.edit_tour_2_length_ct)).perform(typeText("12"));
@@ -65,7 +84,7 @@ public class AddTourFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.edit_tour_2_save_bt)).perform(click());
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Test")),
-        scrollTo()));
+                scrollTo()));
 
     }
 

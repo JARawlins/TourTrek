@@ -67,7 +67,9 @@ public class LoginFragmentTest {
     @Test
     public void loginWithIncorrectEmail() throws InterruptedException {
         onView(withId(R.id.login_email_et)).perform(typeText("doesNotExist@gmail.com"));
+        Espresso.closeSoftKeyboard();
         onView(withId(R.id.login_password_et)).perform(typeText("password"));
+        Espresso.closeSoftKeyboard();
         onView(withId(R.id.login_login_btn)).perform(click());
         onView(isRoot()).perform(waitId(R.id.login_error_tv, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.login_error_tv)).check(matches(withText("There is no user record corresponding to this identifier. The user may have been deleted.")));
@@ -83,7 +85,9 @@ public class LoginFragmentTest {
     @Test
     public void loginWithCorrectEmailAndPassword() throws InterruptedException {
         onView(withId(R.id.login_email_et)).perform(typeText("test@gmail.com"));
+        Espresso.closeSoftKeyboard();
         onView(withId(R.id.login_password_et)).perform(typeText("password"));
+        Espresso.closeSoftKeyboard();
         onView(withId(R.id.login_login_btn)).perform(click());
         onView(isRoot()).perform(waitId(R.id.personal_current_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
     }
