@@ -313,7 +313,6 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }
 
