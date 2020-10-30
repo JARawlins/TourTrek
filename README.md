@@ -7,7 +7,7 @@ TourTrek is an android application developer for those who love to explore new p
 
 [<img src=".github/assets/google-play-badge.png"
       alt="Get it on Google Play"
-      height="80">](https://github.com/k0shk0sh/FastHub/releases/latest)
+      height="80">](https://play.google.com/store)
 [<img src="https://yt3dl.net/images/apk-download-badge.png"
       alt="Direct apk download"
-      height="80">](https://github.com/k0shk0sh/FastHub/releases/latest)
+      height="80">](https://github.com/JohnBednarczyk/TourTrek/releases)
