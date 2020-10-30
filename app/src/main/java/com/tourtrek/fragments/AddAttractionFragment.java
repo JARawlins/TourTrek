@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,6 +57,7 @@ public class AddAttractionFragment extends Fragment {
     private String descriptionHint = "";
     private String startHint = "Beginning date: dd-MM-yyyyTHH:mm";
     private String endHint = "Ending date: dd-MM-yyyyTHH:mm";
+    private String errorMessage = "Enter at least name, location, and start and end time information in the indicated formats";
     private EditText locationText;
     private EditText costText;
     private EditText nameText;
@@ -64,6 +67,7 @@ public class AddAttractionFragment extends Fragment {
     private Tour tour;
     private TourViewModel tourViewModel;
     private FragmentManager fragmentManager;
+    private TextView errorText;
     /**
      * Default for proper back button usage
      */
@@ -110,6 +114,7 @@ public class AddAttractionFragment extends Fragment {
         startText.setHint(startHint);
         endText = addAttractionView.findViewById(R.id.attraction_time_end_et);
         endText.setHint(endHint);
+        errorText = addAttractionView.findViewById(R.id.attraction_error_tv);
         // create the update button
         Button addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
         // set up the action to carry out via the update button
@@ -145,8 +150,9 @@ public class AddAttractionFragment extends Fragment {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            // TODO error if the location does not contain the right kind of information
-            if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")){
+            // make the error text visible when the user does not provide appropriate inputs
+            if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")
+                && inputStart != null && !inputStart.equals("") && inputEnd != null && !inputEnd.equals("")){
                 attr.setName(inputName);
                 attr.setLocation(inputLocation);
                 // proceed only if the other text fields have been populated
@@ -156,11 +162,14 @@ public class AddAttractionFragment extends Fragment {
                 if (inputCost != null && !inputCost.equals("")){
                     attr.setCost(Integer.parseInt(inputCost));
                 }
-                // TODO figure out how to process user time and date information into a Date or Timestamp object
                 // add the attraction to Firestore
                 addToFirestore(attr);
                 // go back once the button is pressed
                 getActivity().getSupportFragmentManager().popBackStack();
+            }
+            else{
+                errorText.setText(errorMessage);
+                errorText.setVisibility(View.VISIBLE);
             }
         });
     }
