@@ -220,6 +220,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                     }
                 }
                 tourMarketAdapter.clear();
+                tourMarketAdapter.setToursDataSetFiltered(filteredList);
                 tourMarketAdapter.addAll(filteredList);
                 return true;
             }
@@ -241,6 +242,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                     }
                 }
                 tourMarketAdapter.clear();
+                tourMarketAdapter.setToursDataSetFiltered(filteredList);
                 tourMarketAdapter.addAll(filteredList);
 
                 return true;
@@ -259,14 +261,14 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
+        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSetFiltered());
         String key = (String) parent.getItemAtPosition(position);
         switch (key){
             case "Name Ascending":
-                List<Tour> temp = new ArrayList<>(data);
-                temp.sort(new TourNameSorter());
+                List<Tour> temp1 = new ArrayList<>(data);
+                temp1.sort(new TourNameSorter());
                 tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp);
+                tourMarketAdapter.addAll(temp1);
                 break;
             case "Location Ascending":
                 List<Tour> temp2 = new ArrayList<>(data);
@@ -311,7 +313,6 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }
 
