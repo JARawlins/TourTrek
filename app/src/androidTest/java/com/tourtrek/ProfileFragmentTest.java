@@ -56,6 +56,7 @@ public class ProfileFragmentTest {
             onView(withId(R.id.login_login_btn)).perform(click());
             onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.navigation_profile)).perform(click());
+            onView(isRoot()).perform(waitId(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(15)));
         }
     }
     @Test

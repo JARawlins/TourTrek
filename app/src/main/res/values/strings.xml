@@ -18,7 +18,7 @@
     <string name="fragment_edit_tour_startDate">Start Date: </string>
     <string name="fragment_edit_tour_notifications">Notifications</string>
     <string name="fragment_edit_tour_public">Public</string>
-    <!--    <string name=""></string>-->
+    <string name="add_tour_toast_message">Not All Fields Entered</string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->

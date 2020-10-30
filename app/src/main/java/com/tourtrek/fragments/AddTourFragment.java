@@ -146,7 +146,7 @@ public class AddTourFragment extends Fragment {
             if (tourNameEditText.getText().toString().equals("") || locationEditText.getText().toString().equals("")
             ||lengthEditText.getText().toString().equals("")||startDateEditText.getText().toString().equals("")
             ) {
-                Toast.makeText(getContext(),"Not All Fields entered",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),R.string.add_tour_toast_message,Toast.LENGTH_SHORT).show();
             }
             else {
                 final String name = tourNameEditText.getText().toString();
