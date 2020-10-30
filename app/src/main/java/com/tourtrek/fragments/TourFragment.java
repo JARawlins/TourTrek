@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -102,7 +103,7 @@ public class TourFragment extends Fragment {
         // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
-        tourIsUsers(this.tour);
+
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -134,6 +135,8 @@ public class TourFragment extends Fragment {
             int PICK_IMAGE = 1;
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
+
+
 
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(coverImageView);
 
