@@ -108,15 +108,6 @@ public class AddTourFragment extends Fragment {
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
 
-        Glide.with(this)
-                .load(MainActivity.user.getProfileImageURI())
-                .placeholder(R.drawable.default_image)
-                .circleCrop()
-                .into(tourCoverImageView);
-
-
-
-
 
         Button editTourSaveButton = addTourView.findViewById(R.id.edit_tour_2_save_bt);
 
@@ -362,6 +353,10 @@ public class AddTourFragment extends Fragment {
 
         if(resultCode == Activity.RESULT_OK) {
             assert imageReturnedIntent != null;
+            Glide.with(this)
+                    .load(imageReturnedIntent.getData())
+                    .placeholder(R.drawable.default_image)
+                    .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
         }
     }
@@ -392,11 +387,7 @@ public class AddTourFragment extends Fragment {
                     storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
 
-                                tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
-
-                                Firestore.updateUser();
-
-                                getActivity().getSupportFragmentManager().popBackStack();
+                               tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
 
                             })
                             .addOnFailureListener(exception -> {
