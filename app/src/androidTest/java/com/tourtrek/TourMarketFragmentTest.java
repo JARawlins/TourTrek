@@ -54,6 +54,6 @@ public class TourMarketFragmentTest {
 //    @Test
 //    public void TourInfoDisplay() throws InterruptedException {
 //        onView(withId(R.id.item_tour_cover_iv)).perform(click());
-//
+//       onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 //    }
 }
