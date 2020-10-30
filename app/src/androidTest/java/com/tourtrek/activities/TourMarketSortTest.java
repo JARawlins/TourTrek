@@ -48,7 +48,7 @@ public class TourMarketSortTest {
 
     @Test
     public void tourMarketSortTest() {
-        onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+        onView(isRoot()).perform(waitId(R.id.navigation_tour_market, TimeUnit.SECONDS.toMillis(15)));
         ViewInteraction bottomNavigationItemView = onView(
                 allOf(withId(R.id.navigation_tour_market), withContentDescription("Tour Market"),
                         childAtPosition(
@@ -59,7 +59,7 @@ public class TourMarketSortTest {
                         isDisplayed()));
         bottomNavigationItemView.perform(click());
 
-        onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+        onView(isRoot()).perform(waitId(R.id.navigation_tour_market, TimeUnit.SECONDS.toMillis(15)));
 
         ViewInteraction appCompatSpinner = onView(
                 allOf(withId(R.id.tour_market_spinner),
