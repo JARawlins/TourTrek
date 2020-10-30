@@ -161,8 +161,6 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     }
 
     public List<Tour> getToursDataSetFiltered() {
-        //if (toursDataSetFiltered.size() != 0)
-            //return toursDataSetFiltered;
         return toursDataSetFiltered;
     }
 
