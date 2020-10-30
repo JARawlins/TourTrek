@@ -21,16 +21,20 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.TimeUnit;
+
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.tourtrek.EspressoExtensions.waitId;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
@@ -44,6 +48,7 @@ public class TourMarketSortTest {
 
     @Test
     public void tourMarketSortTest() {
+        onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
         ViewInteraction bottomNavigationItemView = onView(
                 allOf(withId(R.id.navigation_tour_market), withContentDescription("Tour Market"),
                         childAtPosition(
@@ -53,6 +58,8 @@ public class TourMarketSortTest {
                                 0),
                         isDisplayed()));
         bottomNavigationItemView.perform(click());
+
+        onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
 
         ViewInteraction appCompatSpinner = onView(
                 allOf(withId(R.id.tour_market_spinner),
