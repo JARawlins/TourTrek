@@ -27,9 +27,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentPersonalToursAdapter;
+import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.FuturePersonalToursAdapter;
 import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
@@ -38,8 +41,10 @@ import com.tourtrek.viewModels.TourViewModel;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
@@ -68,6 +73,8 @@ public class AddAttractionFragment extends Fragment {
     private TourViewModel tourViewModel;
     private FragmentManager fragmentManager;
     private TextView errorText;
+    private Button addAttractionButton;
+
     /**
      * Default for proper back button usage
      */
@@ -115,8 +122,9 @@ public class AddAttractionFragment extends Fragment {
         endText = addAttractionView.findViewById(R.id.attraction_time_end_et);
         endText.setHint(endHint);
         errorText = addAttractionView.findViewById(R.id.attraction_error_tv);
+        errorText.setText("");
         // create the update button
-        Button addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
+        addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
         // set up the action to carry out via the update button
         setUpAddAttractionBtn(addAttractionButton);
         return addAttractionView;
@@ -150,9 +158,13 @@ public class AddAttractionFragment extends Fragment {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+//            if (inputName != null){
+//                isDuplicateAttraction(inputName);
+//            }
             // make the error text visible when the user does not provide appropriate inputs
             if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")
                 && inputStart != null && !inputStart.equals("") && inputEnd != null && !inputEnd.equals("")){
+                System.out.println(errorText.getText().toString());
                 attr.setName(inputName);
                 attr.setLocation(inputLocation);
                 // proceed only if the other text fields have been populated
@@ -167,7 +179,7 @@ public class AddAttractionFragment extends Fragment {
                 // go back once the button is pressed
                 getActivity().getSupportFragmentManager().popBackStack();
             }
-            else{
+            else {
                 errorText.setText(errorMessage);
                 errorText.setVisibility(View.VISIBLE);
             }
@@ -230,4 +242,46 @@ public class AddAttractionFragment extends Fragment {
         attraction.setStartDate(startDate);
         attraction.setEndDate(endDate);
     }
+
+//    private void isDuplicateAttraction (String inputName) {
+//        // Get instance of firestore
+//        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        // Setup collection reference
+//        CollectionReference attractionsCollection = db.collection("Attractions");
+//        // Pull out the UID's of each attraction that belongs to this user
+//        List<String> usersAttractionsUIDs = new ArrayList<>();
+//        Task<DocumentSnapshot> task;
+//        if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
+//            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+//                usersAttractionsUIDs.add(documentReference.getId());
+//            }
+//        }
+//        // Query database
+//        attractionsCollection
+//                .get()
+//                .addOnSuccessListener(queryDocumentSnapshots -> {
+//                    ArrayList<String> names = new ArrayList<String>();
+//                    if (queryDocumentSnapshots.isEmpty()) {
+//                        Log.w(TAG, "No documents found in the Attractions collection for this user");
+//                    } else {
+//                        // Go through each document and compare the dates
+//                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+//                            // First check that the document in referenced by the user's current tour
+//                            if (usersAttractionsUIDs.contains(document.getId())) {
+//                                names.add(document.toObject(Attraction.class).getName());
+//                            }
+//                        }
+//                        if (names.contains(inputName)){
+//                            errorText.setText("No duplicate names are allowed.");
+//                            //addAttractionButton.setEnabled(false);
+//                        }
+//                        else{
+//                            errorText.setText("");
+//                        }
+//                        errorText.setVisibility(View.VISIBLE);
+//                    }
+//                });
+//        //return attrNames.getUsersAttrNames().contains(inputName);
+//    }
+
 }
