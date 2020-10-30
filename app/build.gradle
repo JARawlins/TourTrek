@@ -81,8 +81,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     debugImplementation 'androidx.fragment:fragment-testing:1.2.5'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
-    compile group: 'org.apache.commons', name: 'commons-text', version: '1.6'
-    compile group: 'org.apache.commons', name: 'commons-rng-core', version: '1.0'
 
 }
 

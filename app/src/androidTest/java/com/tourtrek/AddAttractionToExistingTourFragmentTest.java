@@ -4,9 +4,6 @@ import android.util.Log;
 
 import com.tourtrek.activities.MainActivity;
 
-import org.apache.commons.rng.UniformRandomProvider;
-import org.apache.commons.text.RandomStringGenerator;
-import org.apache.commons.text.TextRandomProvider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +29,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.tourtrek.EspressoExtensions.waitId;
-import static org.apache.commons.text.RandomStringGenerator.*;
 
 
 /*
@@ -40,8 +36,7 @@ This test file assumes that AddAttractionFragment is reached through selecting a
  */
 public class AddAttractionToExistingTourFragmentTest {
 
-    private RandomStringGenerator stringGenerator = new RandomStringGenerator.Builder().withinRange('a','z').build();
-    public static final String TAG = "AddAttractionFragment";
+    public static final String TAG = "AddAttractionFragmentTest";
     private ActivityScenario mainActivityScenario;
 
     @Rule
@@ -66,7 +61,6 @@ public class AddAttractionToExistingTourFragmentTest {
             onView(withId(R.id.login_login_btn)).perform(click());
             onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-            //onView(withId(R.id.personal_future_tours_rv)).perform(waitId(R.id.edit_tour_add_attraction_btn, TimeUnit.SECONDS.toMillis(5)));
             onView(withId(R.id.edit_tour_add_attraction_btn)).perform(scrollTo());
             onView(withId(R.id.edit_tour_add_attraction_btn)).perform(click());
         }
@@ -96,7 +90,6 @@ public class AddAttractionToExistingTourFragmentTest {
         onView(withId(R.id.attraction_error_tv)).check(matches(withText("Enter at least name, location, and start and end time information in the indicated formats")));
     }
 
-    // TODO an error message should appear when the user inputs a name in the wrong format
 
     /**
      * An error message should appear when the user inputs no location, but every other field
@@ -119,8 +112,6 @@ public class AddAttractionToExistingTourFragmentTest {
         onView(withId(R.id.attraction_error_tv)).check(matches(withText("Enter at least name, location, and start and end time information in the indicated formats")));
     }
 
-    // TODO an error message should appear when the user inputs a location in the wrong format
-
     /**
      * An error message should appear when the user inputs no start time, but every other field
      */
@@ -142,7 +133,6 @@ public class AddAttractionToExistingTourFragmentTest {
         onView(withId(R.id.attraction_error_tv)).check(matches(withText("Enter at least name, location, and start and end time information in the indicated formats")));
     }
 
-    // TODO an error message should appear when the user inputs a start time in the wrong format
 
     /**
      * An error message should appear when the user inputs no end time, but every other field
@@ -165,8 +155,6 @@ public class AddAttractionToExistingTourFragmentTest {
         onView(withId(R.id.attraction_error_tv)).check(matches(withText("Enter at least name, location, and start and end time information in the indicated formats")));
     }
 
-    // TODO an error message should appear when the user inputs an end time in the wrong format
-    // there should be no spaces, periods, nor characters other than 'T"
 
     /**
      * Clicking the "add attraction" button, assuming that name, location, and time fields have been properly entered,
