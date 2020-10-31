@@ -1,7 +1,5 @@
 package com.tourtrek.utilities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,13 +8,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.tourtrek.activities.MainActivity;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class Firestore {
 

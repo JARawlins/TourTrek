@@ -1,12 +1,24 @@
 package com.tourtrek.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.SearchView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,16 +37,21 @@ import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.TourLengthSorter;
+import com.tourtrek.utilities.TourLocationSorter;
+import com.tourtrek.utilities.TourNameSorter;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class TourMarketFragment extends Fragment {
+public class TourMarketFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter tourMarketAdapter;
+    private TourMarketAdapter tourMarketAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
 
@@ -45,11 +62,27 @@ public class TourMarketFragment extends Fragment {
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
+        SetupSpinner(tourMarketView);
+
         configureRecyclerView(tourMarketView);
         configureSwipeRefreshLayout(tourMarketView);
         configureOnClickRecyclerView();
 
         return tourMarketView;
+    }
+
+    public void SetupSpinner(View view) {
+        Spinner spinner = view.findViewById(R.id.tour_market_spinner);
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(), R.array.categories,
+                android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(this);
     }
 
     /**
@@ -62,7 +95,7 @@ public class TourMarketFragment extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
                         // Reference to the current tour selected
-                        Tour tour = ((TourMarketAdapter)tourMarketAdapter).getTour(position);
+                        Tour tour = tourMarketAdapter.getData(position);
 
                         // Add the selected tour to the view model so we can access the tour inside the fragment
                         tourViewModel.setSelectedTour(tour);
@@ -152,8 +185,9 @@ public class TourMarketFragment extends Fragment {
                             Log.i(TAG, "Successfully retrieved " + tours.size() + " tours from the firestore");
 
                             // Clear and add tours
-                            ((TourMarketAdapter)tourMarketAdapter).clear();
-                            ((TourMarketAdapter)tourMarketAdapter).addAll(tours);
+                            (tourMarketAdapter).clear();
+                            (tourMarketAdapter).addAll(tours);
+                            tourMarketAdapter.copyTours(tours);
 
                             // Stop showing refresh decorator
                             swipeRefreshLayout.setRefreshing(false);
@@ -166,8 +200,169 @@ public class TourMarketFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+
+        // Show the top app bar with the search icon
+        inflater.inflate(R.menu.tour_market_search_menu, menu);
+
+        // Get the menu item
+        MenuItem item = menu.findItem(R.id.tour_market_search_itm);
+
+        SearchView searchView = (SearchView) item.getActionView();
+
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                ArrayList<Tour> originalTours = new ArrayList<>(tourMarketAdapter.getDataSet());
+
+                List<Tour> filteredToursList = new ArrayList<>();
+
+                if (query == null || query.length() == 0) {
+
+                    filteredToursList.addAll(originalTours);
+                    tourMarketAdapter.clear();
+                    tourMarketAdapter.addAll(filteredToursList);
+
+                } else {
+
+                    String key = query.toLowerCase();
+
+                    for(Tour tour: originalTours){
+                        if(tour.getName().toLowerCase().contains(key)){
+                            filteredToursList.add(tour);
+                        }
+                    }
+                }
+
+                tourMarketAdapter.clear();
+                tourMarketAdapter.setDataSetFiltered(filteredToursList);
+                tourMarketAdapter.addAll(filteredToursList);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                ArrayList<Tour> originalTours = new ArrayList<>(tourMarketAdapter.getDataSet());
+
+                List<Tour> filteredTourList = new ArrayList<>();
+
+                if (newText == null || newText.length() == 0) {
+
+                    filteredTourList.addAll(originalTours);
+                    tourMarketAdapter.clear();
+                    tourMarketAdapter.addAll(filteredTourList);
+
+                } else {
+
+                    String key = newText.toLowerCase();
+
+                    for(Tour tour: originalTours){
+                        if(tour.getName().toLowerCase().contains(key)){
+                            filteredTourList.add(tour);
+                        }
+                    }
+
+                }
+
+                tourMarketAdapter.clear();
+                tourMarketAdapter.setDataSetFiltered(filteredTourList);
+                tourMarketAdapter.addAll(filteredTourList);
+
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getDataSetFiltered());
+
+        String key = (String) parent.getItemAtPosition(position);
+
+        switch (key){
+
+            case "Name Ascending":
+
+                List<Tour> temp1 = new ArrayList<>(data);
+                temp1.sort(new TourNameSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp1);
+                break;
+
+            case "Location Ascending":
+
+                List<Tour> temp2 = new ArrayList<>(data);
+                temp2.sort(new TourLocationSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp2);
+                break;
+
+            case "Duration Ascending":
+
+                List<Tour> temp3 = new ArrayList<>(data);
+                temp3.sort(new TourLengthSorter());
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp3);
+                break;
+
+            case "Name Descending":
+
+                List<Tour> temp4 = new ArrayList<>(data);
+                temp4.sort(new TourNameSorter());
+                Collections.reverse(temp4);
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp4);
+                break;
+
+            case "Location Descending":
+
+                List<Tour> temp5 = new ArrayList<>(data);
+                temp5.sort(new TourLocationSorter());
+                Collections.reverse(temp5);
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp5);
+                break;
+
+            case "Duration Descending":
+
+                System.out.println(key);
+                List<Tour> temp6 = new ArrayList<>(data);
+                temp6.sort(new TourLengthSorter());
+                Collections.reverse(temp6);
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp6);
+                break;
+
+            default:
+
+                List<Tour> temp0 = new ArrayList<>(data);
+                tourMarketAdapter.clear();
+                tourMarketAdapter.addAll(temp0);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {}
 }
+

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/edit_tour_2_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ImageView
+            android:id="@+id/edit_tour_2_cover_iv"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:scaleType="fitXY"
+            android:src="@drawable/default_image" />
+
+        <LinearLayout
+            android:id="@+id/edit_tour_2_name_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/edit_tour_2_tour_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/fragment_edit_tour_name"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/edit_tour_2_tour_name_ct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:textSize="20sp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_tour_2_location_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/edit_tour_2_location_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/fragment_edit_tour_location"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/edit_tour_2_tour_location_ct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:textSize="20sp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_tour_2_length_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/edit_tour_2_length_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/fragment_edit_tour_length"
+                android:textSize="20sp"
+                android:textColor="@color/colorAccent"/>
+
+            <EditText
+                android:id="@+id/edit_tour_2_length_ct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:textSize="20sp"
+                android:textColor="@color/colorAccent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_tour_2_startDate_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/edit_tour_2_startDate_length_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_edit_tour_startDate"
+                android:layout_marginStart="24dp"
+                android:textSize="20sp"
+                android:textColor="@color/colorAccent"/>
+
+            <EditText
+                android:id="@+id/edit_tour_2_startDate_ct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint=" dd-MM-yyyy"
+                android:ems="10"
+                android:inputType="date|datetime"
+                android:layout_marginEnd="24dp"
+                android:textSize="20sp"
+                android:textColor="@color/colorAccent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="24dp"
+                android:text="Attractions"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="0.5">
+            </TextView>
+
+            <Button
+                android:id="@+id/edit_tour_2_add_attraction_bt"
+                android:layout_width="300dp"
+                android:layout_height="75dp"
+                android:layout_marginEnd="24dp"
+                android:layout_gravity="center"
+                android:text="Add Attractions"
+                android:textColor="#FFFFFF"
+                android:textSize="15dp"
+                android:background="@color/colorPrimary"
+                android:layout_weight="0.5"/>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_weight="1">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/edit_tour_2_attractions_srl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/edit_tour_2_attractions_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:visibility="visible" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_tour_2_checkboxes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <CheckBox
+                android:id="@+id/edit_tour_2_notifications_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_weight="0.5"
+                android:text="@string/fragment_edit_tour_notifications"
+                android:textSize="35sp"/>
+
+            <CheckBox
+                android:id="@+id/edit_tour_2_public_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_weight="0.5"
+                android:text="@string/fragment_edit_tour_public"
+                android:textSize="35sp"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/edit_tour_2_save_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@color/colorPrimary"
+            android:text="Save"
+            android:textColor="#FFFFFF"
+            android:textSize="25dp"
+            android:layout_weight="1"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>
