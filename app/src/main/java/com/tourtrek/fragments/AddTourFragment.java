@@ -84,9 +84,6 @@ public class AddTourFragment extends Fragment {
         // Set selected tour as a new tour
         tourViewModel.setSelectedTour(new Tour());
 
-        setUpAddAttractionButton(addTourView);
-        setUpEditTourSaveButton(addTourView);
-
         // Set profile picture
         coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
 
@@ -99,16 +96,13 @@ public class AddTourFragment extends Fragment {
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
 
-
-
-
-        System.out.println(MainActivity.user.getTours());
-
-
-
         // set up the recycler view of attractions
         configureRecyclerViews(addTourView);
         configureSwipeRefreshLayouts(addTourView);
+
+        setUpAddAttractionButton(addTourView);
+        setUpEditTourSaveButton(addTourView);
+
         return addTourView;
     }
 
@@ -120,124 +114,90 @@ public class AddTourFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // Instantiate all fields in add Tour
+                // Close keyboard
+                Utilities.hideKeyboard(getActivity());
 
+                // Instantiate all fields in add Tour
                 final EditText tourNameEditText = addTourView.findViewById(R.id.edit_tour_2_tour_name_ct);
                 final CheckBox publicCheckBox = addTourView.findViewById(R.id.edit_tour_2_public_cb);
                 final CheckBox notificationCheckBox = addTourView.findViewById(R.id.edit_tour_2_notifications_cb);
                 final EditText startDateEditText = addTourView.findViewById(R.id.edit_tour_2_startDate_ct);
                 final EditText locationEditText = addTourView.findViewById(R.id.edit_tour_2_tour_location_ct);
                 final EditText lengthEditText = addTourView.findViewById(R.id.edit_tour_2_length_ct);
-//            final TextView errorTextView = addTourView.findViewById(R.id.edit_tour_error_tv);
-//            final ProgressBar loadingProgressBar = addTourView.findViewById(R.id.edit_tour_loading_pb);
 
-                // Close keyboard
-                Utilities.hideKeyboard(getActivity());
-
-                // Start loading the progress circle
-//            loadingProgressBar.setVisibility(View.VISIBLE);
-
-
+                // Check that all fields have been entered
                 if (tourNameEditText.getText().toString().equals("") || locationEditText.getText().toString().equals("")
-                        ||lengthEditText.getText().toString().equals("")||startDateEditText.getText().toString().equals("")
-                ) {
+                        ||lengthEditText.getText().toString().equals("")||startDateEditText.getText().toString().equals("")) {
                     Toast.makeText(getContext(),"Not All Fields entered",Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    final String name = tourNameEditText.getText().toString();
-                    final String location = locationEditText.getText().toString();
-                    final boolean isPublic = publicCheckBox.isChecked();
-                    final boolean notificationIsOn = notificationCheckBox.isChecked();
-                    final Integer length = Integer.parseInt(lengthEditText.getText().toString());
-                    String str_date = startDateEditText.getText().toString();
-                    DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+                    String tourName = tourNameEditText.getText().toString();
+                    String tourLocation = locationEditText.getText().toString();
+                    boolean isPublic = publicCheckBox.isChecked();
+                    boolean notificationsAreOn = notificationCheckBox.isChecked();
+                    Long tourLength = Long.parseLong(lengthEditText.getText().toString());
+                    String startDateString = startDateEditText.getText().toString();
+
                     try {
-                        Date date = (Date) formatter.parse(str_date);
+
+                        // Format date
+                        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        Date date = (Date) formatter.parse(startDateString);
                         final Timestamp startDate = new Timestamp(date);
-                        // Check to make sure some input was entered
-                        if (name.equals("")) {
-//                    // Show error to user
-//                    errorTextView.setVisibility(View.VISIBLE);
-//                    errorTextView.setText("Not all fields entered");
-//
-//                    // Stop loading progress circle
-//                    loadingProgressBar.setVisibility(View.GONE);
-                        } else {
 
-                            tourViewModel.getSelectedTour().setName(name);
-                            tourViewModel.getSelectedTour().setLocation(location);
-                            tourViewModel.getSelectedTour().setLength(length.longValue());
-                            tourViewModel.getSelectedTour().setNotifications(notificationIsOn);
-                            tourViewModel.getSelectedTour().setPubliclyAvailable(isPublic);
-                            tourViewModel.getSelectedTour().setStartDate(startDate);
+                        tourViewModel.getSelectedTour().setName(tourName);
+                        tourViewModel.getSelectedTour().setLocation(tourLocation);
+                        tourViewModel.getSelectedTour().setLength(tourLength);
+                        tourViewModel.getSelectedTour().setNotifications(notificationsAreOn);
+                        tourViewModel.getSelectedTour().setPubliclyAvailable(isPublic);
+                        tourViewModel.getSelectedTour().setStartDate(startDate);
 
-                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                            DocumentReference tourRef = db.collection("Tours").document();
-                            tourViewModel.getSelectedTour().setTourUID(tourRef.getId());
-                            Log.i(TAG, tourViewModel.getSelectedTour().getTourUID());
+                        DocumentReference tourRef = db.collection("Tours").document();
 
-                            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).
-                                    set(tourViewModel.getSelectedTour()).addOnSuccessListener(w -> {
-                                Log.d(TAG, "Tour written to firestore ");
+                        tourViewModel.getSelectedTour().setTourUID(tourRef.getId());
 
-                                // Add the tour reference to the user
-                                MainActivity.user.addTourToTours(tourRef);
+                        // Add new tour to firestore
+                        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                                .set(tourViewModel.getSelectedTour()).addOnSuccessListener(w -> {
 
-                                // Update the user
-                                Firestore.updateUser();
+                                    // Add the tour to the user
+                                    MainActivity.user.addTourToTours(tourRef);
 
-                                getActivity().getSupportFragmentManager().popBackStack();
-                            }).addOnFailureListener(a -> {
-                                Log.w(TAG, "Error saving hive to firestore");
-                            });
+                                    // Update the user in the firestore
+                                    Firestore.updateUser();
 
+                                    getActivity().getSupportFragmentManager().popBackStack();
 
-//                                @Override
-//                                public void onSuccess(DocumentReference documentReference) {
-//                                    Log.d(TAG, "Tour written to firestore ");
-//
-//                                    // Add the tour reference to the user
-//                                    MainActivity.user.addTourToTours(documentReference);
-//
-//                                    // Update the user
-//                                    Firestore.updateUser();
-//
-//                                    getActivity().getSupportFragmentManager().popBackStack();
-//
-//                                    // Stop loading progress circle
-////                                    loadingProgressBar.setVisibility(View.GONE);
-//
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.w(TAG, "Error saving hive to firestore");
-//                                }
-//                            });
-
-                        }
+                        }).addOnFailureListener(a -> {
+                            Log.w(TAG, "Error saving hive to firestore");
+                        });
 
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        Log.w(TAG, "Error parsing date in new tour");
                     }
                 }
             }
         });
-
     }
 
 
     public void setUpAddAttractionButton(View view) {
+
         // Create a button which directs to addAttractionFragment when pressed
         Button tour_attractions_btn = view.findViewById(R.id.edit_tour_2_add_attraction_bt);
 
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
+
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+
             ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
+
             ft.addToBackStack("AddAttractionFragment").commit();
+
         });
     }
 
@@ -248,31 +208,33 @@ public class AddTourFragment extends Fragment {
      * @param view current view
      */
     public void configureRecyclerViews(View view) {
+
         // Get our recycler view from the layout
         RecyclerView attractionsView = view.findViewById(R.id.edit_tour_2_attractions_rv);
+
         // Improves performance because content does not change size
         attractionsView.setHasFixedSize(true);
+
         // Only load 10 tours before loading more
         attractionsView.setItemViewCacheSize(10);
+
         // Enable drawing cache
         attractionsView.setDrawingCacheEnabled(true);
         attractionsView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
         // User linear layout manager
         RecyclerView.LayoutManager attractionsLayoutManager = new LinearLayoutManager(getContext());
         attractionsView.setLayoutManager(attractionsLayoutManager);
+
         // Specify an adapter
         attractionsAdapter = new EditTourAttractionsAdapter(getContext());
-//        attractionsAdapter = new EditTourAttractionsAdapter(getContext());
+
+        // Fetch attractions
         fetchAttractionsAsync();
+
         // set the adapter
         attractionsView.setAdapter(attractionsAdapter);
-//        // Stop showing progressBar when items are loaded
-//        attractionsView
-//                .getViewTreeObserver()
-//                .addOnGlobalLayoutListener(
-//                        ((CurrentTourAttractionsAdapter) attractionsAdapter)::stopLoading);
     }
-
 
     /**
      * Retrieve all attractions belonging to this user
@@ -318,8 +280,8 @@ public class AddTourFragment extends Fragment {
 
                         ((EditTourAttractionsAdapter) attractionsAdapter).clear();
                         ((EditTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
-                        swipeRefreshLayout.setRefreshing(false);
 
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
     }
