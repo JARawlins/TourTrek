@@ -44,7 +44,6 @@ import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -86,7 +85,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
                         // Reference to the current tour selected
-                        Tour tour = tourMarketAdapter.getTour(position);
+                        Tour tour = tourMarketAdapter.getData(position);
 
                         // Add the selected tour to the view model so we can access the tour inside the fragment
                         tourViewModel.setSelectedTour(tour);
@@ -205,7 +204,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
+                ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getDataSet());
                 List<Tour> filteredList = new ArrayList<>();
                 if (query == null || query.length() == 0) {
                     filteredList.addAll(data);
@@ -220,14 +219,14 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                     }
                 }
                 tourMarketAdapter.clear();
-                tourMarketAdapter.setToursDataSetFiltered(filteredList);
+                tourMarketAdapter.setDataSetFiltered(filteredList);
                 tourMarketAdapter.addAll(filteredList);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSet());
+                ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getDataSet());
                 List<Tour> filteredList = new ArrayList<>();
                 if (newText == null || newText.length() == 0) {
                     filteredList.addAll(data);
@@ -242,7 +241,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                     }
                 }
                 tourMarketAdapter.clear();
-                tourMarketAdapter.setToursDataSetFiltered(filteredList);
+                tourMarketAdapter.setDataSetFiltered(filteredList);
                 tourMarketAdapter.addAll(filteredList);
 
                 return true;
@@ -261,7 +260,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getToursDataSetFiltered());
+        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getDataSetFiltered());
         String key = (String) parent.getItemAtPosition(position);
         switch (key){
             case "Name Ascending":

@@ -2,10 +2,8 @@ package com.tourtrek.fragments;
 
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,21 +12,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
@@ -39,14 +35,6 @@ import java.util.List;
 public class AddAttractionFragment extends Fragment {
 
     private static final String TAG = "AddAttractionFragment";
-    private FirebaseAuth mAuth;
-    private String locationHint = "Address: eg 330 N. Orchard St., Madison, WI, USA";
-    private String costHint = "Cost: integer dollar amount";
-    private String nameHint = "Name here";
-    private String descriptionHint = "";
-    private String startHint = "Beginning date: dd-MM-yyyyTHH:mm";
-    private String endHint = "Ending date: dd-MM-yyyyTHH:mm";
-    private String errorMessage = "Enter at least name, location, and start and end time information in the indicated formats";
     private EditText locationText;
     private EditText costText;
     private EditText nameText;
@@ -54,9 +42,7 @@ public class AddAttractionFragment extends Fragment {
     private EditText startText;
     private EditText endText;
     private TourViewModel tourViewModel;
-    private FragmentManager fragmentManager;
     private TextView errorText;
-    private Button addAttractionButton;
 
     /**
      * Default for proper back button usage
@@ -75,51 +61,40 @@ public class AddAttractionFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        mAuth = FirebaseAuth.getInstance();
-
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        // Grab a reference to the current view
+        View addAttractionView = inflater.inflate(R.layout.fragment_add_attraction, container, false);
+
         // Initialize tour view model to get the current tour
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
-        fragmentManager = getActivity().getSupportFragmentManager();
-        // Grab a reference to the current view
-        View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
-        // create text fields
-        locationText = addAttractionView.findViewById(R.id.attraction_location_et);
-        locationText.setHint(locationHint);
-        costText = addAttractionView.findViewById(R.id.attraction_cost_et);
-        costText.setHint(costHint);
-        nameText = addAttractionView.findViewById(R.id.attraction_name_et);
-        nameText.setHint(nameHint);
-        descriptionText = addAttractionView.findViewById(R.id.attraction_description_et);
-        descriptionText.setHint(descriptionHint);
-        startText = addAttractionView.findViewById(R.id.attraction_time_start_et);
-        startText.setHint(startHint);
-        endText = addAttractionView.findViewById(R.id.attraction_time_end_et);
-        endText.setHint(endHint);
-        errorText = addAttractionView.findViewById(R.id.attraction_error_tv);
-        errorText.setText("");
-        // create the update button
-        addAttractionButton = addAttractionView.findViewById(R.id.attraction_add_btn);
+
         // set up the action to carry out via the update button
-        setUpAddAttractionBtn(addAttractionButton);
+        setUpAddAttractionButton(addAttractionView);
+
         return addAttractionView;
     }
 
-    /**
-     * Important for titling
-     */
     @Override
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Add Attraction");
     }
 
-    private void setUpAddAttractionBtn(Button addAttractionBtn){
-        addAttractionBtn.setOnClickListener(v -> {
+    private void setUpAddAttractionButton(View view){
+
+        Button addAttractionButton = view.findViewById(R.id.add_attraction_add_btn);
+
+        addAttractionButton.setOnClickListener(v -> {
+
+            locationText = view.findViewById(R.id.add_attraction_location_et);
+            costText = view.findViewById(R.id.add_attraction_cost_et);
+            nameText = view.findViewById(R.id.add_attraction_name_et);
+            descriptionText = view.findViewById(R.id.add_attraction_description_et);
+            startText = view.findViewById(R.id.add_attraction_time_start_et);
+            endText = view.findViewById(R.id.add_attraction_time_end_et);
+            errorText = view.findViewById(R.id.add_attraction_error_tv); // TODO: REMOVE ITERATION 2
+
             // first get the information from each EditText
             String inputLocation = locationText.getText().toString();
             String inputCost = costText.getText().toString();
@@ -127,96 +102,102 @@ public class AddAttractionFragment extends Fragment {
             String inputDescription = descriptionText.getText().toString();
             String inputStart = startText.getText().toString();
             String inputEnd = endText.getText().toString();
+
+            if (inputLocation.equals("") || inputCost.equals("") || inputName.equals("") ||
+                    inputDescription.equals("") || inputStart.equals("") || inputEnd.equals("")) {
+                // TODO: ENABLE IN ITERATION 2
+                //Toast.makeText(getContext(), "Not all field entered", Toast.LENGTH_SHORT).show();
+            }
+
             // build the new attraction from the input information
-            Attraction attr = new Attraction();
-            // process date inputs
+            Attraction newAttraction = new Attraction();
+
+            // parse date to firebase format
             try {
-                getDates(inputStart, inputEnd, attr);
+                parseDates(inputStart, inputEnd, newAttraction);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
             // make the error text visible when the user does not provide appropriate inputs
-            if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("")
-                && inputStart != null && !inputStart.equals("") && inputEnd != null && !inputEnd.equals("")){
-                System.out.println(errorText.getText().toString());
-                attr.setName(inputName);
-                attr.setLocation(inputLocation);
-                // proceed only if the other text fields have been populated
-                if (inputDescription != null && !inputDescription.equals("")){
-                    attr.setDescription(inputDescription);
-                }
-                if (inputCost != null && !inputCost.equals("")){
-                    attr.setCost(Integer.parseInt(inputCost));
-                }
-                // add the attraction to Firestore
-                addToFirestore(attr);
-                // go back once the button is pressed
-                getActivity().getSupportFragmentManager().popBackStack();
+            if (inputName != null && !inputName.equals("") && inputLocation != null && !inputLocation.equals("") &&
+                    inputStart != null && !inputStart.equals("") && inputEnd != null && !inputEnd.equals("") &&
+                    inputDescription != null && !inputDescription.equals("") && inputCost != null && !inputCost.equals("")){
+
+                newAttraction.setName(inputName);
+                newAttraction.setLocation(inputLocation);
+                newAttraction.setDescription(inputDescription);
+                newAttraction.setCost(Integer.parseInt(inputCost));
+
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                final DocumentReference newAttractionDocument = db.collection("Attractions").document();
+
+                newAttraction.setAttractionUID(newAttractionDocument.getId());
+
+                newAttractionDocument.set(newAttraction) // write the attraction to the new document
+                        .addOnCompleteListener(task -> {
+                            Log.d(TAG, "Attraction written to firestore");
+
+                            tourViewModel.getSelectedTour().addAttraction(newAttractionDocument);
+
+                            // Only update the tour if it has been created in the firestore
+                            if (tourViewModel.getSelectedTour().getTourUID() != null) {
+                                syncTour();
+                            }
+
+                            // go back once the button is pressed
+                            getActivity().getSupportFragmentManager().popBackStack();
+
+                        })
+                        .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+
             }
             else {
-                errorText.setText(errorMessage);
+                errorText.setText("Enter at least name, location, and start and end time information in the indicated formats");
                 errorText.setVisibility(View.VISIBLE);
             }
         });
     }
 
     /**
-     * Add the attraction created by the user to the Firestore
-     * @param attraction
-     */
-    private void addToFirestore(Attraction attraction){
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final DocumentReference newAttractionDoc = db.collection("Attractions").document();
-        attraction.setAttractionUID(newAttractionDoc.getId());// omit the ID so that Firestore generates a unique one
-        newAttractionDoc.set(attraction) // write the attraction to the new document
-                .addOnCompleteListener(task -> {
-                    Log.d(TAG, "Attraction written to firestore");
-
-                    List<DocumentReference> attractions = tourViewModel.getSelectedTour().getAttractions();
-                    attractions.add(newAttractionDoc);
-                    tourViewModel.getSelectedTour().setAttractions(attractions);
-                    // if an attraction is added to an existing tour - existing tours will have UIDs
-                    if (tourViewModel.getSelectedTour().getTourUID() != null){
-                        syncTour();
-                    }
-                    // else an attraction is not being added to an existing tour - do nothing, the tourViewModel is already updated for use in adding a tour
-                })
-                .addOnFailureListener(e -> {
-                })
-                .addOnSuccessListener(aVoid -> {
-                })
-                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
-    }
-
-    /**
-     * Update all tours belonging to this user
+     * Update the selected tour
+     *
      * This method assumes a tour is already created and has a properly filled UID field
-     *https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+     * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
      */
     private void syncTour() {
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         // Setup collection reference
         CollectionReference toursCollection = db.collection("Tours");
+
         toursCollection.document(tourViewModel.getSelectedTour().getTourUID()).set(tourViewModel.getSelectedTour()).addOnCompleteListener(v ->
         {
-            Log.d(TAG, "Tour written");
+            Log.d(TAG, "Tour successfully written to firestore");
         });
     }
 
     /**
      * Parse the user's date input
+     *
      * @param startDateStr
      * @param endDateStr
      * @param attraction
+     *
      * @throws ParseException
      */
-    private void getDates(String startDateStr, String endDateStr, Attraction attraction) throws ParseException {
+    private void parseDates(String startDateStr, String endDateStr, Attraction attraction) throws ParseException {
+
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
+
         final Timestamp startDate = new Timestamp((Date) formatter.parse(startDateStr));
+
         final Timestamp endDate = new Timestamp((Date) formatter.parse(endDateStr));
+
         attraction.setStartDate(startDate);
+
         attraction.setEndDate(endDate);
     }
 

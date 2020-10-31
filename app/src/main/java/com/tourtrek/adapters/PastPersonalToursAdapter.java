@@ -2,18 +2,15 @@ package com.tourtrek.adapters;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Tour;
@@ -23,7 +20,7 @@ import java.util.List;
 
 public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalToursAdapter.PastPersonalToursViewHolder> {
 
-    private static final String TAG = "PastToursAdapter";
+    private static final String TAG = "PastPersonalToursAdapter";
     private final List<Tour> pastPersonalToursDataSet;
     private final Context context;
 
@@ -72,9 +69,9 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newTour tour to be added
+     * @param newTour item to be added
      */
     public void addNewData(Tour newTour) {
         pastPersonalToursDataSet.add(newTour);
@@ -82,13 +79,23 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
-     *
-     * @return tour at the position specified
+     * @param tours list of items to add
      */
-    public Tour getTour(int position) {
+    public void addAll(List<Tour> tours) {
+        this.pastPersonalToursDataSet.addAll(tours);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
+     *
+     * @param position index of item to get
+     *
+     * @return item at the position specified
+     */
+    public Tour getData(int position) {
         return pastPersonalToursDataSet.get(position);
     }
 
@@ -97,16 +104,6 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
      */
     public void clear() {
         pastPersonalToursDataSet.clear();
-        notifyDataSetChanged();
-    }
-
-    /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
-     */
-    public void addAll(List<Tour> dataSet) {
-        this.pastPersonalToursDataSet.addAll(dataSet);
         notifyDataSetChanged();
     }
 

@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
+    android:paddingStart="16dp"
     android:paddingTop="16dp"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@drawable/gradient"
     android:orientation="vertical">
@@ -21,7 +21,7 @@
             android:orientation="vertical" >
 
             <ProgressBar
-                android:id="@+id/attraction_loading_pb"
+                android:id="@+id/add_attraction_loading_pb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -32,7 +32,7 @@
                 android:visibility="gone" />
 
             <EditText
-                android:id="@+id/attraction_name_et"
+                android:id="@+id/add_attraction_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -58,7 +58,7 @@
                 app:backgroundTint="@color/colorSecondaryLight" />
 
             <EditText
-                android:id="@+id/attraction_location_et"
+                android:id="@+id/add_attraction_location_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -81,7 +81,7 @@
                 app:backgroundTint="@color/colorPrimaryDark" />
 
             <EditText
-                android:id="@+id/attraction_cost_et"
+                android:id="@+id/add_attraction_cost_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -94,7 +94,7 @@
                 app:backgroundTint="@color/colorPrimaryDark" />
 
             <TextView
-                android:id="@+id/attraction_description_tv"
+                android:id="@+id/add_attraction_description_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -106,7 +106,7 @@
                 app:backgroundTint="@color/colorSecondaryLight" />
 
             <EditText
-                android:id="@+id/attraction_description_et"
+                android:id="@+id/add_attraction_description_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -135,41 +135,29 @@
                 android:weightSum="1.0">
 
                 <EditText
-                    android:id="@+id/attraction_time_start_et"
+                    android:id="@+id/add_attraction_time_start_et"
                     android:layout_width="157dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_weight="0.33"
                     android:hint="Time Start"
                     android:textColorHint="@color/colorAccent"
-                    app:backgroundTint="@color/colorPrimaryDark" /><![CDATA[
-                android:selectAllOnFocus="true"/>
-
-                ]]>
+                    app:backgroundTint="@color/colorPrimaryDark" />
 
                 <EditText
-                    android:id="@+id/attraction_time_end_et"
+                    android:id="@+id/add_attraction_time_end_et"
                     android:layout_width="194dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="31dp"
                     android:layout_weight="0.33"
                     android:hint="Time End"
                     android:textColorHint="@color/colorAccent"
-                    app:backgroundTint="@color/colorPrimaryDark" /><![CDATA[
+                    app:backgroundTint="@color/colorPrimaryDark" />
 
-
-
-
-
-                android:selectAllOnFocus="true"/>
-
-
-
-            ]]>
             </LinearLayout>
 
             <Button
-                android:id="@+id/attraction_add_btn"
+                android:id="@+id/add_attraction_add_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -184,7 +172,7 @@
 
 
             <TextView
-                android:id="@+id/attraction_error_tv"
+                android:id="@+id/add_attraction_error_tv"
                 android:layout_width="283dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -196,6 +184,7 @@
                 android:visibility="gone" />
           
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

@@ -268,7 +268,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getTour(position);
+                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);

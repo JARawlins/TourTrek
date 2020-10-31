@@ -75,21 +75,31 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newTour tour to be added
+     * @param tour item to be added
      */
-    public void addNewData(Tour newTour) {
-        currentPersonalToursDataSet.add(newTour);
+    public void addNewData(Tour tour) {
+        currentPersonalToursDataSet.add(tour);
         notifyDataSetChanged();
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
+     * @param tours list of items to add
+     */
+    public void addAll(List<Tour> tours) {
+        this.currentPersonalToursDataSet.addAll(tours);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
      *
-     * @return tour at the position specified
+     * @param position index of item to get
+     *
+     * @return item at the position specified
      */
     public Tour getData(int position) {
         return currentPersonalToursDataSet.get(position);
@@ -100,16 +110,6 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
      */
     public void clear() {
         currentPersonalToursDataSet.clear();
-        notifyDataSetChanged();
-    }
-
-    /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
-     */
-    public void addAll(List<Tour> dataSet) {
-        this.currentPersonalToursDataSet.addAll(dataSet);
         notifyDataSetChanged();
     }
 

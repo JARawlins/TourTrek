@@ -50,7 +50,7 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    //@Override
+    @Override
     public void onBindViewHolder(@NonNull CurrentTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
 
         ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.VISIBLE);
@@ -74,41 +74,41 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newAttraction tour to be added
+     * @param attraction item to be added
      */
-    public void addNewData(Attraction newAttraction) {
-        currentTourAttractionsDataSet.add(newAttraction);
+    public void addNewData(Attraction attraction) {
+        currentTourAttractionsDataSet.add(attraction);
         notifyDataSetChanged();
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
+     * @param attractions list of items to add
+     */
+    public void addAll(List<Attraction> attractions) {
+        this.currentTourAttractionsDataSet.addAll(attractions);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
      *
-     * @return tour at the position specified
+     * @param position index of item to get
+     *
+     * @return item at the position specified
      */
     public Attraction getData(int position) {
         return currentTourAttractionsDataSet.get(position);
     }
 
     /**
-     * Clean all elements of the recycler
+     * Clean all elements of the recycler view
      */
     public void clear() {
         currentTourAttractionsDataSet.clear();
-        notifyDataSetChanged();
-    }
-
-    /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
-     */
-    public void addAll(List<Attraction> dataSet) {
-        this.currentTourAttractionsDataSet.addAll(dataSet);
         notifyDataSetChanged();
     }
 

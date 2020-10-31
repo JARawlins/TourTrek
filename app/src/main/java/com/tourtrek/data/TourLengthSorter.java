@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 public class TourLengthSorter implements Comparator<Tour> {
     @Override
-    public int compare(Tour o1, Tour o2) {
-        if (o2.getLength() > o1.getLength())
+    public int compare(Tour tour1, Tour tour2) {
+        if (tour2.getLength() > tour1.getLength())
             return -1;
         else return 1;
     }

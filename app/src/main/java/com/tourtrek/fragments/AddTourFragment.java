@@ -15,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -58,7 +56,6 @@ public class AddTourFragment extends Fragment {
     private TourViewModel tourViewModel;
     private EditTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private RecyclerView attractionsView;
     private ImageView coverImageView;
 
     @Override
@@ -84,18 +81,10 @@ public class AddTourFragment extends Fragment {
         // Initialize view model
         tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
 
+        // Set selected tour as a new tour
         tourViewModel.setSelectedTour(new Tour());
 
-        tourViewModel.getSelectedTour().setName("Test");
-
-        // Create a button which directs to addAttractionFragment when pressed
-        Button tour_attractions_btn = addTourView.findViewById(R.id.edit_tour_2_add_attraction_bt);
-        // When the button is clicked, switch to the AddAttractionFragment
-        tour_attractions_btn.setOnClickListener(v -> {
-            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
-            ft.addToBackStack("AddAttractionFragment").commit();
-        });
+        setUpAddAttractionButton(addTourView);
 
         // Set profile picture
         coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
@@ -233,6 +222,20 @@ public class AddTourFragment extends Fragment {
         return addTourView;
     }
 
+
+    public void setUpAddAttractionButton(View view) {
+        // Create a button which directs to addAttractionFragment when pressed
+        Button tour_attractions_btn = view.findViewById(R.id.edit_tour_2_add_attraction_bt);
+
+        // When the button is clicked, switch to the AddAttractionFragment
+        tour_attractions_btn.setOnClickListener(v -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddAttractionFragment(), "AddAttractionFragment");
+            ft.addToBackStack("AddAttractionFragment").commit();
+        });
+    }
+
+
     /**
      * Configure the recycler view
      *
@@ -240,7 +243,7 @@ public class AddTourFragment extends Fragment {
      */
     public void configureRecyclerViews(View view) {
         // Get our recycler view from the layout
-        attractionsView = view.findViewById(R.id.edit_tour_2_attractions_rv);
+        RecyclerView attractionsView = view.findViewById(R.id.edit_tour_2_attractions_rv);
         // Improves performance because content does not change size
         attractionsView.setHasFixedSize(true);
         // Only load 10 tours before loading more

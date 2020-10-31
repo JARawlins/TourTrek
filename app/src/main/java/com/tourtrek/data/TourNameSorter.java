@@ -5,8 +5,8 @@ import java.util.Comparator;
 public class TourNameSorter implements Comparator <Tour> {
 
     @Override
-    public int compare(Tour o1, Tour o2) {
-        int temp = o1.getName().compareToIgnoreCase(o2.getName());
+    public int compare(Tour tour1, Tour tour2) {
+        int temp = tour1.getName().compareToIgnoreCase(tour2.getName());
         if (temp == 0) return 1;
         return temp;
     }

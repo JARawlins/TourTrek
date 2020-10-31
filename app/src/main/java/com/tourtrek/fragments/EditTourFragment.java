@@ -94,7 +94,7 @@ public class EditTourFragment extends Fragment {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             Attraction attraction = task.getResult().toObject(Attraction.class);
 
-                            ((EditTourAttractionsAdapter) attractionsAdapter).add(attraction);
+                            ((EditTourAttractionsAdapter) attractionsAdapter).addNewData(attraction);
 
                         }
                     });

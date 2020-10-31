@@ -61,8 +61,8 @@ public class EditTourFragmentTest {
         }
     }
 
-//    @Test
-//    public void editSuccessfullyFeedback() throws InterruptedException {
+    @Test
+    public void editSuccessfullyFeedback() throws InterruptedException {
 //        onView(withId(R.id.login_email_et)).perform(typeText("cctest@gmail.com"), ViewActions.closeSoftKeyboard());
 //        onView(withId(R.id.login_password_et)).perform(typeText("123456"), ViewActions.closeSoftKeyboard());
 //        onView(withId(R.id.login_login_btn)).perform(click());
@@ -75,5 +75,5 @@ public class EditTourFragmentTest {
 //        onView(withId(R.id.edit_tour_update_btn)).perform(click());
 //        onView(withText(R.string.Edit_Success_TOAST_STRING)).inRoot(new ToastMatcher())
 //                .check(matches(isDisplayed()));
-//    }
+    }
 }
