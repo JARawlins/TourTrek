@@ -101,7 +101,6 @@ public class AddTourFragment extends Fragment {
         coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
 
 
-
         // If user clicks profile image, they can change it
         coverImageView.setOnClickListener(view -> {
             Intent intent = new Intent();
@@ -391,9 +390,9 @@ public class AddTourFragment extends Fragment {
                     storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
 
+
                                 tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
 
-                                //getActivity().getSupportFragmentManager().popBackStack();
 
                             })
                             .addOnFailureListener(exception -> {

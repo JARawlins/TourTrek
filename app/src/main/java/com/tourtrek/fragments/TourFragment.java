@@ -351,15 +351,21 @@ public class TourFragment extends Fragment {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             EditText tourNameEditText = view.findViewById(R.id.edit_tour_name_et);
-            tourViewModel.getSelectedTour().setName(tourNameEditText.getText().toString());
-
             EditText tourLocationEditText = view.findViewById(R.id.edit_tour_location_et);
-            tourViewModel.getSelectedTour().setLocation(tourLocationEditText.getText().toString());
-
             EditText tourCostEditText = view.findViewById(R.id.edit_tour_cost_et);
-            tourViewModel.getSelectedTour().setCost(Float.parseFloat(tourCostEditText.getText().toString()));
-
             EditText tourLengthEditText = view.findViewById(R.id.edit_tour_time_et);
+
+            if (tourNameEditText.getText().toString().equals("") ||
+            tourLocationEditText.getText().toString().equals("") ||
+            tourCostEditText.getText().toString().equals("") ||
+            tourLengthEditText.getText().toString().equals("")) {
+                Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            tourViewModel.getSelectedTour().setName(tourNameEditText.getText().toString());
+            tourViewModel.getSelectedTour().setLocation(tourLocationEditText.getText().toString());
+            tourViewModel.getSelectedTour().setCost(Float.parseFloat(tourCostEditText.getText().toString()));
             tourViewModel.getSelectedTour().setLength(Long.parseLong(tourLengthEditText.getText().toString()));
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
@@ -369,7 +375,9 @@ public class TourFragment extends Fragment {
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "Successfully updated tour in firestore");
 
+
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
+
                         }
                     });
         });
