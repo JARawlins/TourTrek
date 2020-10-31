@@ -66,6 +66,8 @@ public class LoginFragmentTest {
     }
 
     @Test
+
+
     public void loginWithIncorrectEmail() {
         onView(withId(R.id.login_email_et)).perform(typeText("doesNotExist@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.login_password_et)).perform(typeText("password"), closeSoftKeyboard());
@@ -82,6 +84,8 @@ public class LoginFragmentTest {
     }
 
     @Test
+
+
     public void loginWithCorrectEmailAndPassword() {
         onView(withId(R.id.login_email_et)).perform(typeText("test@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.login_password_et)).perform(typeText("password"), closeSoftKeyboard());
