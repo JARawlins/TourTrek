@@ -18,6 +18,7 @@
     <string name="fragment_edit_tour_startDate">Start Date: </string>
     <string name="fragment_edit_tour_notifications">Notifications</string>
     <string name="fragment_edit_tour_public">Public</string>
+    <string name="Edit_Success_TOAST_STRING">Successfully Updated Tour</string>
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->

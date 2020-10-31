@@ -100,6 +100,7 @@ public class AddTourFragment extends Fragment {
         // Set profile picture
         coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
 
+
         // If user clicks profile image, they can change it
         coverImageView.setOnClickListener(view -> {
             Intent intent = new Intent();
@@ -351,13 +352,14 @@ public class AddTourFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
         if(resultCode == Activity.RESULT_OK) {
             assert imageReturnedIntent != null;
+
             Glide.with(this)
                     .load(imageReturnedIntent.getData())
                     .placeholder(R.drawable.default_image)
                     .into(coverImageView);
+
             uploadImageToDatabase(imageReturnedIntent);
         }
     }
@@ -388,7 +390,9 @@ public class AddTourFragment extends Fragment {
                     storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
 
-                               tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
+
+                                tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
+
 
                             })
                             .addOnFailureListener(exception -> {

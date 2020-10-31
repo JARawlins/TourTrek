@@ -69,6 +69,7 @@ public class TourFragment extends Fragment {
     private Button edit_tour_picture_btn;
     private FragmentManager fragmentManager;
     private Context mHandler;
+    private ImageView coverImageView;
 
     private Button tour_edit_btn;
 
@@ -98,11 +99,11 @@ public class TourFragment extends Fragment {
         // tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
         tourNameTextView = tourView.findViewById(R.id.edit_tour_name_et);
         tourNameTextView.setText(tour.getName());
-        ImageView tourCoverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
-        Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
+
         // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
+
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -124,12 +125,25 @@ public class TourFragment extends Fragment {
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
         edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);
         edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
+        coverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
         edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
         edit_tour_picture_btn.setVisibility(View.INVISIBLE);
+        edit_tour_picture_btn.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
+
+
+
+        Glide.with(getContext()).load(tour.getCoverImageURI()).into(coverImageView);
 
         tourIsUsers(tourViewModel.getSelectedTour());
 
-        setUpEditPictureBtn(edit_tour_picture_btn);
+
+
 
         setupUpdateTourButton(tourView);
 
@@ -141,13 +155,7 @@ public class TourFragment extends Fragment {
 
 
     private void setUpEditPictureBtn(Button editPictureBtn){
-        editPictureBtn.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            int PICK_IMAGE = 1;
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-        });
+
     }
 
     /**
@@ -287,6 +295,11 @@ public class TourFragment extends Fragment {
 
         if(resultCode == Activity.RESULT_OK) {
             assert imageReturnedIntent != null;
+
+            Glide.with(this)
+                    .load(imageReturnedIntent.getData())
+                    .placeholder(R.drawable.default_image)
+                    .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
         }
     }
@@ -319,9 +332,8 @@ public class TourFragment extends Fragment {
 
                                 tour.setCoverImageURI(uri.toString());
 
-                                Firestore.updateUser();
 
-                                getActivity().getSupportFragmentManager().popBackStack();
+                                //getActivity().getSupportFragmentManager().popBackStack();
 
                             })
                             .addOnFailureListener(exception -> {
@@ -363,7 +375,9 @@ public class TourFragment extends Fragment {
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "Successfully updated tour in firestore");
 
-                            Toast.makeText(getContext(), "Successfully updated tour", Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
+
                         }
                     });
         });
