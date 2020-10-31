@@ -64,10 +64,10 @@ public class TourFragmentTest {
     public void updateSuccessful() {
         /** Update 1 */
         // populate edit text fields
-        onView(withId(R.id.edit_tour_name_et)).perform(typeText("Brighton Snowboard 2"));
-        onView(withId(R.id.edit_tour_location_et)).perform(typeText("Brighton, UT 2"), closeSoftKeyboard());
-        onView(withId(R.id.edit_tour_cost_et)).perform(typeText("5"), closeSoftKeyboard());
-        onView(withId(R.id.edit_tour_time_et)).perform(typeText("20"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText("Brighton Snowboard 2"));
+        onView(withId(R.id.tour_location_et)).perform(typeText("Brighton, UT 2"), closeSoftKeyboard());
+        onView(withId(R.id.tour_cost_et)).perform(typeText("5"), closeSoftKeyboard());
+        onView(withId(R.id.tour_length_et)).perform(typeText("20"), closeSoftKeyboard());
 
         // scroll to the tour update button and click it
         updateClick();
@@ -77,10 +77,10 @@ public class TourFragmentTest {
         refresh();
 
         // populate edit text fields
-        onView(withId(R.id.edit_tour_name_et)).perform(typeText("Brighton Snowboard 3"));
-        onView(withId(R.id.edit_tour_location_et)).perform(typeText("Brighton, UT 3"), closeSoftKeyboard());
-        onView(withId(R.id.edit_tour_cost_et)).perform(typeText("15"), closeSoftKeyboard());
-        onView(withId(R.id.edit_tour_time_et)).perform(typeText("30"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText("Brighton Snowboard 3"));
+        onView(withId(R.id.tour_location_et)).perform(typeText("Brighton, UT 3"), closeSoftKeyboard());
+        onView(withId(R.id.tour_cost_et)).perform(typeText("15"), closeSoftKeyboard());
+        onView(withId(R.id.tour_length_et)).perform(typeText("30"), closeSoftKeyboard());
 
         // scroll to the tour update button and click it
         updateClick();
@@ -90,16 +90,16 @@ public class TourFragmentTest {
         refresh();
 
         // check the text fields
-        onView(isRoot()).perform(waitId(R.id.edit_tour_name_et, TimeUnit.SECONDS.toMillis(5)));
-        onView(withId(R.id.edit_tour_name_et)).check(matches(withText("Brighton Snowboard 3")));
-        onView(withId(R.id.edit_tour_location_et)).check(matches(withText("Location:Brighton, UT 3")));
-        onView(withId(R.id.edit_tour_cost_et)).check(matches(withText("Cost($): 15.0")));
-        onView(withId(R.id.edit_tour_time_et)).check(matches(withText("Length: 30")));
+        onView(isRoot()).perform(waitId(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(5)));
+        onView(withId(R.id.tour_name_et)).check(matches(withText("Brighton Snowboard 3")));
+        onView(withId(R.id.tour_location_et)).check(matches(withText("Location:Brighton, UT 3")));
+        onView(withId(R.id.tour_cost_et)).check(matches(withText("Cost($): 15.0")));
+        onView(withId(R.id.tour_length_et)).check(matches(withText("Length: 30")));
     }
 
     private void updateClick(){
-        onView(withId(R.id.edit_tour_update_btn)).perform(scrollTo());
-        onView(withId(R.id.edit_tour_update_btn)).perform(click());
+        onView(withId(R.id.tour_update_btn)).perform(scrollTo());
+        onView(withId(R.id.tour_update_btn)).perform(click());
     }
 
     private void refresh(){

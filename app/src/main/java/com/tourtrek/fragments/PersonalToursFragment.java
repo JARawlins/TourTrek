@@ -82,7 +82,6 @@ public class PersonalToursFragment extends Fragment {
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 
-        // TODO: Replace this listener when implementing AddTourFragment
         personalFutureToursTitleButton.setOnClickListener(
                 view -> {
 
@@ -92,8 +91,6 @@ public class PersonalToursFragment extends Fragment {
                     ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
                     ft.addToBackStack("AddTourFragment").commit();
                 });
-
-
 
         // Configure recycler views
         configureRecyclerViews(personalToursView);

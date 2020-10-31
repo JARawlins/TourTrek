@@ -1,4 +1,6 @@
-package com.tourtrek.data;
+package com.tourtrek.utilities;
+
+import com.tourtrek.data.Tour;
 
 import java.util.Comparator;
 

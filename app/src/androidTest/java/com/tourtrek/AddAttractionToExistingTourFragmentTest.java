@@ -56,8 +56,8 @@ public class AddAttractionToExistingTourFragmentTest {
             onView(withId(R.id.login_login_btn)).perform(click());
             onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-            onView(withId(R.id.edit_tour_add_attraction_btn)).perform(scrollTo());
-            onView(withId(R.id.edit_tour_add_attraction_btn)).perform(click());
+            onView(withId(R.id.tour_add_attraction_btn)).perform(scrollTo());
+            onView(withId(R.id.tour_add_attraction_btn)).perform(click());
         }
 //        Random rand = new Random();
 
@@ -171,7 +171,7 @@ public class AddAttractionToExistingTourFragmentTest {
 
         // final check to determine pass or fail
         // this check will only pass if we have successfully returned to the edit tour page
-        onView(withId(R.id.edit_tour_update_btn)).check(matches(withText("Update Tour")));
+        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
     }
 
 }

@@ -81,8 +81,10 @@ public class AddTourFragment extends Fragment {
         // Initialize view model
         tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
 
-        // Set selected tour as a new tour
-        tourViewModel.setSelectedTour(new Tour());
+        // Set selected tour as a new tour if not already set
+        if (tourViewModel.getSelectedTour() == null) {
+            tourViewModel.setSelectedTour(new Tour());
+        }
 
         // Set profile picture
         coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
@@ -183,7 +185,6 @@ public class AddTourFragment extends Fragment {
         });
     }
 
-
     public void setUpAddAttractionButton(View view) {
 
         // Create a button which directs to addAttractionFragment when pressed
@@ -200,7 +201,6 @@ public class AddTourFragment extends Fragment {
 
         });
     }
-
 
     /**
      * Configure the recycler view
@@ -266,10 +266,9 @@ public class AddTourFragment extends Fragment {
                     }
                     else {
 
-                        // Final list of tours for this category
+                        // Final list of attractions for this user
                         List<Attraction> usersAttractions = new ArrayList<>();
 
-                        // Go through each document and compare the dates
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
 
                             // First check that the document belongs to the user
@@ -303,27 +302,15 @@ public class AddTourFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Add a Tour");
-
-
-//        if (tourViewModel.getSelectedTour().getAttractions().size())
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        db.collection("Attractions").document(tourViewModel.getSelectedTour().getAttractions().get(tourViewModel.getSelectedTour().getAttractions().size() - 1).getId())
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        Attraction attraction = task.getResult().toObject(Attraction.class);
-//
-//                        ((EditTourAttractionsAdapter) editTourAttractionsAdapter).add(attraction);
-//
-//                    }
-//                });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
+
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
         if(resultCode == Activity.RESULT_OK) {
+
             assert imageReturnedIntent != null;
 
             Glide.with(this)
@@ -354,17 +341,16 @@ public class AddTourFragment extends Fragment {
         final UploadTask uploadTask = storageReference.putFile(selectedImage);
 
         // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+        uploadTask
+                .addOnFailureListener(exception ->  {
+                    Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage");
+                })
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
 
                     storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-
-
                                 tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
-
-
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());

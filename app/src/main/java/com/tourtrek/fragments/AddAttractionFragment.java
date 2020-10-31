@@ -67,7 +67,7 @@ public class AddAttractionFragment extends Fragment {
         View addAttractionView = inflater.inflate(R.layout.fragment_add_attraction, container, false);
 
         // Initialize tour view model to get the current tour
-        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
 
         // set up the action to carry out via the update button
         setUpAddAttractionButton(addAttractionView);

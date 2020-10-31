@@ -21,7 +21,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/item_tour_bg">
                 <ImageView
-                    android:id="@+id/edit_tour_cover_iv"
+                    android:id="@+id/tour_cover_iv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
@@ -33,7 +33,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/edit_tour_picture_btn"
+                        android:id="@+id/tour_cover_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/item_tour_bg_img"
@@ -51,7 +51,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
             <EditText
-                android:id="@+id/edit_tour_name_et"
+                android:id="@+id/tour_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -63,28 +63,28 @@
                 android:textSize="30dp"
                 android:textStyle="bold" />
             <EditText
-                android:id="@+id/edit_tour_location_et"
+                android:id="@+id/tour_location_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:hint="City, State"
+                android:hint="Location"
                 android:selectAllOnFocus="true"
                 android:textColorHint="@color/colorAccent"
                 app:backgroundTint="@color/colorSecondaryLight" />
             <EditText
-                android:id="@+id/edit_tour_cost_et"
+                android:id="@+id/tour_cost_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:hint="Cost in $"
+                android:hint="Cost"
                 android:inputType="numberDecimal"
                 android:selectAllOnFocus="true"
                 android:textColorHint="@color/colorAccent"
                 app:backgroundTint="@color/colorSecondaryLight" />
             <EditText
-                android:id="@+id/edit_tour_time_et"
+                android:id="@+id/tour_length_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -147,7 +147,7 @@
                 android:layout_marginTop="15dp"
                 android:weightSum="1.0">
                 <Button
-                    android:id="@+id/edit_tour_add_attraction_btn"
+                    android:id="@+id/tour_add_attraction_btn"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -162,7 +162,7 @@
                     android:textStyle="bold" />
                 <!--android:onClick="addAttractionFunction"-->
                 <Button
-                    android:id="@+id/edit_tour_share_btn"
+                    android:id="@+id/tour_share_btn"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -176,7 +176,7 @@
                     android:textStyle="bold" />
                 <!--android:onClick="shareTourFunction"-->
                 <Button
-                    android:id="@+id/edit_tour_update_btn"
+                    android:id="@+id/tour_update_btn"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
