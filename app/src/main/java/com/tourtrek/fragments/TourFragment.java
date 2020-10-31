@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -132,7 +133,7 @@ public class TourFragment extends Fragment {
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
 
-        Glide.with(getContext()).load(tour.getCoverImageURI()).into(coverImageView);
+        Glide.with(getContext()).load(tour.getCoverImageURI()).diskCacheStrategy(DiskCacheStrategy.ALL).into(coverImageView);
 
         // Check if the user is logged in to identify if the tour belongs to them
         if (MainActivity.user != null) {

@@ -21,6 +21,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -83,6 +84,7 @@ public class ProfileFragment extends Fragment {
 
         Glide.with(this)
                 .load(MainActivity.user.getProfileImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_profile_black)
                 .circleCrop()
                 .into(profileUserImageView);
