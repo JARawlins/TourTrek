@@ -21,9 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAttractionsAdapter.CurrentAttractionsViewHolder> {
 
     private static final String TAG = "CurrentTourAttractionsAdapter";
-    private List<Attraction> currentTourAttractionsDataSet;
+    private List<Attraction> editTourAttractionsDataSet;
     private Context context;
-    private RecyclerView recyclerView;
 
     public static class CurrentAttractionsViewHolder extends RecyclerView.ViewHolder {
 
@@ -39,7 +38,7 @@ public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAtt
     }
 
     public EditTourAttractionsAdapter(Context context) {
-        this.currentTourAttractionsDataSet = new ArrayList<>();
+        this.editTourAttractionsDataSet = new ArrayList<>();
         this.context = context;
     }
 
@@ -51,16 +50,14 @@ public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAtt
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    //@Override
+    @Override
     public void onBindViewHolder(@NonNull EditTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
 
-       // ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.VISIBLE);
         ((MainActivity) context).findViewById(R.id.edit_tour_2_attractions_srl).setVisibility(View.INVISIBLE);
 
-         holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
-         holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
+         holder.attractionName.setText(editTourAttractionsDataSet.get(position).getName());
+         holder.attractionLocation.setText(editTourAttractionsDataSet.get(position).getLocation());
 
-        //((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.edit_tour_2_attractions_srl).setVisibility(View.VISIBLE);
 
     }
@@ -68,61 +65,59 @@ public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAtt
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
     }
 
     @Override
     public int getItemCount() {
-        return currentTourAttractionsDataSet.size();
+        return editTourAttractionsDataSet.size();
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newAttraction tour to be added
+     * @param attraction item to be added
      */
-    public void addNewData(Attraction newAttraction) {
-        currentTourAttractionsDataSet.add(newAttraction);
-        notifyDataSetChanged();
-    }
+    public void addNewData(Attraction attraction) {
 
-    /**
-     * Returns a tour at a specified index
-     *
-     * @param position index of tour to get
-     *
-     * @return tour at the position specified
-     */
-    public Attraction getAttraction(int position) {
-        return currentTourAttractionsDataSet.get(position);
-    }
-
-    /**
-     * Clean all elements of the recycler
-     */
-    public void clear() {
-        currentTourAttractionsDataSet.clear();
-        notifyDataSetChanged();
-    }
-
-    /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
-     */
-    public void addAll(List<Attraction> dataSet) {
-        this.currentTourAttractionsDataSet.addAll(dataSet);
-        notifyDataSetChanged();
-    }
-
-    public void add(Attraction attraction) {
-
-        if (!this.currentTourAttractionsDataSet.contains(attraction)) {
-            this.currentTourAttractionsDataSet.add(attraction);
+        if (!this.editTourAttractionsDataSet.contains(attraction)) {
+            this.editTourAttractionsDataSet.add(attraction);
             notifyDataSetChanged();
         }
+
     }
 
+    /**
+     * Add a list of items to the recycler view
+     *
+     * @param attractions list of items to add
+     */
+    public void addAll(List<Attraction> attractions) {
+        this.editTourAttractionsDataSet.addAll(attractions);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
+     *
+     * @param position index of item to get
+     *
+     * @return item at the position specified
+     */
+    public Attraction getData(int position) {
+        return editTourAttractionsDataSet.get(position);
+    }
+
+    /**
+     * Clean all elements of the recycler view
+     */
+    public void clear() {
+        editTourAttractionsDataSet.clear();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Stop the loading of the progress bar for the recycler view
+     */
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.attractions_loading_container) != null) {
             ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);

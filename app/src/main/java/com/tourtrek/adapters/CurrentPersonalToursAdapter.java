@@ -2,19 +2,15 @@ package com.tourtrek.adapters;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Tour;
@@ -24,10 +20,9 @@ import java.util.List;
 
 public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPersonalToursAdapter.CurrentPersonalToursViewHolder> {
 
-    private static final String TAG = "CurrentToursAdapter";
+    private static final String TAG = "CurrentPersonalToursAdapter";
     private final List<Tour> currentPersonalToursDataSet;
     private final Context context;
-    private RecyclerView recyclerView;
 
     public static class CurrentPersonalToursViewHolder extends RecyclerView.ViewHolder {
 
@@ -72,7 +67,6 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -81,23 +75,33 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newTour tour to be added
+     * @param tour item to be added
      */
-    public void addNewData(Tour newTour) {
-        currentPersonalToursDataSet.add(newTour);
+    public void addNewData(Tour tour) {
+        currentPersonalToursDataSet.add(tour);
         notifyDataSetChanged();
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
-     *
-     * @return tour at the position specified
+     * @param tours list of items to add
      */
-    public Tour getTour(int position) {
+    public void addAll(List<Tour> tours) {
+        this.currentPersonalToursDataSet.addAll(tours);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
+     *
+     * @param position index of item to get
+     *
+     * @return item at the position specified
+     */
+    public Tour getData(int position) {
         return currentPersonalToursDataSet.get(position);
     }
 
@@ -110,15 +114,8 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
     }
 
     /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
+     * Stop the loading of the progress bar for the recycler view
      */
-    public void addAll(List<Tour> dataSet) {
-        this.currentPersonalToursDataSet.addAll(dataSet);
-        notifyDataSetChanged();
-    }
-
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container) != null) {
             ((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container).setVisibility(View.INVISIBLE);

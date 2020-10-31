@@ -4,12 +4,10 @@ import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
 
 public class Attraction {
+
     private List<String> reviews;
-    //private Location extendedLocation;
     private String location;
     private int cost;
     private String name;
@@ -19,29 +17,9 @@ public class Attraction {
     private Timestamp endDate;
 
     /**
-     * Attraction constructor, default
+     * Empty constructor needed for Firestore
      */
-    public Attraction(){
-//        this.reviews = new ArrayList<String>();
-//        this.extendedLocation = new Location();
-//        this.cost = 0;
-//        this.name = "";
-//        this.description = "";
-    }
-
-    /**
-     * Attraction constructor, detailed
-     */
-    public Attraction(String name, String description, int cost, String location, String UID){
-//        this.reviews = new ArrayList<String>();
-//        this.extendedLocation = new Location();
-//        this.cost = 0;
-        this.location = location;
-        this.cost = cost;
-        this.name = name;
-        this.description = description;
-        this.attractionUID = UID;
-    }
+    public Attraction(){}
 
     /**
      * Get attraction cost
@@ -82,22 +60,11 @@ public class Attraction {
         this.reviews = reviews;
     }
 
-//    public Location getExtendedLocation() {
-//        if (extendedLocation != null){
-//            return extendedLocation;
-//        }
-//        return new Location();
-//    }
-//
-//    public void setExtendedLocation(Location extendedLocation) {
-//        this.extendedLocation = extendedLocation;
-//    }
-
     public String getName() {
-        if (this.name != null){
-            return this.name;
+        if (this.name == null){
+            this.name = "";
         }
-        return "";
+        return this.name;
     }
 
     public void setName(String name) {
@@ -105,10 +72,10 @@ public class Attraction {
     }
 
     public String getDescription() {
-        if (this.description != null){
-            return this.description;
+        if (this.description == null){
+            this.description = "";
         }
-        return "";
+        return this.description;
     }
 
     public void setDescription(String description) {
@@ -116,10 +83,7 @@ public class Attraction {
     }
 
     public String getAttractionUID() {
-        if (this.attractionUID != null){
-            return attractionUID;
-        }
-        return UUID.randomUUID().toString();
+        return attractionUID;
     }
 
     public void setAttractionUID(String attractionUID) {
@@ -127,9 +91,6 @@ public class Attraction {
     }
 
     public String getLocation() {
-        if (this.location != null){
-            return this.location;
-        }
         return this.location;
     }
 
@@ -138,10 +99,10 @@ public class Attraction {
     }
 
     public Timestamp getStartDate() {
-        if (this.startDate != null) {
-            return startDate;
+        if (this.startDate == null) {
+            startDate = Timestamp.now();
         }
-        return Timestamp.now();
+        return startDate;
     }
 
     public void setStartDate(Timestamp startDate) {
@@ -149,10 +110,10 @@ public class Attraction {
     }
 
     public Timestamp getEndDate() {
-        if (this.endDate != null) {
-            return endDate;
+        if (this.endDate == null) {
+            endDate = Timestamp.now();
         }
-        return Timestamp.now();
+        return endDate;
     }
 
     public void setEndDate(Timestamp endDate) {

@@ -2,23 +2,18 @@ package com.tourtrek.adapters;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.data.Tour;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +23,6 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     private static final String TAG = "CurrentTourAttractionsAdapter";
     private List<Attraction> currentTourAttractionsDataSet;
     private Context context;
-    private RecyclerView recyclerView;
 
     public static class CurrentAttractionsViewHolder extends RecyclerView.ViewHolder {
 
@@ -56,7 +50,7 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    //@Override
+    @Override
     public void onBindViewHolder(@NonNull CurrentTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
 
         ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.VISIBLE);
@@ -67,13 +61,11 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
 
         ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);
-
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -82,28 +74,38 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newAttraction tour to be added
+     * @param attraction item to be added
      */
-    public void addNewData(Attraction newAttraction) {
-        currentTourAttractionsDataSet.add(newAttraction);
+    public void addNewData(Attraction attraction) {
+        currentTourAttractionsDataSet.add(attraction);
         notifyDataSetChanged();
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
-     *
-     * @return tour at the position specified
+     * @param attractions list of items to add
      */
-    public Attraction getAttraction(int position) {
+    public void addAll(List<Attraction> attractions) {
+        this.currentTourAttractionsDataSet.addAll(attractions);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
+     *
+     * @param position index of item to get
+     *
+     * @return item at the position specified
+     */
+    public Attraction getData(int position) {
         return currentTourAttractionsDataSet.get(position);
     }
 
     /**
-     * Clean all elements of the recycler
+     * Clean all elements of the recycler view
      */
     public void clear() {
         currentTourAttractionsDataSet.clear();
@@ -111,15 +113,8 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
+     * Stop the loading of the progress bar for the recycler view
      */
-    public void addAll(List<Attraction> dataSet) {
-        this.currentTourAttractionsDataSet.addAll(dataSet);
-        notifyDataSetChanged();
-    }
-
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.attractions_loading_container) != null) {
             ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);

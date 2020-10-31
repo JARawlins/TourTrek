@@ -26,11 +26,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -68,6 +68,7 @@ public class TourFragment extends Fragment {
     private Button edit_tour_picture_btn;
     private FragmentManager fragmentManager;
     private Context mHandler;
+    private ImageView coverImageView;
 
     private Button tour_edit_btn;
 
@@ -97,11 +98,11 @@ public class TourFragment extends Fragment {
         // tourNameTextView = tourView.findViewById(R.id.tour_tour_name_tv);
         tourNameTextView = tourView.findViewById(R.id.edit_tour_name_et);
         tourNameTextView.setText(tour.getName());
-        ImageView tourCoverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
-        Glide.with(getContext()).load(tour.getCoverImageURI()).into(tourCoverImageView);
+
         // Create a button which directs to addAttractionFragment when pressed
         tour_attractions_btn = tourView.findViewById(R.id.edit_tour_add_attraction_btn);
         tour_attractions_btn.setVisibility(View.INVISIBLE);
+
         // When the button is clicked, switch to the AddAttractionFragment
         tour_attractions_btn.setOnClickListener(v -> {
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
@@ -111,24 +112,39 @@ public class TourFragment extends Fragment {
         // set up fields to be made visible or invisible
         tourNameTextView.setEnabled(false);
         tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
-        tourLocation.setText(tourViewModel.getSelectedTour().getLocation());
+        tourLocation.setText("Location:" + tourViewModel.getSelectedTour().getLocation());
         tourLocation.setEnabled(false);
         tourCost = tourView.findViewById(R.id.edit_tour_cost_et);
-        tourCost.setText(Float.toString(tourViewModel.getSelectedTour().getCost()));
+        tourCost.setText("Cost($): " + Float.toString(tourViewModel.getSelectedTour().getCost()));
         tourCost.setEnabled(false);
         timeText = tourView.findViewById(R.id.edit_tour_time_et);
-        timeText.setText(Long.toString(tourViewModel.getSelectedTour().getLength()));
+        timeText.setText("Length: " + Long.toString(tourViewModel.getSelectedTour().getLength()));
         timeText.setEnabled(false);
         edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
         edit_tour_share_btn = tourView.findViewById(R.id.edit_tour_share_btn);
         edit_tour_share_btn.setVisibility(View.INVISIBLE); // always invisible for now because sharing functionality is not added
+        coverImageView = tourView.findViewById(R.id.edit_tour_cover_iv);
         edit_tour_picture_btn = tourView.findViewById(R.id.edit_tour_picture_btn);
         edit_tour_picture_btn.setVisibility(View.INVISIBLE);
+        edit_tour_picture_btn.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
 
-        tourIsUsers(tourViewModel.getSelectedTour());
 
-        setUpEditPictureBtn(edit_tour_picture_btn);
+
+        Glide.with(getContext()).load(tour.getCoverImageURI()).into(coverImageView);
+
+        if (MainActivity.user != null) {
+            tourIsUsers(tourViewModel.getSelectedTour());
+        }
+
+
+
 
         setupUpdateTourButton(tourView);
 
@@ -140,13 +156,7 @@ public class TourFragment extends Fragment {
 
 
     private void setUpEditPictureBtn(Button editPictureBtn){
-        editPictureBtn.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            int PICK_IMAGE = 1;
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-        });
+
     }
 
     /**
@@ -269,7 +279,7 @@ public class TourFragment extends Fragment {
         }
 
         if (usersToursUIDs.contains(tourViewModel.getSelectedTour().getTourUID())) {
-            this.tour_attractions_btn.setVisibility(View.VISIBLE);
+            tour_attractions_btn.setVisibility(View.VISIBLE);
             tourNameTextView.setEnabled(true);
             tourLocation.setEnabled(true);
             tourCost.setEnabled(true);
@@ -286,6 +296,11 @@ public class TourFragment extends Fragment {
 
         if(resultCode == Activity.RESULT_OK) {
             assert imageReturnedIntent != null;
+
+            Glide.with(this)
+                    .load(imageReturnedIntent.getData())
+                    .placeholder(R.drawable.default_image)
+                    .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
         }
     }
@@ -318,9 +333,8 @@ public class TourFragment extends Fragment {
 
                                 tour.setCoverImageURI(uri.toString());
 
-                                Firestore.updateUser();
 
-                                getActivity().getSupportFragmentManager().popBackStack();
+                                //getActivity().getSupportFragmentManager().popBackStack();
 
                             })
                             .addOnFailureListener(exception -> {
@@ -338,15 +352,21 @@ public class TourFragment extends Fragment {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             EditText tourNameEditText = view.findViewById(R.id.edit_tour_name_et);
-            tourViewModel.getSelectedTour().setName(tourNameEditText.getText().toString());
-
             EditText tourLocationEditText = view.findViewById(R.id.edit_tour_location_et);
-            tourViewModel.getSelectedTour().setLocation(tourLocationEditText.getText().toString());
-
             EditText tourCostEditText = view.findViewById(R.id.edit_tour_cost_et);
-            tourViewModel.getSelectedTour().setCost(Float.parseFloat(tourCostEditText.getText().toString()));
-
             EditText tourLengthEditText = view.findViewById(R.id.edit_tour_time_et);
+
+            if (tourNameEditText.getText().toString().equals("") ||
+            tourLocationEditText.getText().toString().equals("") ||
+            tourCostEditText.getText().toString().equals("") ||
+            tourLengthEditText.getText().toString().equals("")) {
+                Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            tourViewModel.getSelectedTour().setName(tourNameEditText.getText().toString());
+            tourViewModel.getSelectedTour().setLocation(tourLocationEditText.getText().toString());
+            tourViewModel.getSelectedTour().setCost(Float.parseFloat(tourCostEditText.getText().toString()));
             tourViewModel.getSelectedTour().setLength(Long.parseLong(tourLengthEditText.getText().toString()));
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
@@ -355,6 +375,10 @@ public class TourFragment extends Fragment {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "Successfully updated tour in firestore");
+
+
+                            Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
+
                         }
                     });
         });

@@ -6,16 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -239,7 +236,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getTour(position);
+                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);
@@ -271,7 +268,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getTour(position);
+                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);
