@@ -30,7 +30,7 @@ public class User {
      * @return current username
      */
     public String getUsername() {
-        if (this.username != null){
+        if (this.username == null){
             this.username = "";
         }
         return this.username;

@@ -61,7 +61,7 @@ public class Attraction {
     }
 
     public String getName() {
-        if (this.name != null){
+        if (this.name == null){
             this.name = "";
         }
         return this.name;
@@ -72,7 +72,7 @@ public class Attraction {
     }
 
     public String getDescription() {
-        if (this.description != null){
+        if (this.description == null){
             this.description = "";
         }
         return this.description;
@@ -99,7 +99,7 @@ public class Attraction {
     }
 
     public Timestamp getStartDate() {
-        if (this.startDate != null) {
+        if (this.startDate == null) {
             startDate = Timestamp.now();
         }
         return startDate;
@@ -110,7 +110,7 @@ public class Attraction {
     }
 
     public Timestamp getEndDate() {
-        if (this.endDate != null) {
+        if (this.endDate == null) {
             endDate = Timestamp.now();
         }
         return endDate;

@@ -30,10 +30,10 @@ public class Tour{
      * @return current name
      */
     public String getName() {
-        if (this.name != null){
-            return this.name;
+        if (this.name == null){
+            this.name = "";
         }
-        return "";
+        return this.name;
     }
 
     /**
@@ -51,7 +51,7 @@ public class Tour{
      * @return current coverImageURI
      */
     public String getCoverImageURI() {
-        if (this.coverImageURI != null){
+        if (this.coverImageURI == null){
             this.coverImageURI = "";
         }
         return this.coverImageURI;
@@ -100,7 +100,7 @@ public class Tour{
      * @return current startDate
      */
     public Timestamp getStartDate() {
-        if (this.startDate != null){
+        if (this.startDate == null){
             this.startDate = Timestamp.now();
         }
         return this.startDate;
@@ -139,7 +139,7 @@ public class Tour{
      * @return current location
      */
     public String getLocation() {
-        if (this.location != null){
+        if (this.location == null){
             this.location = "";
         }
         return this.location;

@@ -85,12 +85,12 @@ public class AddTourFragment extends Fragment {
         tourViewModel.setSelectedTour(new Tour());
 
         setUpAddAttractionButton(addTourView);
+        setUpEditTourSaveButton(addTourView);
 
         // Set profile picture
         coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
 
-
-        // If user clicks profile image, they can change it
+        // If user clicks tour cover image, they can change it
         coverImageView.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setType("image/*");
@@ -100,84 +100,97 @@ public class AddTourFragment extends Fragment {
         });
 
 
+
+
+        System.out.println(MainActivity.user.getTours());
+
+
+
+        // set up the recycler view of attractions
+        configureRecyclerViews(addTourView);
+        configureSwipeRefreshLayouts(addTourView);
+        return addTourView;
+    }
+
+    private void setUpEditTourSaveButton(View addTourView) {
+
         Button editTourSaveButton = addTourView.findViewById(R.id.edit_tour_2_save_bt);
 
         editTourSaveButton.setOnClickListener(new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
+                // Instantiate all fields in add Tour
 
-            // Instantiate all fields in add Tour
-
-            final EditText tourNameEditText = addTourView.findViewById(R.id.edit_tour_2_tour_name_ct);
-            final CheckBox publicCheckBox = addTourView.findViewById(R.id.edit_tour_2_public_cb);
-            final CheckBox notificationCheckBox = addTourView.findViewById(R.id.edit_tour_2_notifications_cb);
-            final EditText startDateEditText = addTourView.findViewById(R.id.edit_tour_2_startDate_ct);
-            final EditText locationEditText = addTourView.findViewById(R.id.edit_tour_2_tour_location_ct);
-            final EditText lengthEditText = addTourView.findViewById(R.id.edit_tour_2_length_ct);
+                final EditText tourNameEditText = addTourView.findViewById(R.id.edit_tour_2_tour_name_ct);
+                final CheckBox publicCheckBox = addTourView.findViewById(R.id.edit_tour_2_public_cb);
+                final CheckBox notificationCheckBox = addTourView.findViewById(R.id.edit_tour_2_notifications_cb);
+                final EditText startDateEditText = addTourView.findViewById(R.id.edit_tour_2_startDate_ct);
+                final EditText locationEditText = addTourView.findViewById(R.id.edit_tour_2_tour_location_ct);
+                final EditText lengthEditText = addTourView.findViewById(R.id.edit_tour_2_length_ct);
 //            final TextView errorTextView = addTourView.findViewById(R.id.edit_tour_error_tv);
 //            final ProgressBar loadingProgressBar = addTourView.findViewById(R.id.edit_tour_loading_pb);
 
-            // Close keyboard
-            Utilities.hideKeyboard(getActivity());
+                // Close keyboard
+                Utilities.hideKeyboard(getActivity());
 
-            // Start loading the progress circle
+                // Start loading the progress circle
 //            loadingProgressBar.setVisibility(View.VISIBLE);
 
 
-            if (tourNameEditText.getText().toString().equals("") || locationEditText.getText().toString().equals("")
-            ||lengthEditText.getText().toString().equals("")||startDateEditText.getText().toString().equals("")
-            ) {
-                Toast.makeText(getContext(),"Not All Fields entered",Toast.LENGTH_SHORT).show();
-            }
-            else {
-                final String name = tourNameEditText.getText().toString();
-                final String location = locationEditText.getText().toString();
-                final boolean isPublic = publicCheckBox.isChecked();
-                final boolean notificationIsOn = notificationCheckBox.isChecked();
-                final Integer length = Integer.parseInt(lengthEditText.getText().toString());
-                String str_date = startDateEditText.getText().toString();
-                DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                try {
-                    Date date = (Date) formatter.parse(str_date);
-                    final Timestamp startDate = new Timestamp(date);
-                    // Check to make sure some input was entered
-                    if (name.equals("")) {
+                if (tourNameEditText.getText().toString().equals("") || locationEditText.getText().toString().equals("")
+                        ||lengthEditText.getText().toString().equals("")||startDateEditText.getText().toString().equals("")
+                ) {
+                    Toast.makeText(getContext(),"Not All Fields entered",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    final String name = tourNameEditText.getText().toString();
+                    final String location = locationEditText.getText().toString();
+                    final boolean isPublic = publicCheckBox.isChecked();
+                    final boolean notificationIsOn = notificationCheckBox.isChecked();
+                    final Integer length = Integer.parseInt(lengthEditText.getText().toString());
+                    String str_date = startDateEditText.getText().toString();
+                    DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                    try {
+                        Date date = (Date) formatter.parse(str_date);
+                        final Timestamp startDate = new Timestamp(date);
+                        // Check to make sure some input was entered
+                        if (name.equals("")) {
 //                    // Show error to user
 //                    errorTextView.setVisibility(View.VISIBLE);
 //                    errorTextView.setText("Not all fields entered");
 //
 //                    // Stop loading progress circle
 //                    loadingProgressBar.setVisibility(View.GONE);
-                    } else {
+                        } else {
 
-                        tourViewModel.getSelectedTour().setName(name);
-                        tourViewModel.getSelectedTour().setLocation(location);
-                        tourViewModel.getSelectedTour().setLength(length.longValue());
-                        tourViewModel.getSelectedTour().setNotifications(notificationIsOn);
-                        tourViewModel.getSelectedTour().setPubliclyAvailable(isPublic);
-                        tourViewModel.getSelectedTour().setStartDate(startDate);
+                            tourViewModel.getSelectedTour().setName(name);
+                            tourViewModel.getSelectedTour().setLocation(location);
+                            tourViewModel.getSelectedTour().setLength(length.longValue());
+                            tourViewModel.getSelectedTour().setNotifications(notificationIsOn);
+                            tourViewModel.getSelectedTour().setPubliclyAvailable(isPublic);
+                            tourViewModel.getSelectedTour().setStartDate(startDate);
 
-                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                        DocumentReference tourRef = db.collection("Tours").document();
-                        tourViewModel.getSelectedTour().setTourUID(tourRef.getId());
-                        Log.i(TAG, tourViewModel.getSelectedTour().getTourUID());
+                            DocumentReference tourRef = db.collection("Tours").document();
+                            tourViewModel.getSelectedTour().setTourUID(tourRef.getId());
+                            Log.i(TAG, tourViewModel.getSelectedTour().getTourUID());
 
-                        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).
-                                set(tourViewModel.getSelectedTour()).addOnSuccessListener(w -> {
-                            Log.d(TAG, "Tour written to firestore ");
+                            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).
+                                    set(tourViewModel.getSelectedTour()).addOnSuccessListener(w -> {
+                                Log.d(TAG, "Tour written to firestore ");
 
-                            // Add the tour reference to the user
-                            MainActivity.user.addTourToTours(tourRef);
+                                // Add the tour reference to the user
+                                MainActivity.user.addTourToTours(tourRef);
 
-                            // Update the user
-                            Firestore.updateUser();
+                                // Update the user
+                                Firestore.updateUser();
 
-                            getActivity().getSupportFragmentManager().popBackStack();
-                        }).addOnFailureListener(a -> {
-                            Log.w(TAG, "Error saving hive to firestore");
-                        });
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            }).addOnFailureListener(a -> {
+                                Log.w(TAG, "Error saving hive to firestore");
+                            });
 
 
 //                                @Override
@@ -204,22 +217,15 @@ public class AddTourFragment extends Fragment {
 //                                }
 //                            });
 
-                    }
+                        }
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
-    });
-        System.out.println(MainActivity.user.getTours());
+        });
 
-
-
-        // set up the recycler view of attractions
-        configureRecyclerViews(addTourView);
-        configureSwipeRefreshLayouts(addTourView);
-        return addTourView;
     }
 
 

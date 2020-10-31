@@ -79,6 +79,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        System.out.println(e.getMessage());
                         Log.w(TAG, "Error: Tour cover image not loaded");
                         return false;
                     }
