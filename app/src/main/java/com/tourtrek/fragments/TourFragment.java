@@ -25,12 +25,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -109,7 +106,6 @@ public class TourFragment extends Fragment {
             ft.addToBackStack("AddAttractionFragment").commit();
         });
         // set up fields to be made visible or invisible
-        // TODO handling to give a hint if a field is null and set text if not
         tourNameTextView.setEnabled(false);
         tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
         tourLocation.setText("Location:" + tourViewModel.getSelectedTour().getLocation());
