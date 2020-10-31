@@ -139,7 +139,9 @@ public class TourFragment extends Fragment {
 
         Glide.with(getContext()).load(tour.getCoverImageURI()).into(coverImageView);
 
-        tourIsUsers(tourViewModel.getSelectedTour());
+        if (MainActivity.user != null) {
+            tourIsUsers(tourViewModel.getSelectedTour());
+        }
 
 
 
