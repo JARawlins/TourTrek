@@ -66,6 +66,8 @@ public class EspressoExtensions {
 
                             return;
                         }
+
+                        uiController.loopMainThreadForAtLeast(100);
                     }
                 }
                 while (System.currentTimeMillis() < endTime);
@@ -117,6 +119,8 @@ public class EspressoExtensions {
                             return;
                         }
                     }
+
+                    uiController.loopMainThreadForAtLeast(100);
                 }
                 while (System.currentTimeMillis() < endTime);
 
