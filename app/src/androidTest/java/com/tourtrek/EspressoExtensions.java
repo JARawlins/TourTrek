@@ -1,5 +1,6 @@
 package com.tourtrek;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.test.espresso.PerformException;
@@ -17,9 +18,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 public class EspressoExtensions {
 
-    /** Perform action of waiting for a specific view id. */
-    public static ViewAction waitId(final int viewId, final long millis) {
+    private final static String TAG = "EspressoExtensions";
+
+    public static ViewAction waitForView(final int viewId, final long timeout) {
         return new ViewAction() {
+
             @Override
             public Matcher<View> getConstraints() {
                 return isRoot();
@@ -27,37 +30,35 @@ public class EspressoExtensions {
 
             @Override
             public String getDescription() {
-                return "wait for a specific view with id <" + viewId + "> during " + millis + " millis.";
+                return "Wait for a specific view with id " + viewId + " for " + timeout + "millis";
             }
 
             @Override
-            public void perform(UiController uiController, View view) {
+            public void perform(UiController uiController, View rootView) {
+
                 uiController.loopMainThreadUntilIdle();
+
                 final long startTime = System.currentTimeMillis();
-                final long endTime = startTime + millis;
+                final long endTime = startTime + timeout;
                 final Matcher<View> viewMatcher = withId(viewId);
 
                 do {
-                    for (View child : TreeIterables.breadthFirstViewTraversal(view)) {
+                    for (View child : TreeIterables.breadthFirstViewTraversal(rootView)) {
+
                         // found view with required ID
                         if (viewMatcher.matches(child)) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                             return;
                         }
                     }
 
-                    uiController.loopMainThreadForAtLeast(50);
+                    uiController.loopMainThreadForAtLeast(100);
                 }
                 while (System.currentTimeMillis() < endTime);
 
                 // timeout happens
                 throw new PerformException.Builder()
                         .withActionDescription(this.getDescription())
-                        .withViewDescription(HumanReadables.describe(view))
+                        .withViewDescription(HumanReadables.describe(rootView))
                         .withCause(new TimeoutException())
                         .build();
             }
