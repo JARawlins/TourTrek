@@ -1,17 +1,13 @@
 package com.tourtrek;
 
 import android.util.Log;
-import android.view.View;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.tourtrek.activities.MainActivity;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +21,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.tourtrek.EspressoExtensions.waitId;
 import static com.tourtrek.EspressoExtensions.waitForView;
 
 public class ProfileFragmentTest {
@@ -40,7 +35,7 @@ public class ProfileFragmentTest {
     public void setup() {
         // If any user is logged in, make sure to log them out
         try {
-            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+            onView(isRoot()).perform(EspressoExtensions.waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {

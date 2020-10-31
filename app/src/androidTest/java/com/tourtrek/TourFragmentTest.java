@@ -1,28 +1,16 @@
 package com.tourtrek;
 
-import android.util.Log;
-
 import com.tourtrek.activities.MainActivity;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.tourtrek.EspressoExtensions.waitId;
 
 /**
  * Test updating an existing tour
@@ -42,7 +30,7 @@ public class TourFragmentTest {
 //
 //        // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
 //        try {
-//            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+//            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
 //            onView(withId(R.id.navigation_profile)).perform(click());
 //            onView(withId(R.id.profile_logout_btn)).perform(click());
 //        } catch (Exception NoMatchingViewException) {
@@ -52,7 +40,7 @@ public class TourFragmentTest {
 //            onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
 //            onView(withId(R.id.login_password_et)).perform(typeText("123456"), closeSoftKeyboard());
 //            onView(withId(R.id.login_login_btn)).perform(click());
-//            onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
+//            onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
 //            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 //        }
     }
@@ -90,7 +78,7 @@ public class TourFragmentTest {
 //        refresh();
 //
 //        // check the text fields
-//        onView(isRoot()).perform(waitId(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(5)));
+//        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(5)));
 //        onView(withId(R.id.tour_name_et)).check(matches(withText("Brighton Snowboard 3")));
 //        onView(withId(R.id.tour_location_et)).check(matches(withText("Location:Brighton, UT 3")));
 //        onView(withId(R.id.tour_cost_et)).check(matches(withText("Cost($): 15.0")));
@@ -105,7 +93,7 @@ public class TourFragmentTest {
     private void refresh(){
 //        onView(withId(R.id.navigation_profile)).perform(click());
 //        onView(withId(R.id.navigation_tours)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(5)));
+//        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(5)));
 //        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
 }

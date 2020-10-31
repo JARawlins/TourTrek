@@ -1,40 +1,16 @@
 package com.tourtrek;
 
-import android.app.Activity;
-import android.app.Instrumentation;
-import android.util.Log;
-import android.view.View;
-
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.fragments.LoginFragment;
-import com.tourtrek.fragments.ProfileFragment;
 
-import org.hamcrest.Matcher;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.IdlingResource;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
-
-import java.util.concurrent.TimeUnit;
-
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static androidx.test.espresso.Espresso.*;
-import static androidx.test.espresso.action.ViewActions.*;
-import static androidx.test.espresso.assertion.ViewAssertions.*;
-import static com.tourtrek.EspressoExtensions.waitId;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -74,7 +50,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("password"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
     }
     @Test
@@ -88,7 +64,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("password"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
     }
 
@@ -103,7 +79,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("password"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("The email address is badly formatted.")));
     }
 
@@ -118,7 +94,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("password"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("The email address is badly formatted.")));
     }
     @Test
@@ -132,7 +108,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("password"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
     }
 
@@ -147,7 +123,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText(""));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
     }
 
@@ -162,7 +138,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("hey"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("The given password is invalid. [ Password should be at least 6 characters ]")));
     }
 
@@ -177,7 +153,7 @@ public class RegistrationFragmentTest {
 //        onView(withId(R.id.register_password2_et)).perform(typeText("pasdword"));
 //        Espresso.closeSoftKeyboard();
 //        onView(withId(R.id.register_register_btn)).perform(click());
-//        onView(isRoot()).perform(waitId(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
 //        onView(withId(R.id.register_error_tv)).check(matches(withText("Passwords do not match")));
     }
 
