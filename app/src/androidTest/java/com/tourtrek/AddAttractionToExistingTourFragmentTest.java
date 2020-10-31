@@ -40,25 +40,25 @@ public class AddAttractionToExistingTourFragmentTest {
     @Before
     public void setup() {
 
-        mainActivityScenario = mainActivityScenarioRule.getScenario();
-
-        // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
-        try {
-            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
-            onView(withId(R.id.navigation_profile)).perform(click());
-            onView(withId(R.id.profile_logout_btn)).perform(click());
-        } catch (Exception NoMatchingViewException) {
-            Log.w(TAG, "Not logged in");
-        } finally {
-            onView(withId(R.id.navigation_tours)).perform(click());
-            onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
-            onView(withId(R.id.login_password_et)).perform(typeText("123456"), closeSoftKeyboard());
-            onView(withId(R.id.login_login_btn)).perform(click());
-            onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-            onView(withId(R.id.tour_add_attraction_btn)).perform(scrollTo());
-            onView(withId(R.id.tour_add_attraction_btn)).perform(click());
-        }
+//        mainActivityScenario = mainActivityScenarioRule.getScenario();
+//
+//        // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
+//        try {
+//            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+//            onView(withId(R.id.navigation_profile)).perform(click());
+//            onView(withId(R.id.profile_logout_btn)).perform(click());
+//        } catch (Exception NoMatchingViewException) {
+//            Log.w(TAG, "Not logged in");
+//        } finally {
+//            onView(withId(R.id.navigation_tours)).perform(click());
+//            onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
+//            onView(withId(R.id.login_password_et)).perform(typeText("123456"), closeSoftKeyboard());
+//            onView(withId(R.id.login_login_btn)).perform(click());
+//            onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
+//            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+//            onView(withId(R.id.tour_add_attraction_btn)).perform(scrollTo());
+//            onView(withId(R.id.tour_add_attraction_btn)).perform(click());
+//        }
 //        Random rand = new Random();
 
 

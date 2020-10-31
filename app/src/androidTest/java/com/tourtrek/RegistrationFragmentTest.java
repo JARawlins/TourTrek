@@ -49,17 +49,17 @@ public class RegistrationFragmentTest {
     @Before
     public void setup() {
 
-        // If any user is logged in, make sure to log them out
-        try {
-            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
-            onView(withId(R.id.navigation_profile)).perform(click());
-            onView(withId(R.id.profile_logout_btn)).perform(click());
-        } catch (Exception NoMatchingViewException) {
-            Log.w(TAG, "No user is not logged in, continuing test execution");
-        } finally {
-            onView(withId(R.id.navigation_tours)).perform(click());
-            onView(withId(R.id.login_register_btn)).perform(click());
-        }
+//        // If any user is logged in, make sure to log them out
+//        try {
+//            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+//            onView(withId(R.id.navigation_profile)).perform(click());
+//            onView(withId(R.id.profile_logout_btn)).perform(click());
+//        } catch (Exception NoMatchingViewException) {
+//            Log.w(TAG, "No user is not logged in, continuing test execution");
+//        } finally {
+//            onView(withId(R.id.navigation_tours)).perform(click());
+//            onView(withId(R.id.login_register_btn)).perform(click());
+//        }
 
     }
 

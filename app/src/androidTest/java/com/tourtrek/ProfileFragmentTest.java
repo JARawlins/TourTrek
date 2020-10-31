@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -27,7 +26,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.tourtrek.EspressoExtensions.waitId;
-import static org.hamcrest.Matchers.allOf;
+import static com.tourtrek.EspressoExtensions.waitForView;
 
 public class ProfileFragmentTest {
 
@@ -54,15 +53,14 @@ public class ProfileFragmentTest {
             onView(withId(R.id.login_password_et)).perform(typeText("password"));
             Espresso.closeSoftKeyboard();
             onView(withId(R.id.login_login_btn)).perform(click());
-            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+            onView(isRoot()).perform(waitForView(R.id.personal_current_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.navigation_profile)).perform(click());
-            onView(isRoot()).perform(waitId(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(15)));
+            onView(isRoot()).perform(waitForView(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(15)));
         }
     }
     @Test
     public void TestLogOut() {
         onView(withId(R.id.profile_logout_btn)).perform(click());
-       // onData(allOf(withId(R.id.login_container), withText("Register")));
         onView(withId(R.id.login_register_btn)).check(matches(withText("Register")));
     }
 

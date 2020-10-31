@@ -45,25 +45,25 @@ public class AddTourFragmentTest {
     @Before
     public void setup() {
         // If any user is logged in, make sure to log them out
-        try {
-            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
-            onView(withId(R.id.navigation_profile)).perform(click());
-            onView(withId(R.id.profile_logout_btn)).perform(click());
-        } catch (Exception NoMatchingViewException) {
-            Log.w(TAG, "No user is not logged in, continuing test execution");
-        } finally {
-            //then log into test profile
-            onView(withId(R.id.navigation_tours)).perform(click());
-            onView(withId(R.id.login_email_et)).perform(typeText("robert@gmail.com"));
-            Espresso.closeSoftKeyboard();
-            onView(withId(R.id.login_password_et)).perform(typeText("password"));
-            Espresso.closeSoftKeyboard();
-            onView(withId(R.id.login_login_btn)).perform(click());
-            onView(isRoot()).perform(waitId(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(1000)));
-            onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(1000)));
-            onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
-        }
+//        try {
+//            onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+//            onView(withId(R.id.navigation_profile)).perform(click());
+//            onView(withId(R.id.profile_logout_btn)).perform(click());
+//        } catch (Exception NoMatchingViewException) {
+//            Log.w(TAG, "No user is not logged in, continuing test execution");
+//        } finally {
+//            //then log into test profile
+//            onView(withId(R.id.navigation_tours)).perform(click());
+//            onView(withId(R.id.login_email_et)).perform(typeText("robert@gmail.com"));
+//            Espresso.closeSoftKeyboard();
+//            onView(withId(R.id.login_password_et)).perform(typeText("password"));
+//            Espresso.closeSoftKeyboard();
+//            onView(withId(R.id.login_login_btn)).perform(click());
+//            onView(isRoot()).perform(waitId(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(1000)));
+//            onView(withId(R.id.navigation_tours)).perform(click());
+//            onView(isRoot()).perform(waitId(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(1000)));
+//            onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
+//        }
 
     }
 
