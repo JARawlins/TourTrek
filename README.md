@@ -69,8 +69,10 @@ TourTrek is an android application developer for those who love to explore new p
 
 ## FAQ
 
-### I can't see the AVD Manager in Tools --> AVD Manager
-This is because when you unzipped the release zip file, you added an additional folder on top of the app folder. When you import the project, it should show the android icon next to the folder like so:
+<details>
+  <summary>I can't see the AVD Manager in Tools --> AVD Manager</summary>
+  <p>
+   This is because when you unzipped the release zip file, you added an additional folder on top of the app folder. When you import the project, it should show the android icon next to the folder like so:
 
 [<img src=".github/assets/android_app_folder_icon.PNG"
       alt="Android App Folder Icon"
@@ -79,8 +81,12 @@ This is because when you unzipped the release zip file, you added an additional 
 By selecting a folder with this icon, you will correctly import the project
 
 Also keep in mind that once you import a project, regardless of whether or not it was a successful, android studio will convert it into an android project and give that folder the icon above giving you a false positive
+      </p>
+</details>
 
-### Gradle Build never completes
-Restart Android Studio
+<details>
+  <summary>Gradle Build never completes</summary>
+  <p>Restart Android Studio</p>
+</details>
 
 ## Screenshots
