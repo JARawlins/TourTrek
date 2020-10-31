@@ -56,6 +56,7 @@ TourTrek is an android application developer for those who love to explore new p
     * From the Project Directory tab open app/java/
     * Right click on com.tourtrek(androidTest) to run all Instrumentation Unit Tests
     * Click Run 'Tests in 'com.tourtr...'
+    * Click Run
     
 * Run An Instrumentation Unit Test Class:
     * From the Project Directory tab open app/java/com.tourtrek(androidTest)
