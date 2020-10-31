@@ -251,7 +251,7 @@ public class Tour{
     }
 
     public String getTourUID() {
-        return tourUID;
+        return this.tourUID;
     }
 
     public void setTourUID(String tourUID) {

@@ -28,10 +28,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -113,13 +112,13 @@ public class TourFragment extends Fragment {
         // set up fields to be made visible or invisible
         tourNameTextView.setEnabled(false);
         tourLocation = tourView.findViewById(R.id.edit_tour_location_et);
-        tourLocation.setText(tourViewModel.getSelectedTour().getLocation());
+        tourLocation.setText("Location:" + tourViewModel.getSelectedTour().getLocation());
         tourLocation.setEnabled(false);
         tourCost = tourView.findViewById(R.id.edit_tour_cost_et);
-        tourCost.setText(Float.toString(tourViewModel.getSelectedTour().getCost()));
+        tourCost.setText("Cost($): " + Float.toString(tourViewModel.getSelectedTour().getCost()));
         tourCost.setEnabled(false);
         timeText = tourView.findViewById(R.id.edit_tour_time_et);
-        timeText.setText(Long.toString(tourViewModel.getSelectedTour().getLength()));
+        timeText.setText("Length: " + Long.toString(tourViewModel.getSelectedTour().getLength()));
         timeText.setEnabled(false);
         edit_tour_update_btn = tourView.findViewById(R.id.edit_tour_update_btn);
         edit_tour_update_btn.setVisibility(View.INVISIBLE);
@@ -278,7 +277,7 @@ public class TourFragment extends Fragment {
         }
 
         if (usersToursUIDs.contains(tourViewModel.getSelectedTour().getTourUID())) {
-            this.tour_attractions_btn.setVisibility(View.VISIBLE);
+            tour_attractions_btn.setVisibility(View.VISIBLE);
             tourNameTextView.setEnabled(true);
             tourLocation.setEnabled(true);
             tourCost.setEnabled(true);
