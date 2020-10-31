@@ -111,7 +111,7 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
     }
 
     /**
-     * Stops the loading of the progress bar
+     * Stop the loading of the progress bar for the recycler view
      */
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.personal_past_tours_loading_container) != null) {

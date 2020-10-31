@@ -122,6 +122,9 @@ public class EditTourAttractionsAdapter extends RecyclerView.Adapter<EditTourAtt
         }
     }
 
+    /**
+     * Stop the loading of the progress bar for the recycler view
+     */
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.attractions_loading_container) != null) {
             ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);

@@ -92,9 +92,9 @@ public class TourFragmentTest {
         // check the text fields
         onView(isRoot()).perform(waitId(R.id.edit_tour_name_et, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.edit_tour_name_et)).check(matches(withText("Brighton Snowboard 3")));
-        onView(withId(R.id.edit_tour_location_et)).check(matches(withText("Brighton, UT 3")));
-        onView(withId(R.id.edit_tour_cost_et)).check(matches(withText("15")));
-        onView(withId(R.id.edit_tour_cost_et)).check(matches(withText("30")));
+        onView(withId(R.id.edit_tour_location_et)).check(matches(withText("Location:Brighton, UT 3")));
+        onView(withId(R.id.edit_tour_cost_et)).check(matches(withText("Cost($): 15.0")));
+        onView(withId(R.id.edit_tour_time_et)).check(matches(withText("Length: 30")));
     }
 
     private void updateClick(){

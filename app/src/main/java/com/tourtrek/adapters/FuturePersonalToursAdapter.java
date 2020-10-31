@@ -110,7 +110,7 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
     }
 
     /**
-     * Stops the loading of the progress bar
+     * Stop the loading of the progress bar for the recycler view
      */
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container) != null) {

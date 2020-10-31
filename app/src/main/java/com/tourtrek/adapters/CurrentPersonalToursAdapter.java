@@ -2,19 +2,15 @@ package com.tourtrek.adapters;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Tour;
@@ -24,10 +20,9 @@ import java.util.List;
 
 public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPersonalToursAdapter.CurrentPersonalToursViewHolder> {
 
-    private static final String TAG = "CurrentToursAdapter";
+    private static final String TAG = "CurrentPersonalToursAdapter";
     private final List<Tour> currentPersonalToursDataSet;
     private final Context context;
-    private RecyclerView recyclerView;
 
     public static class CurrentPersonalToursViewHolder extends RecyclerView.ViewHolder {
 
@@ -72,7 +67,6 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -97,7 +91,7 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
      *
      * @return tour at the position specified
      */
-    public Tour getTour(int position) {
+    public Tour getData(int position) {
         return currentPersonalToursDataSet.get(position);
     }
 
@@ -119,6 +113,9 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
         notifyDataSetChanged();
     }
 
+    /**
+     * Stop the loading of the progress bar for the recycler view
+     */
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container) != null) {
             ((MainActivity) context).findViewById(R.id.personal_current_tours_loading_container).setVisibility(View.INVISIBLE);

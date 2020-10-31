@@ -61,19 +61,19 @@ public class EditTourFragmentTest {
         }
     }
 
-    @Test
-    public void editSuccessfullyFeedback() throws InterruptedException {
-        onView(withId(R.id.login_email_et)).perform(typeText("cctest@gmail.com"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.login_password_et)).perform(typeText("123456"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.login_login_btn)).perform(click());
-        onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1000)));
-        onView(withId(R.id.navigation_tours)).perform(click());
-        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-        onView(isRoot()).perform(waitId(R.id.edit_tour_name_et, TimeUnit.SECONDS.toMillis(1000)));
-        onView(withId(R.id.edit_tour_name_et)).perform((typeText("EditTourTestTour")), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.edit_tour_update_btn)).perform(scrollTo());
-        onView(withId(R.id.edit_tour_update_btn)).perform(click());
-        onView(withText(R.string.Edit_Success_TOAST_STRING)).inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
-    }
+//    @Test
+//    public void editSuccessfullyFeedback() throws InterruptedException {
+//        onView(withId(R.id.login_email_et)).perform(typeText("cctest@gmail.com"), ViewActions.closeSoftKeyboard());
+//        onView(withId(R.id.login_password_et)).perform(typeText("123456"), ViewActions.closeSoftKeyboard());
+//        onView(withId(R.id.login_login_btn)).perform(click());
+//        onView(isRoot()).perform(waitId(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(withId(R.id.navigation_tours)).perform(click());
+//        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+//        onView(isRoot()).perform(waitId(R.id.edit_tour_name_et, TimeUnit.SECONDS.toMillis(1000)));
+//        onView(withId(R.id.edit_tour_name_et)).perform((typeText("EditTourTestTour")), ViewActions.closeSoftKeyboard());
+//        onView(withId(R.id.edit_tour_update_btn)).perform(scrollTo());
+//        onView(withId(R.id.edit_tour_update_btn)).perform(click());
+//        onView(withText(R.string.Edit_Success_TOAST_STRING)).inRoot(new ToastMatcher())
+//                .check(matches(isDisplayed()));
+//    }
 }
