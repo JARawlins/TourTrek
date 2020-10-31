@@ -1,14 +1,12 @@
 package com.tourtrek.fragments;
 
 import android.os.Bundle;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,35 +14,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
-import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
-import com.tourtrek.adapters.FuturePersonalToursAdapter;
-import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
@@ -69,7 +53,6 @@ public class AddAttractionFragment extends Fragment {
     private EditText descriptionText;
     private EditText startText;
     private EditText endText;
-    private Tour tour;
     private TourViewModel tourViewModel;
     private FragmentManager fragmentManager;
     private TextView errorText;
@@ -104,7 +87,6 @@ public class AddAttractionFragment extends Fragment {
         fragmentManager = getActivity().getSupportFragmentManager();
         // Grab a reference to the current view
         View addAttractionView = inflater.inflate(R.layout.fragment_create_attraction, container, false);
-        // Grab the tour that was selected
         // create text fields
         locationText = addAttractionView.findViewById(R.id.attraction_location_et);
         locationText.setHint(locationHint);
@@ -179,6 +161,10 @@ public class AddAttractionFragment extends Fragment {
         });
     }
 
+    /**
+     * Add the attraction created by the user to the Firestore
+     * @param attraction
+     */
     private void addToFirestore(Attraction attraction){
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final DocumentReference newAttractionDoc = db.collection("Attractions").document();
@@ -197,17 +183,14 @@ public class AddAttractionFragment extends Fragment {
                     // else an attraction is not being added to an existing tour - do nothing, the tourViewModel is already updated for use in adding a tour
                 })
                 .addOnFailureListener(e -> {
-
                 })
-
                 .addOnSuccessListener(aVoid -> {
-
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
     /**
-     * Retrieve all tours belonging to this user
+     * Update all tours belonging to this user
      * This method assumes a tour is already created and has a properly filled UID field
      *https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
      */
@@ -222,8 +205,14 @@ public class AddAttractionFragment extends Fragment {
         });
     }
 
+    /**
+     * Parse the user's date input
+     * @param startDateStr
+     * @param endDateStr
+     * @param attraction
+     * @throws ParseException
+     */
     private void getDates(String startDateStr, String endDateStr, Attraction attraction) throws ParseException {
-        //DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
         final Timestamp startDate = new Timestamp((Date) formatter.parse(startDateStr));
         final Timestamp endDate = new Timestamp((Date) formatter.parse(endDateStr));
