@@ -138,6 +138,7 @@ public class AddTourFragment extends Fragment {
 //            loadingProgressBar.setVisibility(View.VISIBLE);
 
 
+
                 if (tourNameEditText.getText().toString().equals("") || locationEditText.getText().toString().equals("")
                         ||lengthEditText.getText().toString().equals("")||startDateEditText.getText().toString().equals("")
                 ) {
@@ -156,6 +157,7 @@ public class AddTourFragment extends Fragment {
                         final Timestamp startDate = new Timestamp(date);
                         // Check to make sure some input was entered
                         if (name.equals("")) {
+
 //                    // Show error to user
 //                    errorTextView.setVisibility(View.VISIBLE);
 //                    errorTextView.setText("Not all fields entered");
