@@ -59,6 +59,7 @@ public class AddTourFragment extends Fragment {
     private EditTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView attractionsView;
+    private ImageView coverImageView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,25 +98,17 @@ public class AddTourFragment extends Fragment {
         });
 
         // Set profile picture
-        ImageView tourCoverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
+        coverImageView = addTourView.findViewById(R.id.edit_tour_2_cover_iv);
+
 
         // If user clicks profile image, they can change it
-        tourCoverImageView.setOnClickListener(view -> {
+        coverImageView.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             int PICK_IMAGE = 1;
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
-
-        Glide.with(this)
-                .load(MainActivity.user.getProfileImageURI())
-                .placeholder(R.drawable.default_image)
-                .circleCrop()
-                .into(tourCoverImageView);
-
-
-
 
 
         Button editTourSaveButton = addTourView.findViewById(R.id.edit_tour_2_save_bt);
@@ -359,9 +352,14 @@ public class AddTourFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
         if(resultCode == Activity.RESULT_OK) {
             assert imageReturnedIntent != null;
+
+            Glide.with(this)
+                    .load(imageReturnedIntent.getData())
+                    .placeholder(R.drawable.default_image)
+                    .into(coverImageView);
+
             uploadImageToDatabase(imageReturnedIntent);
         }
     }
@@ -392,11 +390,9 @@ public class AddTourFragment extends Fragment {
                     storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
 
+
                                 tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
 
-                                Firestore.updateUser();
-
-                                getActivity().getSupportFragmentManager().popBackStack();
 
                             })
                             .addOnFailureListener(exception -> {
