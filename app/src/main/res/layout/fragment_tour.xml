@@ -5,13 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSecondaryLight">
-    <ScrollView
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
@@ -20,22 +23,27 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/item_tour_bg">
+
                 <ImageView
                     android:id="@+id/tour_cover_iv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
+                    android:src="@drawable/default_image"
                     android:background="@drawable/item_tour_bg_img"
                     android:scaleType="fitXY" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/edit_tour_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/tour_cover_btn"
+
+                    <TextView
+                        android:id="@+id/tour_cover_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/item_tour_bg_img"
                         android:gravity="left"
                         android:maxWidth="150dp"
                         android:paddingBottom="5dp"
@@ -47,104 +55,234 @@
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </FrameLayout>
+
             <EditText
                 android:id="@+id/tour_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:hint="Tour Name"
+                android:padding="5dp"
+                android:background="#E4A561"
+                android:hint="Name"
                 android:inputType="text"
                 android:selectAllOnFocus="true"
                 android:textColorHint="@color/colorAccent"
                 android:textSize="30dp"
                 android:textStyle="bold" />
-            <EditText
-                android:id="@+id/tour_location_et"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:hint="City, State"
-                android:selectAllOnFocus="true"
-                android:textColorHint="@color/colorAccent"
-                app:backgroundTint="@color/colorSecondaryLight" />
-            <EditText
-                android:id="@+id/tour_cost_et"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Location:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <EditText
+                    android:id="@+id/tour_location_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#E4A561"
+                    android:padding="5dp"
+                    android:layout_marginEnd="24dp"
+                    android:textSize="25sp"
+                    android:hint="City, State"
+                    android:selectAllOnFocus="true"
+                    android:textColorHint="@color/colorAccent" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:hint="Cost in $"
-                android:inputType="numberDecimal"
-                android:selectAllOnFocus="true"
-                android:textColorHint="@color/colorAccent"
-                app:backgroundTint="@color/colorSecondaryLight" />
-            <EditText
-                android:id="@+id/tour_length_et"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Cost:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <EditText
+                    android:id="@+id/tour_cost_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="24dp"
+                    android:padding="5dp"
+                    android:background="#E4A561"
+                    android:textSize="25sp"
+                    android:hint="$"
+                    android:inputType="numberDecimal"
+                    android:selectAllOnFocus="true"
+                    android:textColorHint="@color/colorAccent" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:hint="Estimated Time"
-                android:inputType="time"
-                android:selectAllOnFocus="true"
-                android:textColorHint="@color/colorAccent"
-                app:backgroundTint="@color/colorSecondaryLight" />
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Start Date:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <EditText
+                    android:id="@+id/tour_start_date_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#E4A561"
+                    android:padding="5dp"
+                    android:layout_marginEnd="24dp"
+                    android:textSize="25sp"
+                    android:hint="Day/Month/Year"
+                    android:selectAllOnFocus="true"
+                    android:textColorHint="@color/colorAccent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="End Date:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <EditText
+                    android:id="@+id/tour_end_date_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#E4A561"
+                    android:padding="5dp"
+                    android:layout_marginEnd="24dp"
+                    android:textSize="25sp"
+                    android:hint="Day/Month/Year"
+                    android:selectAllOnFocus="true"
+                    android:textColorHint="@color/colorAccent" />
+
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
+                android:paddingTop="10dp"
                 android:text="Attractions"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="28dp"
                 android:textStyle="bold"/>
+
             <FrameLayout
+                android:id="@+id/tour_attractions_rv_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2">
+
                 <LinearLayout
-                    android:id="@+id/tour_loading_container"
+                    android:id="@+id/tour_attractions_loading_container"
                     android:layout_width="match_parent"
                     android:layout_height="266dp"
                     android:gravity="center"
+                    android:background="#E4A561"
                     android:orientation="vertical"
                     android:visibility="visible">
+
                     <ProgressBar
-                        android:id="@+id/tour_loading_pb"
+                        android:id="@+id/tour_attractions_loading_pb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
+
                     <TextView
-                        android:id="@+id/tour_loading_tv"
+                        android:id="@+id/tour_attractions_loading_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:text="Loading Current Attractions"
                         android:textSize="25sp" />
+
                 </LinearLayout>
+
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                     android:id="@+id/tour_attractions_srl"
                     android:layout_width="match_parent"
                     android:layout_height="286dp">
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/tour_attractions_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="#E4A561"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:visibility="invisible" />
+
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
             </FrameLayout>
+
+            <RelativeLayout
+                android:id="@+id/tour_checkboxes_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/tour_notifications_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="40dp"
+                    android:text="@string/fragment_edit_tour_notifications"
+                    android:textSize="25sp" />
+
+                <CheckBox
+                    android:id="@+id/tour_public_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="40dp"
+                    android:text="@string/fragment_edit_tour_public"
+                    android:textSize="25sp"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+
             <LinearLayout
+                android:id="@+id/tour_buttons_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:paddingBottom="20dp"
                 android:weightSum="1.0">
+
                 <Button
                     android:id="@+id/tour_add_attraction_btn"
                     android:layout_width="200dp"
@@ -159,7 +297,7 @@
                     android:textAllCaps="false"
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
-                <!--android:onClick="addAttractionFunction"-->
+
                 <Button
                     android:id="@+id/tour_share_btn"
                     android:layout_width="200dp"
@@ -173,7 +311,7 @@
                     android:textAllCaps="false"
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
-                <!--android:onClick="shareTourFunction"-->
+
                 <Button
                     android:id="@+id/tour_update_btn"
                     android:layout_width="200dp"
@@ -187,8 +325,11 @@
                     android:textAllCaps="false"
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
-                <!--android:onClick="updateTourFunction"-->
+
             </LinearLayout>
+
         </LinearLayout>
-    </ScrollView>
+
+    </androidx.core.widget.NestedScrollView>
+
 </LinearLayout>

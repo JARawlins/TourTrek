@@ -53,13 +53,13 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     @Override
     public void onBindViewHolder(@NonNull CurrentTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
 
-        ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.VISIBLE);
+        ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.VISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.INVISIBLE);
 
          holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
          holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
 
-        ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
+        ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);
     }
 
@@ -116,8 +116,8 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
      * Stop the loading of the progress bar for the recycler view
      */
     public void stopLoading() {
-        if (((MainActivity) context).findViewById(R.id.attractions_loading_container) != null) {
-            ((MainActivity) context).findViewById(R.id.attractions_loading_container).setVisibility(View.INVISIBLE);
+        if (((MainActivity) context).findViewById(R.id.tour_attractions_loading_container) != null) {
+            ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.INVISIBLE);
             ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);
         }
     }

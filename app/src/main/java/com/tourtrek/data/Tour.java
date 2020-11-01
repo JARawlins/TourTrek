@@ -2,12 +2,18 @@ package com.tourtrek.data;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Tour{
     private String name;
     private Timestamp startDate;
+    private Timestamp endDate;
     private String location;
     private Long length;
     private float cost;
@@ -115,12 +121,36 @@ public class Tour{
         this.startDate = startDate;
     }
 
+    public void setStartDateFromString(String startDateString) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
+
+        final Timestamp startDate = new Timestamp((Date) formatter.parse(startDateString));
+
+        this.startDate = startDate;
+    }
+
+
+    public Timestamp getEndDate() {
+        if (this.endDate == null){
+            this.endDate = Timestamp.now();
+        }
+        return this.endDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
+
     /**
      * Getter for notifications
      *
      * @return current notifications
      */
     public Boolean getNotifications() {
+        if (notifications == null) {
+            notifications = false;
+        }
         return notifications;
     }
 
@@ -208,6 +238,10 @@ public class Tour{
      * @return current publiclyAvailable
      */
     public Boolean isPubliclyAvailable() {
+        if (publiclyAvailable == null) {
+            publiclyAvailable = false;
+        }
+
         return publiclyAvailable;
     }
 

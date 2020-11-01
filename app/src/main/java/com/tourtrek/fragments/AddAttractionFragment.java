@@ -54,7 +54,7 @@ public class AddAttractionFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getActivity().getSupportFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -147,7 +147,7 @@ public class AddAttractionFragment extends Fragment {
                             }
 
                             // go back once the button is pressed
-                            getActivity().getSupportFragmentManager().popBackStack();
+                            getParentFragmentManager().popBackStack();
 
                         })
                         .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));

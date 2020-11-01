@@ -84,12 +84,9 @@ public class PersonalToursFragment extends Fragment {
 
         personalFutureToursTitleButton.setOnClickListener(
                 view -> {
-
-                    FragmentManager fm = getParentFragmentManager();
-
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                    ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
-                    ft.addToBackStack("AddTourFragment").commit();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
 
         // Configure recycler views
