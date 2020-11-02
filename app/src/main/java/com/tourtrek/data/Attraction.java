@@ -2,31 +2,63 @@ package com.tourtrek.data;
 
 import com.google.firebase.Timestamp;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Attraction {
 
     private List<String> reviews;
     private String location;
-    private int cost;
+    private float cost;
     private String name;
     private String description;
     private String attractionUID;
     private Timestamp startDate;
+    private String startTime;
     private Timestamp endDate;
+    private String endTime;
+    private String coverImageURI;
 
     /**
      * Empty constructor needed for Firestore
      */
     public Attraction(){}
 
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getCoverImageURI() {
+        return coverImageURI;
+    }
+
+    public void setCoverImageURI(String coverImageURI) {
+        this.coverImageURI = coverImageURI;
+    }
+
     /**
      * Get attraction cost
      *
      * @return cost of this attraction
      */
-    public int getCost() {
+    public float getCost() {
         return this.cost;
     }
 
@@ -35,7 +67,7 @@ public class Attraction {
      *
      * @param cost
      */
-    public void setCost(int cost) {
+    public void setCost(float cost) {
         this.cost = cost;
     }
 
@@ -107,6 +139,21 @@ public class Attraction {
 
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
+    }
+
+    public void setStartDateFromString(String startDateStr) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
+
+        final Timestamp startDate = new Timestamp((Date) formatter.parse(startDateStr));
+
+        this.startDate = startDate;
+    }
+
+    public void setEndDateFromString(String endDateString) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
+
+        this.endDate = new Timestamp(formatter.parse(endDateString));
     }
 
     public Timestamp getEndDate() {

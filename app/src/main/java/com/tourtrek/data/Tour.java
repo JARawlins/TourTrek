@@ -125,9 +125,7 @@ public class Tour{
 
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
 
-        final Timestamp startDate = new Timestamp((Date) formatter.parse(startDateString));
-
-        this.startDate = startDate;
+        this.startDate = new Timestamp(formatter.parse(startDateString));
     }
 
 
