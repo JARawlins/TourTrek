@@ -81,7 +81,7 @@ TourTrek is an android application developer for those who love to explore new p
 
 By selecting a folder with this icon, you will correctly import the project
 
-Also keep in mind that once you import a project, regardless of whether or not it was successful, android studio will convert it into an android project and give that folder the icon above giving you a false positive
+Also keep in mind that once you import a project, regardless of whether or not it was successful, android studio will convert it into an android project and give that folder the icon above, giving you a false positive
       </p>
 </details>
 
