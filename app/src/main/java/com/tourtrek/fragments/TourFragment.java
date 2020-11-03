@@ -67,7 +67,7 @@ public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
-    private RecyclerView.Adapter attractionsAdapter;
+    private CurrentTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
     private EditText locationEditText;
@@ -411,9 +411,9 @@ public class TourFragment extends Fragment {
                             }
                         }
 
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).copyAttractions(usersAttractions);
+                        attractionsAdapter.clear();
+                        attractionsAdapter.addAll(usersAttractions);
+                        attractionsAdapter.copyAttractions(usersAttractions);
                         swipeRefreshLayout.setRefreshing(false);
 
                     }
@@ -614,7 +614,7 @@ public class TourFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, query);
+                searchAttractions(attractionsAdapter, query);
 
                 return true;
             }
@@ -622,7 +622,7 @@ public class TourFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, newText);
+                searchAttractions(attractionsAdapter, newText);
 
                 return true;
             }
