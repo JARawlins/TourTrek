@@ -1,13 +1,8 @@
 package com.tourtrek.utilities;
 
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
 
 public class ItemClickSupport {
 

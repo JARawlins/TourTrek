@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,42 +65,34 @@ public class PersonalToursFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        // Get the current nav backstack
-        NavController navController = NavHostFragment.findNavController(this);
-
-        // Display login screen if no user was previous logged in
-        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
-            navController.navigate(R.id.navigation_login);
-        }
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        // Display login screen if no user was previous logged in
+        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
+            return personalToursView;
+        }
 
         // Initialize view model
         tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 
-        // TODO: Replace this listener when implementing AddTourFragment
         personalFutureToursTitleButton.setOnClickListener(
-                view -> Toast.makeText(getContext(), "Show add tour fragment here", Toast.LENGTH_SHORT).show());
+                view -> {
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
+                });
 
-        if (MainActivity.user != null) {
-
-            // Configure recycler views
-            configureRecyclerViews(personalToursView);
-            configureSwipeRefreshLayouts(personalToursView);
-            configureOnClickRecyclerView();
-
-        }
+        // Configure recycler views
+        configureRecyclerViews(personalToursView);
+        configureSwipeRefreshLayouts(personalToursView);
+        configureOnClickRecyclerView();
 
         return personalToursView;
     }
@@ -116,96 +106,96 @@ public class PersonalToursFragment extends Fragment {
 
         // Current
 
-            // Get our recycler view from the layout
-            currentRecyclerView = view.findViewById(R.id.personal_current_tours_rv);
+        // Get our recycler view from the layout
+        currentRecyclerView = view.findViewById(R.id.personal_current_tours_rv);
 
-            // Improves performance because content does not change size
-            currentRecyclerView.setHasFixedSize(true);
+        // Improves performance because content does not change size
+        currentRecyclerView.setHasFixedSize(true);
 
-            // Only load 10 tours before loading more
-            currentRecyclerView.setItemViewCacheSize(10);
+        // Only load 10 tours before loading more
+        currentRecyclerView.setItemViewCacheSize(10);
 
-            // Enable drawing cache
-            currentRecyclerView.setDrawingCacheEnabled(true);
-            currentRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Enable drawing cache
+        currentRecyclerView.setDrawingCacheEnabled(true);
+        currentRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-            // User linear layout manager
-            RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
-            currentRecyclerView.setLayoutManager(currentToursLayoutManager);
+        // User linear layout manager
+        RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
+        currentRecyclerView.setLayoutManager(currentToursLayoutManager);
 
-            // Get all current tours
-            fetchToursAsync("current");
+        // Get all current tours
+        fetchToursAsync("current");
 
-            // Specify an adapter
-            currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
-            currentRecyclerView.setAdapter(currentTourAdapter);
+        // Specify an adapter
+        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
+        currentRecyclerView.setAdapter(currentTourAdapter);
 
-            // Stop showing progressBar when items are loaded
-            currentRecyclerView
-                    .getViewTreeObserver()
-                    .addOnGlobalLayoutListener(
-                            () -> ((CurrentPersonalToursAdapter)currentTourAdapter).stopLoading());
+        // Stop showing progressBar when items are loaded
+        currentRecyclerView
+                .getViewTreeObserver()
+                .addOnGlobalLayoutListener(
+                        () -> ((CurrentPersonalToursAdapter)currentTourAdapter).stopLoading());
 
         // Future
 
-            // Get our recycler view from the layout
-            futureRecyclerView = view.findViewById(R.id.personal_future_tours_rv);
+        // Get our recycler view from the layout
+        futureRecyclerView = view.findViewById(R.id.personal_future_tours_rv);
 
-            // Improves performance because content does not change size
-            futureRecyclerView.setHasFixedSize(true);
+        // Improves performance because content does not change size
+        futureRecyclerView.setHasFixedSize(true);
 
-            // Only load 10 tours before loading more
-            futureRecyclerView.setItemViewCacheSize(10);
+        // Only load 10 tours before loading more
+        futureRecyclerView.setItemViewCacheSize(10);
 
-            // Enable drawing cache
-            futureRecyclerView.setDrawingCacheEnabled(true);
-            futureRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Enable drawing cache
+        futureRecyclerView.setDrawingCacheEnabled(true);
+        futureRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-            // User linear layout manager
-            RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
-            futureRecyclerView.setLayoutManager(futureToursLayoutManager);
+        // User linear layout manager
+        RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
+        futureRecyclerView.setLayoutManager(futureToursLayoutManager);
 
-            // Get all current tours
-            fetchToursAsync("future");
+        // Get all current tours
+        fetchToursAsync("future");
 
-            // Specify an adapter
-            futureTourAdapter = new FuturePersonalToursAdapter(getContext());
-            futureRecyclerView.setAdapter(futureTourAdapter);
+        // Specify an adapter
+        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
+        futureRecyclerView.setAdapter(futureTourAdapter);
 
-            // Stop showing progressBar when items are loaded
-            futureRecyclerView
-                    .getViewTreeObserver()
-                    .addOnGlobalLayoutListener(() -> ((FuturePersonalToursAdapter)futureTourAdapter).stopLoading());
+        // Stop showing progressBar when items are loaded
+        futureRecyclerView
+                .getViewTreeObserver()
+                .addOnGlobalLayoutListener(() -> ((FuturePersonalToursAdapter)futureTourAdapter).stopLoading());
 
         // Past
 
-            // Get our recycler view from the layout
-            pastRecyclerView = view.findViewById(R.id.personal_past_tours_rv);
+        // Get our recycler view from the layout
+        pastRecyclerView = view.findViewById(R.id.personal_past_tours_rv);
 
-            // Improves performance because content does not change size
-            pastRecyclerView.setHasFixedSize(true);
+        // Improves performance because content does not change size
+        pastRecyclerView.setHasFixedSize(true);
 
-            // Only load 10 tours before loading more
-            pastRecyclerView.setItemViewCacheSize(10);
+        // Only load 10 tours before loading more
+        pastRecyclerView.setItemViewCacheSize(10);
 
-            // Enable drawing cache
-            pastRecyclerView.setDrawingCacheEnabled(true);
-            pastRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Enable drawing cache
+        pastRecyclerView.setDrawingCacheEnabled(true);
+        pastRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-            // User linear layout manager
-            RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
-            pastRecyclerView.setLayoutManager(pastToursLayoutManager);
+        // User linear layout manager
+        RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
+        pastRecyclerView.setLayoutManager(pastToursLayoutManager);
 
-            fetchToursAsync("past");
+        fetchToursAsync("past");
 
-            // Specify an adapter
-            pastTourAdapter = new PastPersonalToursAdapter(getContext());
-            pastRecyclerView.setAdapter(pastTourAdapter);
+        // Specify an adapter
+        pastTourAdapter = new PastPersonalToursAdapter(getContext());
+        pastRecyclerView.setAdapter(pastTourAdapter);
 
-            // Stop showing progressBar when items are loaded
-            pastRecyclerView
-                    .getViewTreeObserver()
-                    .addOnGlobalLayoutListener(() -> ((PastPersonalToursAdapter)pastTourAdapter).stopLoading());
+        // Stop showing progressBar when items are loaded
+        pastRecyclerView
+                .getViewTreeObserver()
+                .addOnGlobalLayoutListener(() -> ((PastPersonalToursAdapter)pastTourAdapter).stopLoading());
 
     }
 
@@ -217,16 +207,16 @@ public class PersonalToursFragment extends Fragment {
     public void configureSwipeRefreshLayouts(View view) {
 
         // Current
-            currentSwipeRefreshLayout = view.findViewById(R.id.personal_current_tours_srl);
-            currentSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("current"));
+        currentSwipeRefreshLayout = view.findViewById(R.id.personal_current_tours_srl);
+        currentSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("current"));
 
         // Future
-            futureSwipeRefreshLayout = view.findViewById(R.id.personal_future_tours_srl);
-            futureSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("future"));
+        futureSwipeRefreshLayout = view.findViewById(R.id.personal_future_tours_srl);
+        futureSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("future"));
 
         // Past
-            pastSwipeRefreshLayout = view.findViewById(R.id.personal_past_tours_srl);
-            pastSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("past"));
+        pastSwipeRefreshLayout = view.findViewById(R.id.personal_past_tours_srl);
+        pastSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync("past"));
 
     }
 
@@ -240,7 +230,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getTour(position);
+                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);
@@ -272,7 +262,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getTour(position);
+                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);

@@ -2,18 +2,15 @@ package com.tourtrek.adapters;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.Tour;
@@ -71,21 +68,31 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to our recycler view
      *
-     * @param newTour tour to be added
+     * @param tour item to be added
      */
-    public void addNewData(Tour newTour) {
-        futurePersonalToursDataSet.add(newTour);
+    public void addNewData(Tour tour) {
+        futurePersonalToursDataSet.add(tour);
         notifyDataSetChanged();
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
+     * @param tours list of items to add
+     */
+    public void addAll(List<Tour> tours) {
+        this.futurePersonalToursDataSet.addAll(tours);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
      *
-     * @return tour at the position specified
+     * @param position index of item to get
+     *
+     * @return item at the position specified
      */
     public Tour getTour(int position) {
         return futurePersonalToursDataSet.get(position);
@@ -100,17 +107,7 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
     }
 
     /**
-     * Add a list of tours to the recycler
-     *
-     * @param dataSet list of tours to add
-     */
-    public void addAll(List<Tour> dataSet) {
-        this.futurePersonalToursDataSet.addAll(dataSet);
-        notifyDataSetChanged();
-    }
-
-    /**
-     * Stops the loading of the progress bar
+     * Stop the loading of the progress bar for the recycler view
      */
     public void stopLoading() {
         if (((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container) != null) {
