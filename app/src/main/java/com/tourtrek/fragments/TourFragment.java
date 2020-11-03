@@ -1,6 +1,7 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -19,14 +20,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +50,7 @@ import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
+import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.viewModels.TourViewModel;
@@ -78,6 +87,7 @@ public class TourFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
@@ -99,6 +109,9 @@ public class TourFragment extends Fragment {
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
+
+        //setup spinner
+        //SetupSpinner(tourView);
 
         // Initialize all fields
         nameEditText = tourView.findViewById(R.id.tour_name_et);
@@ -273,6 +286,8 @@ public class TourFragment extends Fragment {
         return tourView;
     }
 
+
+
     @Override
     public void onDestroyView() {
 
@@ -283,6 +298,8 @@ public class TourFragment extends Fragment {
 
         super.onDestroyView();
     }
+
+
 
     /**
      * Convert a given date into the readable string representation
@@ -396,6 +413,7 @@ public class TourFragment extends Fragment {
 
                         ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
                         ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
+                        ((CurrentTourAttractionsAdapter) attractionsAdapter).copyAttractions(usersAttractions);
                         swipeRefreshLayout.setRefreshing(false);
 
                     }
@@ -576,8 +594,68 @@ public class TourFragment extends Fragment {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
 
                     })
-            .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // Show the top app bar with the search icon
+        inflater.inflate(R.menu.tour_search_menu, menu);
+
+        // Get the menu item
+        MenuItem item = menu.findItem(R.id.tour_search_itm);
+
+        SearchView searchView = (SearchView) item.getActionView();
+
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, query);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, newText);
+
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    private void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
+        ArrayList<Attraction> originalList = new ArrayList<>(adapter.getDataSet());
+
+        List<Attraction> filteredTourList = new ArrayList<>();
+
+        if (newText == null || newText.length() == 0) {
+
+            filteredTourList.addAll(originalList);
+            adapter.clear();
+            adapter.addAll(filteredTourList);
+
+        } else {
+
+            String key = newText.toLowerCase();
+
+            for(Attraction attraction: originalList){
+                if(attraction.getName().toLowerCase().contains(key)){
+                    filteredTourList.add(attraction);
+                }
+            }
+        }
+
+        adapter.clear();
+        adapter.setDataSetFiltered(filteredTourList);
+        adapter.addAll(filteredTourList);
     }
 
     /**
@@ -589,5 +667,6 @@ public class TourFragment extends Fragment {
     private void syncTour() {
 
     }
+
 }
 
