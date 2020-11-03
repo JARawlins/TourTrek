@@ -77,15 +77,15 @@ public class LoginFragment extends Fragment {
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             // Close soft keyboard
-            Activity currentActivity = getActivity();
+            Activity currentActivity = requireActivity();
             Utilities.hideKeyboard(currentActivity);
 
             // Start loading progress circle
-            getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.login_loading_pb).setVisibility(View.VISIBLE);
 
-            final EditText emailEditText = getActivity().findViewById(R.id.login_email_et);
-            final EditText passwordEditText = getActivity().findViewById(R.id.login_password_et);
-            final TextView errorTextView = getActivity().findViewById(R.id.login_error_tv);
+            final EditText emailEditText = view.findViewById(R.id.login_email_et);
+            final EditText passwordEditText = view.findViewById(R.id.login_password_et);
+            final TextView errorTextView = view.findViewById(R.id.login_error_tv);
 
             final String email = emailEditText.getText().toString();
             final String password = passwordEditText.getText().toString();
@@ -95,12 +95,12 @@ public class LoginFragment extends Fragment {
                 errorTextView.setText("Invalid username or password");
 
                 // Stop loading progress circle
-                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+                view.findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
             }
             else {
 
                 mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(getActivity(), task -> {
+                        .addOnCompleteListener(requireActivity(), task -> {
                             if (task.isSuccessful()) {
 
                                 Log.d(TAG, "signInWithEmail:success");
@@ -130,7 +130,7 @@ public class LoginFragment extends Fragment {
                                                 }
 
                                                 // Stop showing progress bar
-                                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+                                                view.findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
                                             }
                                         });
 
@@ -142,7 +142,7 @@ public class LoginFragment extends Fragment {
                                 Log.w(TAG, "signInWithEmail:failure - " + task.getException().getMessage());
 
                                 // Stop loading progress circle
-                                getActivity().findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+                                view.findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
                             }
                         });
             }
@@ -169,6 +169,6 @@ public class LoginFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setActionBarTitle("Login");
+        ((MainActivity) requireActivity()).setActionBarTitle("Login");
     }
 }

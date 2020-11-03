@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -55,12 +56,28 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Leave empty since we don't want to user to go back to another screen
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View tourMarketView = inflater.inflate(R.layout.fragment_tour_market, container, false);
 
         // Initialize view model
-        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
         SetupSpinner(tourMarketView);
 
@@ -75,7 +92,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         Spinner spinner = view.findViewById(R.id.tour_market_spinner);
 
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(), R.array.categories,
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireActivity(), R.array.categories,
                 android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -200,12 +217,6 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
 
         // Show the top app bar with the search icon
@@ -289,7 +300,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setActionBarTitle("Tour Market");
+        ((MainActivity) requireActivity()).setActionBarTitle("Tour Market");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

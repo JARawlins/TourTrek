@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -20,14 +19,17 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.data.User;
+import com.tourtrek.viewModels.TourViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -127,10 +129,12 @@ public class MainActivity extends AppCompatActivity {
             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
 
                 int hour = hourOfDay % 12;
+
                 button.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour,
                         minute, hourOfDay < 12 ? "am" : "pm"));
 
                 button.setBackgroundColor(Color.parseColor("#10000000"));
+
             }
         };
 
@@ -152,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 String date = (month + 1) + "/" + day + "/" + year;
                 button.setText(date);
                 button.setBackgroundColor(Color.parseColor("#10000000"));
+
             }
         };
 
@@ -163,7 +168,5 @@ public class MainActivity extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, year, month, day);
 
         datePickerDialog.show();
-
-
     }
 }

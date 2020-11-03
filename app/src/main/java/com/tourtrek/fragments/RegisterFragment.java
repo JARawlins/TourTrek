@@ -77,7 +77,7 @@ public class RegisterFragment extends Fragment {
             public void onClick(View v) {
 
                 // Close keyboard
-                Utilities.hideKeyboard(getActivity());
+                Utilities.hideKeyboard(requireActivity());
 
                 // Start loading the progress circle
                 loadingProgressBar.setVisibility(View.VISIBLE);
@@ -111,7 +111,7 @@ public class RegisterFragment extends Fragment {
                 else {
 
                     mAuth.createUserWithEmailAndPassword(email, password1)
-                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
@@ -166,6 +166,6 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setActionBarTitle("Register");
+        ((MainActivity) requireActivity()).setActionBarTitle("Register");
     }
 }
