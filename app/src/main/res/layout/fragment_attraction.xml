@@ -24,7 +24,7 @@
                 android:background="@drawable/item_tour_bg">
 
                 <ImageView
-                    android:id="@+id/add_attraction_cover_iv"
+                    android:id="@+id/attraction_cover_iv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
@@ -90,7 +90,7 @@
                     android:layout_marginStart="24dp" />
 
                 <EditText
-                    android:id="@+id/add_attraction_location_et"
+                    android:id="@+id/attraction_location_et"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#EEEEEE"
@@ -120,7 +120,7 @@
                     android:layout_marginStart="24dp" />
 
                 <EditText
-                    android:id="@+id/add_attraction_cost_et"
+                    android:id="@+id/attraction_cost_et"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="24dp"
@@ -151,7 +151,7 @@
                     android:layout_marginStart="24dp" />
 
                 <Button
-                    android:id="@+id/add_attraction_start_date_btn"
+                    android:id="@+id/attraction_start_date_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
@@ -177,7 +177,7 @@
                     android:layout_marginStart="24dp" />
 
                 <Button
-                    android:id="@+id/add_attraction_start_time_btn"
+                    android:id="@+id/attraction_start_time_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
@@ -203,7 +203,7 @@
                     android:layout_marginStart="24dp" />
 
                 <Button
-                    android:id="@+id/add_attraction_end_date_btn"
+                    android:id="@+id/attraction_end_date_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
@@ -230,7 +230,7 @@
                     android:layout_marginStart="24dp" />
 
                 <Button
-                    android:id="@+id/add_attraction_end_time_btn"
+                    android:id="@+id/attraction_end_time_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
@@ -255,7 +255,7 @@
                 app:backgroundTint="@color/colorSecondaryLight" />
 
             <EditText
-                android:id="@+id/add_attraction_description_et"
+                android:id="@+id/attraction_description_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -280,7 +280,7 @@
                 android:weightSum="1.0">
 
                 <Button
-                    android:id="@+id/add_attraction_update_btn"
+                    android:id="@+id/attraction_update_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
