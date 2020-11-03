@@ -75,13 +75,13 @@ TourTrek is an android application developer for those who love to explore new p
   <p>
    This is because when you unzipped the release zip file, you added an additional folder on top of the app folder. When you import the project, it should show the android icon next to the folder like so:
 
-[<img src=".github/assets/android_app_folder_icon.PNG"
+<img src=".github/assets/android_app_folder_icon.PNG"
       alt="Android App Folder Icon"
-      height="30">]
+      height="30">
 
 By selecting a folder with this icon, you will correctly import the project
 
-Also keep in mind that once you import a project, regardless of whether or not it was a successful, android studio will convert it into an android project and give that folder the icon above giving you a false positive
+Also keep in mind that once you import a project, regardless of whether or not it was successful, android studio will convert it into an android project and give that folder the icon above giving you a false positive
       </p>
 </details>
 
