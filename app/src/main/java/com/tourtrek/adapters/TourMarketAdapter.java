@@ -173,7 +173,8 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     }
 
     public void setDataSetFiltered(List<Tour> dataSet){
-        this.toursDataSetFiltered = dataSet;
+
+        this.toursDataSetFiltered = new ArrayList<>(dataSet);
     }
 
 }
