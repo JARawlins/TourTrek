@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/gradient"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/item_tour_bg">
+
+                <ImageView
+                    android:id="@+id/add_attraction_cover_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:src="@drawable/default_image"
+                    android:background="@drawable/item_tour_bg_img"
+                    android:scaleType="fitXY" />
+
+                <FrameLayout
+                    android:id="@+id/attraction_cover_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/attraction_cover_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/item_tour_bg_img"
+                        android:gravity="left"
+                        android:maxWidth="150dp"
+                        android:paddingBottom="5dp"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="5dp"
+                        android:text="Edit Image"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+            <EditText
+                android:id="@+id/attraction_name_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:padding="5dp"
+                android:background="#E4A561"
+                android:hint="Attraction Name"
+                android:inputType="text"
+                android:selectAllOnFocus="true"
+                android:textColorHighlight="#AAAAAAAA"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Location:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <EditText
+                    android:id="@+id/add_attraction_location_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#E4A561"
+                    android:padding="5dp"
+                    android:layout_marginEnd="24dp"
+                    android:textSize="25sp"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="City, State"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Cost:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <EditText
+                    android:id="@+id/add_attraction_cost_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="24dp"
+                    android:padding="5dp"
+                    android:background="#E4A561"
+                    android:textSize="25sp"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="$0.00"
+                    android:inputType="numberDecimal"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Start Date:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <Button
+                    android:id="@+id/add_attraction_start_date_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:background="#E4A561"
+                    android:textSize="20dp"
+                    android:hint="Pick Date" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Start Time:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <Button
+                    android:id="@+id/add_attraction_start_time_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:background="#E4A561"
+                    android:textSize="20dp"
+                    android:hint="Pick Time"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="End Date:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <Button
+                    android:id="@+id/add_attraction_end_date_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:background="#E4A561"
+                    android:textSize="20dp"
+                    android:hint="Pick Date"
+                    android:onClick="showDatePickerDialog" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="End Time:"
+                    android:textSize="25sp"
+                    android:layout_marginStart="24dp" />
+
+                <Button
+                    android:id="@+id/add_attraction_end_time_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:background="#E4A561"
+                    android:textSize="20dp"
+                    android:hint="Pick Time"
+                    android:onClick="showTimePickerDialog" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/add_attraction_description_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:gravity="center_horizontal"
+                android:text="Description"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorSecondaryLight" />
+
+            <EditText
+                android:id="@+id/add_attraction_description_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:padding="10dp"
+                android:inputType="textMultiLine"
+                android:gravity="start"
+                android:background="#E4A561"
+                android:textColorHighlight="#AAAAAAAA"
+                android:lines="5"
+                android:hint="Details"
+                android:selectAllOnFocus="true" />
+
+            <LinearLayout
+                android:id="@+id/attraction_buttons_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:paddingBottom="20dp"
+                android:weightSum="1.0">
+
+                <Button
+                    android:id="@+id/add_attraction_update_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginStart="24dp"
+                    android:background="@color/colorPrimary"
+                    android:enabled="true"
+                    android:text="Update Attraction"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+          
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

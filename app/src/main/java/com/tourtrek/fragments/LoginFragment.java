@@ -120,7 +120,7 @@ public class LoginFragment extends Fragment {
                                                     MainActivity.user = userDocument.toObject(User.class);
 
                                                     // Go back to the profile screen
-                                                    getActivity().getSupportFragmentManager().popBackStack();
+                                                    getParentFragmentManager().popBackStack();
 
                                                 }
 

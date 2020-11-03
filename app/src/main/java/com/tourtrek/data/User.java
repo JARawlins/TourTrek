@@ -11,6 +11,7 @@ public class User {
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
+    private List<DocumentReference> contacts;
 
     /**
      * Empty constructor needed for firestore
@@ -20,7 +21,7 @@ public class User {
     public User(String username, String email) {
         this.username = username;
         this.email = email;
-        this.tours = new ArrayList<DocumentReference>();
+        this.tours = new ArrayList<>();
     }
 
     /**
@@ -29,7 +30,10 @@ public class User {
      * @return current username
      */
     public String getUsername() {
-        return username;
+        if (this.username == null){
+            this.username = "";
+        }
+        return this.username;
     }
 
     /**
@@ -98,6 +102,16 @@ public class User {
         this.tours = tours;
     }
 
+    public List<DocumentReference> getContacts() {
+        if (this.contacts == null){
+            this.contacts = new ArrayList<>();
+        }
+        return this.contacts;
+    }
+
+    public void setContacts(List<DocumentReference> contacts) {
+        this.contacts = contacts;
+    }
 
     /**
      * Add tour reference to the user
@@ -106,7 +120,7 @@ public class User {
      */
     public void addTourToTours(DocumentReference tourDocument){
         if (this.tours == null) {
-            this.tours = new ArrayList<DocumentReference>();
+            this.tours = new ArrayList<>();
         }
 
         this.tours.add(tourDocument);

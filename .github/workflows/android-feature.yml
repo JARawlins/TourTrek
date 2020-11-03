@@ -1,4 +1,4 @@
-name: Android Feature Branch CI
+name: android-feature
 
 on:
   push:
@@ -61,12 +61,12 @@ jobs:
     # Runs Unit Test Action
     - name: Unit Tests
       run: bash ./gradlew test
-  
+
   firebase:
     name: Firebase Test Lab
     needs: apk
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v1
 

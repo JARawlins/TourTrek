@@ -40,7 +40,7 @@ public class RegisterFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getActivity().getSupportFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -131,8 +131,8 @@ public class RegisterFragment extends Fragment {
                                                         if (task.isSuccessful()) {
 
                                                             // Remove the last two item from the fragment back stack
-                                                            getActivity().getSupportFragmentManager().popBackStack();
-                                                            getActivity().getSupportFragmentManager().popBackStack();
+                                                            getParentFragmentManager().popBackStack();
+                                                            getParentFragmentManager().popBackStack();
 
                                                             // Stop loading progress circle
                                                             loadingProgressBar.setVisibility(View.GONE);
