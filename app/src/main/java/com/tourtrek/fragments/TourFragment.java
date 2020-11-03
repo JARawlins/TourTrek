@@ -1,6 +1,7 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -53,17 +55,21 @@ import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.AttractionCostSorter;
+import com.tourtrek.utilities.AttractionLocationSorter;
+import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class TourFragment extends Fragment {
+public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
@@ -100,6 +106,20 @@ public class TourFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+    public void SetupSpinner(View view) {
+        Spinner spinner = view.findViewById(R.id.tour_attraction_sort_spinner);
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(), R.array.categories_attractions,
+                android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(this);
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -111,6 +131,8 @@ public class TourFragment extends Fragment {
         tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
 
         //setup spinner
+        SetupSpinner(tourView);
+
         //SetupSpinner(tourView);
 
         // Initialize all fields
@@ -666,6 +688,87 @@ public class TourFragment extends Fragment {
      */
     private void syncTour() {
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        String key = (String) parent.getItemAtPosition(position);
+        sortAttractions(attractionsAdapter, key);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
+
+        ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetFiltered());
+
+        switch (key){
+
+            case "Name Ascending":
+
+                List<Attraction> temp1 = new ArrayList<>(data);
+                temp1.sort(new AttractionNameSorter());
+                adapter.clear();
+                adapter.addAll(temp1);
+                break;
+
+            case "Location Ascending":
+
+                List<Attraction> temp2 = new ArrayList<>(data);
+                temp2.sort(new AttractionLocationSorter());
+                adapter.clear();
+                adapter.addAll(temp2);
+                break;
+
+            case "Cost Ascending":
+
+                List<Attraction> temp3 = new ArrayList<>(data);
+                temp3.sort(new AttractionCostSorter());
+                adapter.clear();
+                adapter.addAll(temp3);
+                break;
+
+            case "Name Descending":
+
+                List<Attraction> temp4 = new ArrayList<>(data);
+                temp4.sort(new AttractionNameSorter());
+                Collections.reverse(temp4);
+                adapter.clear();
+                adapter.addAll(temp4);
+                break;
+
+            case "Location Descending":
+
+                List<Attraction> temp5 = new ArrayList<>(data);
+                temp5.sort(new AttractionLocationSorter());
+                Collections.reverse(temp5);
+                adapter.clear();
+                adapter.addAll(temp5);
+                break;
+
+            case "Cost Descending":
+
+                List<Attraction> temp6 = new ArrayList<>(data);
+                temp6.sort(new AttractionCostSorter());
+                Collections.reverse(temp6);
+                adapter.clear();
+                adapter.addAll(temp6);
+                break;
+
+            default:
+
+                List<Attraction> temp0 = new ArrayList<>(data);
+                adapter.clear();
+                adapter.addAll(temp0);
+        }
     }
 
 }
