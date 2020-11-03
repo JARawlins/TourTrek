@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/JohnBednarczyk/TourTrek/workflows/android-feature/badge.svg)](https://github.com/JohnBednarczyk/TourTrek/actions) [![Releases](https://img.shields.io/github/v/release/JohnBednarczyk/TourTrek)](https://github.com/JohnBednarczyk/TourTrek/releases/latest) [![Slack](https://img.shields.io/badge/slack-join-e01563.svg)](https://f20-cs506.slack.com/archives/G01A7TE27TR)
 
 
-TourTrek is an android application developer for those who love to explore new places. In this application, a user can create their own personal account where they can keep track of excursions they decide to embark on. Users can create a Tour, which includes a location, date, and name. Tours consist of attractions a user would like to attend, which can range anywhere from restaurants to amusement parks. Each attraction can store its name, location, cost, and date to keep track of what time/date you want to attend each attraction with reminders included. TourTrek also features a public tour market where you can explore tours that other users have completed and embark on these excursions yourself.
+TourTrek is an android application developed for those who love to explore new places. In this application, a user can create their own personal account where they can keep track of excursions they decide to embark on. Users can create a Tour, which includes a location, date, and name. Tours consist of attractions a user would like to attend, which can range anywhere from restaurants to amusement parks. Each attraction can store its name, location, cost, and date to keep track of what time/date you want to attend each attraction with reminders included. TourTrek also features a public tour market where you can explore tours that other users have completed and embark on these excursions yourself.
 
 [<img src=".github/assets/google-play-badge.png"
       alt="Get it on Google Play"
@@ -75,13 +75,13 @@ TourTrek is an android application developer for those who love to explore new p
   <p>
    This is because when you unzipped the release zip file, you added an additional folder on top of the app folder. When you import the project, it should show the android icon next to the folder like so:
 
-[<img src=".github/assets/android_app_folder_icon.PNG"
+<img src=".github/assets/android_app_folder_icon.PNG"
       alt="Android App Folder Icon"
-      height="30">]
+      height="30">
 
 By selecting a folder with this icon, you will correctly import the project
 
-Also keep in mind that once you import a project, regardless of whether or not it was a successful, android studio will convert it into an android project and give that folder the icon above giving you a false positive
+Also keep in mind that once you import a project, regardless of whether or not it was successful, android studio will convert it into an android project and give that folder the icon above, giving you a false positive
       </p>
 </details>
 
@@ -91,3 +91,15 @@ Also keep in mind that once you import a project, regardless of whether or not i
 </details>
 
 ## Screenshots
+
+| Login | Register | Tour Market |
+|:-:|:-:|:-:|
+| <img src=".github/assets/screenshots/Login-Screen.PNG" alt="Login" height="500"> | <img src=".github/assets/screenshots/Registration-Screen.PNG" alt="Registration" height="500"> | <img src=".github/assets/screenshots/Tour-Market-Screen.PNG" alt="Tour Market" height="500"> |
+
+| Personal Tours | Profile | Tour Top |
+|:-:|:-:|:-:|
+| <img src=".github/assets/screenshots/Personal-Tours-Screen.PNG" alt="Personal Tours" height="500"> | <img src=".github/assets/screenshots/Profile-Screen.PNG" alt="Profile" height="500"> | <img src=".github/assets/screenshots/Tour-Screen-1.PNG" alt="Tour Top" height="500"> |
+
+| Tour Bottom |
+|:-:|
+| <img src=".github/assets/screenshots/Tour-Screen-2.PNG" alt="Tour Bottom" height="500"> |
