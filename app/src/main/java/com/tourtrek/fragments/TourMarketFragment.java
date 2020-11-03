@@ -222,30 +222,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                ArrayList<Tour> originalTours = new ArrayList<>(tourMarketAdapter.getDataSet());
-
-                List<Tour> filteredToursList = new ArrayList<>();
-
-                if (query == null || query.length() == 0) {
-
-                    filteredToursList.addAll(originalTours);
-                    tourMarketAdapter.clear();
-                    tourMarketAdapter.addAll(filteredToursList);
-
-                } else {
-
-                    String key = query.toLowerCase();
-
-                    for(Tour tour: originalTours){
-                        if(tour.getName().toLowerCase().contains(key)){
-                            filteredToursList.add(tour);
-                        }
-                    }
-                }
-
-                tourMarketAdapter.clear();
-                tourMarketAdapter.setDataSetFiltered(filteredToursList);
-                tourMarketAdapter.addAll(filteredToursList);
+                searchTours(tourMarketAdapter, query);
 
                 return true;
             }
@@ -253,31 +230,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                ArrayList<Tour> originalTours = new ArrayList<>(tourMarketAdapter.getDataSet());
-
-                List<Tour> filteredTourList = new ArrayList<>();
-
-                if (newText == null || newText.length() == 0) {
-
-                    filteredTourList.addAll(originalTours);
-                    tourMarketAdapter.clear();
-                    tourMarketAdapter.addAll(filteredTourList);
-
-                } else {
-
-                    String key = newText.toLowerCase();
-
-                    for(Tour tour: originalTours){
-                        if(tour.getName().toLowerCase().contains(key)){
-                            filteredTourList.add(tour);
-                        }
-                    }
-
-                }
-
-                tourMarketAdapter.clear();
-                tourMarketAdapter.setDataSetFiltered(filteredTourList);
-                tourMarketAdapter.addAll(filteredTourList);
+                searchTours(tourMarketAdapter, newText);
 
                 return true;
             }
@@ -296,9 +249,45 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        ArrayList<Tour> data = new ArrayList<>(tourMarketAdapter.getDataSetFiltered());
-
         String key = (String) parent.getItemAtPosition(position);
+        sortTours(tourMarketAdapter, key);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {}
+
+    public void searchTours(TourMarketAdapter adapter, String newText){
+        ArrayList<Tour> originalList = new ArrayList<>(adapter.getDataSet());
+
+        List<Tour> filteredTourList = new ArrayList<>();
+
+        if (newText == null || newText.length() == 0) {
+
+            filteredTourList.addAll(originalList);
+            adapter.clear();
+            adapter.addAll(filteredTourList);
+
+        } else {
+
+            String key = newText.toLowerCase();
+
+            for(Tour tour: originalList){
+                if(tour.getName().toLowerCase().contains(key)){
+                    filteredTourList.add(tour);
+                }
+            }
+        }
+
+        adapter.clear();
+        adapter.setDataSetFiltered(filteredTourList);
+        adapter.addAll(filteredTourList);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sortTours(TourMarketAdapter adapter, String key){
+
+        ArrayList<Tour> data = new ArrayList<>(adapter.getDataSetFiltered());
 
         switch (key){
 
@@ -306,24 +295,24 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
 
                 List<Tour> temp1 = new ArrayList<>(data);
                 temp1.sort(new TourNameSorter());
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp1);
+                adapter.clear();
+                adapter.addAll(temp1);
                 break;
 
             case "Location Ascending":
 
                 List<Tour> temp2 = new ArrayList<>(data);
                 temp2.sort(new TourLocationSorter());
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp2);
+                adapter.clear();
+                adapter.addAll(temp2);
                 break;
 
             case "Duration Ascending":
 
                 List<Tour> temp3 = new ArrayList<>(data);
                 temp3.sort(new TourLengthSorter());
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp3);
+                adapter.clear();
+                adapter.addAll(temp3);
                 break;
 
             case "Name Descending":
@@ -331,8 +320,8 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                 List<Tour> temp4 = new ArrayList<>(data);
                 temp4.sort(new TourNameSorter());
                 Collections.reverse(temp4);
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp4);
+                adapter.clear();
+                adapter.addAll(temp4);
                 break;
 
             case "Location Descending":
@@ -340,8 +329,8 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                 List<Tour> temp5 = new ArrayList<>(data);
                 temp5.sort(new TourLocationSorter());
                 Collections.reverse(temp5);
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp5);
+                adapter.clear();
+                adapter.addAll(temp5);
                 break;
 
             case "Duration Descending":
@@ -350,19 +339,16 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                 List<Tour> temp6 = new ArrayList<>(data);
                 temp6.sort(new TourLengthSorter());
                 Collections.reverse(temp6);
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp6);
+                adapter.clear();
+                adapter.addAll(temp6);
                 break;
 
             default:
 
                 List<Tour> temp0 = new ArrayList<>(data);
-                tourMarketAdapter.clear();
-                tourMarketAdapter.addAll(temp0);
+                adapter.clear();
+                adapter.addAll(temp0);
         }
     }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {}
 }
 
