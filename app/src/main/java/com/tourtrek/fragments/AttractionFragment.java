@@ -312,7 +312,12 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+        if (attractionViewModel.isNewAttraction()){
+            ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+        }
+        else{
+            ((MainActivity) requireActivity()).setActionBarTitle("Update Attraction");
+        }
     }
 
     @Override
