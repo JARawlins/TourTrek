@@ -34,11 +34,8 @@ import com.tourtrek.data.Attraction;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,23 +86,23 @@ public class AttractionFragment extends Fragment {
         View addAttractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
 
         // Initialize tourViewModel to get the current tour
-        tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
         // Initialize attractionMarketViewModel to get the current attraction
-        attractionViewModel = new ViewModelProvider(getActivity()).get(AttractionViewModel.class);
+        attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
 
         // Initialize all fields
         nameEditText = addAttractionView.findViewById(R.id.attraction_name_et);
-        locationEditText = addAttractionView.findViewById(R.id.add_attraction_location_et);
-        costEditText = addAttractionView.findViewById(R.id.add_attraction_cost_et);
-        startDateButton = addAttractionView.findViewById(R.id.add_attraction_start_date_btn);
-        startTimeButton = addAttractionView.findViewById(R.id.add_attraction_start_time_btn);
-        endDateButton = addAttractionView.findViewById(R.id.add_attraction_end_date_btn);
-        endTimeButton = addAttractionView.findViewById(R.id.add_attraction_end_time_btn);
-        descriptionEditText = addAttractionView.findViewById(R.id.add_attraction_description_et);
-        coverImageView = addAttractionView.findViewById(R.id.add_attraction_cover_iv);
+        locationEditText = addAttractionView.findViewById(R.id.attraction_location_et);
+        costEditText = addAttractionView.findViewById(R.id.attraction_cost_et);
+        startDateButton = addAttractionView.findViewById(R.id.attraction_start_date_btn);
+        startTimeButton = addAttractionView.findViewById(R.id.attraction_start_time_btn);
+        endDateButton = addAttractionView.findViewById(R.id.attraction_end_date_btn);
+        endTimeButton = addAttractionView.findViewById(R.id.attraction_end_time_btn);
+        descriptionEditText = addAttractionView.findViewById(R.id.attraction_description_et);
+        coverImageView = addAttractionView.findViewById(R.id.attraction_cover_iv);
         coverTextView = addAttractionView.findViewById(R.id.attraction_cover_tv);
-        updateAttractionButton = addAttractionView.findViewById(R.id.add_attraction_update_btn);
+        updateAttractionButton = addAttractionView.findViewById(R.id.attraction_update_btn);
         buttonsContainer = addAttractionView.findViewById(R.id.attraction_buttons_container);
 
         nameEditText.setEnabled(false);
@@ -118,7 +115,6 @@ public class AttractionFragment extends Fragment {
         coverImageView.setClickable(false);
         coverTextView.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
 
         if (attractionViewModel.getSelectedAttraction() == null) {
 
@@ -130,7 +126,8 @@ public class AttractionFragment extends Fragment {
             costEditText.setEnabled(true);
             startDateButton.setEnabled(true);
             startTimeButton.setEnabled(true);
-            endDateButton.setClickable(true);
+            endDateButton.setEnabled(true);
+            endTimeButton.setEnabled(true);
             endTimeButton.setVisibility(View.VISIBLE);
             coverImageView.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
@@ -151,9 +148,9 @@ public class AttractionFragment extends Fragment {
             nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
             locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
             costEditText.setText("$" + attractionViewModel.getSelectedAttraction().getCost());
-            startDateButton.setText(convertDateToString(attractionViewModel.getSelectedAttraction().getStartDate().toDate()));
+            startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
             startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
-            endDateButton.setText(convertDateToString(attractionViewModel.getSelectedAttraction().getEndDate().toDate()));
+            endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
             endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
             descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
 
@@ -309,31 +306,17 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setActionBarTitle("Add Attraction");
+        ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
     }
 
     @Override
     public void onDestroyView() {
 
         tourViewModel.setReturnedFromAddAttraction(false);
+        attractionViewModel.setIsNewAttraction(null);
+        attractionViewModel.setSelectedAttraction(null);
 
         super.onDestroyView();
-    }
-
-
-    /**
-     * Convert a given date into the readable string representation
-     *
-     * @param date date to convert
-     *
-     * @return string representation of the date
-     */
-    public String convertDateToString(Date date) {
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-        final String newDate = formatter.format(date);
-
-        return newDate;
     }
 
     /**
@@ -471,26 +454,26 @@ public class AttractionFragment extends Fragment {
                 return;
             }
 
+            try {
+                attractionViewModel.getSelectedAttraction().setStartDateFromString(startDate);
+            } catch (ParseException e) {
+                Log.e(TAG, "Error converting endDate to a firebase Timestamp");
+                e.printStackTrace();
+            }
+
             // parse dates to firebase format
             try {
                 attractionViewModel.getSelectedAttraction().setEndDateFromString(endDate);
             } catch (ParseException e) {
                 Log.e(TAG, "Error converting startDate to a firebase Timestamp");
-                Toast.makeText(getContext(), "Start Date Formatted Incorrectly", Toast.LENGTH_SHORT).show();
                 return;
-            }
-
-            try {
-                attractionViewModel.getSelectedAttraction().setStartDateFromString(startDate);
-            } catch (ParseException e) {
-                Log.e(TAG, "Error converting endDate to a firebase Timestamp");
-                Toast.makeText(getContext(), "End Date Formatted Incorrectly", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
             }
 
             attractionViewModel.getSelectedAttraction().setName(name);
             attractionViewModel.getSelectedAttraction().setLocation(location);
             attractionViewModel.getSelectedAttraction().setDescription(description);
+            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
+            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
 
             // Remove $ from cost
             if (cost.startsWith("$"))
@@ -501,51 +484,34 @@ public class AttractionFragment extends Fragment {
             // Get Firestore instance
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            final DocumentReference attractionDocumentReference = db.collection("Attractions").document();
+            // Create a new attraction in the firestore if it doesn't exist
+            if (attractionViewModel.isNewAttraction()) {
+                final DocumentReference attractionDocumentReference = db.collection("Attractions").document();
+                attractionViewModel.getSelectedAttraction().setAttractionUID(attractionDocumentReference.getId());
+                tourViewModel.getSelectedTour().addAttraction(attractionDocumentReference);
+            }
 
-            attractionViewModel.getSelectedAttraction().setAttractionUID(attractionDocumentReference.getId());
-
-            attractionDocumentReference.set(attractionViewModel.getSelectedAttraction())
+            db.collection("Attractions").document(attractionViewModel.getSelectedAttraction().getAttractionUID())
+                    .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
                         Log.d(TAG, "Attraction written to firestore");
-
 
                         if (attractionViewModel.isNewAttraction()) {
                             Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
 
+                            attractionViewModel.setSelectedAttraction(null);
                             attractionViewModel.setIsNewAttraction(null);
                             getParentFragmentManager().popBackStack();
                         }
-                        else
+                        else {
                             Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
 
-                        // Only update the tour with new attraction if it has been created in the firestore
-                        if (tourViewModel.getSelectedTour().getTourUID() != null)
-                            syncTour();
+                            attractionViewModel.setIsNewAttraction(false);
+                        }
 
                     })
                     .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
-    });
-    }
-
-    /**
-     * Update the selected tour
-     *
-     * This method assumes a tour is already created and has a properly filled UID field
-     * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-     */
-    private void syncTour() {
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Setup collection reference
-        CollectionReference toursCollection = db.collection("Tours");
-
-        toursCollection.document(tourViewModel.getSelectedTour().getTourUID())
-                .set(tourViewModel.getSelectedTour())
-                .addOnCompleteListener(v -> {
-                    Log.d(TAG, "Tour successfully written to firestore");
-                });
+        });
     }
 
 }
