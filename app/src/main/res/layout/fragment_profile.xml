@@ -46,13 +46,27 @@
         android:id="@+id/profile_logout_btn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="50dp"
-        android:text="Logout"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:layout_marginTop="64dp"
         android:background="@color/colorPrimary"
+        android:text="Logout"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.229"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_top_panel_container" />
+
+    <Button
+        android:id="@+id/profile_friend_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="64dp"
+        android:background="@color/colorPrimary"
+        android:text="Add Friend"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.758"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_top_panel_container" />
 

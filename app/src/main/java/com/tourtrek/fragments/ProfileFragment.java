@@ -92,6 +92,9 @@ public class ProfileFragment extends Fragment {
         // Setup handler for logout button
         setupLogoutButtonHandler(profileFragmentView);
 
+        // Setup handler for logout button
+        setupAddFriendButtonHandler(profileFragmentView);
+
         return profileFragmentView;
     }
 
@@ -116,6 +119,23 @@ public class ProfileFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
 
             navController.navigate(R.id.navigation_login);
+        });
+    }
+
+    /**
+     * Setup listener for add_friend button
+     *
+     * @param view current view
+     */
+    public void setupAddFriendButtonHandler(final View view) {
+
+        Button addFriendButton = view.findViewById(R.id.profile_friend_btn);
+
+        addFriendButton.setOnClickListener(v -> {
+
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddFriendFragment(), "AddFriendFragment");
+            ft.addToBackStack("AddFriendFragment").commit();
         });
     }
 
