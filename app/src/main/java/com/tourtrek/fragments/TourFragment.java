@@ -55,14 +55,13 @@ import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -128,7 +127,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         View tourView = inflater.inflate(R.layout.fragment_tour, container, false);
 
         // Initialize tourViewModel to get the current tour
-        tourViewModel = new ViewModelProvider(getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
         //setup spinner
         SetupSpinner(tourView);
@@ -206,14 +205,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 tourIsUsers();
             }
 
-            // Set all the fields
-            nameEditText.setText(tourViewModel.getSelectedTour().getName());
-            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
-            costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
-            startDateButton.setText(convertDateToString(tourViewModel.getSelectedTour().getStartDate().toDate()));
-            endDateButton.setText(convertDateToString(tourViewModel.getSelectedTour().getEndDate().toDate()));
-            notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
-            publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
+            if (!tourViewModel.isNewTour()) {
+                // Set all the fields
+                nameEditText.setText(tourViewModel.getSelectedTour().getName());
+                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+                costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
+                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+                notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
+                publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
+            }
 
             Glide.with(getContext())
                     .load(tourViewModel.getSelectedTour().getCoverImageURI())
@@ -269,7 +270,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         });
 
-        startDateButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton));
+        startDateButton.setOnClickListener(view -> {
+            ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton);
+        });
 
         startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -287,7 +290,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         });
 
-        endDateButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showDatePickerDialog(endDateButton));
+        endDateButton.setOnClickListener(view -> {
+            ((MainActivity) requireActivity()).showDatePickerDialog(endDateButton);
+        });
 
         endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -319,23 +324,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
         super.onDestroyView();
-    }
-
-
-
-    /**
-     * Convert a given date into the readable string representation
-     *
-     * @param date date to convert
-     *
-     * @return string representation of the date
-     */
-    public String convertDateToString(Date date) {
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-        final String newDate = formatter.format(date);
-
-        return newDate;
     }
 
     /**
@@ -385,9 +373,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         super.onResume();
 
         if (tourViewModel.isNewTour() || tourViewModel.getSelectedTour() == null)
-            ((MainActivity) getActivity()).setActionBarTitle("New Tour");
+            ((MainActivity) requireActivity()).setActionBarTitle("New Tour");
         else
-            ((MainActivity) getActivity()).setActionBarTitle(tourViewModel.getSelectedTour().getName());
+            ((MainActivity) requireActivity()).setActionBarTitle(tourViewModel.getSelectedTour().getName());
 
     }
 
@@ -577,10 +565,19 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
 
             // parse date to firebase format
+            Date date;
             try {
                 tourViewModel.getSelectedTour().setStartDateFromString(startDateButton.getText().toString());
             } catch (ParseException e) {
-                Log.e(TAG, "Error converting date to a firebase Timestamp");
+                Log.e(TAG, "Error converting startDate to a firebase Timestamp");
+                return;
+            }
+
+            try {
+                tourViewModel.getSelectedTour().setEndDateFromString(endDateButton.getText().toString());
+            } catch (ParseException e) {
+                Log.e(TAG, "Error converting startDate to a firebase Timestamp");
+                return;
             }
 
             tourViewModel.getSelectedTour().setName(nameEditText.getText().toString());
@@ -594,16 +591,21 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             else
                 tourViewModel.getSelectedTour().setCost(Float.parseFloat(costEditText.getText().toString()));
 
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            final DocumentReference tourDocumentReference = db.collection("Tours").document();
+            if (tourViewModel.isNewTour()) {
+                final DocumentReference tourDocumentReference = db.collection("Tours").document();
+                tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
+                MainActivity.user.addTourToTours(tourDocumentReference);
+            }
 
-            tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
-
-            tourDocumentReference.set(tourViewModel.getSelectedTour())
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                    .set(tourViewModel.getSelectedTour())
                     .addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "Tour written to firestore");
+
+                        // Update the user in the firestore
+                        Firestore.updateUser();
 
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
@@ -612,11 +614,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                             tourViewModel.setIsNewTour(null);
                             getParentFragmentManager().popBackStack();
                         }
-                        else
+                        else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
 
+                            tourViewModel.setIsNewTour(false);
+                        }
+
                     })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+            .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
         });
     }
 
