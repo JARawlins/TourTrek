@@ -117,6 +117,7 @@ public class AttractionFragment extends Fragment {
         endDateButton.setEnabled(false);
         endTimeButton.setEnabled(false);
         coverImageView.setClickable(false);
+        // coverImageView.setClickable(true); // new
         coverTextView.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
 
@@ -133,6 +134,8 @@ public class AttractionFragment extends Fragment {
             startTimeButton.setEnabled(true);
             endDateButton.setEnabled(true);
             endTimeButton.setEnabled(true);
+            // coverImageView.setEnabled(true); // new
+            // coverImageView.setClickable(true); // new
             endTimeButton.setVisibility(View.VISIBLE);
             coverImageView.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
@@ -312,6 +315,7 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         if (attractionViewModel.isNewAttraction()){
             ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
         }
@@ -344,14 +348,12 @@ public class AttractionFragment extends Fragment {
             startTimeButton.setEnabled(true);
             endDateButton.setEnabled(true);
             endTimeButton.setEnabled(true);
-            coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
 //            checkBoxesContainer.setVisibility(View.VISIBLE);
             updateAttractionButton.setText("Add Attraction");
             return;
         }
-
 
         // Get instance of firestore
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -364,6 +366,8 @@ public class AttractionFragment extends Fragment {
             }
         }
 
+        // TODO - this is the only location with coverImageView onClick logic, so I need to add logic here to enter the condition when adding an attraction to an owned tour
+        // TODO or add it elsewhere in this method
         if (tourAttractionsUIDs.contains(attractionViewModel.getSelectedAttraction().getAttractionUID())) {
 
             nameEditText.setEnabled(true);
