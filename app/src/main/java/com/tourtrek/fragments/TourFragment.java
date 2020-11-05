@@ -124,7 +124,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        //setup spinner dialog
         attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
 
