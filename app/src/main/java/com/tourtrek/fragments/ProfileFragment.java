@@ -1,6 +1,7 @@
 package com.tourtrek.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -91,6 +94,14 @@ public class ProfileFragment extends Fragment {
 
         // Setup handler for logout button
         setupLogoutButtonHandler(profileFragmentView);
+        Button changePassword = profileFragmentView.findViewById(R.id.profile_change_password_btn);
+
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChangePasswordDialog();
+            }
+        });
 
         return profileFragmentView;
     }
@@ -168,6 +179,42 @@ public class ProfileFragment extends Fragment {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
                 });
+    }
+
+    private void showChangePasswordDialog(){
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_password, null);
+        //Get elements
+        EditText passwordEt1 = view.findViewById(R.id.profile_change_password1_et);
+        EditText passwordEt2 = view.findViewById(R.id.profile_change_password2_et);
+        Button updatePasswordButton = view.findViewById(R.id.profile_update_password_btn);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        //builder.create().show();
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        updatePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String password1 = passwordEt1.getText().toString().trim();
+                String password2 = passwordEt2.getText().toString().trim();
+
+                //validate the password
+                if (password1 == null || password2 == null) {
+                    Toast.makeText(getActivity(), "Passwords filled are empty", Toast.LENGTH_SHORT);
+                } else if (!password1.equals(password2)) {
+                    Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT);
+                } else if (password1.equals(password2) && password1.length() >= 6) {
+                    mAuth.getCurrentUser().updatePassword(password1);
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(getActivity(), "Passwords does not meet minimum requirement", Toast.LENGTH_SHORT);
+                }
+
+            }
+        });
+
     }
 
 }
