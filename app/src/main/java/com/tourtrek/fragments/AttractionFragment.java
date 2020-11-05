@@ -145,6 +145,8 @@ public class AttractionFragment extends Fragment {
             updateAttractionButton.setText("Add Attraction");
 
             attractionViewModel.setIsNewAttraction(true);
+
+            attractionIsUsers();
         }
         else { // attraction selected -> existing one
 
@@ -339,37 +341,8 @@ public class AttractionFragment extends Fragment {
      */
     public void attractionIsUsers() {
 
-        // Check to see if this is an abandoned new attraction
-        if (tourViewModel.isNewTour()) {
-            nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
-            costEditText.setEnabled(true);
-            startDateButton.setEnabled(true);
-            startTimeButton.setEnabled(true);
-            endDateButton.setEnabled(true);
-            endTimeButton.setEnabled(true);
-            coverTextView.setVisibility(View.VISIBLE);
-            buttonsContainer.setVisibility(View.VISIBLE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
-            updateAttractionButton.setText("Add Attraction");
-            return;
-        }
-
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Pull out the UID's of each attraction that belongs to the currently selected tour
-        List<String> tourAttractionsUIDs = new ArrayList<>();
-        if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
-            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
-                tourAttractionsUIDs.add(documentReference.getId());
-            }
-        }
-
-        // TODO - this is the only location with coverImageView onClick logic, so I need to add logic here to enter the condition when adding an attraction to an owned tour
-        // TODO or add it elsewhere in this method
-        if (tourAttractionsUIDs.contains(attractionViewModel.getSelectedAttraction().getAttractionUID())) {
-
+        // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
+        if (tourViewModel.isUserOwned() || attractionViewModel.isNewAttraction()){
             nameEditText.setEnabled(true);
             locationEditText.setEnabled(true);
             costEditText.setEnabled(true);

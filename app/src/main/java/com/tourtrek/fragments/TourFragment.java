@@ -143,6 +143,9 @@ public class TourFragment extends Fragment {
         coverTextView.setVisibility(View.GONE);
         checkBoxesContainer.setVisibility(View.GONE);
 
+        // tour flagged as not belonging to the user by default
+        tourViewModel.setIsUserOwned(false);
+
         // set up the recycler view of attractions
         configureRecyclerView(tourView);
         configureSwipeRefreshLayouts(tourView);
@@ -163,6 +166,8 @@ public class TourFragment extends Fragment {
             buttonsContainer.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
+
+            tourViewModel.setIsUserOwned(true);
 
             updateTourButton.setText("Add Tour");
 
@@ -444,6 +449,9 @@ public class TourFragment extends Fragment {
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
             updateTourButton.setText("Add Tour");
+
+            tourViewModel.setIsUserOwned(true);
+
             return;
         }
 
@@ -469,6 +477,8 @@ public class TourFragment extends Fragment {
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
+
+            tourViewModel.setIsUserOwned(true);
 
             coverImageView.setOnClickListener(view -> {
                 Intent intent = new Intent();
