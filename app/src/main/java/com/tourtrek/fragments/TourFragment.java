@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -88,6 +90,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private LinearLayout buttonsContainer;
     Button shareButton;
     private ImageView coverImageView;
+    private Button attractionSortButton;
+    AlertDialog dialog;
+    AlertDialog.Builder builder;
+    String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
+            "Name Descending", "Location Descending", "Cost Descending"};
+    String result = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,19 +113,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    public void SetupSpinner(View view) {
-        Spinner spinner = view.findViewById(R.id.tour_attraction_sort_spinner);
-
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(), R.array.categories_attractions,
-                android.R.layout.simple_spinner_item);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(adapter);
-
-        spinner.setOnItemSelectedListener(this);
-    }
 
 
     @Override
@@ -129,10 +124,43 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        //setup spinner
-        SetupSpinner(tourView);
+        //setup spinner dialog
+        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
-        //SetupSpinner(tourView);
+
+        //Setup dialog;
+        builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Select Sorting option");
+
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                result = items[which];
+            }
+        });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sortAttractions(attractionsAdapter, result);
+            }
+        });
+
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        dialog = builder.create();
+        attractionSortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
 
         // Initialize all fields
         nameEditText = tourView.findViewById(R.id.tour_name_et);
