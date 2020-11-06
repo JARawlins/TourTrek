@@ -268,7 +268,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {}
 
-    private void searchTours(TourMarketAdapter adapter, String newText){
+    public void searchTours(TourMarketAdapter adapter, String newText){
         ArrayList<Tour> data = new ArrayList<>(adapter.getDataSet());
 
         List<Tour> filteredTourList = findTours(data, newText);
@@ -300,7 +300,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         return filteredTourList;
     }
 
-    private void sortTours(TourMarketAdapter adapter, String key){
+    public void sortTours(TourMarketAdapter adapter, String key){
 
         ArrayList<Tour> data = new ArrayList<>(adapter.getDataSetFiltered());
 
