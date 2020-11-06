@@ -685,16 +685,24 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
 
-    private void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
-        ArrayList<Attraction> originalList = new ArrayList<>(adapter.getDataSet());
+    public void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
+        ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSet());
 
+        List<Attraction> filteredTourList = findAttractions(data, newText);
+
+        adapter.clear();
+        adapter.setDataSetFiltered(filteredTourList);
+        adapter.addAll(filteredTourList);
+    }
+
+    public List<Attraction> findAttractions(List<Attraction> data, String newText) {
+
+        ArrayList<Attraction> originalList = new ArrayList<>(data);
         List<Attraction> filteredTourList = new ArrayList<>();
 
         if (newText == null || newText.length() == 0) {
 
             filteredTourList.addAll(originalList);
-            adapter.clear();
-            adapter.addAll(filteredTourList);
 
         } else {
 
@@ -707,9 +715,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         }
 
-        adapter.clear();
-        adapter.setDataSetFiltered(filteredTourList);
-        adapter.addAll(filteredTourList);
+        return filteredTourList;
     }
 
     /**
@@ -722,7 +728,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -737,70 +742,52 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
 
         ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetFiltered());
 
+        List<Attraction> temp = sortedAttractions(data, key);
+
+        adapter.clear();
+        adapter.addAll(temp);
+    }
+
+    public List<Attraction> sortedAttractions(List<Attraction> data, String key) {
+        List<Attraction> temp = new ArrayList<>(data);
+
         switch (key){
 
             case "Name Ascending":
-
-                List<Attraction> temp1 = new ArrayList<>(data);
-                temp1.sort(new AttractionNameSorter());
-                adapter.clear();
-                adapter.addAll(temp1);
+                Collections.sort(temp, new AttractionNameSorter());
                 break;
 
             case "Location Ascending":
-
-                List<Attraction> temp2 = new ArrayList<>(data);
-                temp2.sort(new AttractionLocationSorter());
-                adapter.clear();
-                adapter.addAll(temp2);
+                Collections.sort(temp, new AttractionLocationSorter());
                 break;
 
             case "Cost Ascending":
-
-                List<Attraction> temp3 = new ArrayList<>(data);
-                temp3.sort(new AttractionCostSorter());
-                adapter.clear();
-                adapter.addAll(temp3);
+                Collections.sort(temp, new AttractionCostSorter());
                 break;
 
             case "Name Descending":
-
-                List<Attraction> temp4 = new ArrayList<>(data);
-                temp4.sort(new AttractionNameSorter());
-                Collections.reverse(temp4);
-                adapter.clear();
-                adapter.addAll(temp4);
+                Collections.sort(temp, new AttractionNameSorter());
+                Collections.reverse(temp);
                 break;
 
             case "Location Descending":
-
-                List<Attraction> temp5 = new ArrayList<>(data);
-                temp5.sort(new AttractionLocationSorter());
-                Collections.reverse(temp5);
-                adapter.clear();
-                adapter.addAll(temp5);
+                Collections.sort(temp, new AttractionLocationSorter());
+                Collections.reverse(temp);
                 break;
 
             case "Cost Descending":
-
-                List<Attraction> temp6 = new ArrayList<>(data);
-                temp6.sort(new AttractionCostSorter());
-                Collections.reverse(temp6);
-                adapter.clear();
-                adapter.addAll(temp6);
+                Collections.sort(temp, new AttractionCostSorter());
+                Collections.reverse(temp);
                 break;
 
             default:
-
-                List<Attraction> temp0 = new ArrayList<>(data);
-                adapter.clear();
-                adapter.addAll(temp0);
+                return temp;
         }
+        return temp;
     }
 
 }
