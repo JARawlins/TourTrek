@@ -117,7 +117,6 @@ public class AttractionFragment extends Fragment {
         endDateButton.setEnabled(false);
         endTimeButton.setEnabled(false);
         coverImageView.setClickable(false);
-        // coverImageView.setClickable(true); // new
         coverTextView.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
 
@@ -134,8 +133,6 @@ public class AttractionFragment extends Fragment {
             startTimeButton.setEnabled(true);
             endDateButton.setEnabled(true);
             endTimeButton.setEnabled(true);
-            // coverImageView.setEnabled(true); // new
-            // coverImageView.setClickable(true); // new
             endTimeButton.setVisibility(View.VISIBLE);
             coverImageView.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
@@ -150,9 +147,7 @@ public class AttractionFragment extends Fragment {
         }
         else { // attraction selected -> existing one
 
-            if (MainActivity.user != null) {
-                attractionIsUsers();
-            }
+            attractionIsUsers();
 
             // Set all the fields
             nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
@@ -353,7 +348,6 @@ public class AttractionFragment extends Fragment {
             coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
 
             coverImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
