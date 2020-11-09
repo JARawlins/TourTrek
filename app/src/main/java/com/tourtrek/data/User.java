@@ -3,6 +3,7 @@ package com.tourtrek.data;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class User {
@@ -12,6 +13,7 @@ public class User {
     private String profileImageURI;
     private List<DocumentReference> tours;
     private List<DocumentReference> contacts;
+    private HashMap<String, Object> settings;
 
     /**
      * Empty constructor needed for firestore
@@ -22,6 +24,24 @@ public class User {
         this.username = username;
         this.email = email;
         this.tours = new ArrayList<>();
+    }
+
+    /**
+     * Getter for settings.
+     *
+     * @return current settings
+     */
+    public HashMap<String, Object> getSettings() {
+        return settings;
+    }
+
+    /**
+     * Setter for settings.
+     *
+     * @param settings settings to set
+     */
+    public void setSettings(HashMap<String, Object> settings) {
+        this.settings = settings;
     }
 
     /**
