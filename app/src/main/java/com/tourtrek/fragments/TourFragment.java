@@ -91,11 +91,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     Button shareButton;
     private ImageView coverImageView;
     private Button attractionSortButton;
-    AlertDialog dialog;
-    AlertDialog.Builder builder;
-    String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
+    private AlertDialog dialog;
+    private AlertDialog.Builder builder;
+    private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
             "Name Descending", "Location Descending", "Cost Descending"};
-    String result = "";
+    private String result = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,8 +124,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
+        //initialize attractionSortButton
         attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
-
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -339,8 +339,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         return tourView;
     }
-
-
 
     @Override
     public void onDestroyView() {
