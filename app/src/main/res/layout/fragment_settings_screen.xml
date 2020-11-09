@@ -42,31 +42,58 @@
         </FrameLayout>
 
             <LinearLayout
+                android:id="@+id/settings_buttons_container"
                 android:layout_width="match_parent"
-                android:layout_height="135dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:paddingBottom="20dp"
+                android:weightSum="1.0">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                <Button
+                    android:id="@+id/settings_version_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="24dp"
-                    android:text="About the App:"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="25dp" />
+                    android:layout_weight="0.33"
+                    android:background="@color/colorPrimaryDark"
+                    android:clickable="false"
+                    android:text="Version 1.2"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginStart="24dp"
-                    android:background="#EEEEEE"
-                    android:text="blah blah blah blahblahb albjlahblahblahbkslfjdklda albjlahblahblahbkslfjdklda"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="20dp" />
+                <Button
+                    android:id="@+id/settings_privacy_policy_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.33"
+                    android:background="@color/colorSecondary"
+                    android:clickable="true"
+                    android:text="Privacy Policy"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/settings_help_center_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="24dp"
+                    android:layout_weight=".33"
+                    android:background="@color/colorAccent"
+                    android:clickable="true"
+                    android:text="Help Center"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
 
             </LinearLayout>
+
 
             <LinearLayout
             android:layout_width="match_parent"
@@ -75,30 +102,32 @@
             android:layout_marginEnd="24dp"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="24dp"
-                android:text="Change Username:"
-                android:textStyle="bold"
-                android:textColor="@color/colorAccent"
-                android:textSize="25dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Change Username:"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp" />
 
-            <EditText
-                android:id="@+id/settings_new_username_et"
-                android:layout_width="350dp"
-                android:layout_height="35dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="48dp"
-                android:background="#EEEEEE"
-                android:textSize="20sp"
-                android:textAlignment="center"
-                android:textColorHighlight="#AAAAAAAA"
-                android:hint="new username"
-                android:selectAllOnFocus="true" />
+                <EditText
+                    android:id="@+id/settings_new_username_et"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="48dp"
+                    android:background="#EEEEEE"
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="new username"
+                    android:selectAllOnFocus="true" />
 
-        </LinearLayout>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,6 +153,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="48dp"
                     android:background="#EEEEEE"
+                    android:clickable="false"
                     android:textSize="20sp"
                     android:textAlignment="center"
                     android:textColorHighlight="#AAAAAAAA"
@@ -177,48 +207,48 @@
             </LinearLayout>
 
             <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="175dp"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
-
-            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="24dp"
-                android:text="Notifications:"
-                android:textStyle="bold"
-                android:textColor="@color/colorAccent"
-                android:textSize="25dp" />
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Notifications:"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp" />
 
-            <CheckBox
-                android:id="@+id/tour_notification1_cb"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="40dp"
-                android:text="when current tour starts"
-                android:textSize="25sp" />
+                <CheckBox
+                    android:id="@+id/settings_tour_start_notification_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="40dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="when current tour starts"
+                    android:textSize="25sp" />
 
-            <CheckBox
-                android:id="@+id/tour_ntifications_cb"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="40dp"
-                android:text="similar tours"
-                android:textSize="25sp" />
+                <CheckBox
+                    android:id="@+id/settings_similar_tours_notification_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="40dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="similar tours"
+                    android:textSize="25sp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/attraction_buttons_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
             android:weightSum="1.0">
 
             <Button
-                android:id="@+id/attraction_update_btn"
+                android:id="@+id/settings_update_settings_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -227,7 +257,7 @@
                 android:background="@color/colorPrimary"
                 android:enabled="true"
                 android:text="Update Settings"
-                android:textColor="#FFFFFF"
+                android:textColor="#EEEEEE"
                 android:textAllCaps="false"
                 android:textSize="20dp"
                 android:textStyle="bold" />
