@@ -41,10 +41,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.utilities.Firestore;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.ParseException;
@@ -57,6 +60,7 @@ public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
+    private AttractionViewModel attractionViewModel;
     private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
@@ -95,6 +99,9 @@ public class TourFragment extends Fragment {
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.fragment_tour, container, false);
 
+        // Initialize attractionViewModel to set the attraction chosen from the recycler
+        attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
+
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
@@ -121,8 +128,8 @@ public class TourFragment extends Fragment {
             tourViewModel.setReturnedFromAddAttraction(true);
 
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AddAttractionFragment");
-            ft.addToBackStack("AddAttractionFragment").commit();
+            ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AttractionFragment");
+            ft.addToBackStack("AttractionFragment").commit();
         });
 
         // set up fields to be made invisible at first
@@ -135,6 +142,9 @@ public class TourFragment extends Fragment {
         buttonsContainer.setVisibility(View.GONE);
         coverTextView.setVisibility(View.GONE);
         checkBoxesContainer.setVisibility(View.GONE);
+
+        // tour flagged as not belonging to the user by default
+        tourViewModel.setIsUserOwned(false);
 
         // set up the recycler view of attractions
         configureRecyclerView(tourView);
@@ -157,6 +167,8 @@ public class TourFragment extends Fragment {
             coverTextView.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
 
+            tourViewModel.setIsUserOwned(true);
+
             updateTourButton.setText("Add Tour");
 
             tourViewModel.setIsNewTour(true);
@@ -169,6 +181,7 @@ public class TourFragment extends Fragment {
                 tourIsUsers();
             }
 
+            // handles the case where you create a new attraction from within the add tour functionality
             if (!tourViewModel.isNewTour()) {
                 // Set all the fields
                 nameEditText.setText(tourViewModel.getSelectedTour().getName());
@@ -280,7 +293,7 @@ public class TourFragment extends Fragment {
     @Override
     public void onDestroyView() {
 
-        if (!tourViewModel.returnedFromAddAttraction()) {
+        if (!tourViewModel.returnedFromAddAttraction() && attractionViewModel.getSelectedAttraction() == null) {
             tourViewModel.setSelectedTour(null);
             tourViewModel.setIsNewTour(null);
         }
@@ -328,6 +341,22 @@ public class TourFragment extends Fragment {
                 .getViewTreeObserver()
                 .addOnGlobalLayoutListener(
                         () -> ((CurrentTourAttractionsAdapter)attractionsAdapter).stopLoading());
+
+        // enable clicking a recycler view item to update an attraction
+        ItemClickSupport.addTo(attractionsRecyclerView, R.layout.item_attraction)
+                .setOnItemClickListener((recyclerView, position, v) -> {
+
+                    // Reference to the current tour selected
+                    Attraction attraction = ((CurrentTourAttractionsAdapter) attractionsAdapter).getData(position);
+
+                    // Add the selected tour to the view model so we can access the tour inside the fragment
+                    attractionViewModel.setSelectedAttraction(attraction);
+
+                    // Display the attraction selected
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AttractionFragment");
+                    ft.addToBackStack("AttractionFragment").commit();
+                });
     }
 
     @Override
@@ -420,6 +449,9 @@ public class TourFragment extends Fragment {
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
             updateTourButton.setText("Add Tour");
+
+            tourViewModel.setIsUserOwned(true);
+
             return;
         }
 
@@ -445,6 +477,8 @@ public class TourFragment extends Fragment {
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
+
+            tourViewModel.setIsUserOwned(true);
 
             coverImageView.setOnClickListener(view -> {
                 Intent intent = new Intent();

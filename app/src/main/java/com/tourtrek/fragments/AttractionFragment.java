@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,7 +31,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
+import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
@@ -116,6 +120,7 @@ public class AttractionFragment extends Fragment {
         coverTextView.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
 
+        // no attraction selected -> new one
         if (attractionViewModel.getSelectedAttraction() == null) {
 
             attractionViewModel.setSelectedAttraction(new Attraction());
@@ -137,12 +142,12 @@ public class AttractionFragment extends Fragment {
             updateAttractionButton.setText("Add Attraction");
 
             attractionViewModel.setIsNewAttraction(true);
-        }
-        else {
 
-            if (MainActivity.user != null) {
-                attractionIsUsers();
-            }
+            attractionIsUsers();
+        }
+        else { // attraction selected -> existing one
+
+            attractionIsUsers();
 
             // Set all the fields
             nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
@@ -153,9 +158,10 @@ public class AttractionFragment extends Fragment {
             endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
             endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
             descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
+            updateAttractionButton.setText("Update Attraction");
 
             Glide.with(getContext())
-                    .load(tourViewModel.getSelectedTour().getCoverImageURI())
+                    .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.default_image)
                     .into(coverImageView);
@@ -306,7 +312,13 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+
+        if (attractionViewModel.isNewAttraction()){
+            ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+        }
+        else{
+            ((MainActivity) requireActivity()).setActionBarTitle("Update Attraction");
+        }
     }
 
     @Override
@@ -324,8 +336,8 @@ public class AttractionFragment extends Fragment {
      */
     public void attractionIsUsers() {
 
-        // Check to see if this is an abandoned new attraction
-        if (tourViewModel.isNewTour()) {
+        // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
+        if (tourViewModel.isUserOwned() || attractionViewModel.isNewAttraction()){
             nameEditText.setEnabled(true);
             locationEditText.setEnabled(true);
             costEditText.setEnabled(true);
@@ -336,36 +348,6 @@ public class AttractionFragment extends Fragment {
             coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
-            updateAttractionButton.setText("Add Attraction");
-            return;
-        }
-
-
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Pull out the UID's of each attraction that belongs to the currently selected tour
-        List<String> tourAttractionsUIDs = new ArrayList<>();
-        if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
-            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
-                tourAttractionsUIDs.add(documentReference.getId());
-            }
-        }
-
-        if (tourAttractionsUIDs.contains(attractionViewModel.getSelectedAttraction().getAttractionUID())) {
-
-            nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
-            costEditText.setEnabled(true);
-            startDateButton.setEnabled(true);
-            startTimeButton.setEnabled(true);
-            endDateButton.setEnabled(true);
-            endTimeButton.setEnabled(true);
-            coverImageView.setClickable(true);
-            coverTextView.setVisibility(View.VISIBLE);
-            buttonsContainer.setVisibility(View.VISIBLE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
 
             coverImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -428,6 +410,10 @@ public class AttractionFragment extends Fragment {
                 });
     }
 
+    /**
+     * This methods is usable for both adding a new attraction and updating an existing attraction
+     * @param view
+     */
     private void setupUpdateAttractionButton(View view){
 
         updateAttractionButton.setOnClickListener(v -> {
