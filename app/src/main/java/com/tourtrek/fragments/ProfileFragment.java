@@ -26,12 +26,9 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,7 +39,6 @@ import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.utilities.Firestore;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class ProfileFragment extends Fragment {
@@ -236,10 +232,10 @@ public class ProfileFragment extends Fragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_password, null);
         //Get elements
-        EditText passwordEt0 = view.findViewById(R.id.profile_change_password0_et);
-        EditText passwordEt1 = view.findViewById(R.id.profile_change_password1_et);
-        EditText passwordEt2 = view.findViewById(R.id.profile_change_password2_et);
-        Button updatePasswordButton = view.findViewById(R.id.profile_update_password_btn);
+        EditText passwordEt0 = view.findViewById(R.id.change_password_current_password_et);
+        EditText passwordEt1 = view.findViewById(R.id.change_password_new_password_et);
+        EditText passwordEt2 = view.findViewById(R.id.change_password_confirm_new_password_et);
+        Button updatePasswordButton = view.findViewById(R.id.change_password_update_password_btn);
         TextView errorTextView = view.findViewById(R.id.change_password_error_tv);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
