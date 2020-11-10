@@ -200,6 +200,8 @@ public class AttractionFragmentTest {
         onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
+    // TODO - how will I test images?
+
     /**
      * Helper method to minimize duplicate code
      * Possible conditions include:
