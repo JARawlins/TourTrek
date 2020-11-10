@@ -187,17 +187,38 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:paddingTop="10dp"
-                android:text="Attractions"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="28dp"
-                android:textStyle="bold"/>
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:paddingTop="10dp"
+                    android:text="Attractions"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="28dp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/tour_attraction_sort_btn"
+                    android:layout_width="115dp"
+                    android:layout_height="38dp"
+
+
+                    android:paddingTop="10dp"
+                    android:text="Sort By" />
+
+
+
+            </LinearLayout>
+
 
             <FrameLayout
                 android:id="@+id/tour_attractions_rv_container"
