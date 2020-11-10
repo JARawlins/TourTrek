@@ -19,7 +19,6 @@ public class TourMarketFragmentTest {
         tourMarketFragment = new TourMarketFragment();
     }
 
-
     @Test
     public void findTours_test(){
 
@@ -39,7 +38,6 @@ public class TourMarketFragmentTest {
         tour2.setLocation("location_tour2");
         tour2.setLength((long) 2);
 
-
         //Add the tours a list
         List<Tour> tours = new ArrayList<>();
         tours.add(tour2);
@@ -50,5 +48,4 @@ public class TourMarketFragmentTest {
         assertEquals(result.get(0).getName(), "tour1");
 
     }
-
 }

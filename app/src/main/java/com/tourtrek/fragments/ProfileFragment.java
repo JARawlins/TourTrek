@@ -45,7 +45,6 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
     private FirebaseAuth mAuth;
-    private ProgressDialog pd;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -188,10 +187,7 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    private void updatePassword(String oldPassword, String newPassword){
-        pd = new ProgressDialog(getActivity());
-        pd.show();
-
+    private void updatePassword(String oldPassword, String newPassword, TextView errorTextView, AlertDialog dialog){
         FirebaseUser user = mAuth.getCurrentUser();
 
         //ReAuthenticate the user
@@ -204,15 +200,16 @@ public class ProfileFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        pd.dismiss();
                                         Toast.makeText(getActivity(),
                                                 "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        pd.dismiss();
+                                        errorTextView.setVisibility(View.VISIBLE);
+                                        errorTextView.setText("" + e.getMessage());
                                         Toast.makeText(getActivity(),
                                                 "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -222,7 +219,6 @@ public class ProfileFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        pd.dismiss();
                         Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -239,7 +235,6 @@ public class ProfileFragment extends Fragment {
         TextView errorTextView = view.findViewById(R.id.change_password_error_tv);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        //builder.create().show();
         final AlertDialog dialog = builder.create();
         dialog.show();
 
@@ -261,13 +256,10 @@ public class ProfileFragment extends Fragment {
                     errorTextView.setVisibility(View.VISIBLE);
                     errorTextView.setText("New passwords should be at least 6 characters");
                 } else {
-                    dialog.dismiss();
-                    updatePassword(password0,password1);
+                    updatePassword(password0,password1,errorTextView,dialog);
                 }
 
             }
         });
-
     }
-
 }
