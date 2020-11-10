@@ -163,9 +163,10 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="48dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".fragment.AddFriendFragment"
+                android:layout_marginTop="24dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -181,10 +182,51 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/add_friend_my_friends_srl"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="50dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/add_friend_my_friends_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"
+                        android:visibility="invisible"/>
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <LinearLayout
+                    android:id="@+id/add_friend_my_friends_loading_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginTop="75dp"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/add_friend_my_friends_loading_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Loading Friends"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="20dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <ProgressBar
+                        android:id="@+id/add_friend_my_friends_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
             </RelativeLayout>
 
-
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>
