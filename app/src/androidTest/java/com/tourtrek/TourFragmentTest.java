@@ -74,7 +74,7 @@ public class TourFragmentTest {
      * // TODO I got the set up working, but need to refine the code below for testing the date selector
      */
     @Test
-    public void updateSuccessful1() {
+    public void updateSuccessfulWithDates() {
         ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.tour_start_date_btn), withText("11/06/2020"),
                         childAtPosition(
