@@ -150,7 +150,7 @@ public class AddFriendFragment extends Fragment {
                                             Glide.with(getContext())
                                                     .load(friend.getProfileImageURI())
                                                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                                    .placeholder(R.drawable.ic_profile_black)
+                                                    .placeholder(R.drawable.ic_profile)
                                                     .into(friendImageView);
                                             friendImageView.setVisibility(View.VISIBLE);
 
