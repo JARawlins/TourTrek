@@ -50,5 +50,4 @@ public class TourMarketFragmentTest {
         assertEquals(result.get(0).getName(), "tour1");
 
     }
-
 }
