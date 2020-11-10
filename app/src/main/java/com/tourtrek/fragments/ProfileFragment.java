@@ -239,7 +239,6 @@ public class ProfileFragment extends Fragment {
         TextView errorTextView = view.findViewById(R.id.change_password_error_tv);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        //builder.create().show();
         final AlertDialog dialog = builder.create();
         dialog.show();
 
