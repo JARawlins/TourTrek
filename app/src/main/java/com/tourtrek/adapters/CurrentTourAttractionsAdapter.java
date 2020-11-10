@@ -132,7 +132,7 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
     public void setDataSetFiltered(List<Attraction> dataSet){
-        this.currentTourAttractionsDataSetFiltered = dataSet;
+        this.currentTourAttractionsDataSetFiltered = new ArrayList<>(dataSet);
     }
 
     /**
