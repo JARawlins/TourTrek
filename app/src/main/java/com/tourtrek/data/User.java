@@ -11,7 +11,7 @@ public class User {
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
-    private List<DocumentReference> contacts;
+    private List<DocumentReference> friends;
 
     /**
      * Empty constructor needed for firestore
@@ -22,6 +22,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.tours = new ArrayList<>();
+        this.friends= new ArrayList<>();
     }
 
     /**
@@ -102,16 +103,30 @@ public class User {
         this.tours = tours;
     }
 
-    public List<DocumentReference> getContacts() {
-        if (this.contacts == null){
-            this.contacts = new ArrayList<>();
+
+    /**
+     * Getter for friends
+     *
+     * @return current friends
+     */
+    public List<DocumentReference> getFriends() {
+        if (this.friends == null){
+            this.friends = new ArrayList<>();
         }
-        return this.contacts;
+        return friends;
     }
 
-    public void setContacts(List<DocumentReference> contacts) {
-        this.contacts = contacts;
+    /**
+     * Setter for friends
+     *
+     * @param friends friends to set
+     */
+    public void setFriends(List<DocumentReference> friends) {
+        this.friends = friends;
     }
+
+
+
 
     /**
      * Add tour reference to the user
@@ -124,5 +139,18 @@ public class User {
         }
 
         this.tours.add(tourDocument);
+    }
+
+    /**
+     * Add friend reference to the user
+     *
+     * @param friendDocument friendDocument to add
+     */
+    public void addFriendToFriends(DocumentReference friendDocument){
+        if (this.friends == null) {
+            this.friends = new ArrayList<>();
+        }
+
+        this.friends.add(friendDocument);
     }
 }
