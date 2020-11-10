@@ -90,7 +90,7 @@ public class ProfileFragment extends Fragment {
                 .circleCrop()
                 .into(profileUserImageView);
 
-        // Setup handlers for buttons
+        // Setup handler for logout button
         setupLogoutButtonHandler(profileFragmentView);
         setupSettingsButtonHandler(profileFragmentView);
 
