@@ -7,16 +7,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
+import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.User;
+import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
@@ -93,7 +100,14 @@ public class AddFriendFragment extends Fragment {
 
                     // Stop loading progress circle
                     loadingProgressBar.setVisibility(View.GONE);
-                }else{
+                }else if(email.equals(MainActivity.user.getEmail())){
+                    // Show error to user
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText("You cannot add yourself");
+
+                    // Stop loading progress circle
+                    loadingProgressBar.setVisibility(View.GONE);
+                } else{
 
                     // Get instance of firestore
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -111,6 +125,9 @@ public class AddFriendFragment extends Fragment {
                                 }
                                 else {
 
+                                    // Stop loading progress circle
+                                    loadingProgressBar.setVisibility(View.GONE);
+
                                     // Final result for the query
                                     User friend=null;
 
@@ -119,27 +136,60 @@ public class AddFriendFragment extends Fragment {
 
                                         // First check that the document belongs to the user
                                         if (document.get("email").equals(email)) {
+                                            final DocumentReference friendReference =document.getReference();
                                             friend =new User();
+                                            friend.setEmail(email);
                                             friend.setUsername((String) document.get("username"));
                                             friend.setProfileImageURI((String) document.get("profileImageURI"));
+
+                                            final ImageView friendImageView = addFriendView.findViewById(R.id.add_friend_profile_iv);
+                                            final TextView friendNameTextView= addFriendView.findViewById(R.id.add_friend_friendName_tv);
+                                            final Button addFriendBtn= addFriendView.findViewById(R.id.add_friend_add_btn);
+
+                                            //load profile picture for friend
+                                            Glide.with(getContext())
+                                                    .load(friend.getProfileImageURI())
+                                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                    .placeholder(R.drawable.ic_profile_black)
+                                                    .into(friendImageView);
+                                            friendImageView.setVisibility(View.VISIBLE);
+
+                                            //load username for friend
+                                            friendNameTextView.setText(friend.getUsername());
+                                            friendNameTextView.setVisibility(View.VISIBLE);
+
+                                           // setupAddFriendButton(addFriendView,friend.getEmail());
+                                            addFriendBtn.setOnClickListener(view1 -> {
+                                                if(MainActivity.user.getFriends().contains(friendReference)){
+                                                    Toast.makeText(getContext(), "Friend already exists", Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    MainActivity.user.getFriends().add(friendReference);
+                                                    Firestore.updateUser();
+                                                    Toast.makeText(getContext(), "Successfully Add Friend", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                            addFriendBtn.setVisibility(View.VISIBLE);
                                         }
                                     }
-                                    if(friend!=null){
-
+                                    if(friend==null){
+                                        errorTextView.setVisibility(View.VISIBLE);
+                                        errorTextView.setText("Cannot find user with email entered");
                                     }
-
-
-
                                 }
                             });
                 }
-
             }
         });
-
-
-
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setActionBarTitle("Add Friend");
+    }
+
+
 
 
 }

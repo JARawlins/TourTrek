@@ -109,6 +109,43 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
+
+            <RelativeLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+
+                <ImageView
+                    android:id="@+id/add_friend_profile_iv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
+                    android:background="@drawable/item_tour_bg_img"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/default_image"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/add_friend_friendName_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toRightOf="@+id/add_friend_profile_iv"
+                    android:layout_alignParentBottom="true"
+                    android:text="friendName"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/add_friend_add_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    android:layout_gravity="left"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+
+
         </LinearLayout>
     </ScrollView>
 
