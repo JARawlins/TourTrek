@@ -1,5 +1,6 @@
 package com.tourtrek.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -243,6 +244,7 @@ public class ProfileFragment extends Fragment {
         dialog.show();
 
         updatePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 String password0 = passwordEt0.getText().toString();
