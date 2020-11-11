@@ -1,13 +1,18 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,14 +24,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,22 +54,27 @@ import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
+import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.utilities.Firestore;
+import com.tourtrek.utilities.AttractionCostSorter;
+import com.tourtrek.utilities.AttractionLocationSorter;
+import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class TourFragment extends Fragment {
+public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
-    private RecyclerView.Adapter attractionsAdapter;
+    private CurrentTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
     private EditText locationEditText;
@@ -73,10 +90,17 @@ public class TourFragment extends Fragment {
     private LinearLayout buttonsContainer;
     Button shareButton;
     private ImageView coverImageView;
+    private Button attractionSortButton;
+    private AlertDialog dialog;
+    private AlertDialog.Builder builder;
+    private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
+            "Name Descending", "Location Descending", "Cost Descending"};
+    private String result = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
@@ -89,6 +113,8 @@ public class TourFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
@@ -97,6 +123,43 @@ public class TourFragment extends Fragment {
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
+
+        //initialize attractionSortButton
+        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+
+        //Setup dialog;
+        builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Select Sorting option");
+
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                result = items[which];
+            }
+        });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sortAttractions(attractionsAdapter, result);
+            }
+        });
+
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        dialog = builder.create();
+        attractionSortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
 
         // Initialize all fields
         nameEditText = tourView.findViewById(R.id.tour_name_et);
@@ -394,8 +457,9 @@ public class TourFragment extends Fragment {
                             }
                         }
 
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
+                        attractionsAdapter.clear();
+                        attractionsAdapter.addAll(usersAttractions);
+                        attractionsAdapter.copyAttractions(usersAttractions);
                         swipeRefreshLayout.setRefreshing(false);
 
                     }
@@ -596,5 +660,144 @@ public class TourFragment extends Fragment {
             .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
         });
     }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // Show the top app bar with the search icon
+        inflater.inflate(R.menu.tour_search_menu, menu);
+
+        // Get the menu item
+        MenuItem item = menu.findItem(R.id.tour_search_itm);
+
+        SearchView searchView = (SearchView) item.getActionView();
+
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                searchAttractions(attractionsAdapter, query);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                searchAttractions(attractionsAdapter, newText);
+
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    public void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
+        ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSet());
+
+        List<Attraction> filteredTourList = findAttractions(data, newText);
+
+        adapter.clear();
+        adapter.setDataSetFiltered(filteredTourList);
+        adapter.addAll(filteredTourList);
+    }
+
+    public List<Attraction> findAttractions(List<Attraction> data, String newText) {
+
+        ArrayList<Attraction> originalList = new ArrayList<>(data);
+        List<Attraction> filteredTourList = new ArrayList<>();
+
+        if (newText == null || newText.length() == 0) {
+
+            filteredTourList.addAll(originalList);
+
+        } else {
+
+            String key = newText.toLowerCase();
+
+            for(Attraction attraction: originalList){
+                if(attraction.getName().toLowerCase().contains(key)){
+                    filteredTourList.add(attraction);
+                }
+            }
+        }
+
+        return filteredTourList;
+    }
+
+    /**
+     * Update the selected tour
+     *
+     * This method assumes a tour is already created and has a properly filled UID field
+     * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+     */
+    private void syncTour() {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        String key = (String) parent.getItemAtPosition(position);
+        sortAttractions(attractionsAdapter, key);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+
+    public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
+
+        ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetFiltered());
+
+        List<Attraction> temp = sortedAttractions(data, key);
+
+        adapter.clear();
+        adapter.addAll(temp);
+    }
+
+    public List<Attraction> sortedAttractions(List<Attraction> data, String key) {
+        List<Attraction> temp = new ArrayList<>(data);
+
+        switch (key){
+
+            case "Name Ascending":
+                Collections.sort(temp, new AttractionNameSorter());
+                break;
+
+            case "Location Ascending":
+                Collections.sort(temp, new AttractionLocationSorter());
+                break;
+
+            case "Cost Ascending":
+                Collections.sort(temp, new AttractionCostSorter());
+                break;
+
+            case "Name Descending":
+                Collections.sort(temp, new AttractionNameSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Location Descending":
+                Collections.sort(temp, new AttractionLocationSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Cost Descending":
+                Collections.sort(temp, new AttractionCostSorter());
+                Collections.reverse(temp);
+                break;
+
+            default:
+                return temp;
+        }
+        return temp;
+    }
+
 }
 
