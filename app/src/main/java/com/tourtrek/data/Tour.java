@@ -106,9 +106,6 @@ public class Tour{
      * @return current startDate
      */
     public Timestamp getStartDate() {
-        if (this.startDate == null){
-            this.startDate = Timestamp.now();
-        }
         return this.startDate;
     }
 
@@ -130,9 +127,6 @@ public class Tour{
 
 
     public Timestamp getEndDate() {
-        if (this.endDate == null){
-            this.endDate = Timestamp.now();
-        }
         return this.endDate;
     }
 

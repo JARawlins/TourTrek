@@ -54,6 +54,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static com.tourtrek.utilities.Firestore.updateUser;
+
 public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
@@ -549,11 +551,12 @@ public class TourFragment extends Fragment {
             tourViewModel.getSelectedTour().setPubliclyAvailable(publicCheckBox.isChecked());
 
             // Remove $ from cost
-            if (costEditText.getText().toString().startsWith("$"))
+            if (costEditText.getText().toString().startsWith("$")) {
                 tourViewModel.getSelectedTour().setCost(Float.parseFloat(costEditText.getText().toString().substring(1)));
-            else
+            }
+            else {
                 tourViewModel.getSelectedTour().setCost(Float.parseFloat(costEditText.getText().toString()));
-
+            }
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -568,6 +571,10 @@ public class TourFragment extends Fragment {
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
 
+                            // update user
+                            MainActivity.user.getTours().add(tourDocumentReference);
+                            updateUser();
+
                             tourViewModel.setSelectedTour(null);
                             tourViewModel.setIsNewTour(null);
                             getParentFragmentManager().popBackStack();
@@ -577,17 +584,9 @@ public class TourFragment extends Fragment {
 
                     })
             .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+
         });
     }
 
-    /**
-     * Update the selected tour
-     *
-     * This method assumes a tour is already created and has a properly filled UID field
-     * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-     */
-    private void syncTour() {
-
-    }
 }
 
