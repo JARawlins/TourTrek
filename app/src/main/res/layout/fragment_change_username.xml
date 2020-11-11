@@ -12,30 +12,33 @@
         android:text="Change Username"
         android:textStyle="bold"
         android:textAlignment="center"/>
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:passwordToggleEnabled="true">
+
         <EditText
-            android:id="@+id/profile_change_username_password_et"
+            android:id="@+id/change_username_current_username_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Current Password"
-            android:inputType="textPassword"/>
+            android:hint="Current Username"
+            android:inputType="text"/>
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:passwordToggleEnabled="true">
+
         <EditText
-            android:id="@+id/profile_change_username_username_et"
+            android:id="@+id/change_username_new_username_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="New Username"
-            android:inputType="textPassword"/>
+            android:inputType="text"/>
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -47,12 +50,10 @@
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/profile_update_username_btn"
+        android:id="@+id/change_username_update_username_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Change Username"
+        android:text="Update Username"
         android:layout_gravity="center_horizontal"/>
-
-
 
 </LinearLayout>

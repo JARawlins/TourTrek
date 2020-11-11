@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change Password"
+        android:text="Change Email"
         android:textStyle="bold"
         android:textAlignment="center"/>
 
@@ -19,11 +19,11 @@
         app:passwordToggleEnabled="true">
 
         <EditText
-            android:id="@+id/change_password_current_password_et"
+            android:id="@+id/change_email_current_email_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Current Password"
-            android:inputType="textPassword"/>
+            android:hint="Current Email"
+            android:inputType="textEmailAddress"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -33,30 +33,16 @@
         app:passwordToggleEnabled="true">
 
         <EditText
-            android:id="@+id/change_password_new_password_et"
+            android:id="@+id/change_email_new_email_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="New Password"
-            android:inputType="textPassword"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true">
-
-        <EditText
-            android:id="@+id/change_password_confirm_new_password_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Confirm New Password"
-            android:inputType="textPassword"/>
+            android:hint="New Email"
+            android:inputType="textEmailAddress"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/change_password_error_tv"
+        android:id="@+id/change_email_error_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
@@ -64,10 +50,10 @@
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/change_password_update_password_btn"
+        android:id="@+id/change_email_update_email_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Update Password"
+        android:text="Update Email"
         android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>
