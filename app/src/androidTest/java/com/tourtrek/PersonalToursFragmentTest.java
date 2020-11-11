@@ -42,7 +42,7 @@ import static java.lang.Thread.sleep;
 
 public class PersonalToursFragmentTest {
 
-    public static final String TAG = "AttractionFragmentTest";
+    public static final String TAG = "PersonalToursFragmentTest";
     private ActivityScenario mainActivityScenario;
 
     @Rule
