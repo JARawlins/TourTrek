@@ -78,7 +78,7 @@ public class PersonalToursFragment extends Fragment {
         }
 
         // Initialize view model
-        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 

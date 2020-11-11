@@ -11,9 +11,10 @@ import java.util.Date;
 import java.util.List;
 
 public class Tour{
+
     private String name;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private Date startDate;
+    private Date endDate;
     private String location;
     private Long length;
     private float cost;
@@ -93,6 +94,11 @@ public class Tour{
         this.attractions = attractions;
     }
 
+    /**
+     * Adds a new attraction to this tour
+     *
+     * @param attraction attraction to add
+     */
     public void addAttraction(DocumentReference attraction) {
         if (attractions == null) {
             attractions = new ArrayList<>();
@@ -105,7 +111,7 @@ public class Tour{
      *
      * @return current startDate
      */
-    public Timestamp getStartDate() {
+    public Date getStartDate() {
         return this.startDate;
     }
 
@@ -114,24 +120,53 @@ public class Tour{
      *
      * @param startDate startDate to set
      */
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public void setStartDateFromString(String startDateString) throws ParseException {
+    /**
+     * Retrieves the current start date as a string
+     *
+     * @return current start date
+     */
+    public String retrieveStartDateAsString() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
-        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm");
-
-        this.startDate = new Timestamp(formatter.parse(startDateString));
+        return formatter.format(startDate);
     }
 
+    /**
+     * Setter for startDate
+     *
+     * @param startDateString startDate to set as a string
+     * @throws ParseException thrown if startDateString cannot be converted to Date
+     */
+    public void setStartDateFromString(String startDateString) throws ParseException {
 
-    public Timestamp getEndDate() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        this.startDate = formatter.parse(startDateString);
+    }
+
+    public Date getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String retrieveEndDateAsString() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        return formatter.format(endDate);
+    }
+
+    public void setEndDateFromString(String endDateString) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        this.endDate = formatter.parse(endDateString);
     }
 
     /**
