@@ -1,6 +1,8 @@
 package com.tourtrek.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -22,7 +26,12 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -36,6 +45,7 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
     private FirebaseAuth mAuth;
+    private ProgressDialog pd;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,12 +95,23 @@ public class ProfileFragment extends Fragment {
         Glide.with(this)
                 .load(MainActivity.user.getProfileImageURI())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_profile_black)
+                .placeholder(R.drawable.ic_profile)
                 .circleCrop()
                 .into(profileUserImageView);
 
         // Setup handler for logout button
         setupLogoutButtonHandler(profileFragmentView);
+        Button changePassword = profileFragmentView.findViewById(R.id.profile_change_password_btn);
+
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChangePasswordDialog();
+            }
+        });
+
+        // Setup handler for logout button
+        setupAddFriendButtonHandler(profileFragmentView);
 
         return profileFragmentView;
     }
@@ -116,6 +137,23 @@ public class ProfileFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
 
             navController.navigate(R.id.navigation_login);
+        });
+    }
+
+    /**
+     * Setup listener for add_friend button
+     *
+     * @param view current view
+     */
+    public void setupAddFriendButtonHandler(final View view) {
+
+        Button addFriendButton = view.findViewById(R.id.profile_friend_btn);
+
+        addFriendButton.setOnClickListener(v -> {
+
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddFriendFragment(), "AddFriendFragment");
+            ft.addToBackStack("AddFriendFragment").commit();
         });
     }
 
@@ -168,6 +206,88 @@ public class ProfileFragment extends Fragment {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
                 });
+    }
+
+    private void updatePassword(String oldPassword, String newPassword){
+        pd = new ProgressDialog(getActivity());
+        pd.show();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        //ReAuthenticate the user
+        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+        user.reauthenticate(authCredential)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        user.updatePassword(newPassword)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        pd.dismiss();
+                                        Toast.makeText(getActivity(),
+                                                "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        pd.dismiss();
+                                        Toast.makeText(getActivity(),
+                                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        pd.dismiss();
+                        Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void showChangePasswordDialog(){
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_password, null);
+        //Get elements
+        EditText passwordEt0 = view.findViewById(R.id.change_password_current_password_et);
+        EditText passwordEt1 = view.findViewById(R.id.change_password_new_password_et);
+        EditText passwordEt2 = view.findViewById(R.id.change_password_confirm_new_password_et);
+        Button updatePasswordButton = view.findViewById(R.id.change_password_update_password_btn);
+        TextView errorTextView = view.findViewById(R.id.change_password_error_tv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        //builder.create().show();
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        updatePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String password0 = passwordEt0.getText().toString();
+                String password1 = passwordEt1.getText().toString();
+                String password2 = passwordEt2.getText().toString();
+
+                //validate the password
+                if (password1 == null || password2 == null) {
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Password fields are empty");
+                } else if (!password1.equals(password2)) {
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Passwords do not match");
+                } else if (password1.equals(password2) && password1.length() < 6) {
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText("New passwords should be at least 6 characters");
+                } else {
+                    dialog.dismiss();
+                    updatePassword(password0,password1);
+                }
+
+            }
+        });
+
     }
 
 }

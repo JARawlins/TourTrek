@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/gradient"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/settings_top_panel_container"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/settings_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:text="Settings"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:textSize="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/settings_buttons_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:paddingBottom="20dp"
+                android:weightSum="1.0">
+
+                <Button
+                    android:id="@+id/settings_version_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="0.33"
+                    android:background="@color/colorPrimaryDark"
+                    android:clickable="false"
+                    android:text="Version 1.2"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/settings_privacy_policy_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.33"
+                    android:background="@color/colorSecondary"
+                    android:clickable="true"
+                    android:text="Privacy Policy"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/settings_help_center_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="24dp"
+                    android:layout_weight=".33"
+                    android:background="@color/colorAccent"
+                    android:clickable="true"
+                    android:text="Help Center"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Change Username:"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp" />
+
+                <EditText
+                    android:id="@+id/settings_new_username_et"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="48dp"
+                    android:background="#EEEEEE"
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="new username"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Change Email Address:"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp" />
+
+                <EditText
+                    android:id="@+id/settings_new_email_et"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="48dp"
+                    android:background="#EEEEEE"
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="new email"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Change Password:"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp" />
+
+                <EditText
+                    android:id="@+id/settings_new_password_et"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="48dp"
+                    android:background="#EEEEEE"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="new password"
+                    android:selectAllOnFocus="true" />
+
+                <EditText
+                    android:id="@+id/settings_confirm_new_password_et"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"                android:layout_marginStart="24dp"
+                    android:layout_marginEnd="48dp"
+                    android:background="#EEEEEE"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:hint="confirm new password"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Notifications:"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp" />
+
+                <CheckBox
+                    android:id="@+id/settings_tour_start_notification_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="40dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="when current tour starts"
+                    android:textSize="25sp" />
+
+                <CheckBox
+                    android:id="@+id/settings_similar_tours_notification_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="40dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="similar tours"
+                    android:textSize="25sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:weightSum="1.0">
+
+            <Button
+                android:id="@+id/settings_update_settings_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:background="@color/colorPrimary"
+                android:enabled="true"
+                android:text="Update Settings"
+                android:textColor="#EEEEEE"
+                android:textAllCaps="false"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
