@@ -71,7 +71,7 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-    
+
     @Override
     public int getItemCount() {
         return currentTourAttractionsDataSet.size();
