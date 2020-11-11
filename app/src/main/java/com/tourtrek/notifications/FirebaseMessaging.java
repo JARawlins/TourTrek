@@ -1,4 +1,4 @@
-package com.tourtrek.utilities;
+package com.tourtrek.notifications;
 
 import android.util.Log;
 
@@ -27,4 +27,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     public void onMessageSent(@NonNull String s) {
         super.onMessageSent(s);
     }
+
+
 }

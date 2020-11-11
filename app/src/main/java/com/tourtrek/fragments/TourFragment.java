@@ -1,10 +1,15 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,14 +50,21 @@ import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.viewModels.TourViewModel;
 
+import org.joda.time.DateTime;
+
 import java.text.ParseException;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class TourFragment extends Fragment {
 
@@ -568,12 +581,19 @@ public class TourFragment extends Fragment {
                         // Update the user in the firestore
                         Firestore.updateUser();
 
+                        // TODO: Setup alarm for start time
+                        if (tourViewModel.getSelectedTour().getNotifications())
+                            scheduleNotification("1",
+                                    "tourStart",
+                                    "Tour Started",
+                                    tourViewModel.getSelectedTour().getName() + " has started");
+
+                        tourViewModel.setSelectedTour(null);
+                        tourViewModel.setIsNewTour(null);
+                        getParentFragmentManager().popBackStack();
+
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
-
-                            tourViewModel.setSelectedTour(null);
-                            tourViewModel.setIsNewTour(null);
-                            getParentFragmentManager().popBackStack();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
@@ -584,6 +604,42 @@ public class TourFragment extends Fragment {
                     })
             .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
         });
+    }
+
+    private void scheduleNotification(String notificationChannelId, String notificationChannelName, String title, String body) {
+
+        // Create view button
+        Intent viewIntent = new Intent(getContext(), MainActivity.class);
+        viewIntent.putExtra("viewId", 1000);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
+
+        // Build the notification to display
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), notificationChannelId);
+        builder.setContentTitle(title);
+        builder.setContentText(body);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setChannelId(notificationChannelId);
+        builder.setContentIntent(viewPendingIntent);
+        builder.setAutoCancel(true);
+        builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
+        Notification notification = builder.build();
+
+        // Get Tour Start Date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        calendar.set(Calendar.MINUTE, 31);
+
+        // Initialize the alarm manager
+        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, String.valueOf(System.currentTimeMillis() % 10000));
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
+        intent.putExtra("NOTIFICATION_CHANNEL_ID", notificationChannelId);
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", notificationChannelName);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
     }
 }
 
