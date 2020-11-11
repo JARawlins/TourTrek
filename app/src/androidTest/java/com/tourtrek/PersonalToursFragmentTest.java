@@ -53,15 +53,15 @@ public class PersonalToursFragmentTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and tap the button for adding a tour
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(50)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
-            onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(50)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(50)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(100)));
             onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("123456"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
@@ -74,6 +74,7 @@ public class PersonalToursFragmentTest {
     public void tearDown() throws UiObjectNotFoundException, InterruptedException {
         // remove all tours
         MainActivity.user.setTours(new ArrayList<DocumentReference>());
+        updateUser();
 
         // don't break attraction fragment testing
         setup();
@@ -127,7 +128,7 @@ public class PersonalToursFragmentTest {
         catch(androidx.test.espresso.PerformException e){
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
-        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
         sleep(1000);
 
 //        onView(withId(R.id.tour_name_et)).check(matches(withText("future tour")));
@@ -156,7 +157,7 @@ public class PersonalToursFragmentTest {
         catch(androidx.test.espresso.PerformException e){
             onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
-        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
         sleep(1000);
 
 //        onView(withId(R.id.tour_name_et)).check(matches(withText("current tour")));
@@ -185,7 +186,7 @@ public class PersonalToursFragmentTest {
         catch(androidx.test.espresso.PerformException e){
             onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
-        onView(isRoot()).perform(waitForView(R.id.tour_end_date_btn, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_end_date_btn, TimeUnit.SECONDS.toMillis(100)));
         sleep(1000);
 
 //        onView(withId(R.id.tour_name_et)).check(matches(withText("past tour")));
