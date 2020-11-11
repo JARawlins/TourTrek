@@ -152,7 +152,7 @@ public class ProfileFragment extends Fragment {
         addFriendButton.setOnClickListener(v -> {
 
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new AddFriendFragment(), "AddFriendFragment");
+            ft.replace(R.id.nav_host_fragment, new FriendFragment(), "AddFriendFragment");
             ft.addToBackStack("AddFriendFragment").commit();
         });
     }
