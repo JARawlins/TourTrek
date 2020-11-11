@@ -35,11 +35,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.data.User;
 import com.tourtrek.utilities.Firestore;
 
 import java.util.Objects;
@@ -207,6 +209,15 @@ public class ProfileFragment extends Fragment {
                                         Toast.makeText(getActivity(),
                                                 "Password changed successfully", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
+                                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        User newUser = new User();
+                                        newUser.setUsername("I have been changed");
+                                        newUser.setEmail(MainActivity.user.getEmail());
+                                        newUser.setContacts(MainActivity.user.getContacts());
+                                        newUser.setProfileImageURI(MainActivity.user.getProfileImageURI());
+                                        newUser.setTours(MainActivity.user.getTours());
+                                        //databaseReference.child(user.getUid()).updateChildren(result);
+                                        db.collection("Users").document(user.getUid()).set(newUser);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
