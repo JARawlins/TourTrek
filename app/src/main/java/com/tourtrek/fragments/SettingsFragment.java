@@ -23,8 +23,10 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.rpc.context.AttributeContext;
 import com.tourtrek.R;
+import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.User;
 
 //extends preferenceFragmentCompact
@@ -91,10 +93,9 @@ public class SettingsFragment extends Fragment {
         dialog.show();
 
         //get fields
-        EditText newUsername = view.findViewById(R.id.profile_change_username_username_et);
-        EditText password = view.findViewById(R.id.profile_change_username_password_et);
-        Button updateUsernameButton = view.findViewById(R.id.profile_update_username_btn);
-
+        EditText newUsername = view.findViewById(R.id.change_username_new_username_et);
+        EditText password = view.findViewById(R.id.change_username_current_password_et);
+        Button updateUsernameButton = view.findViewById(R.id.change_username_update_username_btn);
         //create update username button listener
         updateUsernameButton.setOnClickListener(v -> {
             updateUsername(newUsername.getText().toString(),password.getText().toString(), dialog);
@@ -103,50 +104,26 @@ public class SettingsFragment extends Fragment {
 
     private void updateUsername(String newUsername, String oldPassword, AlertDialog dialog) {
         FirebaseUser user = mAuth.getCurrentUser();
-
-        //ReAuthenticate the user
-        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
-        user.reauthenticate(authCredential)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(newUsername)
-                                .build();
-
-                        user.updateProfile(profileUpdates)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(getActivity(),
-                                                "Username changed successfully", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getActivity(),
-                                        "Failed to change username. Please try again ", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        User newUser = new User();
+        newUser.setEmail(MainActivity.user.getEmail());
+        newUser.setProfileImageURI(MainActivity.user.getProfileImageURI());
+        newUser.setTours(MainActivity.user.getTours());
+        // TODO: need to set contacts for user newUser.setContacts()
+        newUser.setUsername(newUsername);
+        db.collection("Users").document(user.getUid()).set(newUser);
     }
+
+
 
     private void showChangePasswordDialog(){
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_password, null);
         //Get elements
-        EditText passwordEt0 = view.findViewById(R.id.profile_change_password0_et);
-        EditText passwordEt1 = view.findViewById(R.id.profile_change_password1_et);
-        EditText passwordEt2 = view.findViewById(R.id.profile_change_password2_et);
-        Button updatePasswordButton = view.findViewById(R.id.profile_update_password_btn);
+        EditText passwordEt0 = view.findViewById(R.id.change_password_current_password_et);
+        EditText passwordEt1 = view.findViewById(R.id.change_password_new_password_et);
+        EditText passwordEt2 = view.findViewById(R.id.change_password_confirm_new_password_et);
+        Button updatePasswordButton = view.findViewById(R.id.change_password_update_password_btn);
         TextView errorTextView = view.findViewById(R.id.change_password_error_tv);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);

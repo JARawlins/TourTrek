@@ -19,10 +19,10 @@
         app:passwordToggleEnabled="true">
 
         <EditText
-            android:id="@+id/change_username_current_username_et"
+            android:id="@+id/change_username_current_password_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Current Username"
+            android:hint="Current Password"
             android:inputType="text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
