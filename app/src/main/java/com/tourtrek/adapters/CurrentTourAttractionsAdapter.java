@@ -68,6 +68,11 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     }
 
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
 
     @Override
     public int getItemCount() {
