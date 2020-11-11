@@ -90,10 +90,10 @@ public class ProfileFragment extends Fragment {
                 .circleCrop()
                 .into(profileUserImageView);
 
-        // Setup handler for logout button
+        // Setup handler for buttons
         setupLogoutButtonHandler(profileFragmentView);
         setupSettingsButtonHandler(profileFragmentView);
-
+        setupAddFriendButtonHandler(profileFragmentView);
         return profileFragmentView;
     }
 
@@ -121,6 +121,22 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    /**
+     * Setup listener for add_friend button
+     *
+     * @param view current view
+     */
+    public void setupAddFriendButtonHandler(final View view) {
+
+        Button addFriendButton = view.findViewById(R.id.profile_friend_btn);
+
+        addFriendButton.setOnClickListener(v -> {
+
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new FriendFragment(), "AddFriendFragment");
+            ft.addToBackStack("AddFriendFragment").commit();
+        });
+    }
 
     /**
      * Setup listener for settings button

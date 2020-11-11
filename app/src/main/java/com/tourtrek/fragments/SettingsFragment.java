@@ -87,6 +87,7 @@ public class SettingsFragment extends Fragment {
     private void showChangeUsernameDialog(){
         //set view to fragment_change_username.xml
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_username, null);
+        TextView errorTextView = view.findViewById(R.id.change_username_error_tv);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         final AlertDialog dialog = builder.create();
@@ -98,20 +99,38 @@ public class SettingsFragment extends Fragment {
         Button updateUsernameButton = view.findViewById(R.id.change_username_update_username_btn);
         //create update username button listener
         updateUsernameButton.setOnClickListener(v -> {
-            updateUsername(newUsername.getText().toString(),password.getText().toString(), dialog);
+            updateUsername(newUsername.getText().toString(),errorTextView, dialog);
         });
     }
 
-    private void updateUsername(String newUsername, String oldPassword, AlertDialog dialog) {
+    private void updateUsername(String newUsername, TextView errorTextView, AlertDialog dialog) {
+
+
         FirebaseUser user = mAuth.getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         User newUser = new User();
         newUser.setEmail(MainActivity.user.getEmail());
         newUser.setProfileImageURI(MainActivity.user.getProfileImageURI());
         newUser.setTours(MainActivity.user.getTours());
-        // TODO: need to set contacts for user newUser.setContacts()
+        newUser.setFriends(MainActivity.user.getFriends());
         newUser.setUsername(newUsername);
-        db.collection("Users").document(user.getUid()).set(newUser);
+        db.collection("Users").document(user.getUid()).set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getActivity(),
+                        "Username changed successfully", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorTextView.setVisibility(View.VISIBLE);
+                        errorTextView.setText("" + e.getMessage());
+                        Toast.makeText(getActivity(),
+                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
