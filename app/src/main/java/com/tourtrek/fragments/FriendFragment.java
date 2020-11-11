@@ -20,13 +20,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
-import com.tourtrek.data.Attraction;
+import com.tourtrek.adapters.FriendsAdapter;
 import com.tourtrek.data.User;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.Utilities;
-import com.tourtrek.viewModels.AttractionViewModel;
-import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +31,16 @@ import java.util.List;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class AddFriendFragment extends Fragment {
+public class FriendFragment extends Fragment {
 
     private static final String TAG = "AddFriendFragment";
+    private RecyclerView friendsRecyclerView;
+    private RecyclerView.Adapter friendsAdapter;
+    private SwipeRefreshLayout friendsSwipeRefreshLayout;
 
 
     /**
@@ -66,6 +68,10 @@ public class AddFriendFragment extends Fragment {
 
         // set up the action to carry out via the search button
         setupSearchButton(addFriendView);
+
+        // Configure recycler views
+        configureRecyclerViews(addFriendView);
+        configureSwipeRefreshLayouts(addFriendView);
 
         return addFriendView;
     }
@@ -188,6 +194,114 @@ public class AddFriendFragment extends Fragment {
         super.onResume();
         ((MainActivity) requireActivity()).setActionBarTitle("Add Friend");
     }
+
+
+    /**
+     * Configure the recycler view
+     *
+     * @param view current view
+     */
+    public void configureRecyclerViews(View view) {
+
+        // Get our recycler view from the layout
+        friendsRecyclerView = view.findViewById(R.id.add_friend_my_friends_rv);
+
+        // Improves performance because content does not change size
+        friendsRecyclerView.setHasFixedSize(true);
+
+        // Only load 10 tours before loading more
+        friendsRecyclerView.setItemViewCacheSize(10);
+
+        // Enable drawing cache
+        friendsRecyclerView.setDrawingCacheEnabled(true);
+        friendsRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+        // User linear layout manager
+        RecyclerView.LayoutManager friendsLayoutManager = new LinearLayoutManager(getContext());
+        friendsRecyclerView.setLayoutManager(friendsLayoutManager);
+
+        // Get all friends
+        fetchUsersAsync();
+
+        // Specify an adapter
+        friendsAdapter = new FriendsAdapter(getContext());
+        friendsRecyclerView.setAdapter(friendsAdapter);
+
+        // Stop showing progressBar when items are loaded
+        friendsRecyclerView
+                .getViewTreeObserver()
+                .addOnGlobalLayoutListener(() -> ((FriendsAdapter) friendsAdapter).stopLoading());
+
+
+    }
+
+    /**
+     * Configure the swipe down to refresh function of our recycler view
+     *
+     * @param view current view
+     */
+    public void configureSwipeRefreshLayouts(View view) {
+
+
+        // Future
+        friendsSwipeRefreshLayout = view.findViewById(R.id.add_friend_my_friends_srl);
+        friendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchUsersAsync());
+        
+
+    }
+
+
+    /**
+     * Retrieve all friends belonging to this user
+     *
+     */
+    private void fetchUsersAsync() {
+
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Setup collection reference
+        CollectionReference usersCollection = db.collection("Users");
+
+        // Pull out the UID's of each friend that belongs to this user
+        List<String> usersUIDs = new ArrayList<>();
+        if (!MainActivity.user.getFriends().isEmpty()) {
+            for (DocumentReference documentReference : MainActivity.user.getFriends()) {
+                usersUIDs.add(documentReference.getId());
+            }
+        }
+
+        // Query database
+        usersCollection
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.w(TAG, "No documents found in the Users collection");
+                    }
+                    else {
+
+                        // Final list of tours for this category
+                        List<User> usersFriends = new ArrayList<>();
+
+                        // Go through each document and compare the dates
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+
+                            // First check that the document belongs to the user
+                            if (usersUIDs.contains(document.getId())) {
+
+                                usersFriends.add(document.toObject(User.class));
+
+                            }
+                        }
+                        ((FriendsAdapter) friendsAdapter).clear();
+                        ((FriendsAdapter) friendsAdapter).addAll(usersFriends);
+                        friendsSwipeRefreshLayout.setRefreshing(false);
+
+                    }
+                });
+    }
+
 
 
 
