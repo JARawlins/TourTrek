@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
-
 import com.google.firebase.firestore.DocumentReference;
 import com.tourtrek.activities.MainActivity;
 import org.hamcrest.Description;
@@ -19,7 +18,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import androidx.test.core.app.ActivityScenario;
@@ -47,7 +45,6 @@ public class PersonalToursFragmentTest {
 
     @Rule
     public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
-
 
     @Before
     public void setup() throws InterruptedException, UiObjectNotFoundException {
@@ -83,7 +80,6 @@ public class PersonalToursFragmentTest {
         // sync to database
         updateUser();
     }
-
     /**
      *Create a tour with future start and end dates, then make sure it goes in the future tours bin
      */
@@ -243,6 +239,4 @@ public class PersonalToursFragmentTest {
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
     }
-
-
 }
