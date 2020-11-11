@@ -67,13 +67,11 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);
     }
 
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
-
+    
     @Override
     public int getItemCount() {
         return currentTourAttractionsDataSet.size();
