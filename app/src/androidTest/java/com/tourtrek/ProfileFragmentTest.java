@@ -43,9 +43,9 @@ public class ProfileFragmentTest {
         } finally {
             //then log into test profile
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(withId(R.id.login_email_et)).perform(typeText("robert@gmail.com"));
+            onView(withId(R.id.login_email_et)).perform(typeText("cctest@gmail.com"));
             Espresso.closeSoftKeyboard();
-            onView(withId(R.id.login_password_et)).perform(typeText("password"));
+            onView(withId(R.id.login_password_et)).perform(typeText("123456"));
             Espresso.closeSoftKeyboard();
             onView(withId(R.id.login_login_btn)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.personal_current_tours_title_btn, TimeUnit.SECONDS.toMillis(15)));
@@ -56,6 +56,7 @@ public class ProfileFragmentTest {
     @Test
     public void TestLogOut() {
         onView(withId(R.id.profile_logout_btn)).perform(click());
+        onView(isRoot()).perform(waitForView(R.id.login_register_btn, TimeUnit.SECONDS.toMillis(15)));
         onView(withId(R.id.login_register_btn)).check(matches(withText("Register")));
     }
 

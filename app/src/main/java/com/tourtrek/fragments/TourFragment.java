@@ -199,6 +199,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         coverTextView.setVisibility(View.GONE);
         checkBoxesContainer.setVisibility(View.GONE);
 
+        //configure Image View onClick event
+        coverImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
+
         // set up the recycler view of attractions
         configureRecyclerView(tourView);
         configureSwipeRefreshLayouts(tourView);
@@ -242,6 +251,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
                 publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
             }
+
+
 
             Glide.with(getContext())
                     .load(tourViewModel.getSelectedTour().getCoverImageURI())
