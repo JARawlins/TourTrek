@@ -81,7 +81,7 @@ public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
-    private RecyclerView.Adapter attractionsAdapter;
+    private CurrentTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
     private EditText locationEditText;
@@ -780,18 +780,18 @@ public class TourFragment extends Fragment {
 
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortAttractions(attractionsAdapter, key);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+//    @Override
+//    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//        String key = (String) parent.getItemAtPosition(position);
+//        sortAttractions(attractionsAdapter, key);
+//
+//    }
+//
+//    @Override
+//    public void onNothingSelected(AdapterView<?> parent) {
+//
+//    }
 
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
