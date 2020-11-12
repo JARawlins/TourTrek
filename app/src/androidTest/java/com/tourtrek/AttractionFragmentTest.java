@@ -151,54 +151,54 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
     }
 
-    /**
-     * test to check that an attraction is successfully added to the recycler view of the current tour following addition
-     *https://stackoverflow.com/questions/37736616/espresso-how-to-find-a-specific-item-in-a-recycler-view-order-is-random
-     */
-    @Test
-    public void addedToRecyclerTest() throws InterruptedException {
-        attractionConditionsTest("");
+//    /**
+//     * test to check that an attraction is successfully added to the recycler view of the current tour following addition
+//     *https://stackoverflow.com/questions/37736616/espresso-how-to-find-a-specific-item-in-a-recycler-view-order-is-random
+//     */
+//    @Test
+//    public void addedToRecyclerTest() throws InterruptedException {
+//        attractionConditionsTest("");
+//
+//        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
+//
+//        sleep(1000); // give time for the recycler view to load
+//
+//        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
+//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
+//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
+//
+//        onView(withId(R.id.attraction_name_et)).check(matches(withText("Some attraction")));
+//    }
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
-
-        sleep(1000); // give time for the recycler view to load
-
-        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
-
-        onView(withId(R.id.attraction_name_et)).check(matches(withText("Some attraction")));
-    }
-
-    /**
-     * Test for updating an attraction, not making a new one
-     */
-    @Test
-    public void updatedAttractionTest() throws InterruptedException {
-        attractionConditionsTest("");
-
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
-
-        sleep(1000); // give time for the recycler view items to load
-
-        // find the newly made attraction and select it
-        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
-
-
-        // update the attraction name
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
-        onView(withId(R.id.attraction_name_et)).perform(typeText("New attraction name"), closeSoftKeyboard());
-
-        // scroll to the "update attraction" button and click it
-        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.attraction_update_btn)).perform(click());
-
-        // check for the proper toast message
-        onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-    }
+//    /**
+//     * Test for updating an attraction, not making a new one
+//     */
+//    @Test
+//    public void updatedAttractionTest() throws InterruptedException {
+//        attractionConditionsTest("");
+//
+//        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
+//
+//        sleep(1000); // give time for the recycler view items to load
+//
+//        // find the newly made attraction and select it
+//        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
+//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
+//
+//
+//        // update the attraction name
+//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
+//        onView(withId(R.id.attraction_name_et)).perform(typeText("New attraction name"), closeSoftKeyboard());
+//
+//        // scroll to the "update attraction" button and click it
+//        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
+//        onView(withId(R.id.attraction_update_btn)).perform(click());
+//
+//        // check for the proper toast message
+//        onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+//    }
 
     // TODO - how will I test images?
 
