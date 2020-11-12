@@ -95,6 +95,17 @@ public class PersonalToursFragment extends Fragment {
 
         personalFutureToursTitleButton.setOnClickListener(
                 view -> {
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    // Create a new tour in firebase
+                    tourViewModel.setSelectedTour(new Tour());
+                    final DocumentReference tourDocumentReference = db.collection("Tours").document();
+                    tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
+                    db.collection("Tours").document(tourDocumentReference.getId()).set(tourViewModel.getSelectedTour());
+                    tourViewModel.setIsNewTour(true);
+                    MainActivity.user.addTourToTours(tourDocumentReference);
+
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
                     ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
                     ft.addToBackStack("TourFragment").commit();

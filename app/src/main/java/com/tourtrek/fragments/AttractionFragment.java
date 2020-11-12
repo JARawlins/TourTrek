@@ -502,10 +502,14 @@ public class AttractionFragment extends Fragment {
                 tourViewModel.getSelectedTour().addAttraction(attractionDocumentReference);
             }
 
+            // Adds or updates the attraction in the firestore
             db.collection("Attractions").document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
                         Log.d(TAG, "Attraction written to firestore");
+
+                        // update the attraction to the tour object in the firestore
+                        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
                         // TODO: Setup alarm for start time
                         if (tourViewModel.getSelectedTour().getNotifications())
@@ -513,15 +517,10 @@ public class AttractionFragment extends Fragment {
 
                         if (attractionViewModel.isNewAttraction()) {
                             Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
-
-                            attractionViewModel.setSelectedAttraction(null);
-                            attractionViewModel.setIsNewAttraction(null);
                             getParentFragmentManager().popBackStack();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
-
-                            attractionViewModel.setIsNewAttraction(false);
                         }
 
                     })

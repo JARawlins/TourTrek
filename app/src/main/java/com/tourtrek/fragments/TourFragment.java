@@ -80,11 +80,15 @@ public class TourFragment extends Fragment {
     private LinearLayout buttonsContainer;
     Button shareButton;
     private ImageView coverImageView;
+    private boolean added;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // To check that the tour has not been added
+        added = false;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -149,50 +153,27 @@ public class TourFragment extends Fragment {
         setupUpdateTourButton(tourView);
 
         // This means we are creating a new tour
-        if (tourViewModel.getSelectedTour() == null) {
-
-            tourViewModel.setSelectedTour(new Tour());
-
-            // set up fields to be made visible since we are creating a new tour
-            nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
-            costEditText.setEnabled(true);
-            startDateButton.setEnabled(true);
-            endDateButton.setEnabled(true);
-            coverImageView.setClickable(true);
-            buttonsContainer.setVisibility(View.VISIBLE);
-            coverTextView.setVisibility(View.VISIBLE);
-            checkBoxesContainer.setVisibility(View.VISIBLE);
-
+        if (tourViewModel.isNewTour()) {
             updateTourButton.setText("Add Tour");
-
-            tourViewModel.setIsNewTour(true);
-
         }
         else {
-
-            // Check if the user is logged in to identify if the tour belongs to them
-            if (MainActivity.user != null) {
-                tourIsUsers();
-            }
-
-            if (!tourViewModel.isNewTour()) {
-                // Set all the fields
-                nameEditText.setText(tourViewModel.getSelectedTour().getName());
-                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
-                costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
-                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
-                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
-                notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
-                publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
-            }
-
-            Glide.with(getContext())
-                    .load(tourViewModel.getSelectedTour().getCoverImageURI())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.default_image)
-                    .into(coverImageView);
+            nameEditText.setText(tourViewModel.getSelectedTour().getName());
+            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+            costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
+            startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+            notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
+            publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
         }
+
+        // Check to see if this tour belongs to the user
+        tourIsUsers();
+
+        Glide.with(getContext())
+                .load(tourViewModel.getSelectedTour().getCoverImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.default_image)
+                .into(coverImageView);
 
         nameEditText.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -286,6 +267,33 @@ public class TourFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (tourViewModel.isNewTour() && !added && !tourViewModel.returnedFromAddAttraction()) {
+            // Go through each attraction in the tour and delete them from the firestore
+
+            // Pull out the UID's of each attraction that belongs to this tour
+            List<String> tourAttractionUIDs = new ArrayList<>();
+            if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
+                for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                    tourAttractionUIDs.add(documentReference.getId());
+                }
+            }
+
+            for (String attractionUID : tourAttractionUIDs) {
+                db.collection("Attractions").document(attractionUID).delete();
+            }
+
+            // Delete the tour from the firestore since the user has not
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).delete();
+
+            // Remove the tour from the users tour list
+            for (DocumentReference tourDocumentReference : MainActivity.user.getTours()) {
+                if (tourDocumentReference.getId().equals(tourViewModel.getSelectedTour().getTourUID()))
+                    MainActivity.user.getTours().remove(tourDocumentReference);
+            }
+        }
 
         if (!tourViewModel.returnedFromAddAttraction()) {
             tourViewModel.setSelectedTour(null);
@@ -517,6 +525,8 @@ public class TourFragment extends Fragment {
 
         editTourUpdateButton.setOnClickListener(view1 -> {
 
+            added = true;
+
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
             String cost = costEditText.getText().toString();
@@ -560,12 +570,6 @@ public class TourFragment extends Fragment {
                 tourViewModel.getSelectedTour().setCost(Float.parseFloat(costEditText.getText().toString()));
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            if (tourViewModel.isNewTour()) {
-                final DocumentReference tourDocumentReference = db.collection("Tours").document();
-                tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
-                MainActivity.user.addTourToTours(tourDocumentReference);
-            }
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
