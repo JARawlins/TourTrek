@@ -443,7 +443,7 @@ public class AttractionFragment extends Fragment {
     private void setupUpdateAttractionButton(View view){
 
         updateAttractionButton.setOnClickListener(v -> {
-
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             // first get the information from each EditText
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
@@ -453,6 +453,18 @@ public class AttractionFragment extends Fragment {
             String startTime = startTimeButton.getText().toString();
             String endDate = endDateButton.getText().toString();
             String endTime = endTimeButton.getText().toString();
+
+            // error-handling of dates
+            try {
+                Date start = simpleDateFormat.parse(startDate);
+                Date end = simpleDateFormat.parse(endDate);
+                if (end.compareTo(start) < 0){
+                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             if (name.equals("") ||
                     location.equals("") ||
