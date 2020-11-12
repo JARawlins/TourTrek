@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -89,9 +90,10 @@ public class ProfileFragment extends Fragment {
                 .circleCrop()
                 .into(profileUserImageView);
 
-        // Setup handler for logout button
+        // Setup handler for buttons
         setupLogoutButtonHandler(profileFragmentView);
-
+        setupSettingsButtonHandler(profileFragmentView);
+        setupAddFriendButtonHandler(profileFragmentView);
         return profileFragmentView;
     }
 
@@ -118,6 +120,42 @@ public class ProfileFragment extends Fragment {
             navController.navigate(R.id.navigation_login);
         });
     }
+
+    /**
+     * Setup listener for add_friend button
+     *
+     * @param view current view
+     */
+    public void setupAddFriendButtonHandler(final View view) {
+
+        Button addFriendButton = view.findViewById(R.id.profile_friend_btn);
+
+        addFriendButton.setOnClickListener(v -> {
+
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new FriendFragment(), "AddFriendFragment");
+            ft.addToBackStack("AddFriendFragment").commit();
+        });
+    }
+
+    /**
+     * Setup listener for settings button
+     *
+     * @param view current view
+     */
+    public void setupSettingsButtonHandler(final View view) {
+
+        Button settingsButton = view.findViewById(R.id.profile_settings_btn);
+
+        settingsButton.setOnClickListener(v -> {
+           // Toast.makeText(getContext(), "Test123", Toast.LENGTH_SHORT).show();
+            //TODO: open settings xml
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new SettingsFragment(), "SettingsFragment");
+            ft.addToBackStack("SettingsFragment").commit();
+        });
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {

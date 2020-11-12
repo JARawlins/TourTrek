@@ -23,6 +23,8 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     private static final String TAG = "CurrentTourAttractionsAdapter";
     private List<Attraction> currentTourAttractionsDataSet;
     private Context context;
+    private List<Attraction> currentTourAttractionsDataSetCopy;
+    private List<Attraction> currentTourAttractionsDataSetFiltered;
 
     public static class CurrentAttractionsViewHolder extends RecyclerView.ViewHolder {
 
@@ -40,6 +42,8 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
     public CurrentTourAttractionsAdapter (Context context) {
         this.currentTourAttractionsDataSet = new ArrayList<>();
         this.context = context;
+        this.currentTourAttractionsDataSetCopy = new ArrayList<>();
+        this.currentTourAttractionsDataSetFiltered = new ArrayList<>();
     }
 
     @NonNull
@@ -109,7 +113,26 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
      */
     public void clear() {
         currentTourAttractionsDataSet.clear();
+        currentTourAttractionsDataSet = new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public List<Attraction> getDataSet() {
+
+        return currentTourAttractionsDataSetCopy;
+    }
+
+    public void copyAttractions(List<Attraction> attractions){
+        this.currentTourAttractionsDataSetFiltered = new ArrayList<>(attractions);
+        this.currentTourAttractionsDataSetCopy = new ArrayList<>(attractions);
+    }
+
+    public List<Attraction> getDataSetFiltered() {
+        return currentTourAttractionsDataSetFiltered;
+    }
+
+    public void setDataSetFiltered(List<Attraction> dataSet){
+        this.currentTourAttractionsDataSetFiltered = new ArrayList<>(dataSet);
     }
 
     /**
