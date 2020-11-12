@@ -151,6 +151,7 @@ public class AttractionFragmentTest {
 //        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
 //    }
 
+
     /**
      * test to check that an attraction is successfully added to the recycler view of the current tour following addition
      *https://stackoverflow.com/questions/37736616/espresso-how-to-find-a-specific-item-in-a-recycler-view-order-is-random
