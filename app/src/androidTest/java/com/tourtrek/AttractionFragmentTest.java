@@ -47,14 +47,14 @@ public class AttractionFragmentTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(20)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(20)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(100)));
             onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("123456"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
@@ -147,7 +147,7 @@ public class AttractionFragmentTest {
     public void backToEditTourTest() {
         // this check will only pass if we have successfully returned to the edit tour page
         attractionConditionsTest("");
-        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
     }
 
@@ -159,14 +159,14 @@ public class AttractionFragmentTest {
     public void addedToRecyclerTest() throws InterruptedException {
         attractionConditionsTest("");
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
 
         sleep(1000); // give time for the recycler view to load
 
         onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(100)));
 
         onView(withId(R.id.attraction_name_et)).check(matches(withText("Some attraction")));
     }
@@ -178,7 +178,7 @@ public class AttractionFragmentTest {
     public void updatedAttractionTest() throws InterruptedException {
         attractionConditionsTest("");
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
 
         sleep(1000); // give time for the recycler view items to load
 
@@ -188,7 +188,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
 
         // update the attraction name
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.attraction_name_et)).perform(typeText("New attraction name"), closeSoftKeyboard());
 
         // scroll to the "update attraction" button and click it
@@ -205,8 +205,8 @@ public class AttractionFragmentTest {
     @Test
     public void deletionTest() throws InterruptedException {
         attractionConditionsTest("");
-
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
+      
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
 
         sleep(1000); // give time for the recycler view items to load
 
@@ -216,7 +216,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
 
         // update the attraction name
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(100)));
 
         // scroll to the "update attraction" button and click it
         onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
