@@ -19,20 +19,6 @@
         app:passwordToggleEnabled="true">
 
         <EditText
-            android:id="@+id/change_email_current_email_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Current Email"
-            android:inputType="textEmailAddress"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true">
-
-        <EditText
             android:id="@+id/change_email_new_email_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

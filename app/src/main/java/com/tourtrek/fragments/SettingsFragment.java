@@ -38,6 +38,7 @@ public class SettingsFragment extends Fragment {
     private EditText changePassword2;
     private Button updatePasswordButton;
     private Button updateUsernameButton;
+    private Button updateEmailButton;
     private boolean nameUpdated = false;
     private boolean EmailUpdated = false;
     private boolean passwordUpdated = false;
@@ -83,6 +84,11 @@ public class SettingsFragment extends Fragment {
             showChangeUsernameDialog();
         });
 
+        //create change email button listener
+        updateEmailButton = view.findViewById(R.id.settings_change_email_btn);
+        updateEmailButton.setOnClickListener(v -> {
+            showChangeEmailDialog();
+        });
     }
     private void showChangeUsernameDialog(){
         //set view to fragment_change_username.xml
@@ -95,7 +101,6 @@ public class SettingsFragment extends Fragment {
 
         //get fields
         EditText newUsername = view.findViewById(R.id.change_username_new_username_et);
-        EditText password = view.findViewById(R.id.change_username_current_password_et);
         Button updateUsernameButton = view.findViewById(R.id.change_username_update_username_btn);
         //create update username button listener
         updateUsernameButton.setOnClickListener(v -> {
@@ -117,6 +122,7 @@ public class SettingsFragment extends Fragment {
         db.collection("Users").document(user.getUid()).set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                MainActivity.user.setUsername(newUsername);
                 Toast.makeText(getActivity(),
                         "Username changed successfully", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
@@ -133,8 +139,76 @@ public class SettingsFragment extends Fragment {
                 });
     }
 
+    private void showChangeEmailDialog(){
+        //set view to fragment_change_email.xml
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_email, null);
+        TextView errorTextView = view.findViewById(R.id.change_email_error_tv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        //get fields
+        EditText newEmail = view.findViewById(R.id.change_email_new_email_et);
+        Button updateEmailButton = view.findViewById(R.id.change_email_update_email_btn);
+        //create update username button listener
+        updateEmailButton.setOnClickListener(v -> {
+            if(newEmail.getText().toString().split("@").length == 2 && newEmail.getText().toString().split("@")[1].contains(".") ){
+                updateEmail(newEmail.getText().toString(),errorTextView, dialog);
+            }
+            else{
+                Toast.makeText(getActivity(),
+                        "New email formatted incorrectly", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateEmail(String newEmail, TextView errorTextView, AlertDialog dialog) {
 
 
+        FirebaseUser user = mAuth.getCurrentUser();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        user.updateEmail(newEmail).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                User newUser = new User();
+                newUser.setEmail(newEmail);
+                newUser.setProfileImageURI(MainActivity.user.getProfileImageURI());
+                newUser.setTours(MainActivity.user.getTours());
+                newUser.setFriends(MainActivity.user.getFriends());
+                newUser.setUsername(MainActivity.user.getUsername());
+                db.collection("Users").document(user.getUid()).set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        MainActivity.user.setEmail(newEmail);
+                        Toast.makeText(getActivity(),
+                                "Email changed successfully", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errorTextView.setVisibility(View.VISIBLE);
+                                errorTextView.setText("" + e.getMessage());
+                                Toast.makeText(getActivity(),
+                                        "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorTextView.setVisibility(View.VISIBLE);
+                        errorTextView.setText("" + e.getMessage());
+                        Toast.makeText(getActivity(),
+                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+    }
     private void showChangePasswordDialog(){
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_change_password, null);
@@ -211,50 +285,4 @@ public class SettingsFragment extends Fragment {
                     }
                 });
     }
-
-
-//    private void setupUpdateSettingsButton(View view){
-//
-//        //set up fields
-//        changeName = view.findViewById(R.id.settings_new_username_et);
-//        changeEmail = view.findViewById(R.id.settings_new_email_et);
-//        changePassword1 = view.findViewById(R.id.settings_new_password_et);
-//        changePassword2 = view.findViewById(R.id.settings_confirm_new_password_et);
-//        updateSettingsButton = view.findViewById(R.id.settings_update_settings_btn);
-//
-//        // start click listener
-//        updateSettingsButton.setOnClickListener(v -> {
-//
-//            //assign text fields to variables
-//            String newName = changeName.getText().toString();
-//            String newEmail = changeEmail.getText().toString();
-//            String newPassword1 = changePassword1.getText().toString();
-//            String newPassword2 = changePassword2.getText().toString();
-//
-//            //check to see if newName is not empty
-//            if(newName.trim() != ""){
-//                //mAuth.getCurrentUser().updateProfile({username: newName});
-//                //User user = mAuth.getCurrentUser();
-//
-//                nameUpdated = true;
-//            }
-//
-//            //check to see if newEmail is not empty
-//            if(newEmail.trim() != ""){
-//                //todo: update email in firebase
-//                EmailUpdated = true;
-//            }
-//
-//            //check to see if newPassword1 matches newPassword2 and that they have content that is at least  x chars long
-//            // also make sure any other requirements are met
-//            if(newPassword1.trim()  != ""){
-//                //todo: update password in firebase
-//                nameUpdated = true;
-//            }
-//
-//
-//
-//        });
-//
-//    }
 }
