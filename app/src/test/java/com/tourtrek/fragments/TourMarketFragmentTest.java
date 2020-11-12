@@ -19,7 +19,6 @@ public class TourMarketFragmentTest {
         tourMarketFragment = new TourMarketFragment();
     }
 
-
     @Test
     public void findTours_test(){
 
