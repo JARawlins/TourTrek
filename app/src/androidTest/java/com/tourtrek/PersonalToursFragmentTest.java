@@ -77,6 +77,7 @@ public class PersonalToursFragmentTest {
         MainActivity.user.setTours(new ArrayList<DocumentReference>());
 
         // don't break attraction fragment testing
+        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.navigation_tours)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
