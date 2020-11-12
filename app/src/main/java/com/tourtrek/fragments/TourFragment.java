@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,17 +53,12 @@ import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.viewModels.TourViewModel;
 
-import org.joda.time.DateTime;
-
 import java.text.ParseException;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class TourFragment extends Fragment {
 
@@ -583,10 +577,7 @@ public class TourFragment extends Fragment {
 
                         // TODO: Setup alarm for start time
                         if (tourViewModel.getSelectedTour().getNotifications())
-                            scheduleNotification("1",
-                                    "tourStart",
-                                    "Tour Started",
-                                    tourViewModel.getSelectedTour().getName() + " has started");
+                            scheduleNotification();
 
                         tourViewModel.setSelectedTour(null);
                         tourViewModel.setIsNewTour(null);
@@ -606,19 +597,19 @@ public class TourFragment extends Fragment {
         });
     }
 
-    private void scheduleNotification(String notificationChannelId, String notificationChannelName, String title, String body) {
+    private void scheduleNotification() {
 
         // Create view button
         Intent viewIntent = new Intent(getContext(), MainActivity.class);
-        viewIntent.putExtra("viewId", 1000);
+        viewIntent.putExtra("viewId", 1);
         PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
 
         // Build the notification to display
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), notificationChannelId);
-        builder.setContentTitle(title);
-        builder.setContentText(body);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "1");
+        builder.setContentTitle("Tour Started");
+        builder.setContentText(tourViewModel.getSelectedTour().getName() + " has started");
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
-        builder.setChannelId(notificationChannelId);
+        builder.setChannelId("1");
         builder.setContentIntent(viewPendingIntent);
         builder.setAutoCancel(true);
         builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
@@ -627,16 +618,14 @@ public class TourFragment extends Fragment {
         // Get Tour Start Date
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
-        calendar.set(Calendar.HOUR_OF_DAY, 18);
-        calendar.set(Calendar.MINUTE, 31);
 
         // Initialize the alarm manager
         AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
         intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, String.valueOf(System.currentTimeMillis() % 10000));
         intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
-        intent.putExtra("NOTIFICATION_CHANNEL_ID", notificationChannelId);
-        intent.putExtra("NOTIFICATION_CHANNEL_NAME", notificationChannelName);
+        intent.putExtra("NOTIFICATION_CHANNEL_ID", "1");
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "tourStart");
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
