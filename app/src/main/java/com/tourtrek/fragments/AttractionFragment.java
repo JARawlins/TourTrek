@@ -338,7 +338,7 @@ public class AttractionFragment extends Fragment {
             ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
         }
         else{
-            ((MainActivity) requireActivity()).setActionBarTitle("Update Attraction");
+            ((MainActivity) requireActivity()).setActionBarTitle(attractionViewModel.getSelectedAttraction().getName());
         }
     }
 
