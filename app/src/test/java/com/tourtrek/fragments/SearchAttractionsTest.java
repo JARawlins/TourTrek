@@ -173,7 +173,7 @@ public class SearchAttractionsTest {
     }
 
     @Test
-    public void sortAttractionByNameDescendingTest(){
+    public void sortAttractionsByNameDescendingTest(){
         //Create 3 attractions and set fields
         Attraction attraction0 = new Attraction();
         Attraction attraction1 = new Attraction();
@@ -200,6 +200,71 @@ public class SearchAttractionsTest {
         List<Attraction> result = tourFragment.sortedAttractions(attractions, "Name Descending");
         assertEquals(result.get(0).getName(), "attraction2");
         assertEquals(result.get(1).getName(), "attraction1");
+        assertEquals(result.get(2).getName(), "attraction0");
+        assertEquals(result.size(), 3);
+    }
+
+    @Test
+    public void sortAttractionsByLocationDescendingTest(){
+        //Create 3 attractions and set fields
+        Attraction attraction0 = new Attraction();
+        Attraction attraction1 = new Attraction();
+        Attraction attraction2 = new Attraction();
+        attraction0.setName("attraction0");
+        attraction0.setLocation("attraction0_location");
+        attraction0.setCost(0);
+
+        attraction1.setName("attraction1");
+        attraction1.setLocation("attraction1_location");
+        attraction1.setCost(1);
+
+        attraction2.setName("attraction2");
+        attraction2.setLocation("attraction2_location");
+        attraction2.setCost(2);
+
+        //Add attractions to a list
+        List<Attraction> attractions = new ArrayList<>();
+        attractions.add(attraction1);
+        attractions.add(attraction0);
+        attractions.add(attraction2);
+
+        //Expected size 3
+        List<Attraction> result = tourFragment.sortedAttractions(attractions, "Location Descending");
+        assertEquals(result.get(0).getName(), "attraction2");
+        assertEquals(result.get(1).getName(), "attraction1");
+        assertEquals(result.get(2).getName(), "attraction0");
+        assertEquals(result.size(), 3);
+    }
+
+    @Test
+    public void sortAttractionsByCostDescendingTest(){
+        //Create 3 attractions and set fields
+        Attraction attraction0 = new Attraction();
+        Attraction attraction1 = new Attraction();
+        Attraction attraction2 = new Attraction();
+        attraction0.setName("attraction0");
+        attraction0.setLocation("attraction0_location");
+        attraction0.setCost(0);
+
+        attraction1.setName("attraction1");
+        attraction1.setLocation("attraction1_location");
+        attraction1.setCost(1);
+
+        attraction2.setName("attraction2");
+        attraction2.setLocation("attraction2_location");
+        attraction2.setCost(2);
+
+        //Add attractions to a list
+        List<Attraction> attractions = new ArrayList<>();
+        attractions.add(attraction1);
+        attractions.add(attraction0);
+        attractions.add(attraction2);
+
+        //Expected size 3
+        List<Attraction> result = tourFragment.sortedAttractions(attractions, "Cost Descending");
+        assertEquals(result.get(0).getName(), "attraction2");
+        assertEquals(result.get(1).getName(), "attraction1");
+        assertEquals(result.get(2).getName(), "attraction0");
         assertEquals(result.size(), 3);
     }
 }
