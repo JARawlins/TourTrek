@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// TODO - deleting an attraction - add a delete button (visible when owned by the user) and remove the attraction from the tour view model upon clicking it
 /**
  * This fragment corresponds to the user story for creating a custom attraction.
  * It runs when a user selects the 'add attraction' option from within the fragment showing the list of attractions in a selected tour.
