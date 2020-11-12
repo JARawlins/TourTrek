@@ -147,7 +147,7 @@ public class AttractionFragmentTest {
     public void backToEditTourTest() {
         // this check will only pass if we have successfully returned to the edit tour page
         attractionConditionsTest("");
-        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMillis(20)));
+        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
     }
 
