@@ -575,7 +575,7 @@ public class TourFragment extends Fragment {
                         // Update the user in the firestore
                         Firestore.updateUser();
 
-                        // TODO: Setup alarm for start time
+                        // TODO: only schedule the notification if it hasn't started yet
                         if (tourViewModel.getSelectedTour().getNotifications())
                             scheduleNotification();
 
@@ -597,6 +597,9 @@ public class TourFragment extends Fragment {
         });
     }
 
+    /**
+     * Create a notification channel and add an alarm to be triggered by a broadcast receiver
+     */
     private void scheduleNotification() {
 
         // Create view button
@@ -622,11 +625,12 @@ public class TourFragment extends Fragment {
         // Initialize the alarm manager
         AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
-        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, String.valueOf(System.currentTimeMillis() % 10000));
+        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
         intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
         intent.putExtra("NOTIFICATION_CHANNEL_ID", "1");
-        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "tourStart");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Tour Start");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
     }

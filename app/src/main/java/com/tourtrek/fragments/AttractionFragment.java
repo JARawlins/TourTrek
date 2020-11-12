@@ -40,10 +40,14 @@ import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -535,7 +539,7 @@ public class AttractionFragment extends Fragment {
         // Build the notification to display
         NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "2");
         builder.setContentTitle("Attraction Started");
-        builder.setContentText(tourViewModel.getSelectedTour().getName() + " has started");
+        builder.setContentText(attractionViewModel.getSelectedAttraction().getName() + " has started");
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
         builder.setChannelId("2");
         builder.setContentIntent(viewPendingIntent);
@@ -545,16 +549,27 @@ public class AttractionFragment extends Fragment {
 
         // Get Tour Start Date
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+        calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+
+        try {
+            String startTime = attractionViewModel.getSelectedAttraction().getStartTime();
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+            Date date = df.parse(startTime);
+            calendar.set(Calendar.HOUR, date.getHours());
+            calendar.set(Calendar.MINUTE, date.getMinutes());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         // Initialize the alarm manager
         AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
-        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, String.valueOf(System.currentTimeMillis() % 10000));
+        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
         intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
         intent.putExtra("NOTIFICATION_CHANNEL_ID", "2");
-        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "attractionStart");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Attraction Start");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
     }
