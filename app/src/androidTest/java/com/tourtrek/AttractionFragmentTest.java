@@ -205,7 +205,7 @@ public class AttractionFragmentTest {
     @Test
     public void deletionTest() throws InterruptedException {
         attractionConditionsTest("");
-
+      
         onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
 
         sleep(1000); // give time for the recycler view items to load
