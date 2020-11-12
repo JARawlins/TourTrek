@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static androidx.test.espresso.Espresso.*;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
+import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
 import static org.hamcrest.Matchers.not;
 
@@ -69,7 +70,7 @@ public class EditTourFragmentTest {
         onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
         onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.tour_name_et)).perform((typeText("EditTourTestTour")), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.tour_update_btn)).perform(scrollTo());
+        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
         onView(withText(R.string.Edit_Success_TOAST_STRING)).inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
