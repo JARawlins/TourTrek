@@ -187,7 +187,6 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
 
-
         // update the attraction name
         onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
         onView(withId(R.id.attraction_name_et)).perform(typeText("New attraction name"), closeSoftKeyboard());
@@ -200,7 +199,32 @@ public class AttractionFragmentTest {
         onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
-    // TODO - how will I test images?
+    /**
+     * Test deletion of an attraction
+     */
+    @Test
+    public void deletionTest() throws InterruptedException {
+        attractionConditionsTest("");
+
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(20)));
+
+        sleep(1000); // give time for the recycler view items to load
+
+        // find the newly made attraction and select it
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Some attraction"))));
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Some attraction")), click()));
+
+        // update the attraction name
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(20)));
+
+        // scroll to the "update attraction" button and click it
+        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_delete_btn)).perform(click());
+
+        // check for the proper toast message
+        onView(withText("Attraction Deleted")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+    }
 
     /**
      * Helper method to minimize duplicate code
