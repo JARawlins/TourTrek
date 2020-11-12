@@ -284,7 +284,8 @@
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="visible" />
 
                 <Button
                     android:id="@+id/attraction_delete_btn"
@@ -296,11 +297,12 @@
                     android:layout_weight="1"
                     android:background="@color/colorPrimary"
                     android:enabled="true"
-                    android:text="Delete Attraction"
+                    android:text="Permanently Delete Attraction"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
 
             </LinearLayout>
 
