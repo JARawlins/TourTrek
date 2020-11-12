@@ -140,16 +140,16 @@ public class AttractionFragmentTest {
         onView(withText("Successfully Added Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
-    /**
-     * Check that updating or adding an attraction takes you back to the prior tour screen
-     */
-    @Test
-    public void backToEditTourTest() {
-        // this check will only pass if we have successfully returned to the edit tour page
-        attractionConditionsTest("");
-        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMillis(100)));
-        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
-    }
+//    /**
+//     * Check that updating or adding an attraction takes you back to the prior tour screen
+//     */
+//    @Test
+//    public void backToEditTourTest() {
+//        // this check will only pass if we have successfully returned to the edit tour page
+//        attractionConditionsTest("");
+//        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMillis(100)));
+//        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
+//    }
 
     /**
      * test to check that an attraction is successfully added to the recycler view of the current tour following addition
