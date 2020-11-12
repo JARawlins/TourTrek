@@ -74,10 +74,11 @@ public class PersonalToursFragmentTest {
     public void tearDown() throws UiObjectNotFoundException, InterruptedException {
         // remove all tours
         MainActivity.user.setTours(new ArrayList<DocumentReference>());
-        updateUser();
 
         // don't break attraction fragment testing
-        setup();
+        onView(withId(R.id.navigation_tours)).perform(click());
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
+        onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
         tourDateConditionsTest("future");
 
         // sync to database
@@ -206,6 +207,7 @@ public class PersonalToursFragmentTest {
      */
     private void tourDateConditionsTest(String condition){
         // name
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.tour_name_et)).perform(typeText(condition + " tour"), closeSoftKeyboard());
 
         // location
