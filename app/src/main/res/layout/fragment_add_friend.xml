@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="24dp"
                 android:text="Find a friend by e-mail:"
                 android:textColor="@color/colorPrimary"
@@ -117,9 +117,9 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <RelativeLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="48dp">
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_marginTop="16dp">
 
                 <ImageView
                     android:id="@+id/add_friend_profile_iv"
@@ -166,14 +166,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context=".fragment.AddFriendFragment"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="16dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="16dp"
                     android:text="My Friends:"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold"
@@ -186,21 +187,23 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_weight="2">
+                android:layout_height="250dp">
 
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:id="@+id/add_friend_my_friends_srl"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/add_friend_my_friends_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginVertical="2dp"
+                        android:background="#EEEEEE"
+                        android:padding="8dp"
                         android:visibility="invisible"/>
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
