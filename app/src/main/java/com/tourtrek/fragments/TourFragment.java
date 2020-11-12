@@ -358,6 +358,8 @@ public class TourFragment extends Fragment {
         ItemClickSupport.addTo(attractionsRecyclerView, R.layout.item_attraction)
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
+                    tourViewModel.setReturnedFromAddAttraction(true);
+
                     // Reference to the current tour selected
                     Attraction attraction = ((CurrentTourAttractionsAdapter) attractionsAdapter).getData(position);
 
