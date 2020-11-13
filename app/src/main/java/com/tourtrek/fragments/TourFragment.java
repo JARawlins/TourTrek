@@ -152,7 +152,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sortAttractions(attractionsAdapter, result);
+                sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, result);
             }
         });
 
@@ -692,7 +692,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                searchAttractions(attractionsAdapter, query);
+                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, query);
 
                 return true;
             }
@@ -700,7 +700,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                searchAttractions(attractionsAdapter, newText);
+                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, newText);
 
                 return true;
             }
@@ -756,7 +756,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         String key = (String) parent.getItemAtPosition(position);
-        sortAttractions(attractionsAdapter, key);
+        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
 
     }
 
