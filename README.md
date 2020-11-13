@@ -71,7 +71,7 @@ TourTrek is an android application developed for those who love to explore new p
 * Run A Code Coverage Test:
     * Open the Gradle sidebar navigator view
     * Navigate to TourTrek --> Tasks --> verification
-    * Double click "createDebugConverageReport"
+    * Double click "createDebugCoverageReport"
     * Wait for project status to display "Gradle build finished"
     * In the project directory, navigate to app --> build --> reports --> coverage --> debug
     * Open index.html with a web browser to view full code coverage report
