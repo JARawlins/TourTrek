@@ -12,8 +12,9 @@ public class User {
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
-    private List<DocumentReference> friends;
+    private List<DocumentReference> contacts;
     private HashMap<String, Object> settings;
+    private List<DocumentReference> friends;
 
     /**
      * Empty constructor needed for firestore
@@ -123,6 +124,16 @@ public class User {
         this.tours = tours;
     }
 
+    public List<DocumentReference> getContacts() {
+        if (this.contacts == null){
+            this.contacts = new ArrayList<>();
+        }
+        return this.contacts;
+    }
+
+    public void setContacts(List<DocumentReference> contacts) {
+        this.contacts = contacts;
+    }
 
     /**
      * Getter for friends
@@ -144,6 +155,9 @@ public class User {
     public void setFriends(List<DocumentReference> friends) {
         this.friends = friends;
     }
+
+
+
 
     /**
      * Add tour reference to the user

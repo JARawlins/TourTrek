@@ -337,16 +337,19 @@ public class PersonalToursFragment extends Fragment {
                             if (usersToursUIDs.contains(document.getId())) {
 
                                 Timestamp tourStartDate = (Timestamp) document.get("startDate");
+                                Timestamp tourEndDate = (Timestamp) document.get("endDate");
                                 Timestamp now = Timestamp.now();
-                                Long length = (Long)document.get("length");
 
-                                // Next query based on timestamp
-                                if (type.equals("current")) { // TODO: filter based on tour length and timestamp
-                                }
-                                else if (type.equals("future") && tourStartDate.compareTo(now) > 0) {
+                                // the start date is before now and the end date is after now
+                                if (type.equals("current") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) > 0) {
                                     usersTours.add(document.toObject(Tour.class));
                                 }
-                                else if (type.equals("past") && tourStartDate.compareTo(now) < 0) {
+                                // the start date is after now and the end date is after now
+                                else if (type.equals("future") && tourStartDate.compareTo(now) > 0 && tourEndDate.compareTo(now) > 0) {
+                                    usersTours.add(document.toObject(Tour.class));
+                                }
+                                // the start date and end dates are before now
+                                else if (type.equals("past") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) < 0) {
                                     usersTours.add(document.toObject(Tour.class));
                                 }
                             }
