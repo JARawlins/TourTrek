@@ -39,12 +39,9 @@ import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.data.Tour;
-import com.tourtrek.utilities.Firestore;
-import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
-
+import com.tourtrek.data.Tour;
 import java.text.DateFormat;
 import org.w3c.dom.Document;
 
