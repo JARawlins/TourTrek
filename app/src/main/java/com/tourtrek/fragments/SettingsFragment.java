@@ -227,6 +227,7 @@ public class SettingsFragment extends Fragment {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
+                errorTextView.setVisibility(View.INVISIBLE);
                 String password0 = passwordEt0.getText().toString();
                 String password1 = passwordEt1.getText().toString();
                 String password2 = passwordEt2.getText().toString();
