@@ -1,5 +1,6 @@
 package com.tourtrek.data;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.DateFormat;

@@ -64,6 +64,7 @@ import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -584,12 +585,25 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         Button editTourUpdateButton = view.findViewById(R.id.tour_update_btn);
 
         editTourUpdateButton.setOnClickListener(view1 -> {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
             String cost = costEditText.getText().toString();
             String startDate = startDateButton.getText().toString();
             String endDate = endDateButton.getText().toString();
+
+            // error-handling of dates so as to not break the tour classification by date
+            try {
+                Date start = simpleDateFormat.parse(startDate);
+                Date end = simpleDateFormat.parse(endDate);
+                if (end.compareTo(start) < 0){
+                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             if (name.equals("") ||
                     location.equals("") ||
