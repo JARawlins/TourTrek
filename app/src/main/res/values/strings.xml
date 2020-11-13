@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TourTrek</string>
     <string name="title_tour_market">Tour Market</string>
-    <string name="title_tours">Tours</string>
+    <string name="title_tours">Personal Tours</string>
     <string name="title_profile">Profile</string>
     <string name="action_sign_in">Sign In</string>
     <string name="prompt_password">Password</string>
@@ -10,15 +10,14 @@
     <string name="prompt_username">Username</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_edit_tour_notifications">Notifications</string>
-    <string name="fragment_edit_tour_public">Public</string><![CDATA[
-    -->
-    ]]><!--    <string name=""></string>-->
+    <string name="fragment_edit_tour_public">Public</string>
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
-    
+    <!--    <string name=""></string>-->
+
     <string-array name="categories">
         <item>Sort by</item>
         <item>Name Ascending</item>
@@ -28,5 +27,19 @@
         <item>Location Descending</item>
         <item>Duration Descending</item>
     </string-array>
+
+    <string-array name="categories_attractions">
+        <item>Sort by</item>
+        <item>Name Ascending</item>
+        <item>Location Ascending</item>
+        <item>Cost Ascending</item>
+        <item>Name Descending</item>
+        <item>Location Descending</item>
+        <item>Cost Descending</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Edit_Success_TOAST_STRING">Successfully Updated Tour</string>
+    <string name="Add_Friend_Success_TOAST_STRING">Successfully Add Friend</string>
 
 </resources>

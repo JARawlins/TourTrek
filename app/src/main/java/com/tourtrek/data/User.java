@@ -3,6 +3,7 @@ package com.tourtrek.data;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class User {
@@ -12,6 +13,8 @@ public class User {
     private String profileImageURI;
     private List<DocumentReference> tours;
     private List<DocumentReference> contacts;
+    private HashMap<String, Object> settings;
+    private List<DocumentReference> friends;
 
     /**
      * Empty constructor needed for firestore
@@ -22,6 +25,25 @@ public class User {
         this.username = username;
         this.email = email;
         this.tours = new ArrayList<>();
+        this.friends= new ArrayList<>();
+    }
+
+    /**
+     * Getter for settings.
+     *
+     * @return current settings
+     */
+    public HashMap<String, Object> getSettings() {
+        return settings;
+    }
+
+    /**
+     * Setter for settings.
+     *
+     * @param settings settings to set
+     */
+    public void setSettings(HashMap<String, Object> settings) {
+        this.settings = settings;
     }
 
     /**
@@ -114,6 +136,30 @@ public class User {
     }
 
     /**
+     * Getter for friends
+     *
+     * @return current friends
+     */
+    public List<DocumentReference> getFriends() {
+        if (this.friends == null){
+            this.friends = new ArrayList<>();
+        }
+        return friends;
+    }
+
+    /**
+     * Setter for friends
+     *
+     * @param friends friends to set
+     */
+    public void setFriends(List<DocumentReference> friends) {
+        this.friends = friends;
+    }
+
+
+
+
+    /**
      * Add tour reference to the user
      *
      * @param tourDocument tourDocument to add
@@ -124,5 +170,18 @@ public class User {
         }
 
         this.tours.add(tourDocument);
+    }
+
+    /**
+     * Add friend reference to the user
+     *
+     * @param friendDocument friendDocument to add
+     */
+    public void addFriendToFriends(DocumentReference friendDocument){
+        if (this.friends == null) {
+            this.friends = new ArrayList<>();
+        }
+
+        this.friends.add(friendDocument);
     }
 }

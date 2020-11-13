@@ -9,6 +9,7 @@ public class TourViewModel extends ViewModel {
 
     private MutableLiveData<Tour> selectedTour = new MutableLiveData<>();
     private MutableLiveData<Boolean> isNewTour = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isUserOwned = new MutableLiveData<>();
     private MutableLiveData<Boolean> returnedFromAddAttraction = new MutableLiveData<>();
 
     public Tour getSelectedTour() {
@@ -29,6 +30,10 @@ public class TourViewModel extends ViewModel {
     public void setIsNewTour(Boolean isNewTour) {
         this.isNewTour.setValue(isNewTour);
     }
+
+    public Boolean isUserOwned() { return isUserOwned.getValue(); }
+
+    public void setIsUserOwned(Boolean isUserOwned) { this.isUserOwned.setValue(isUserOwned); }
 
     public void setReturnedFromAddAttraction(Boolean returnedFromAddAttraction) {
         this.returnedFromAddAttraction.setValue(returnedFromAddAttraction);

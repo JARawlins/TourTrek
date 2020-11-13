@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,6 @@ public class Attraction {
      * Empty constructor needed for Firestore
      */
     public Attraction(){}
-
 
     public String getStartTime() {
         return startTime;
