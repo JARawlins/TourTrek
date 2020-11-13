@@ -80,7 +80,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class TourFragment extends Fragment {
+public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
