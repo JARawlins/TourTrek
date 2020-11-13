@@ -1,6 +1,13 @@
 package com.tourtrek.fragments;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +16,8 @@ import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -30,6 +39,7 @@ import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.FuturePersonalToursAdapter;
 import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
@@ -65,6 +75,7 @@ public class PersonalToursFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
@@ -84,6 +95,17 @@ public class PersonalToursFragment extends Fragment {
 
         personalFutureToursTitleButton.setOnClickListener(
                 view -> {
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    // Create a new tour in firebase
+                    tourViewModel.setSelectedTour(new Tour());
+                    final DocumentReference tourDocumentReference = db.collection("Tours").document();
+                    tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
+                    db.collection("Tours").document(tourDocumentReference.getId()).set(tourViewModel.getSelectedTour());
+                    tourViewModel.setIsNewTour(true);
+                    MainActivity.user.addTourToTours(tourDocumentReference);
+
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
                     ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
                     ft.addToBackStack("TourFragment").commit();
