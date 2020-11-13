@@ -1,13 +1,19 @@
 package com.tourtrek.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +36,22 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
+import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -116,6 +131,7 @@ public class AttractionFragment extends Fragment {
         coverTextView.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
 
+        // no attraction selected -> new one
         if (attractionViewModel.getSelectedAttraction() == null) {
 
             attractionViewModel.setSelectedAttraction(new Attraction());
@@ -137,6 +153,8 @@ public class AttractionFragment extends Fragment {
             updateAttractionButton.setText("Add Attraction");
 
             attractionViewModel.setIsNewAttraction(true);
+
+
         }
         else {
 
@@ -306,7 +324,13 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+
+        if (attractionViewModel.isNewAttraction()){
+            ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+        }
+        else{
+            ((MainActivity) requireActivity()).setActionBarTitle("Update Attraction");
+        }
     }
 
     @Override
@@ -428,6 +452,10 @@ public class AttractionFragment extends Fragment {
                 });
     }
 
+    /**
+     * This methods is usable for both adding a new attraction and updating an existing attraction
+     * @param view
+     */
     private void setupUpdateAttractionButton(View view){
 
         updateAttractionButton.setOnClickListener(v -> {
@@ -491,27 +519,75 @@ public class AttractionFragment extends Fragment {
                 tourViewModel.getSelectedTour().addAttraction(attractionDocumentReference);
             }
 
+            // Adds or updates the attraction in the firestore
             db.collection("Attractions").document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
                         Log.d(TAG, "Attraction written to firestore");
 
+                        // update the attraction to the tour object in the firestore
+                        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
+
+                        // TODO: Setup alarm for start time
+                        if (tourViewModel.getSelectedTour().getNotifications())
+                            scheduleNotification();
+
                         if (attractionViewModel.isNewAttraction()) {
                             Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
-
-                            attractionViewModel.setSelectedAttraction(null);
-                            attractionViewModel.setIsNewAttraction(null);
                             getParentFragmentManager().popBackStack();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
-
-                            attractionViewModel.setIsNewAttraction(false);
                         }
 
                     })
                     .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
         });
+    }
+
+    private void scheduleNotification() {
+
+        // Create view button
+        Intent viewIntent = new Intent(getContext(), MainActivity.class);
+        viewIntent.putExtra("viewId", 1);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
+
+        // Build the notification to display
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "2");
+        builder.setContentTitle("Attraction Started");
+        builder.setContentText(attractionViewModel.getSelectedAttraction().getName() + " has started");
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setChannelId("2");
+        builder.setContentIntent(viewPendingIntent);
+        builder.setAutoCancel(true);
+        builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
+        Notification notification = builder.build();
+
+        // Get Tour Start Date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+
+        try {
+            String startTime = attractionViewModel.getSelectedAttraction().getStartTime();
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+            Date date = df.parse(startTime);
+            calendar.set(Calendar.HOUR, date.getHours());
+            calendar.set(Calendar.MINUTE, date.getMinutes());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // Initialize the alarm manager
+        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
+        intent.putExtra("NOTIFICATION_CHANNEL_ID", "2");
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Attraction Start");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
     }
 
 }

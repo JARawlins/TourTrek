@@ -40,5 +40,7 @@
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Edit_Success_TOAST_STRING">Successfully Updated Tour</string>
+    <string name="Add_Friend_Success_TOAST_STRING">Successfully Add Friend</string>
 
 </resources>

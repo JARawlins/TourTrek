@@ -55,6 +55,7 @@ public class LoginFragmentTest {
     @Test
     public void loginWithIncorrectEmail() {
         onView(withId(R.id.login_email_et)).perform(typeText("doesNotExist@gmail.com"), closeSoftKeyboard());
+        onView(isRoot()).perform(waitForView(R.id.login_register_btn, TimeUnit.SECONDS.toMillis(15)));
         onView(withId(R.id.login_password_et)).perform(typeText("password"), closeSoftKeyboard());
         onView(withId(R.id.login_login_btn)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.login_error_tv, TimeUnit.SECONDS.toMillis(15), TimeUnit.SECONDS.toMillis(1)));

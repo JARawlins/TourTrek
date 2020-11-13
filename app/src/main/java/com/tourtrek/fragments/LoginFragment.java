@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.User;
+import com.tourtrek.fragments.RegisterFragment;
 import com.tourtrek.utilities.Utilities;
 
 import java.util.Objects;
