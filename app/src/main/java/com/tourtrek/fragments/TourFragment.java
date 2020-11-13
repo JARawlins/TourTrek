@@ -77,7 +77,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class TourFragment extends Fragment {
+public class TourFragment extends Fragment{
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
@@ -495,8 +495,9 @@ public class TourFragment extends Fragment {
                             }
                         }
 
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
+                        attractionsAdapter.clear();
+                        attractionsAdapter.addAll(usersAttractions);
+                        attractionsAdapter.copyAttractions(usersAttractions);
                         swipeRefreshLayout.setRefreshing(false);
 
                     }
@@ -769,29 +770,6 @@ public class TourFragment extends Fragment {
 
         return filteredTourList;
     }
-
-    /**
-     * Update the selected tour
-     *
-     * This method assumes a tour is already created and has a properly filled UID field
-     * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-     */
-    private void syncTour() {
-
-    }
-
-//    @Override
-//    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//        String key = (String) parent.getItemAtPosition(position);
-//        sortAttractions(attractionsAdapter, key);
-//
-//    }
-//
-//    @Override
-//    public void onNothingSelected(AdapterView<?> parent) {
-//
-//    }
 
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
