@@ -41,7 +41,6 @@
                         android:id="@+id/tour_cover_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/item_tour_bg_img"
                         android:gravity="left"
                         android:maxWidth="150dp"
                         android:paddingBottom="5dp"
@@ -68,6 +67,7 @@
                 android:padding="5dp"
                 android:background="#EEEEEE"
                 android:hint="Tour Name"
+                android:textColorHint="@color/colorPrimaryDark"
                 android:inputType="text"
                 android:selectAllOnFocus="true"
                 android:textColorHighlight="#AAAAAAAA"
@@ -191,15 +191,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
-                    android:paddingTop="10dp"
                     android:text="Attractions"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
@@ -208,12 +207,15 @@
 
                 <Button
                     android:id="@+id/tour_attraction_sort_btn"
-                    android:layout_width="115dp"
-                    android:layout_height="38dp"
-
-
-                    android:paddingTop="10dp"
-                    android:text="Sort By" />
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_gravity="bottom"
+                    android:background="#EEEEEE"
+                    android:text="Sort By"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"/>
 
 
 
@@ -230,15 +232,12 @@
                     android:id="@+id/tour_attractions_loading_container"
                     android:layout_width="match_parent"
                     android:layout_height="266dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
                     android:gravity="center"
                     android:background="#EEEEEE"
                     android:orientation="vertical"
                     android:visibility="visible">
-
-                    <ProgressBar
-                        android:id="@+id/tour_attractions_loading_pb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/tour_attractions_loading_tv"
@@ -246,22 +245,30 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:text="Loading Attractions"
+                        android:textColor="@color/colorAccent"
                         android:textSize="25sp" />
+
+                    <ProgressBar
+                        android:id="@+id/tour_attractions_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                     android:id="@+id/tour_attractions_srl"
                     android:layout_width="match_parent"
-                    android:layout_height="286dp">
+                    android:layout_height="286dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/tour_attractions_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
                         android:background="#EEEEEE"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:visibility="invisible" />
 
@@ -281,6 +288,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="40dp"
                     android:text="@string/fragment_edit_tour_notifications"
+                    android:textColor="@color/colorAccent"
                     android:textSize="25sp" />
 
                 <CheckBox
@@ -290,6 +298,7 @@
                     android:layout_marginEnd="40dp"
                     android:text="@string/fragment_edit_tour_public"
                     android:textSize="25sp"
+                    android:textColor="@color/colorAccent"
                     android:layout_alignParentRight="true"/>
 
             </RelativeLayout>
@@ -304,10 +313,10 @@
 
                 <Button
                     android:id="@+id/tour_add_attraction_btn"
-                    android:layout_width="200dp"
+                    android:layout_width="210dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="24dp"
                     android:layout_weight="0.33"
                     android:background="@color/colorSecondary"
@@ -319,10 +328,10 @@
 
                 <Button
                     android:id="@+id/tour_share_btn"
-                    android:layout_width="200dp"
+                    android:layout_width="210dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_weight="0.33"
                     android:background="@color/colorPrimaryDark"
                     android:enabled="true"
@@ -333,7 +342,7 @@
 
                 <Button
                     android:id="@+id/tour_update_btn"
-                    android:layout_width="200dp"
+                    android:layout_width="210dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginEnd="24dp"
@@ -353,6 +362,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginTop="8dp"
+                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:background="#EEEEEE"
                 android:enabled="true"
