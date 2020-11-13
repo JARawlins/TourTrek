@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/gradient"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/settings_top_panel_container"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/settings_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:text="Settings"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:textSize="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/settings_buttons_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:paddingBottom="20dp"
+                android:weightSum="1.0">
+
+                <Button
+                    android:id="@+id/settings_version_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="0.33"
+                    android:background="#EEEEEE"
+                    android:clickable="false"
+                    android:text="Version 1.2"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorSecondary"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/settings_privacy_policy_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.33"
+                    android:background="#EEEEEE"
+                    android:clickable="true"
+                    android:text="Privacy Policy"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorSecondary"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/settings_feedback_btn"
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="24dp"
+                    android:layout_weight=".33"
+                    android:background="#EEEEEE"
+                    android:clickable="true"
+                    android:text="Feedback"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorSecondary"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/settings_change_password_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Change Password"
+                    android:textStyle="bold"
+                    android:background="#EEEEEE"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_top_panel_container" />
+
+                <Button
+                    android:id="@+id/settings_change_username_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Change Username"
+                    android:textStyle="bold"
+                    android:background="#EEEEEE"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_top_panel_container" />
+
+                <Button
+                    android:id="@+id/settings_change_email_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Change Email"
+                    android:textStyle="bold"
+                    android:background="#EEEEEE"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_top_panel_container" />
+
+                <Button
+                    android:id="@+id/settings_delete_account_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:text="Delete Account"
+                    android:textStyle="bold"
+                    android:background="#EEEEEE"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_top_panel_container" />
+
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:weightSum="1.0">
+
+            <Button
+                android:id="@+id/settings_update_settings_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:background="@color/colorPrimary"
+                android:enabled="true"
+                android:text="Update Settings"
+                android:textColor="#EEEEEE"
+                android:textAllCaps="false"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

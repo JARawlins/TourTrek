@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -30,8 +31,10 @@ import java.util.List;
 public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.TourMarketViewHolder> {
 
     private static final String TAG = "TourMarketAdapter";
-    private final List<Tour> toursDataSet;
+    private List<Tour> toursDataSet;
     private final Context context;
+    private List<Tour> toursDataSetCopy;
+    private List<Tour> toursDataSetFiltered;
 
     public static class TourMarketViewHolder extends RecyclerView.ViewHolder {
 
@@ -48,12 +51,11 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
 
     }
 
-    /**
-     * Empty constructor
-     */
     public TourMarketAdapter(Context context) {
         this.toursDataSet = new ArrayList<>();
+        this.toursDataSetCopy = new ArrayList<>();
         this.context = context;
+        this.toursDataSetFiltered = new ArrayList<>();
     }
 
     @NonNull
@@ -75,9 +77,11 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
 
         Glide.with(context)
                 .load(toursDataSet.get(position).getCoverImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        System.out.println(e.getMessage());
                         Log.w(TAG, "Error: Tour cover image not loaded");
                         return false;
                     }
@@ -94,6 +98,10 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
                     }
                 })
                 .into(holder.coverImage);
+
+        ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
+        ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -102,24 +110,43 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
     }
 
     /**
-     * Adds a new item to our tours list
+     * Adds a new item to the recycler view
      *
-     * @param newTour tour to be added
+     * @param tour item to be added
      */
-    public void addNewData(Tour newTour) {
-        toursDataSet.add(newTour);
+    public void addNewData(Tour tour) {
+        toursDataSet.add(tour);
         notifyDataSetChanged();
     }
 
     /**
-     * Returns a tour at a specified index
+     * Add a list of items to the recycler view
      *
-     * @param position index of tour to get
-     *
-     * @return tour at the position specified
+     * @param tours list of items to add
      */
-    public Tour getTour(int position) {
+    public void addAll(List<Tour> tours) {
+        this.toursDataSet.addAll(tours);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns an item from the recycler view
+     *
+     * @param position index of item to get
+     *
+     * @return item at the position specified
+     */
+    public Tour getData(int position) {
         return toursDataSet.get(position);
+    }
+
+    /**
+     * Gets the recycler view data set
+     *
+     * @return recycler view data set
+     */
+    public List<Tour> getDataSet() {
+        return toursDataSetCopy;
     }
 
     /**
@@ -127,16 +154,26 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
      */
     public void clear() {
         toursDataSet.clear();
+        toursDataSet = new ArrayList<>();
         notifyDataSetChanged();
     }
 
     /**
-     * Add a list of tours to the recycler
+     * Copies items into toursDataSetCopy and toursDataSetFiltered
      *
-     * @param dataSet list of tours to add
+     * @param tours list of tours to copy into toursDataSetCopy and toursDataSetFiltered
      */
-    public void addAll(List<Tour> dataSet) {
-        this.toursDataSet.addAll(dataSet);
-        notifyDataSetChanged();
+    public void copyTours(List<Tour> tours){
+        this.toursDataSetFiltered = new ArrayList<>(tours);
+        this.toursDataSetCopy = new ArrayList<>(tours);
     }
+
+    public List<Tour> getDataSetFiltered() {
+        return toursDataSetFiltered;
+    }
+
+    public void setDataSetFiltered(List<Tour> dataSet){
+        this.toursDataSetFiltered = new ArrayList<>(dataSet);;
+    }
+
 }

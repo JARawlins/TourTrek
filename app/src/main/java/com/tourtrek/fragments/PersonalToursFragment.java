@@ -1,21 +1,27 @@
 package com.tourtrek.fragments;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +39,7 @@ import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.FuturePersonalToursAdapter;
 import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
@@ -68,51 +75,46 @@ public class PersonalToursFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        // Get the current nav backstack
-        NavController navController = NavHostFragment.findNavController(this);
-
-        // Display login screen if no user was previous logged in
-        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
-            navController.navigate(R.id.navigation_login);
-        }
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        // Display login screen if no user was previous logged in
+        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
+            return personalToursView;
+        }
+
         // Initialize view model
-        tourViewModel = new ViewModelProvider(this.getActivity()).get(TourViewModel.class);
+        tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 
-        // TODO: Replace this listener when implementing AddTourFragment
         personalFutureToursTitleButton.setOnClickListener(
                 view -> {
 
-                    FragmentManager fm = getParentFragmentManager();
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    // Create a new tour in firebase
+                    tourViewModel.setSelectedTour(new Tour());
+                    final DocumentReference tourDocumentReference = db.collection("Tours").document();
+                    tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
+                    db.collection("Tours").document(tourDocumentReference.getId()).set(tourViewModel.getSelectedTour());
+                    tourViewModel.setIsNewTour(true);
+                    MainActivity.user.addTourToTours(tourDocumentReference);
 
                     final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                    ft.replace(R.id.nav_host_fragment, new AddTourFragment(), "AddTourFragment");
-                    ft.addToBackStack("AddTourFragment").commit();
+                    ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                    ft.addToBackStack("TourFragment").commit();
                 });
 
-
-
-        if (MainActivity.user != null) {
-
-            // Configure recycler views
-            configureRecyclerViews(personalToursView);
-            configureSwipeRefreshLayouts(personalToursView);
-            configureOnClickRecyclerView();
-
-        }
+        // Configure recycler views
+        configureRecyclerViews(personalToursView);
+        configureSwipeRefreshLayouts(personalToursView);
+        configureOnClickRecyclerView();
 
         return personalToursView;
     }
@@ -250,7 +252,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getTour(position);
+                    Tour tour = ((CurrentPersonalToursAdapter) currentTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);
@@ -282,7 +284,7 @@ public class PersonalToursFragment extends Fragment {
                 .setOnItemClickListener((recyclerView, position, v) -> {
 
                     // Reference to the current tour selected
-                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getTour(position);
+                    Tour tour = ((PastPersonalToursAdapter) pastTourAdapter).getData(position);
 
                     // Add the selected tour to the view model so we can access the tour inside the fragment
                     tourViewModel.setSelectedTour(tour);
@@ -370,6 +372,12 @@ public class PersonalToursFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setActionBarTitle("Personal Tours");
     }
 
 }

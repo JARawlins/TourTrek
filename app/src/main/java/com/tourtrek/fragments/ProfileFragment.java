@@ -1,6 +1,8 @@
 package com.tourtrek.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -21,6 +24,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -40,9 +44,6 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get instance of Firebase Authentication
-        mAuth = FirebaseAuth.getInstance();
-
         // Setup a callback for the back button being pressed
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -51,56 +52,50 @@ public class ProfileFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-
-        // Get the current nav backstack
-        NavController navController = NavHostFragment.findNavController(this);
-
-        // Display login screen if no user was previous logged in
-        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
-            navController.navigate(R.id.navigation_login);
-        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
         View profileFragmentView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        /*
-        FIXME: Unfortunately we need to do this because this fragments entire lifecycle is called even if we overlay the
-        FIXME: login fragment on top of it. If somebody can figure out a better way of doing this, please implement.
-         */
-        if (MainActivity.user != null) {
+        // Get instance of Firebase Authentication
+        mAuth = FirebaseAuth.getInstance();
 
-            // TODO: This is where we will load the users information into their profile
-
-            // Set the users username on their profile
-            TextView usernameTextView = profileFragmentView.findViewById(R.id.profile_username_tv);
-            usernameTextView.setText(MainActivity.user.getUsername());
-
-            // Set profile picture
-            ImageView profileUserImageView = profileFragmentView.findViewById(R.id.profile_user_iv);
-
-            // If user clicks profile image, they can change it
-            profileUserImageView.setOnClickListener(view -> {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                int PICK_IMAGE = 1;
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-            });
-
-            Glide.with(this)
-                    .load(MainActivity.user.getProfileImageURI())
-                    .placeholder(R.drawable.ic_profile_black)
-                    .circleCrop()
-                    .into(profileUserImageView);
-
+        // Display login screen if no user was previous logged in
+        if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
+            return profileFragmentView;
         }
 
-        // Setup handler for logout button
-        setupLogoutButtonHandler(profileFragmentView);
+        // TODO: This is where we will load the users information into their profile
 
+        // Set the users username on their profile
+        TextView usernameTextView = profileFragmentView.findViewById(R.id.profile_username_tv);
+        usernameTextView.setText(MainActivity.user.getUsername());
+
+        // Set profile picture
+        ImageView profileUserImageView = profileFragmentView.findViewById(R.id.profile_user_iv);
+
+        // If user clicks profile image, they can change it
+        profileUserImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
+
+        Glide.with(this)
+                .load(MainActivity.user.getProfileImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_profile)
+                .circleCrop()
+                .into(profileUserImageView);
+
+        // Setup handler for buttons
+        setupLogoutButtonHandler(profileFragmentView);
+        setupSettingsButtonHandler(profileFragmentView);
+        setupAddFriendButtonHandler(profileFragmentView);
         return profileFragmentView;
     }
 
@@ -127,6 +122,42 @@ public class ProfileFragment extends Fragment {
             navController.navigate(R.id.navigation_login);
         });
     }
+
+    /**
+     * Setup listener for add_friend button
+     *
+     * @param view current view
+     */
+    public void setupAddFriendButtonHandler(final View view) {
+
+        Button addFriendButton = view.findViewById(R.id.profile_friend_btn);
+
+        addFriendButton.setOnClickListener(v -> {
+
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new FriendFragment(), "AddFriendFragment");
+            ft.addToBackStack("AddFriendFragment").commit();
+        });
+    }
+
+    /**
+     * Setup listener for settings button
+     *
+     * @param view current view
+     */
+    public void setupSettingsButtonHandler(final View view) {
+
+        Button settingsButton = view.findViewById(R.id.profile_settings_btn);
+
+        settingsButton.setOnClickListener(v -> {
+           // Toast.makeText(getContext(), "Test123", Toast.LENGTH_SHORT).show();
+            //TODO: open settings xml
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new SettingsFragment(), "SettingsFragment");
+            ft.addToBackStack("SettingsFragment").commit();
+        });
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {

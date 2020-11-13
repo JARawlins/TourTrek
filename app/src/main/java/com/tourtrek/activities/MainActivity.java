@@ -1,7 +1,15 @@
 package com.tourtrek.activities;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -10,16 +18,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.tourtrek.R;
 import com.tourtrek.data.User;
+import com.tourtrek.viewModels.TourViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-//        mAuth.signOut();
-//        MainActivity.user = null;
         // If the user was previously logged in, load their information here
         if (mAuth.getCurrentUser() != null) {
 
@@ -111,5 +122,53 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setTitle(title);
+    }
+
+    public void showTimePickerDialog(Button button) {
+
+        final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+
+                int hour = hourOfDay % 12;
+
+                button.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour,
+                        minute, hourOfDay < 12 ? "am" : "pm"));
+
+                button.setBackgroundColor(Color.parseColor("#10000000"));
+
+            }
+        };
+
+        final Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, timeSetListener, hour, minute, DateFormat.is24HourFormat(this));
+
+        timePickerDialog.show();
+    }
+
+    public void showDatePickerDialog(Button button) {
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+
+                String date = (month + 1) + "/" + day + "/" + year;
+                button.setText(date);
+                button.setBackgroundColor(Color.parseColor("#10000000"));
+
+            }
+        };
+
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, year, month, day);
+
+        datePickerDialog.show();
     }
 }

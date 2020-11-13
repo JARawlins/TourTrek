@@ -1,17 +1,19 @@
 package com.tourtrek.data;
 
-
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class Tour{
+
     private String name;
-    private Timestamp startDate;
+    private Date startDate;
+    private Date endDate;
     private String location;
     private Long length;
     private float cost;
@@ -21,38 +23,12 @@ public class Tour{
     private Boolean publiclyAvailable;
     private List<DocumentReference> attractions;
     private String coverImageURI;
-    private String tourUID; // not user-bound; universal unique ID
+    private String tourUID;
 
     /**
      * Empty constructor needed for Firestore
      */
-    public Tour() {
-        this.startDate = Timestamp.now();
-//        this.name = "";
-//        this.location = "";
-//        this.notifications = false;
-//        this.reviews = new ArrayList<>();
-//        this.description = "";
-//        this.publiclyAvailable = false;
-//        this.attractions = new ArrayList<>();
-//        this.coverImageURI = "";
-    }
-
-    /**
-     * Alternate constructor
-     * To get the String UID, create a new document. Apply the getID method to its document reference.
-     */
-    public Tour(String name, Boolean publiclyAvailable, String description){
-        this.startDate = Timestamp.now();
-        this.name = name;
-        this.description = description;
-        this.publiclyAvailable = publiclyAvailable;
-//        this.location = "";
-//        this.notifications = false;
-//        this.reviews = new ArrayList<>();
-//        this.attractions = new ArrayList<>();
-//        this.coverImageURI = "";
-    }
+    public Tour() {}
 
     /**
      * Getter for name
@@ -60,10 +36,10 @@ public class Tour{
      * @return current name
      */
     public String getName() {
-        if (this.name != null){
-            return this.name;
+        if (this.name == null){
+            this.name = "";
         }
-        return "";
+        return this.name;
     }
 
     /**
@@ -81,10 +57,10 @@ public class Tour{
      * @return current coverImageURI
      */
     public String getCoverImageURI() {
-        if (this.coverImageURI != null){
-            return this.coverImageURI;
+        if (this.coverImageURI == null){
+            this.coverImageURI = "";
         }
-        return "";
+        return this.coverImageURI;
     }
 
     /**
@@ -102,10 +78,10 @@ public class Tour{
      * @return current attractions
      */
     public List<DocumentReference> getAttractions() {
-        if (this.attractions != null){
-            return this.attractions;
+        if (this.attractions == null){
+            this.attractions = new ArrayList<>();
         }
-        return new ArrayList<>();
+        return this.attractions;
     }
 
     /**
@@ -117,11 +93,16 @@ public class Tour{
         this.attractions = attractions;
     }
 
-    public void addAttractionToAttractions(DocumentReference attraction) {
-        if (this.attractions == null){
-            this.attractions = new ArrayList<>();
+    /**
+     * Adds a new attraction to this tour
+     *
+     * @param attraction attraction to add
+     */
+    public void addAttraction(DocumentReference attraction) {
+        if (attractions == null) {
+            attractions = new ArrayList<>();
         }
-        this.attractions.add(attraction);
+        attractions.add(attraction);
     }
 
     /**
@@ -129,11 +110,8 @@ public class Tour{
      *
      * @return current startDate
      */
-    public Timestamp getStartDate() {
-        if (this.startDate != null){
-            return this.startDate;
-        }
-        return Timestamp.now();
+    public Date getStartDate() {
+        return this.startDate;
     }
 
     /**
@@ -141,8 +119,53 @@ public class Tour{
      *
      * @param startDate startDate to set
      */
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    /**
+     * Retrieves the current start date as a string
+     *
+     * @return current start date
+     */
+    public String retrieveStartDateAsString() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        return formatter.format(startDate);
+    }
+
+    /**
+     * Setter for startDate
+     *
+     * @param startDateString startDate to set as a string
+     * @throws ParseException thrown if startDateString cannot be converted to Date
+     */
+    public void setStartDateFromString(String startDateString) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        this.startDate = formatter.parse(startDateString);
+    }
+
+    public Date getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public String retrieveEndDateAsString() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        return formatter.format(endDate);
+    }
+
+    public void setEndDateFromString(String endDateString) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        this.endDate = formatter.parse(endDateString);
     }
 
     /**
@@ -151,6 +174,9 @@ public class Tour{
      * @return current notifications
      */
     public Boolean getNotifications() {
+        if (notifications == null) {
+            notifications = false;
+        }
         return notifications;
     }
 
@@ -169,10 +195,10 @@ public class Tour{
      * @return current location
      */
     public String getLocation() {
-        if (this.location != null){
-            return this.location;
+        if (this.location == null){
+            this.location = "";
         }
-        return "";
+        return this.location;
     }
 
     /**
@@ -222,10 +248,10 @@ public class Tour{
     }
 
     public String getDescription() {
-        if (this.description != null){
-            return this.description;
+        if (this.description == null){
+            this.description = "";
         }
-        return "";
+        return this.description;
     }
 
     public void setDescription(String description) {
@@ -238,6 +264,10 @@ public class Tour{
      * @return current publiclyAvailable
      */
     public Boolean isPubliclyAvailable() {
+        if (publiclyAvailable == null) {
+            publiclyAvailable = false;
+        }
+
         return publiclyAvailable;
     }
 
@@ -251,7 +281,7 @@ public class Tour{
     }
 
     public String getTourUID() {
-        return tourUID;
+        return this.tourUID;
     }
 
     public void setTourUID(String tourUID) {

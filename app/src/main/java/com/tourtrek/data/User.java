@@ -3,6 +3,7 @@ package com.tourtrek.data;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class User {
@@ -11,8 +12,8 @@ public class User {
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
-    private List<DocumentReference> contacts;
-    private DocumentReference currentTour; // to be updated when the user selects a tour
+    private List<DocumentReference> friends;
+    private HashMap<String, Object> settings;
 
     /**
      * Empty constructor needed for firestore
@@ -22,7 +23,26 @@ public class User {
     public User(String username, String email) {
         this.username = username;
         this.email = email;
-        this.tours = new ArrayList<DocumentReference>();
+        this.tours = new ArrayList<>();
+        this.friends= new ArrayList<>();
+    }
+
+    /**
+     * Getter for settings.
+     *
+     * @return current settings
+     */
+    public HashMap<String, Object> getSettings() {
+        return settings;
+    }
+
+    /**
+     * Setter for settings.
+     *
+     * @param settings settings to set
+     */
+    public void setSettings(HashMap<String, Object> settings) {
+        this.settings = settings;
     }
 
     /**
@@ -31,10 +51,10 @@ public class User {
      * @return current username
      */
     public String getUsername() {
-        if (this.username != null){
-            return this.username;
+        if (this.username == null){
+            this.username = "";
         }
-        return "";
+        return this.username;
     }
 
     /**
@@ -103,25 +123,27 @@ public class User {
         this.tours = tours;
     }
 
-    public List<DocumentReference> getContacts() {
-        if (this.contacts == null){
-            this.contacts = new ArrayList<>();
+
+    /**
+     * Getter for friends
+     *
+     * @return current friends
+     */
+    public List<DocumentReference> getFriends() {
+        if (this.friends == null){
+            this.friends = new ArrayList<>();
         }
-        return this.contacts;
+        return friends;
     }
 
-    public void setContacts(List<DocumentReference> contacts) {
-        this.contacts = contacts;
+    /**
+     * Setter for friends
+     *
+     * @param friends friends to set
+     */
+    public void setFriends(List<DocumentReference> friends) {
+        this.friends = friends;
     }
-
-    public DocumentReference getCurrentTour() {
-        return currentTour;
-    }
-
-    public void setCurrentTour(DocumentReference currentTour) {
-        this.currentTour = currentTour;
-    }
-
 
     /**
      * Add tour reference to the user
@@ -130,9 +152,22 @@ public class User {
      */
     public void addTourToTours(DocumentReference tourDocument){
         if (this.tours == null) {
-            this.tours = new ArrayList<DocumentReference>();
+            this.tours = new ArrayList<>();
         }
 
         this.tours.add(tourDocument);
+    }
+
+    /**
+     * Add friend reference to the user
+     *
+     * @param friendDocument friendDocument to add
+     */
+    public void addFriendToFriends(DocumentReference friendDocument){
+        if (this.friends == null) {
+            this.friends = new ArrayList<>();
+        }
+
+        this.friends.add(friendDocument);
     }
 }

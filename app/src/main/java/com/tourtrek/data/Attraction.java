@@ -1,46 +1,54 @@
 package com.tourtrek.data;
 
-import com.google.firebase.Timestamp;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-
 
 public class Attraction {
+
     private List<String> reviews;
-    //private Location extendedLocation;
     private String location;
-    private int cost;
+    private float cost;
     private String name;
     private String description;
     private String attractionUID;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private Date startDate;
+    private String startTime;
+    private Date endDate;
+    private String endTime;
+    private String coverImageURI;
 
     /**
-     * Attraction constructor, default
+     * Empty constructor needed for Firestore
      */
-    public Attraction(){
-//        this.reviews = new ArrayList<String>();
-//        this.extendedLocation = new Location();
-//        this.cost = 0;
-//        this.name = "";
-//        this.description = "";
+    public Attraction(){}
+
+    public String getStartTime() {
+        return startTime;
     }
 
-    /**
-     * Attraction constructor, detailed
-     */
-    public Attraction(String name, String description, int cost, String location, String UID){
-//        this.reviews = new ArrayList<String>();
-//        this.extendedLocation = new Location();
-//        this.cost = 0;
-        this.location = location;
-        this.cost = cost;
-        this.name = name;
-        this.description = description;
-        this.attractionUID = UID;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getCoverImageURI() {
+        return coverImageURI;
+    }
+
+    public void setCoverImageURI(String coverImageURI) {
+        this.coverImageURI = coverImageURI;
     }
 
     /**
@@ -48,7 +56,7 @@ public class Attraction {
      *
      * @return cost of this attraction
      */
-    public int getCost() {
+    public float getCost() {
         return this.cost;
     }
 
@@ -57,7 +65,7 @@ public class Attraction {
      *
      * @param cost
      */
-    public void setCost(int cost) {
+    public void setCost(float cost) {
         this.cost = cost;
     }
 
@@ -82,22 +90,11 @@ public class Attraction {
         this.reviews = reviews;
     }
 
-//    public Location getExtendedLocation() {
-//        if (extendedLocation != null){
-//            return extendedLocation;
-//        }
-//        return new Location();
-//    }
-//
-//    public void setExtendedLocation(Location extendedLocation) {
-//        this.extendedLocation = extendedLocation;
-//    }
-
     public String getName() {
-        if (this.name != null){
-            return this.name;
+        if (this.name == null){
+            this.name = "";
         }
-        return "";
+        return this.name;
     }
 
     public void setName(String name) {
@@ -105,10 +102,10 @@ public class Attraction {
     }
 
     public String getDescription() {
-        if (this.description != null){
-            return this.description;
+        if (this.description == null){
+            this.description = "";
         }
-        return "";
+        return this.description;
     }
 
     public void setDescription(String description) {
@@ -116,10 +113,7 @@ public class Attraction {
     }
 
     public String getAttractionUID() {
-        if (this.attractionUID != null){
-            return attractionUID;
-        }
-        return UUID.randomUUID().toString();
+        return attractionUID;
     }
 
     public void setAttractionUID(String attractionUID) {
@@ -127,9 +121,6 @@ public class Attraction {
     }
 
     public String getLocation() {
-        if (this.location != null){
-            return this.location;
-        }
         return this.location;
     }
 
@@ -137,25 +128,45 @@ public class Attraction {
         this.location = location;
     }
 
-    public Timestamp getStartDate() {
-        if (this.startDate != null) {
-            return startDate;
-        }
-        return Timestamp.now();
+    public Date getStartDate() {
+        return this.startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
-        if (this.endDate != null) {
-            return endDate;
-        }
-        return Timestamp.now();
+    public String retrieveStartDateAsString() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        return formatter.format(startDate);
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setStartDateFromString(String startDateString) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        this.startDate = formatter.parse(startDateString);
+    }
+
+    public Date getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public void setEndDateFromString(String endDateString) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        this.endDate = formatter.parse(endDateString);
+    }
+
+    public String retrieveEndDateAsString() {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        return formatter.format(endDate);
     }
 }

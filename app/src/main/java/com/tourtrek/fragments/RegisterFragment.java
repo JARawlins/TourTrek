@@ -40,7 +40,7 @@ public class RegisterFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getActivity().getSupportFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -77,7 +77,7 @@ public class RegisterFragment extends Fragment {
             public void onClick(View v) {
 
                 // Close keyboard
-                Utilities.hideKeyboard(getActivity());
+                Utilities.hideKeyboard(requireActivity());
 
                 // Start loading the progress circle
                 loadingProgressBar.setVisibility(View.VISIBLE);
@@ -111,7 +111,7 @@ public class RegisterFragment extends Fragment {
                 else {
 
                     mAuth.createUserWithEmailAndPassword(email, password1)
-                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
@@ -131,8 +131,8 @@ public class RegisterFragment extends Fragment {
                                                         if (task.isSuccessful()) {
 
                                                             // Remove the last two item from the fragment back stack
-                                                            getActivity().getSupportFragmentManager().popBackStack();
-                                                            getActivity().getSupportFragmentManager().popBackStack();
+                                                            getParentFragmentManager().popBackStack();
+                                                            getParentFragmentManager().popBackStack();
 
                                                             // Stop loading progress circle
                                                             loadingProgressBar.setVisibility(View.GONE);
@@ -166,6 +166,6 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setActionBarTitle("Register");
+        ((MainActivity) requireActivity()).setActionBarTitle("Register");
     }
 }
