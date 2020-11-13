@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -60,8 +61,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
@@ -74,8 +77,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
@@ -89,8 +94,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("The email address is badly formatted.")));
@@ -104,8 +111,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("The email address is badly formatted.")));
@@ -118,8 +127,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText(""));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
@@ -133,8 +144,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText(""));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("Not all fields entered")));
@@ -148,8 +161,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("hey"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("hey"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("The given password is invalid. [ Password should be at least 6 characters ]")));
@@ -163,8 +178,10 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_password2_et)).perform(scrollTo());
         onView(withId(R.id.register_password2_et)).perform(typeText("pasdword"));
         Espresso.closeSoftKeyboard();
+        onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("Passwords do not match")));
