@@ -18,7 +18,7 @@
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
-    
+
     <string-array name="categories">
         <item>Sort by</item>
         <item>Name Ascending</item>
@@ -28,5 +28,19 @@
         <item>Location Descending</item>
         <item>Duration Descending</item>
     </string-array>
+
+    <string-array name="categories_attractions">
+        <item>Sort by</item>
+        <item>Name Ascending</item>
+        <item>Location Ascending</item>
+        <item>Cost Ascending</item>
+        <item>Name Descending</item>
+        <item>Location Descending</item>
+        <item>Cost Descending</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Edit_Success_TOAST_STRING">Successfully Updated Tour</string>
+    <string name="Add_Friend_Success_TOAST_STRING">Successfully Add Friend</string>
 
 </resources>
