@@ -590,7 +590,6 @@ public class AttractionFragment extends Fragment {
      * Precondition: not a new tour
      */
     private void updateTourWithDeletion(FirebaseFirestore db){
-
                 db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                         .set(tourViewModel.getSelectedTour())
                         .addOnSuccessListener(aVoid -> {

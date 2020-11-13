@@ -640,7 +640,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
      */
     public void setupDeleteTourButton(View view){
         // only visible to a user with the tour in their list of tours
-        if (tourViewModel.getSelectedTour().getTourUID() != null){
+        if (tourViewModel.getSelectedTour().getTourUID() != null && tourViewModel.isUserOwned()){
             deleteTourButton.setVisibility(View.VISIBLE);
         }
 
