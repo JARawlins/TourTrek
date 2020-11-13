@@ -48,7 +48,8 @@ public class RegistrationFragmentTest {
             Log.w(TAG, "No user is not logged in, continuing test execution");
         } finally {
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(withId(R.id.login_register_btn)).perform(click());
+            onView(isRoot()).perform(waitForView(R.id.login_register_btn, TimeUnit.SECONDS.toMillis(15)));
+            onView(withId(R.id.login_register_btn)).perform(scrollTo(), click());
         }
 
     }
@@ -178,11 +179,9 @@ public class RegistrationFragmentTest {
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.register_password1_et)).perform(typeText("password"));
         Espresso.closeSoftKeyboard();
-        onView(withId(R.id.register_password2_et)).perform(scrollTo());
-        onView(withId(R.id.register_password2_et)).perform(typeText("pasdword"));
+        onView(withId(R.id.register_password2_et)).perform(scrollTo(),typeText("pasdword"));
         Espresso.closeSoftKeyboard();
-        onView(withId(R.id.register_register_btn)).perform(scrollTo());
-        onView(withId(R.id.register_register_btn)).perform(click());
+        onView(withId(R.id.register_register_btn)).perform(scrollTo(),click());
         Thread.sleep(1000);
         onView(withId(R.id.register_error_tv)).check(matches(withText("Passwords do not match")));
     }
