@@ -103,6 +103,16 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     }
 
     /**
+     * Add a single user to the recycler view
+     *
+     * @param user user to be added
+     */
+    public void add(User user) {
+        this.friendsDataSet.add(user);
+        notifyDataSetChanged();
+    }
+
+    /**
      * Returns an item from the recycler view
      *
      * @param position index of item to get
