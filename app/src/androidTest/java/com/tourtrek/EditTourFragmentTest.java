@@ -60,6 +60,8 @@ public class EditTourFragmentTest {
         }
     }
 
+
+
     @Test
     public void editSuccessfullyFeedback() throws InterruptedException {
         onView(withId(R.id.login_email_et)).perform(typeText("cctest@gmail.com"), ViewActions.closeSoftKeyboard());

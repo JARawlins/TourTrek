@@ -136,6 +136,7 @@ public class TourFragmentTest {
 //        //onView(withId(R.id.tour_length_et)).check(matches(withText("Length: 30")));
 //    }
 
+
     private void updateClick(){
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());

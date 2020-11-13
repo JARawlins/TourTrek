@@ -125,6 +125,13 @@ public class AttractionFragmentTest {
         onView(withText("Not all fields entered")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
+
+    @Test
+    public void invalidTimeTest() {
+        attractionConditionsTest("invalidTime");
+        onView(withText("Start dates must be before end dates!")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+    }
+
     @Test
     public void noDescriptionTest() {
         attractionConditionsTest("noDescription");
@@ -278,7 +285,12 @@ public class AttractionFragmentTest {
 
         // set end date
         onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
-        if (!condition.equals("noEndDate")){
+        if (condition.equals("invalidTime")){
+            onView(withId(R.id.attraction_end_date_btn)).perform(click());
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 9));
+            onView(withId(android.R.id.button1)).perform(click());
+        }
+        else if (!condition.equals("noEndDate")){
             onView(withId(R.id.attraction_end_date_btn)).perform(click());
             onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 12));
             onView(withId(android.R.id.button1)).perform(click());
