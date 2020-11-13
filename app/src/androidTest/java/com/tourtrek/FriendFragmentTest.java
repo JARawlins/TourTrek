@@ -102,5 +102,4 @@ public class FriendFragmentTest {
         onView(withText(R.string.Add_Friend_Success_TOAST_STRING)).inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
     }
-
 }
