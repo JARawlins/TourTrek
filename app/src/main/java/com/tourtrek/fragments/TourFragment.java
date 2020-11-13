@@ -2,11 +2,11 @@ package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.MainThread;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,10 +66,13 @@ import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
-import com.tourtrek.viewModels.TourViewModel;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
+import com.tourtrek.viewModels.TourViewModel;
+
 import java.text.ParseException;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.AttractionViewModel;
@@ -221,6 +224,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         // tour flagged as not belonging to the user by default
         tourViewModel.setIsUserOwned(false);
+        //configure Image View onClick event
+        coverImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
 
         // set up the recycler view of attractions
         configureRecyclerView(tourView);

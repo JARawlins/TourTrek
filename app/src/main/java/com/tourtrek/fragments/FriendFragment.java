@@ -167,7 +167,9 @@ public class FriendFragment extends Fragment {
                                            // setupAddFriendButton(addFriendView,friend.getEmail());
                                             addFriendBtn.setOnClickListener(view1 -> {
                                                 if(MainActivity.user.getFriends().contains(friendReference)){
-                                                    Toast.makeText(getContext(), "Friend already exists", Toast.LENGTH_SHORT).show();
+                                                    // Show error to user
+                                                    errorTextView.setVisibility(View.VISIBLE);
+                                                    errorTextView.setText("Friend already exists");
                                                 }else{
                                                     MainActivity.user.getFriends().add(friendReference);
                                                     Firestore.updateUser();
@@ -242,11 +244,9 @@ public class FriendFragment extends Fragment {
      */
     public void configureSwipeRefreshLayouts(View view) {
 
-
         // Future
         friendsSwipeRefreshLayout = view.findViewById(R.id.add_friend_my_friends_srl);
         friendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchUsersAsync());
-        
 
     }
 

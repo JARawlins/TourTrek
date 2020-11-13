@@ -156,6 +156,9 @@ public class User {
         this.friends = friends;
     }
 
+
+
+
     /**
      * Add tour reference to the user
      *
