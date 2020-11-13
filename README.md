@@ -35,15 +35,15 @@ TourTrek is an android application developed for those who love to explore new p
     * Select Tools --> AVD Manager:
     * Select + Create Virtual Device... (Bottom Left)
     * Select Pixel 2 --> Next
-    * Download [Pie, 28, x86, Android 9.0 (Google Play)]
-    * Select [Pie, 28, x86, Android 9.0 (Google Play)] --> Next
+    * Download <Pie, 28, x86, Android 9.0 (Google Play)>
+    * Select <Pie, 28, x86, Android 9.0 (Google Play)> --> Next
     * Keep all defaults and select Finish
     * Exit AVD Manager
     
 4. Build and Sync Gradle:
-    * Select Build —> Make Project
+    * Select Build --> Make Project
     * Wait for project status to display “gradle build finished” (located in the bottom left corner of Android Studio)
-    * Select File —> Sync Project with Gradle Files
+    * Select File --> Sync Project with Gradle Files
     * Wait for project status to display “Gradle Sync Finished”
 
 5. Run Application:
@@ -67,6 +67,14 @@ TourTrek is an android application developed for those who love to explore new p
     * From the Project Directory tab open app/java/com.tourtrek(androidTest)
     * Open the test class file of the test you want to run
     * Click the play symbol next to the individual test you want to run
+
+* Run A Code Coverage Test:
+    * Open the Gradle sidebar navigator view
+    * Navigate to TourTrek --> Tasks --> verification
+    * Double click "createDebugConverageReport"
+    * Wait for project status to display "Gradle build finished"
+    * In the project directory, navigate to app --> build --> reports --> coverage --> debug
+    * Open index.html with a web browser to view full code coverage report
 
 ## FAQ
 
