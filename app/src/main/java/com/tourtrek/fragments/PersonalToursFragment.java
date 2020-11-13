@@ -377,4 +377,10 @@ public class PersonalToursFragment extends Fragment {
                 });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setActionBarTitle("Personal Tours");
+    }
+
 }
