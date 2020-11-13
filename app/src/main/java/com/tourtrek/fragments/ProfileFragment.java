@@ -102,15 +102,11 @@ public class ProfileFragment extends Fragment {
 
         // Setup handler for logout button
         setupLogoutButtonHandler(profileFragmentView);
-        //Button changePassword = profileFragmentView.findViewById(R.id.profile_change_password_btn);
 
-        //changePassword.setOnClickListener(new View.OnClickListener() {
-            //@Override
-            //public void onClick(View v) {
-                //showChangePasswordDialog();
-            //}
-        //});
+        // Setup handler for settings button
         setupSettingsButtonHandler(profileFragmentView);
+
+        // Setup handler for friends button
         setupAddFriendButtonHandler(profileFragmentView);
         return profileFragmentView;
     }
