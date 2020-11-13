@@ -59,12 +59,15 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
@@ -84,6 +87,7 @@ public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
+    private AttractionViewModel attractionViewModel;
     private CurrentTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
@@ -133,6 +137,9 @@ public class TourFragment extends Fragment {
 
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.fragment_tour, container, false);
+
+        // Initialize attractionViewModel to set the attraction chosen from the recycler
+        attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
@@ -187,7 +194,7 @@ public class TourFragment extends Fragment {
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
         checkBoxesContainer = tourView.findViewById(R.id.tour_checkboxes_container);
-        publicCheckBox =  tourView.findViewById(R.id.tour_public_cb);
+        publicCheckBox = tourView.findViewById(R.id.tour_public_cb);
         notificationsCheckBox = tourView.findViewById(R.id.tour_notifications_cb);
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
 
@@ -198,8 +205,8 @@ public class TourFragment extends Fragment {
             tourViewModel.setReturnedFromAddAttraction(true);
 
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AddAttractionFragment");
-            ft.addToBackStack("AddAttractionFragment").commit();
+            ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AttractionFragment");
+            ft.addToBackStack("AttractionFragment").commit();
         });
 
         // set up fields to be made invisible at first
@@ -222,56 +229,36 @@ public class TourFragment extends Fragment {
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         });
 
+
+        // tour flagged as not belonging to the user by default
+        tourViewModel.setIsUserOwned(false);
+
         // set up the recycler view of attractions
         configureRecyclerView(tourView);
         configureSwipeRefreshLayouts(tourView);
         setupUpdateTourButton(tourView);
 
-        // This means we are creating a new tour
-        if (tourViewModel.getSelectedTour() == null) {
-
-            tourViewModel.setSelectedTour(new Tour());
-
-            // set up fields to be made visible since we are creating a new tour
-            nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
-            costEditText.setEnabled(true);
-            startDateButton.setEnabled(true);
-            endDateButton.setEnabled(true);
-            coverImageView.setClickable(true);
-            buttonsContainer.setVisibility(View.VISIBLE);
-            coverTextView.setVisibility(View.VISIBLE);
-            checkBoxesContainer.setVisibility(View.VISIBLE);
-
+        if (tourViewModel.isNewTour()) {
             updateTourButton.setText("Add Tour");
-
-            tourViewModel.setIsNewTour(true);
-
+            tourViewModel.setIsUserOwned(true);
+        } else {
+            nameEditText.setText(tourViewModel.getSelectedTour().getName());
+            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+            costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
+            startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+            notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
+            publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
         }
-        else {
 
-            // Check if the user is logged in to identify if the tour belongs to them
-            if (MainActivity.user != null) {
-                tourIsUsers();
-            }
+        // Check to see if this tour belongs to the user
+        tourIsUsers();
 
-            if (!tourViewModel.isNewTour()) {
-                // Set all the fields
-                nameEditText.setText(tourViewModel.getSelectedTour().getName());
-                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
-                costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
-                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
-                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
-                notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
-                publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
-            }
-
-            Glide.with(getContext())
-                    .load(tourViewModel.getSelectedTour().getCoverImageURI())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.default_image)
-                    .into(coverImageView);
-        }
+        Glide.with(getContext())
+                .load(tourViewModel.getSelectedTour().getCoverImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.default_image)
+                .into(coverImageView);
 
         nameEditText.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -367,83 +354,103 @@ public class TourFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (!tourViewModel.returnedFromAddAttraction() && attractionViewModel.getSelectedAttraction() == null) {
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        if (tourViewModel.isNewTour() && !added && !tourViewModel.returnedFromAddAttraction()) {
-            // Go through each attraction in the tour and delete them from the firestore
+            if (tourViewModel.isNewTour() && !added && !tourViewModel.returnedFromAddAttraction()) {
+                // Go through each attraction in the tour and delete them from the firestore
 
-            // Pull out the UID's of each attraction that belongs to this tour
-            List<String> tourAttractionUIDs = new ArrayList<>();
-            if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
-                for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
-                    tourAttractionUIDs.add(documentReference.getId());
+                // Pull out the UID's of each attraction that belongs to this tour
+                List<String> tourAttractionUIDs = new ArrayList<>();
+                if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
+                    for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                        tourAttractionUIDs.add(documentReference.getId());
+                    }
+                }
+
+                for (String attractionUID : tourAttractionUIDs) {
+                    db.collection("Attractions").document(attractionUID).delete();
+                }
+
+                // Delete the tour from the firestore since the user has not
+                db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).delete();
+
+                // Remove the tour from the users tour list
+                for (DocumentReference tourDocumentReference : MainActivity.user.getTours()) {
+                    if (tourDocumentReference.getId().equals(tourViewModel.getSelectedTour().getTourUID()))
+                        MainActivity.user.getTours().remove(tourDocumentReference);
                 }
             }
 
-            for (String attractionUID : tourAttractionUIDs) {
-                db.collection("Attractions").document(attractionUID).delete();
+            if (!tourViewModel.returnedFromAddAttraction()) {
+                tourViewModel.setSelectedTour(null);
+                tourViewModel.setIsNewTour(null);
             }
 
-            // Delete the tour from the firestore since the user has not
-            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).delete();
+            super.onDestroyView();
+        }
+    }
 
-            // Remove the tour from the users tour list
-            for (DocumentReference tourDocumentReference : MainActivity.user.getTours()) {
-                if (tourDocumentReference.getId().equals(tourViewModel.getSelectedTour().getTourUID()))
-                    MainActivity.user.getTours().remove(tourDocumentReference);
+        /**
+         * Configure the recycler view
+         *
+         * @param view current view
+         */
+        public void configureRecyclerView (View view){
+
+            // Get our recycler view from the layout
+            RecyclerView attractionsRecyclerView = view.findViewById(R.id.tour_attractions_rv);
+
+            // Improves performance because content does not change size
+            attractionsRecyclerView.setHasFixedSize(true);
+
+            // Only load 10 tours before loading more
+            attractionsRecyclerView.setItemViewCacheSize(10);
+
+            // Enable drawing cache
+            attractionsRecyclerView.setDrawingCacheEnabled(true);
+            attractionsRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+            // User linear layout manager
+            RecyclerView.LayoutManager attractionsLayoutManager = new LinearLayoutManager(getContext());
+            attractionsRecyclerView.setLayoutManager(attractionsLayoutManager);
+
+            // Specify an adapter
+            attractionsAdapter = new CurrentTourAttractionsAdapter(getContext());
+
+            // Pull the tours attractions if it already exists in firebase
+            if (tourViewModel.getSelectedTour() != null) {
+                fetchAttractionsAsync();
             }
+
+            // set the adapter
+            attractionsRecyclerView.setAdapter(attractionsAdapter);
+
+            // Stop showing progressBar when items are loaded
+            attractionsRecyclerView
+                    .getViewTreeObserver()
+                    .addOnGlobalLayoutListener(
+                            () -> ((CurrentTourAttractionsAdapter) attractionsAdapter).stopLoading());
+
+            // enable clicking a recycler view item to update an attraction
+            ItemClickSupport.addTo(attractionsRecyclerView, R.layout.item_attraction)
+                    .setOnItemClickListener((recyclerView, position, v) -> {
+
+                        tourViewModel.setReturnedFromAddAttraction(true);
+
+                        // Reference to the current tour selected
+                        Attraction attraction = ((CurrentTourAttractionsAdapter) attractionsAdapter).getData(position);
+
+                        // Add the selected tour to the view model so we can access the tour inside the fragment
+                        attractionViewModel.setSelectedAttraction(attraction);
+
+                        // Display the attraction selected
+                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AttractionFragment");
+                        ft.addToBackStack("AttractionFragment").commit();
+                    });
         }
-
-        if (!tourViewModel.returnedFromAddAttraction()) {
-            tourViewModel.setSelectedTour(null);
-            tourViewModel.setIsNewTour(null);
-        }
-
-        super.onDestroyView();
-    }
-
-    /**
-     * Configure the recycler view
-     *
-     * @param view current view
-     */
-    public void configureRecyclerView(View view) {
-
-        // Get our recycler view from the layout
-        RecyclerView attractionsRecyclerView = view.findViewById(R.id.tour_attractions_rv);
-
-        // Improves performance because content does not change size
-        attractionsRecyclerView.setHasFixedSize(true);
-
-        // Only load 10 tours before loading more
-        attractionsRecyclerView.setItemViewCacheSize(10);
-
-        // Enable drawing cache
-        attractionsRecyclerView.setDrawingCacheEnabled(true);
-        attractionsRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-        // User linear layout manager
-        RecyclerView.LayoutManager attractionsLayoutManager = new LinearLayoutManager(getContext());
-        attractionsRecyclerView.setLayoutManager(attractionsLayoutManager);
-
-        // Specify an adapter
-        attractionsAdapter = new CurrentTourAttractionsAdapter(getContext());
-
-        // Pull the tours attractions if it already exists in firebase
-        if (tourViewModel.getSelectedTour() != null) {
-            fetchAttractionsAsync();
-        }
-
-        // set the adapter
-        attractionsRecyclerView.setAdapter(attractionsAdapter);
-
-        // Stop showing progressBar when items are loaded
-        attractionsRecyclerView
-                .getViewTreeObserver()
-                .addOnGlobalLayoutListener(
-                        () -> ((CurrentTourAttractionsAdapter)attractionsAdapter).stopLoading());
-    }
 
     @Override
     public void onResume() {
@@ -536,6 +543,9 @@ public class TourFragment extends Fragment {
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
             updateTourButton.setText("Add Tour");
+
+            tourViewModel.setIsUserOwned(true);
+
             return;
         }
 
@@ -561,6 +571,8 @@ public class TourFragment extends Fragment {
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
+
+            tourViewModel.setIsUserOwned(true);
 
             coverImageView.setOnClickListener(view -> {
                 Intent intent = new Intent();

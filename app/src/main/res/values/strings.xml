@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TourTrek</string>
     <string name="title_tour_market">Tour Market</string>
-    <string name="title_tours">Tours</string>
+    <string name="title_tours">Personal Tours</string>
     <string name="title_profile">Profile</string>
     <string name="action_sign_in">Sign In</string>
     <string name="prompt_password">Password</string>
@@ -10,9 +10,8 @@
     <string name="prompt_username">Username</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_edit_tour_notifications">Notifications</string>
-    <string name="fragment_edit_tour_public">Public</string><![CDATA[
-    -->
-    ]]><!--    <string name=""></string>-->
+    <string name="fragment_edit_tour_public">Public</string>
+    <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
