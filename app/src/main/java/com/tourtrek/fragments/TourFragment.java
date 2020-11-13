@@ -1,11 +1,12 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.MainThread;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -79,6 +80,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import static com.tourtrek.utilities.Firestore.updateUser;
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -94,6 +96,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private Button endDateButton;
     private EditText nameEditText;
     private Button updateTourButton;
+    private Button deleteTourButton;
     private TextView coverTextView;
     private CheckBox notificationsCheckBox;
     private CheckBox publicCheckBox;
@@ -185,6 +188,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         startDateButton = tourView.findViewById(R.id.tour_start_date_btn);
         endDateButton = tourView.findViewById(R.id.tour_end_date_btn);
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
+        deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
         shareButton = tourView.findViewById(R.id.tour_share_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
@@ -333,6 +337,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 }
             }
         });
+
+        setupDeleteTourButton(tourView);
 
         return tourView;
     }
@@ -613,6 +619,76 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
                 });
+    }
+
+    /**
+     * Remove the tour from the user's list of tours in the database and return to the prior screen
+     * // TODO deal with the problem of deleting a tour which is referenced by another user
+     *
+     * @param view
+     */
+    public void setupDeleteTourButton(View view){
+        // only visible to a user with the tour in their list of tours
+        if (tourViewModel.getSelectedTour().getTourUID() != null){
+            deleteTourButton.setVisibility(View.VISIBLE);
+        }
+
+        // delete listener
+        deleteTourButton.setOnClickListener(v -> {
+
+            String currentTourUID = tourViewModel.getSelectedTour().getTourUID();
+            List<DocumentReference> tourRefs = MainActivity.user.getTours();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // only remove a tour which is private
+            if (!tourViewModel.getSelectedTour().isPubliclyAvailable()){
+                for (int i = 0; i < tourRefs.size(); i++){
+
+                    if (tourRefs.get(i).getId().equals(currentTourUID)){
+                        // remove from the user
+                        MainActivity.user.getTours().remove(i);
+
+                        // remove attractions in the tour in the DB
+                        db.collection("Tours").document(currentTourUID)
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    // get Tour object
+                                    Tour currentTour = task.getResult().toObject(Tour.class);
+                                    // iterate through each attraction document and delete it
+                                    for (int j = 0; j < currentTour.getAttractions().size(); j++){
+                                        db.collection("Attractions").document(
+                                                currentTour.getAttractions()
+                                                        .get(j)
+                                                        .getId())
+                                                .delete()
+                                                .addOnSuccessListener(v1 -> Log.d(TAG, "Attraction deleted"))
+                                                .addOnFailureListener(v2 -> Log.d(TAG, "Attraction could not be deleted"));
+                                    }
+
+                                    // remove the tour from the DB
+                                    task.getResult().getReference()
+                                            .delete()
+                                            .addOnCompleteListener(w -> {
+
+                                                // remove the tour from the user's DB entry
+                                                updateUser();
+
+                                                // toast message
+                                                Toast.makeText(getContext(), "Tour removed", Toast.LENGTH_SHORT).show();
+
+                                                // go back
+                                                getParentFragmentManager().popBackStack();
+                                            });
+                                });
+                        break;
+                    }
+                }
+            }
+            // the tour is not private - error
+            else{
+                Toast.makeText(getContext(), "You cannot delete a public tour!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void setupUpdateTourButton(View view) {
