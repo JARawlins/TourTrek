@@ -1,14 +1,20 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.MainThread;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -53,28 +59,38 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.ParseException;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.viewModels.AttractionViewModel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import static com.tourtrek.utilities.Firestore.updateUser;
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
-    private CurrentTourAttractionsAdapter attractionsAdapter;
+    private AttractionViewModel attractionViewModel;
+    private RecyclerView.Adapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
     private EditText locationEditText;
@@ -83,6 +99,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private Button endDateButton;
     private EditText nameEditText;
     private Button updateTourButton;
+    private Button deleteTourButton;
     private TextView coverTextView;
     private CheckBox notificationsCheckBox;
     private CheckBox publicCheckBox;
@@ -96,12 +113,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
             "Name Descending", "Location Descending", "Cost Descending"};
     private String result = "";
+    private boolean added;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        // To check that the tour has not been added
+        added = false;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -113,13 +134,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.fragment_tour, container, false);
+
+        // Initialize attractionViewModel to set the attraction chosen from the recycler
+        attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
@@ -142,7 +164,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sortAttractions(attractionsAdapter, result);
+                sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, result);
             }
         });
 
@@ -169,6 +191,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         startDateButton = tourView.findViewById(R.id.tour_start_date_btn);
         endDateButton = tourView.findViewById(R.id.tour_end_date_btn);
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
+        deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
         shareButton = tourView.findViewById(R.id.tour_share_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
@@ -184,8 +207,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             tourViewModel.setReturnedFromAddAttraction(true);
 
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AddAttractionFragment");
-            ft.addToBackStack("AddAttractionFragment").commit();
+            ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AttractionFragment");
+            ft.addToBackStack("AttractionFragment").commit();
         });
 
         // set up fields to be made invisible at first
@@ -199,56 +222,45 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         coverTextView.setVisibility(View.GONE);
         checkBoxesContainer.setVisibility(View.GONE);
 
+        // tour flagged as not belonging to the user by default
+        tourViewModel.setIsUserOwned(false);
+        //configure Image View onClick event
+        coverImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        });
+
         // set up the recycler view of attractions
         configureRecyclerView(tourView);
         configureSwipeRefreshLayouts(tourView);
         setupUpdateTourButton(tourView);
 
         // This means we are creating a new tour
-        if (tourViewModel.getSelectedTour() == null) {
-
-            tourViewModel.setSelectedTour(new Tour());
-
-            // set up fields to be made visible since we are creating a new tour
-            nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
-            costEditText.setEnabled(true);
-            startDateButton.setEnabled(true);
-            endDateButton.setEnabled(true);
-            coverImageView.setClickable(true);
-            buttonsContainer.setVisibility(View.VISIBLE);
-            coverTextView.setVisibility(View.VISIBLE);
-            checkBoxesContainer.setVisibility(View.VISIBLE);
-
+        if (tourViewModel.isNewTour()) {
             updateTourButton.setText("Add Tour");
-
-            tourViewModel.setIsNewTour(true);
-
+            tourViewModel.setIsUserOwned(true);
         }
         else {
-
-            // Check if the user is logged in to identify if the tour belongs to them
-            if (MainActivity.user != null) {
-                tourIsUsers();
-            }
-
-            if (!tourViewModel.isNewTour()) {
-                // Set all the fields
-                nameEditText.setText(tourViewModel.getSelectedTour().getName());
-                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
-                costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
-                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
-                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
-                notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
-                publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
-            }
-
-            Glide.with(getContext())
-                    .load(tourViewModel.getSelectedTour().getCoverImageURI())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.default_image)
-                    .into(coverImageView);
+            nameEditText.setText(tourViewModel.getSelectedTour().getName());
+            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+            costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
+            startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+            notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
+            publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
         }
+
+        // Check to see if this tour belongs to the user
+        tourIsUsers();
+
+        Glide.with(getContext())
+                .load(tourViewModel.getSelectedTour().getCoverImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.default_image)
+                .into(coverImageView);
 
         nameEditText.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -337,11 +349,40 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         });
 
+        setupDeleteTourButton(tourView);
+
         return tourView;
     }
 
     @Override
     public void onDestroyView() {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (tourViewModel.isNewTour() && !added && !tourViewModel.returnedFromAddAttraction()) {
+            // Go through each attraction in the tour and delete them from the firestore
+
+            // Pull out the UID's of each attraction that belongs to this tour
+            List<String> tourAttractionUIDs = new ArrayList<>();
+            if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
+                for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                    tourAttractionUIDs.add(documentReference.getId());
+                }
+            }
+
+            for (String attractionUID : tourAttractionUIDs) {
+                db.collection("Attractions").document(attractionUID).delete();
+            }
+
+            // Delete the tour from the firestore since the user has not
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).delete();
+
+            // Remove the tour from the users tour list
+            for (DocumentReference tourDocumentReference : MainActivity.user.getTours()) {
+                if (tourDocumentReference.getId().equals(tourViewModel.getSelectedTour().getTourUID()))
+                    MainActivity.user.getTours().remove(tourDocumentReference);
+            }
+        }
 
         if (!tourViewModel.returnedFromAddAttraction()) {
             tourViewModel.setSelectedTour(null);
@@ -391,6 +432,24 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 .getViewTreeObserver()
                 .addOnGlobalLayoutListener(
                         () -> ((CurrentTourAttractionsAdapter)attractionsAdapter).stopLoading());
+
+        // enable clicking a recycler view item to update an attraction
+        ItemClickSupport.addTo(attractionsRecyclerView, R.layout.item_attraction)
+                .setOnItemClickListener((recyclerView, position, v) -> {
+
+                    tourViewModel.setReturnedFromAddAttraction(true);
+
+                    // Reference to the current tour selected
+                    Attraction attraction = ((CurrentTourAttractionsAdapter) attractionsAdapter).getData(position);
+
+                    // Add the selected tour to the view model so we can access the tour inside the fragment
+                    attractionViewModel.setSelectedAttraction(attraction);
+
+                    // Display the attraction selected
+                    final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, new AttractionFragment(), "AttractionFragment");
+                    ft.addToBackStack("AttractionFragment").commit();
+                });
     }
 
     @Override
@@ -446,9 +505,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                             }
                         }
 
-                        attractionsAdapter.clear();
-                        attractionsAdapter.addAll(usersAttractions);
-                        attractionsAdapter.copyAttractions(usersAttractions);
+                        ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
+                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
+                        ((CurrentTourAttractionsAdapter) attractionsAdapter).copyAttractions(usersAttractions);
                         swipeRefreshLayout.setRefreshing(false);
 
                     }
@@ -484,6 +543,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
             updateTourButton.setText("Add Tour");
+
+            tourViewModel.setIsUserOwned(true);
+
             return;
         }
 
@@ -509,6 +571,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
+
+            tourViewModel.setIsUserOwned(true);
 
             coverImageView.setOnClickListener(view -> {
                 Intent intent = new Intent();
@@ -568,17 +632,102 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 });
     }
 
+    /**
+     * Remove the tour from the user's list of tours in the database and return to the prior screen
+     * // TODO deal with the problem of deleting a tour which is referenced by another user
+     *
+     * @param view
+     */
+    public void setupDeleteTourButton(View view){
+        // only visible to a user with the tour in their list of tours
+        if (tourViewModel.getSelectedTour().getTourUID() != null && tourViewModel.isUserOwned()){
+            deleteTourButton.setVisibility(View.VISIBLE);
+        }
+
+        // delete listener
+        deleteTourButton.setOnClickListener(v -> {
+
+            String currentTourUID = tourViewModel.getSelectedTour().getTourUID();
+            List<DocumentReference> tourRefs = MainActivity.user.getTours();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // only remove a tour which is private
+            if (!tourViewModel.getSelectedTour().isPubliclyAvailable()){
+                for (int i = 0; i < tourRefs.size(); i++){
+
+                    if (tourRefs.get(i).getId().equals(currentTourUID)){
+                        // remove from the user
+                        MainActivity.user.getTours().remove(i);
+
+                        // remove attractions in the tour in the DB
+                        db.collection("Tours").document(currentTourUID)
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    // get Tour object
+                                    Tour currentTour = task.getResult().toObject(Tour.class);
+                                    // iterate through each attraction document and delete it
+                                    for (int j = 0; j < currentTour.getAttractions().size(); j++){
+                                        db.collection("Attractions").document(
+                                                currentTour.getAttractions()
+                                                        .get(j)
+                                                        .getId())
+                                                .delete()
+                                                .addOnSuccessListener(v1 -> Log.d(TAG, "Attraction deleted"))
+                                                .addOnFailureListener(v2 -> Log.d(TAG, "Attraction could not be deleted"));
+                                    }
+
+                                    // remove the tour from the DB
+                                    task.getResult().getReference()
+                                            .delete()
+                                            .addOnCompleteListener(w -> {
+
+                                                // remove the tour from the user's DB entry
+                                                updateUser();
+
+                                                // toast message
+                                                Toast.makeText(getContext(), "Tour removed", Toast.LENGTH_SHORT).show();
+
+                                                // go back
+                                                getParentFragmentManager().popBackStack();
+                                            });
+                                });
+                        break;
+                    }
+                }
+            }
+            // the tour is not private - error
+            else{
+                Toast.makeText(getContext(), "You cannot delete a public tour!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public void setupUpdateTourButton(View view) {
 
         Button editTourUpdateButton = view.findViewById(R.id.tour_update_btn);
 
         editTourUpdateButton.setOnClickListener(view1 -> {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            added = true;
 
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
             String cost = costEditText.getText().toString();
             String startDate = startDateButton.getText().toString();
             String endDate = endDateButton.getText().toString();
+
+            // error-handling of dates so as to not break the tour classification by date
+            try {
+                Date start = simpleDateFormat.parse(startDate);
+                Date end = simpleDateFormat.parse(endDate);
+                if (end.compareTo(start) < 0){
+                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             if (name.equals("") ||
                     location.equals("") ||
@@ -618,12 +767,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            if (tourViewModel.isNewTour()) {
-                final DocumentReference tourDocumentReference = db.collection("Tours").document();
-                tourViewModel.getSelectedTour().setTourUID(tourDocumentReference.getId());
-                MainActivity.user.addTourToTours(tourDocumentReference);
-            }
-
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
                     .addOnSuccessListener(aVoid -> {
@@ -632,12 +775,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         // Update the user in the firestore
                         Firestore.updateUser();
 
+                        // TODO: only schedule the notification if it hasn't started yet
+                        if (tourViewModel.getSelectedTour().getNotifications())
+                            scheduleNotification();
+
+                        tourViewModel.setSelectedTour(null);
+                        tourViewModel.setIsNewTour(null);
+                        getParentFragmentManager().popBackStack();
+
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
-
-                            tourViewModel.setSelectedTour(null);
-                            tourViewModel.setIsNewTour(null);
-                            getParentFragmentManager().popBackStack();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
@@ -666,7 +813,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                searchAttractions(attractionsAdapter, query);
+                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, query);
 
                 return true;
             }
@@ -674,7 +821,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                searchAttractions(attractionsAdapter, newText);
+                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, newText);
 
                 return true;
             }
@@ -730,7 +877,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         String key = (String) parent.getItemAtPosition(position);
-        sortAttractions(attractionsAdapter, key);
+        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
 
     }
 
@@ -788,5 +935,43 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return temp;
     }
 
+
+    /**
+     * Create a notification channel and add an alarm to be triggered by a broadcast receiver
+     */
+    private void scheduleNotification() {
+
+        // Create view button
+        Intent viewIntent = new Intent(getContext(), MainActivity.class);
+        viewIntent.putExtra("viewId", 1);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
+
+        // Build the notification to display
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "1");
+        builder.setContentTitle("Tour Started");
+        builder.setContentText(tourViewModel.getSelectedTour().getName() + " has started");
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setChannelId("1");
+        builder.setContentIntent(viewPendingIntent);
+        builder.setAutoCancel(true);
+        builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
+        Notification notification = builder.build();
+
+        // Get Tour Start Date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+
+        // Initialize the alarm manager
+        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
+        intent.putExtra("NOTIFICATION_CHANNEL_ID", "1");
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Tour Start");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+    }
 }
 

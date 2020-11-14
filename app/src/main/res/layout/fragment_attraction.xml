@@ -42,7 +42,6 @@
                         android:id="@+id/attraction_cover_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/item_tour_bg_img"
                         android:gravity="left"
                         android:maxWidth="150dp"
                         android:paddingBottom="5dp"
@@ -69,6 +68,7 @@
                 android:padding="5dp"
                 android:background="#EEEEEE"
                 android:hint="Attraction Name"
+                android:textColorHint="@color/colorPrimaryDark"
                 android:inputType="text"
                 android:selectAllOnFocus="true"
                 android:textColorHighlight="#AAAAAAAA"
@@ -277,23 +277,43 @@
                 android:id="@+id/attraction_buttons_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="20dp"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
                 android:weightSum="1.0">
 
                 <Button
                     android:id="@+id/attraction_update_btn"
-                    android:layout_width="match_parent"
+                    android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="12dp"
                     android:layout_marginStart="24dp"
-                    android:background="@color/colorPrimary"
+                    android:layout_weight="0.4"
+                    android:background="@color/colorPrimaryDark"
                     android:enabled="true"
                     android:text="Update Attraction"
-                    android:textColor="#FFFFFF"
                     android:textAllCaps="false"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/attraction_delete_btn"
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="0.4"
+                    android:background="@color/colorAccent"
+                    android:enabled="true"
+                    android:text="Delete Attraction"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 

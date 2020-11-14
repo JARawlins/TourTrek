@@ -24,7 +24,7 @@ public class SearchAttractionsTest {
 
     @Test
     public void findAttractionTest(){
-        //Create 3 attractions and set their fields
+        //Create 3 attractions and set fields
         Attraction attraction0 = new Attraction();
         Attraction attraction1 = new Attraction();
         Attraction attraction2 = new Attraction();
