@@ -93,7 +93,6 @@ public class UploadImageTest {
             intended(hasAction(Intent.ACTION_CHOOSER));
         }
 
-        
 
 
     /**
