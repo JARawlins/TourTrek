@@ -236,6 +236,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_update_btn)).perform(click());
 
         // check for the proper toast message
+        sleep(1000);
         onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 
         // delete the tour and attraction
@@ -271,6 +272,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_delete_btn)).perform(click());
 
         // check for the proper toast message
+        sleep(1000);
         onView(withText("Attraction Deleted")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 
         // delete the tour and attraction
