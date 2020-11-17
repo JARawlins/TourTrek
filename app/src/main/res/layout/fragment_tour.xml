@@ -326,7 +326,7 @@
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
 
-                <Button
+                <com.facebook.share.widget.ShareButton
                     android:id="@+id/tour_share_btn"
                     android:layout_width="210dp"
                     android:layout_height="wrap_content"
@@ -335,7 +335,6 @@
                     android:layout_weight="0.33"
                     android:background="@color/colorPrimaryDark"
                     android:enabled="true"
-                    android:text="Share Tour"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />

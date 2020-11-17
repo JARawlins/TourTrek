@@ -50,6 +50,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.CallbackManager;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -85,6 +89,9 @@ import java.util.List;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 
+import  com.facebook.FacebookSdk;
+
+
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "TourFragment";
@@ -105,7 +112,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private CheckBox publicCheckBox;
     private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
-    Button shareButton;
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
     private ImageView coverImageView;
     private Button attractionSortButton;
     private AlertDialog dialog;
@@ -120,6 +128,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        //setup for facebook share
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
 
         // To check that the tour has not been added
         added = false;
@@ -192,13 +204,18 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         endDateButton = tourView.findViewById(R.id.tour_end_date_btn);
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
         deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
-        shareButton = tourView.findViewById(R.id.tour_share_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
         checkBoxesContainer = tourView.findViewById(R.id.tour_checkboxes_container);
         publicCheckBox =  tourView.findViewById(R.id.tour_public_cb);
         notificationsCheckBox = tourView.findViewById(R.id.tour_notifications_cb);
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
+
+        ShareButton shareButton = (ShareButton)tourView.findViewById(R.id.tour_share_btn);
+        ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                .build();
+        shareButton.setShareContent(linkContent);
 
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
@@ -597,6 +614,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
         }
+
+        callbackManager.onActivityResult(requestCode, resultCode, imageReturnedIntent);
     }
 
     /**
