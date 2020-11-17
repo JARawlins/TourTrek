@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/item_tour_bg">
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <ImageView
+            android:id="@+id/item_friend_profile_iv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="24dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/item_tour_bg_img"
+            android:scaleType="fitXY"
+            android:src="@drawable/default_image"/>
+
+        <TextView
+            android:id="@+id/item_friend_friendName_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="24dp"
+            android:layout_toRightOf="@+id/item_friend_profile_iv"
+            android:gravity="center_vertical"
+            android:text="friendName"
+            android:textAlignment="gravity"
+            android:textColor="@color/colorAccent"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+
+    </RelativeLayout>
+
+</FrameLayout>

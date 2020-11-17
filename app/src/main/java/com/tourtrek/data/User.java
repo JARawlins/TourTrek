@@ -3,6 +3,7 @@ package com.tourtrek.data;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class User {
@@ -11,6 +12,8 @@ public class User {
     private String email;
     private String profileImageURI;
     private List<DocumentReference> tours;
+    private List<DocumentReference> contacts;
+    private HashMap<String, Object> settings;
     private List<DocumentReference> friends;
 
     /**
@@ -23,6 +26,24 @@ public class User {
         this.email = email;
         this.tours = new ArrayList<>();
         this.friends= new ArrayList<>();
+    }
+
+    /**
+     * Getter for settings.
+     *
+     * @return current settings
+     */
+    public HashMap<String, Object> getSettings() {
+        return settings;
+    }
+
+    /**
+     * Setter for settings.
+     *
+     * @param settings settings to set
+     */
+    public void setSettings(HashMap<String, Object> settings) {
+        this.settings = settings;
     }
 
     /**
@@ -103,6 +124,16 @@ public class User {
         this.tours = tours;
     }
 
+    public List<DocumentReference> getContacts() {
+        if (this.contacts == null){
+            this.contacts = new ArrayList<>();
+        }
+        return this.contacts;
+    }
+
+    public void setContacts(List<DocumentReference> contacts) {
+        this.contacts = contacts;
+    }
 
     /**
      * Getter for friends
