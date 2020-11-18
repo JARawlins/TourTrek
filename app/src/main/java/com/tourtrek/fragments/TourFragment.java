@@ -41,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -114,6 +115,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             "Name Descending", "Location Descending", "Cost Descending"};
     private String result = "";
     private boolean added;
+    private ImageButton rate;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,6 +147,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
+
+        //review button
+        rate = tourView.findViewById(R.id.tour_rate_btn);
+        rate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReviewDialog();
+            }
+        });
+
 
         //initialize attractionSortButton
         attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
@@ -179,7 +191,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         attractionSortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
+                //dialog.show();
             }
         });
 
@@ -971,6 +983,18 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Tour Start");
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+    }
+
+    private void showReviewDialog(){
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
+        //Get elements
+        EditText comment = view.findViewById(R.id.tour_rating_comment_et);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
 }
