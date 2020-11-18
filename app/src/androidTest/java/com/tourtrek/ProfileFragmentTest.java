@@ -43,7 +43,7 @@ public class ProfileFragmentTest {
         } finally {
             //then log into test profile
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(withId(R.id.login_email_et)).perform(typeText("robert@gmail.com"));
+            onView(withId(R.id.login_email_et)).perform(typeText("testingaccount@gmail.com"));
             Espresso.closeSoftKeyboard();
             onView(withId(R.id.login_password_et)).perform(typeText("password"));
             Espresso.closeSoftKeyboard();
@@ -62,7 +62,7 @@ public class ProfileFragmentTest {
 //    @Test
 //    public void ChangePicture() {
 //        onView(withId(R.id.profile_user_iv)).perform(click());
-//        onView(withId(R.id.login_register_btn)).check(matches(withText("Register")));
+//
 //    }
 
 }

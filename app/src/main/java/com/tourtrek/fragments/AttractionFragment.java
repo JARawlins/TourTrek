@@ -1,13 +1,19 @@
 package com.tourtrek.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +36,23 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
+import com.tourtrek.data.Tour;
+import java.text.DateFormat;
+import org.w3c.dom.Document;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -58,6 +74,7 @@ public class AttractionFragment extends Fragment {
     private Button endDateButton;
     private Button endTimeButton;
     private Button updateAttractionButton;
+    private Button deleteAttractionButton;
     private LinearLayout buttonsContainer;
     private TourViewModel tourViewModel;
     private AttractionViewModel attractionViewModel;
@@ -83,7 +100,7 @@ public class AttractionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Grab a reference to the current view
-        View addAttractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
+        View attractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
@@ -92,18 +109,19 @@ public class AttractionFragment extends Fragment {
         attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
 
         // Initialize all fields
-        nameEditText = addAttractionView.findViewById(R.id.attraction_name_et);
-        locationEditText = addAttractionView.findViewById(R.id.attraction_location_et);
-        costEditText = addAttractionView.findViewById(R.id.attraction_cost_et);
-        startDateButton = addAttractionView.findViewById(R.id.attraction_start_date_btn);
-        startTimeButton = addAttractionView.findViewById(R.id.attraction_start_time_btn);
-        endDateButton = addAttractionView.findViewById(R.id.attraction_end_date_btn);
-        endTimeButton = addAttractionView.findViewById(R.id.attraction_end_time_btn);
-        descriptionEditText = addAttractionView.findViewById(R.id.attraction_description_et);
-        coverImageView = addAttractionView.findViewById(R.id.attraction_cover_iv);
-        coverTextView = addAttractionView.findViewById(R.id.attraction_cover_tv);
-        updateAttractionButton = addAttractionView.findViewById(R.id.attraction_update_btn);
-        buttonsContainer = addAttractionView.findViewById(R.id.attraction_buttons_container);
+        nameEditText = attractionView.findViewById(R.id.attraction_name_et);
+        locationEditText = attractionView.findViewById(R.id.attraction_location_et);
+        costEditText = attractionView.findViewById(R.id.attraction_cost_et);
+        startDateButton = attractionView.findViewById(R.id.attraction_start_date_btn);
+        startTimeButton = attractionView.findViewById(R.id.attraction_start_time_btn);
+        endDateButton = attractionView.findViewById(R.id.attraction_end_date_btn);
+        endTimeButton = attractionView.findViewById(R.id.attraction_end_time_btn);
+        descriptionEditText = attractionView.findViewById(R.id.attraction_description_et);
+        coverImageView = attractionView.findViewById(R.id.attraction_cover_iv);
+        coverTextView = attractionView.findViewById(R.id.attraction_cover_tv);
+        updateAttractionButton = attractionView.findViewById(R.id.attraction_update_btn);
+        deleteAttractionButton = attractionView.findViewById(R.id.attraction_delete_btn);
+        buttonsContainer = attractionView.findViewById(R.id.attraction_buttons_container);
 
         nameEditText.setEnabled(false);
         locationEditText.setEnabled(false);
@@ -116,6 +134,7 @@ public class AttractionFragment extends Fragment {
         coverTextView.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
 
+        // no attraction selected -> new one
         if (attractionViewModel.getSelectedAttraction() == null) {
 
             attractionViewModel.setSelectedAttraction(new Attraction());
@@ -137,12 +156,12 @@ public class AttractionFragment extends Fragment {
             updateAttractionButton.setText("Add Attraction");
 
             attractionViewModel.setIsNewAttraction(true);
-        }
-        else {
 
-            if (MainActivity.user != null) {
-                attractionIsUsers();
-            }
+            attractionIsUsers();
+        }
+        else { // attraction selected -> existing one
+
+            attractionIsUsers();
 
             // Set all the fields
             nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
@@ -153,9 +172,10 @@ public class AttractionFragment extends Fragment {
             endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
             endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
             descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
+            updateAttractionButton.setText("Update Attraction");
 
             Glide.with(getContext())
-                    .load(tourViewModel.getSelectedTour().getCoverImageURI())
+                    .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.default_image)
                     .into(coverImageView);
@@ -298,15 +318,24 @@ public class AttractionFragment extends Fragment {
         });
 
         // set up the action to carry out via the update button
-        setupUpdateAttractionButton(addAttractionView);
+        setupUpdateAttractionButton(attractionView);
 
-        return addAttractionView;
+        // set up the action to carry out via the delete button
+        setupDeleteAttractionButton(attractionView);
+
+        return attractionView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+
+        if (attractionViewModel.isNewAttraction()){
+            ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
+        }
+        else{
+            ((MainActivity) requireActivity()).setActionBarTitle(attractionViewModel.getSelectedAttraction().getName());
+        }
     }
 
     @Override
@@ -324,8 +353,8 @@ public class AttractionFragment extends Fragment {
      */
     public void attractionIsUsers() {
 
-        // Check to see if this is an abandoned new attraction
-        if (tourViewModel.isNewTour()) {
+        // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
+        if (tourViewModel.isUserOwned() || attractionViewModel.isNewAttraction()){
             nameEditText.setEnabled(true);
             locationEditText.setEnabled(true);
             costEditText.setEnabled(true);
@@ -336,36 +365,11 @@ public class AttractionFragment extends Fragment {
             coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
-            updateAttractionButton.setText("Add Attraction");
-            return;
-        }
 
-
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Pull out the UID's of each attraction that belongs to the currently selected tour
-        List<String> tourAttractionsUIDs = new ArrayList<>();
-        if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
-            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
-                tourAttractionsUIDs.add(documentReference.getId());
+            // to enable deletion of attractions selected from the tour's recycler view
+            if (attractionViewModel.getSelectedAttraction().getAttractionUID() != null){
+                deleteAttractionButton.setVisibility((View.VISIBLE));
             }
-        }
-
-        if (tourAttractionsUIDs.contains(attractionViewModel.getSelectedAttraction().getAttractionUID())) {
-
-            nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
-            costEditText.setEnabled(true);
-            startDateButton.setEnabled(true);
-            startTimeButton.setEnabled(true);
-            endDateButton.setEnabled(true);
-            endTimeButton.setEnabled(true);
-            coverImageView.setClickable(true);
-            coverTextView.setVisibility(View.VISIBLE);
-            buttonsContainer.setVisibility(View.VISIBLE);
-//            checkBoxesContainer.setVisibility(View.VISIBLE);
 
             coverImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -428,10 +432,14 @@ public class AttractionFragment extends Fragment {
                 });
     }
 
+    /**
+     * This methods is usable for both adding a new attraction and updating an existing attraction
+     * @param view
+     */
     private void setupUpdateAttractionButton(View view){
 
         updateAttractionButton.setOnClickListener(v -> {
-
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             // first get the information from each EditText
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
@@ -441,6 +449,18 @@ public class AttractionFragment extends Fragment {
             String startTime = startTimeButton.getText().toString();
             String endDate = endDateButton.getText().toString();
             String endTime = endTimeButton.getText().toString();
+
+            // error-handling of dates
+            try {
+                Date start = simpleDateFormat.parse(startDate);
+                Date end = simpleDateFormat.parse(endDate);
+                if (end.compareTo(start) < 0){
+                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             if (name.equals("") ||
                     location.equals("") ||
@@ -491,27 +511,135 @@ public class AttractionFragment extends Fragment {
                 tourViewModel.getSelectedTour().addAttraction(attractionDocumentReference);
             }
 
-            db.collection("Attractions").document(attractionViewModel.getSelectedAttraction().getAttractionUID())
+            db.collection("Attractions")
+                    .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
                         Log.d(TAG, "Attraction written to firestore");
 
+                        // update the attraction to the tour object in the firestore
+                        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
+
+                        // TODO: Setup alarm for start time
+                        if (tourViewModel.getSelectedTour().getNotifications())
+                            scheduleNotification();
+
                         if (attractionViewModel.isNewAttraction()) {
                             Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
-
-                            attractionViewModel.setSelectedAttraction(null);
-                            attractionViewModel.setIsNewAttraction(null);
                             getParentFragmentManager().popBackStack();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
-
-                            attractionViewModel.setIsNewAttraction(false);
                         }
 
                     })
                     .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
         });
+    }
+
+    /**
+     * Upon clicking the delete button, the current attraction is removed from the current tour view model
+     * and the user is returned to the current tour fragment.
+     * A toast message is shown marking successful deletion.
+     *
+     * Precondition: the attraction has been formally added and has a UID
+     * @param view
+     */
+    private void setupDeleteAttractionButton(View view) {
+
+        deleteAttractionButton.setOnClickListener(v -> {
+
+            String currentAttractionUID = attractionViewModel.getSelectedAttraction().getAttractionUID();
+            List<DocumentReference> attractionRefs = tourViewModel.getSelectedTour().getAttractions();
+            int originalSize = attractionRefs.size();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // search through the tour view model's list of attractions and delete the one corresponding to the current attraction based on UID
+            for (int i = 0; i < originalSize; i++){
+                if (attractionRefs.get(i).getId().equals(currentAttractionUID)){
+                    tourViewModel.getSelectedTour().getAttractions().remove(i);
+                    break;
+                }
+            }
+
+            // remove the attraction from the database
+            db.collection("Attractions").document(currentAttractionUID).delete()
+                    .addOnCompleteListener(task -> {
+
+                        Toast.makeText(getContext(), "Attraction Deleted", Toast.LENGTH_SHORT).show();
+
+                        attractionViewModel.setSelectedAttraction(null);
+                        attractionViewModel.setIsNewAttraction(null);
+
+                        // update the tour
+                        updateTourWithDeletion(db);
+
+                        // go back
+                        getParentFragmentManager().popBackStack();
+                    })
+                    .addOnFailureListener(task2 -> {
+                        Toast.makeText(getContext(), "Error Deleting Attraction", Toast.LENGTH_SHORT).show();
+                    });
+        });
+    }
+
+    /**
+     * Helper method for updating the current tour in the DB when the user deletes an attraction to leave no dangling references
+     * Updating the current tour in the DB to eliminate the deleted attraction's reference immediately is necessary
+     * attraction addition and updating immediately write to the DB without tapping the update tour button.
+     * Precondition: not a new tour
+     */
+    private void updateTourWithDeletion(FirebaseFirestore db){
+                db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                        .set(tourViewModel.getSelectedTour())
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Tour written to Firestore");
+                        })
+                        .addOnFailureListener(e -> Log.w(TAG, "Error writing tour document"));
+    }
+    private void scheduleNotification() {
+
+        // Create view button
+        Intent viewIntent = new Intent(getContext(), MainActivity.class);
+        viewIntent.putExtra("viewId", 1);
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
+
+        // Build the notification to display
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "2");
+        builder.setContentTitle("Attraction Started");
+        builder.setContentText(attractionViewModel.getSelectedAttraction().getName() + " has started");
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setChannelId("2");
+        builder.setContentIntent(viewPendingIntent);
+        builder.setAutoCancel(true);
+        builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
+        Notification notification = builder.build();
+
+        // Get Tour Start Date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+
+        try {
+            String startTime = attractionViewModel.getSelectedAttraction().getStartTime();
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+            Date date = df.parse(startTime);
+            calendar.set(Calendar.HOUR, date.getHours());
+            calendar.set(Calendar.MINUTE, date.getMinutes());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // Initialize the alarm manager
+        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
+        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
+        intent.putExtra("NOTIFICATION_CHANNEL_ID", "2");
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Attraction Start");
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
     }
 
 }
