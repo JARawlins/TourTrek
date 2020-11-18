@@ -329,7 +329,7 @@
                 <com.facebook.share.widget.ShareButton
                     android:id="@+id/tour_share_btn"
                     android:layout_width="210dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="0.33"

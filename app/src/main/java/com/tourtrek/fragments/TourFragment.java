@@ -212,10 +212,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
 
         ShareButton shareButton = (ShareButton)tourView.findViewById(R.id.tour_share_btn);
-        ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
-                .build();
-        shareButton.setShareContent(linkContent);
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse("https://github.com/lovinganivia/TourTrek/tree/Feature-Share-tour"))
+                    .build();
+            shareButton.setShareContent(linkContent);
+        }
+
+
 
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
