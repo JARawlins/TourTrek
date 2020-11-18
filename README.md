@@ -98,6 +98,11 @@ Also keep in mind that once you import a project, regardless of whether or not i
   <p>Restart Android Studio</p>
 </details>
 
+<details>
+  <summary>I can't see createDebugCoverageReport in my Gradle sidebar navigator view</summary>
+  <p>You need to perform a gradle sync by selecting File --> Sync Project with Gradle Files</p>
+</details>
+
 ## Screenshots
 
 | Login | Register | Tour Market |
