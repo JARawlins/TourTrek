@@ -16,6 +16,8 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -110,6 +112,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private TextView coverTextView;
     private CheckBox notificationsCheckBox;
     private CheckBox publicCheckBox;
+    private Button twitterShareButton;
     private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
     private CallbackManager callbackManager;
@@ -211,13 +214,18 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         notificationsCheckBox = tourView.findViewById(R.id.tour_notifications_cb);
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
 
-        ShareButton shareButton = (ShareButton)tourView.findViewById(R.id.tour_share_btn);
+        ShareButton shareButton = (ShareButton)tourView.findViewById(R.id.tour_fb_share_btn);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentUrl(Uri.parse("https://github.com/lovinganivia/TourTrek/tree/Feature-Share-tour"))
                     .build();
             shareButton.setShareContent(linkContent);
         }
+
+        twitterShareButton =tourView.findViewById(R.id.tour_tw_share_btn);
+        twitterShareButton.setOnClickListener(view -> {
+            shareOnTwitter();
+        });
 
 
 
@@ -995,6 +1003,30 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
+    }
+
+    void shareOnTwitter()
+    {
+        PackageManager pm=getContext().getPackageManager();
+        try {
+            Intent waIntent = new Intent(Intent.ACTION_SEND);
+            waIntent.setType("text/plain");
+            String text = "Insert Tweet Here";
+
+            @SuppressWarnings("unused")
+            PackageInfo info=pm.getPackageInfo("com.twitter.android", PackageManager.GET_META_DATA);
+            //Check if package exists or not. If not then code
+            //in catch block will be called
+            waIntent.setPackage("com.twitter.android");
+
+            waIntent.putExtra(Intent.EXTRA_TEXT, text);
+            startActivity(Intent.createChooser(waIntent, "Share with"));
+
+        } catch (PackageManager.NameNotFoundException e) {
+            Toast.makeText(getContext(), "Twitter not Installed", Toast.LENGTH_SHORT).show();
+            return ;
+        }
+        return ;
     }
 }
 

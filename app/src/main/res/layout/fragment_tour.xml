@@ -327,14 +327,28 @@
                     android:textStyle="bold" />
 
                 <com.facebook.share.widget.ShareButton
-                    android:id="@+id/tour_share_btn"
-                    android:layout_width="210dp"
+                    android:id="@+id/tour_fb_share_btn"
+                    android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.17"
                     android:background="@color/colorPrimaryDark"
                     android:enabled="true"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/tour_tw_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.17"
+                    android:background="@color/colorPrimaryDark"
+                    android:enabled="true"
+                    android:text="twitter"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
