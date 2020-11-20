@@ -27,7 +27,7 @@ public class Attraction {
     private String endTime;
     private String address;
     private String coverImageURI;
-    private HashMap<String, Double> weather;
+    private HashMap<String, String> weather;
 
     /**
      * Empty constructor needed for Firestore
@@ -50,11 +50,11 @@ public class Attraction {
         this.lon = lon;
     }
 
-    public HashMap<String, Double> getWeather() {
+    public HashMap<String, String> getWeather() {
         return weather;
     }
 
-    public void addToWeather(String date, Double temperature) {
+    public void addToWeather(String date, String temperature) {
         if (weather == null) {
             weather = new HashMap<>();
         }
@@ -62,7 +62,7 @@ public class Attraction {
         weather.put(date, temperature);
     }
 
-    public void setWeather(HashMap<String, Double> weather) {
+    public void setWeather(HashMap<String, String> weather) {
         this.weather = weather;
     }
 
