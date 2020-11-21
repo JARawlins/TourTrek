@@ -1,5 +1,7 @@
 package com.tourtrek.data;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +12,7 @@ import java.util.List;
 
 public class Attraction {
 
-    private List<String> reviews;
+    private List<DocumentReference> reviews;
     private String location;
     private float cost;
     private String name;
@@ -74,9 +76,9 @@ public class Attraction {
      *
      * @return current reviews
      */
-    public List<String> getReviews() {
+    public List<DocumentReference> getReviews() {
         if (this.reviews == null){
-            return new ArrayList<String>();
+            return new ArrayList<DocumentReference>();
         }
         return this.reviews;
     }
@@ -86,7 +88,7 @@ public class Attraction {
      *
      * @param reviews list of reviews for the tour
      */
-    public void setReviews(List<String> reviews) {
+    public void setReviews(List<DocumentReference> reviews) {
         this.reviews = reviews;
     }
 

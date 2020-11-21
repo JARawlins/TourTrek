@@ -238,10 +238,7 @@ public class Tour{
     }
 
     public List<String> getReviews() {
-        if (this.reviews == null){
-            return new ArrayList<>();
-        }
-        return this.reviews;
+        return reviews;
     }
 
     public void setReviews(List<String> reviews) {

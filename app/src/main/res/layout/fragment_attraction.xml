@@ -327,7 +327,7 @@
                 android:weightSum="1.0">
 
                 <ImageButton
-                    android:id="@+id/tour_rating_btn"
+                    android:id="@+id/attraction_rating_btn"
                     android:layout_width="64dp"
                     android:layout_height="60dp"
                     android:background="#00ffffff"

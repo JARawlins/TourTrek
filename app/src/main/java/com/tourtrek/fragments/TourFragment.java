@@ -1,7 +1,6 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.MainThread;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.NotificationCompat;
@@ -37,20 +36,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -60,11 +61,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
-import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
+import com.tourtrek.data.TourReview;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
@@ -75,8 +75,6 @@ import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.ParseException;
-import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.viewModels.AttractionViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -992,11 +990,82 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
         //Get elements
         EditText comment = view.findViewById(R.id.tour_rating_comment_et);
+        RatingBar ratingBar = view.findViewById(R.id.tour_rating_bar);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+
+            TourReview review = new TourReview();
+            review.setUser(getCurrentUserDocumentReference());
+            review.setStars(ratingBar.getRating());
+            review.setComment(comment.getText().toString());
+            review.setTour(getCurrentTourDocumentReference());
+
+            db.collection("TourReviews").document().set(review)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                List<String> users =  tourViewModel.getSelectedTour().getReviews();
+                                users.add(mAuth.getCurrentUser().getUid());
+                                tourViewModel.getSelectedTour().setReviews(users);
+                                updateTourInFirebase(tourViewModel.getSelectedTour().getTourUID(),
+                                        tourViewModel.getSelectedTour());
+                                Log.w(TAG, "Tour Review written in Database successfully");
+                            }
+                            else {
+                                Log.w(TAG, "Tour Review database writing failed");
+                            }
+                        }
+                    });
+        });
         final AlertDialog dialog = builder.create();
         dialog.show();
 
     }
+
+    private DocumentReference getCurrentUserDocumentReference() {
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // Setup collection reference
+        CollectionReference usersCollection = db.collection("Users");
+        return usersCollection.document(mAuth.getCurrentUser().getUid());
+    }
+
+    private DocumentReference getCurrentTourDocumentReference() {
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // Setup collection reference
+        CollectionReference usersCollection = db.collection("Tours");
+        return usersCollection.document(tourViewModel.getSelectedTour().getTourUID());
+    }
+
+    private void updateTourInFirebase(String UID, Tour tour){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Tours").document(UID)
+                .set(tour)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Tour written to firestore");
+                    // Update the user in the firestore
+                    Firestore.updateUser();
+
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
+
+
+
 }
 

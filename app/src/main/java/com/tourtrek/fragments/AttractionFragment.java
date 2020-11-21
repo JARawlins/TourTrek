@@ -2,6 +2,7 @@ package com.tourtrek.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
@@ -21,13 +23,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,6 +45,8 @@ import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
+import com.tourtrek.data.AttractionReview;
+import com.tourtrek.data.TourReview;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
@@ -79,6 +88,7 @@ public class AttractionFragment extends Fragment {
     private TourViewModel tourViewModel;
     private AttractionViewModel attractionViewModel;
     private ImageView coverImageView;
+    private ImageButton rateAttraction;
 
     /**
      * Default for proper back button usage
@@ -107,6 +117,15 @@ public class AttractionFragment extends Fragment {
 
         // Initialize attractionMarketViewModel to get the current attraction
         attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
+
+        //review button
+        rateAttraction = attractionView.findViewById(R.id.attraction_rating_btn);
+        rateAttraction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReviewDialog();
+            }
+        });
 
         // Initialize all fields
         nameEditText = attractionView.findViewById(R.id.attraction_name_et);
@@ -640,6 +659,65 @@ public class AttractionFragment extends Fragment {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
+    }
+
+    private void showReviewDialog(){
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
+        //Get elements
+        EditText comment = view.findViewById(R.id.attraction_rating_comment_et);
+        RatingBar ratingBar = view.findViewById(R.id.attraction_rating_bar);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            AttractionReview review = new AttractionReview();
+            review.setUser(getCurrentUserDocumentReference());
+            review.setStars(ratingBar.getRating());
+            review.setComment(comment.getText().toString());
+            review.setAttraction(getCurrentAttractionDocumentReference());
+
+            db.collection("AttractionReviews").document().set(review)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.w(TAG, "Tour Review written in Database successfully");
+                            }
+                            else {
+                                Log.w(TAG, "Tour Review database writing failed");
+                            }
+                        }
+                    });
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private DocumentReference getCurrentUserDocumentReference() {
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // Setup collection reference
+        CollectionReference usersCollection = db.collection("Users");
+        return usersCollection.document(mAuth.getCurrentUser().getUid());
+    }
+
+    private DocumentReference getCurrentAttractionDocumentReference() {
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // Setup collection reference
+        CollectionReference usersCollection = db.collection("Attractions");
+        return usersCollection.document(attractionViewModel.getSelectedAttraction().getAttractionUID());
     }
 
 }
