@@ -289,7 +289,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
         // Check to see if this tour belongs to the user
-        tourIsUsers();
+        if (MainActivity.user != null)
+            tourIsUsers();
 
         Glide.with(getContext())
                 .load(tourViewModel.getSelectedTour().getCoverImageURI())
