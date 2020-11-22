@@ -113,6 +113,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private CheckBox notificationsCheckBox;
     private CheckBox publicCheckBox;
     private Button twitterShareButton;
+    private Button myFacebookShareButton;
     private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
     private CallbackManager callbackManager;
@@ -213,6 +214,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         publicCheckBox =  tourView.findViewById(R.id.tour_public_cb);
         notificationsCheckBox = tourView.findViewById(R.id.tour_notifications_cb);
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
+        myFacebookShareButton = tourView.findViewById(R.id.tour_my_fb_share_btn);
 
         ShareButton shareButton = (ShareButton)tourView.findViewById(R.id.tour_fb_share_btn);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
@@ -221,6 +223,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     .build();
             shareButton.setShareContent(linkContent);
         }
+
+        myFacebookShareButton.setOnClickListener(view -> {
+            shareButton.performClick();
+        });
 
         twitterShareButton =tourView.findViewById(R.id.tour_tw_share_btn);
         twitterShareButton.setOnClickListener(view -> {

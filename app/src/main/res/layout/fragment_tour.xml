@@ -337,6 +337,20 @@
                     android:enabled="true"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/tour_my_fb_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.17"
+                    android:enabled="true"
+                    android:background="@drawable/ic_facebook"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
                     android:textStyle="bold" />
 
                 <Button
@@ -346,9 +360,8 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="0.17"
-                    android:background="@color/colorPrimaryDark"
                     android:enabled="true"
-                    android:text="twitter"
+                    android:background="@drawable/ic_twitter"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
