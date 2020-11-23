@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.data.Tour;
 import com.tourtrek.data.User;
 
 import java.util.ArrayList;
@@ -38,7 +39,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
             super(view);
             this.friendName = view.findViewById(R.id.item_friend_friendName_tv);
             this.friendProfilePicture = view.findViewById(R.id.item_friend_profile_iv);
+
         }
+    }
+
+    public interface OnFriendListener{
+        void onFriendClick(int position);
     }
 
     public FriendsAdapter(Context context) {
@@ -76,6 +82,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
 
     @Override
     public int getItemCount() {
