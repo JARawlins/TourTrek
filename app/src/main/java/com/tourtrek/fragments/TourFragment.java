@@ -1126,6 +1126,19 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return temp;
     }
 
+    private float computeRating(List<TourReview> reviews) {
 
+        //Check if review is empty
+        if (reviews.size() == 0){
+            return 0;
+        } else {
+            float sum = 0;
+            for (int i = 0; i < reviews.size(); i++) {
+                sum += reviews.get(i).getStars();
+            }
+
+            return sum / reviews.size();
+        }
+    }
 }
 
