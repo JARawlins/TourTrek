@@ -114,10 +114,13 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private String result = "";
     private boolean added;
     private ImageButton rate;
+    private List<TourReview> tourReviews;
+    private List<TourReview> selectedTourReviews;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
+        selectedTourReviews = new ArrayList<>();
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
@@ -192,6 +195,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 //dialog.show();
             }
         });
+
+
 
         // Initialize all fields
         nameEditText = tourView.findViewById(R.id.tour_name_et);
@@ -433,6 +438,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Pull the tours attractions if it already exists in firebase
         if (tourViewModel.getSelectedTour() != null) {
             fetchAttractionsAsync();
+            fetchReviewsAsync();
+            //selectedTourReviews.addAll(getCurrentTourReviews(tourReviews));///////////////////////////////////////////////////////////////
+            System.out.println(formatReviews(tourReviews));
         }
 
         // set the adapter
@@ -1007,6 +1015,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             review.setStars(ratingBar.getRating());
             review.setComment(comment.getText().toString());
             review.setTour(getCurrentTourDocumentReference());
+            review.setUserUID(mAuth.getCurrentUser().getUid());
+            review.setTourUID(tourViewModel.getSelectedTour().getTourUID());
 
             db.collection("TourReviews").document().set(review)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -1065,6 +1075,67 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
+    private void fetchReviewsAsync() {
+
+        tourReviews = new ArrayList<>();
+        // Get instance of firestore
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Setup collection reference
+        CollectionReference tourReviewsCollection = db.collection("TourReviews");
+
+        // Query database
+        tourReviewsCollection
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.w(TAG, "No documents found in the Review collection");
+                    }
+                    else {
+
+                        tourReviews = new ArrayList<>();
+                        // Go through each document and compare the dates
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+
+                            tourReviews.add(document.toObject(TourReview.class));
+                        }
+
+                        //tourReviews = getCurrentTourReviews(tourReviews);
+
+                        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+                        System.out.println(formatReviews(tourReviews));
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+    }
+
+    private List<TourReview> getCurrentTourReviews(List<TourReview> reviews) {
+        List<TourReview> currentTourReviews = new ArrayList<>();
+        if (reviews.size() == 0){
+            return currentTourReviews;
+        } else {
+            for (int i = 0; i < reviews.size(); i++){
+                if (reviews.get(i).getTourUID() == tourViewModel.getSelectedTour().getTourUID()){
+                    currentTourReviews.add(reviews.get(i));
+                }
+            }
+        }
+
+        return currentTourReviews;
+    }
+
+    private String formatReviews(List<TourReview> selectedTourReviews){
+
+        if (selectedTourReviews.size() == 0){
+            return "NULL";
+        }
+        String temp = "";
+        for (int i = 0; i < selectedTourReviews.size(); i++){
+            temp += "\n" + "username" + "\n" + selectedTourReviews.get(i).getComment()+ "\n";
+        }
+        return temp;
+    }
 
 
 }

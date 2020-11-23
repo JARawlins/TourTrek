@@ -9,6 +9,8 @@ public class TourReview {
     private DocumentReference user;
     private DocumentReference tour;
     private String comment;
+    private  String userUID;
+    private String tourUID;
 
     public TourReview (){
     }
@@ -50,5 +52,21 @@ public class TourReview {
 
     public void setTour(DocumentReference tour) {
         this.tour = tour;
+    }
+
+    public String getUserUID() {
+        return userUID;
+    }
+
+    public void setUserUID(String userUID) {
+        this.userUID = userUID;
+    }
+
+    public String getTourUID() {
+        return tourUID;
+    }
+
+    public void setTourUID(String tourUID) {
+        this.tourUID = tourUID;
     }
 }
