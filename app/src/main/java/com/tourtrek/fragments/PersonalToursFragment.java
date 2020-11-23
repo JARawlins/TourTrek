@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -312,69 +313,46 @@ public class PersonalToursFragment extends Fragment {
         // Pull out the UID's of each tour that belongs to this user
         List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
+
+            // Final list of tours for this category
+            List<Tour> usersTours = new ArrayList<>();
+
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
-                usersToursUIDs.add(documentReference.getId());
-            }
-        }
 
-        // Query database
-        toursCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                toursCollection.document(documentReference.getId()).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Tours collection");
-                    }
-                    else {
-
-                        // Final list of tours for this category
-                        List<Tour> usersTours = new ArrayList<>();
-
-                        // Go through each document and compare the dates
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-
-                            // First check that the document belongs to the user
-                            if (usersToursUIDs.contains(document.getId())) {
-
-                                Timestamp tourStartDate = (Timestamp) document.get("startDate");
-                                Timestamp tourEndDate = (Timestamp) document.get("endDate");
+                                Timestamp tourStartDate = (Timestamp) documentSnapshot.get("startDate");
+                                Timestamp tourEndDate = (Timestamp) documentSnapshot.get("endDate");
                                 Timestamp now = Timestamp.now();
 
                                 // the start date is before now and the end date is after now
                                 if (type.equals("current") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(document.toObject(Tour.class));
+                                    usersTours.add(documentSnapshot.toObject(Tour.class));
+                                    ((CurrentPersonalToursAdapter) currentTourAdapter).clear();
+                                    ((CurrentPersonalToursAdapter) currentTourAdapter).addAll(usersTours);
+                                    currentSwipeRefreshLayout.setRefreshing(false);
                                 }
                                 // the start date is after now and the end date is after now
                                 else if (type.equals("future") && tourStartDate.compareTo(now) > 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(document.toObject(Tour.class));
+                                    usersTours.add(documentSnapshot.toObject(Tour.class));
+                                    ((FuturePersonalToursAdapter) futureTourAdapter).clear();
+                                    ((FuturePersonalToursAdapter) futureTourAdapter).addAll(usersTours);
+                                    futureSwipeRefreshLayout.setRefreshing(false);
                                 }
                                 // the start date and end dates are before now
                                 else if (type.equals("past") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) < 0) {
-                                    usersTours.add(document.toObject(Tour.class));
+                                    usersTours.add(documentSnapshot.toObject(Tour.class));
+                                    ((PastPersonalToursAdapter) pastTourAdapter).clear();
+                                    ((PastPersonalToursAdapter) pastTourAdapter).addAll(usersTours);
+                                    pastSwipeRefreshLayout.setRefreshing(false);
                                 }
                             }
-                        }
-
-                        switch (type) {
-
-                            case "current":
-                                ((CurrentPersonalToursAdapter) currentTourAdapter).clear();
-                                ((CurrentPersonalToursAdapter) currentTourAdapter).addAll(usersTours);
-                                currentSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                            case "future":
-                                ((FuturePersonalToursAdapter) futureTourAdapter).clear();
-                                ((FuturePersonalToursAdapter) futureTourAdapter).addAll(usersTours);
-                                futureSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                            case "past":
-                                ((PastPersonalToursAdapter) pastTourAdapter).clear();
-                                ((PastPersonalToursAdapter) pastTourAdapter).addAll(usersTours);
-                                pastSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                        }
-                    }
-                });
+                        });
+            }
+        }
     }
 
     @Override
