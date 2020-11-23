@@ -779,9 +779,9 @@ public class AttractionFragment extends Fragment {
                     .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
-                        Log.d(TAG, "Attraction written to firestore");
+                        Log.d(TAG, "Attraction written to firestore with UID: " + attractionViewModel.getSelectedAttraction().getAttractionUID());
 
-                        // update the attraction to the tour object in the firestore
+                        // Add/Update attraction to the selected tour
                         db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
                         // TODO: Setup alarm for start time

@@ -472,21 +472,20 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Setup collection reference
         CollectionReference attractionsCollection = db.collection("Attractions");
 
-        // Pull out the UID's of each tour that belongs to this user
-        List<String> usersAttractionUIDs = new ArrayList<>();
+        // Grab each attraction for the selected tour
         if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
-            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
 
-                usersAttractionUIDs.add(documentReference.getId());
+            // Clear the data set if one exists
+            if (attractionsAdapter != null)
+                attractionsAdapter.clear();
+
+            for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
 
                 attractionsCollection.document(documentReference.getId()).get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                Log.i(TAG, documentReference.getId());
-
-                                attractionsAdapter.clear();
                                 attractionsAdapter.addNewData(documentSnapshot.toObject(Attraction.class));
                                 attractionsAdapter.copyAttractions(attractionsAdapter.getDataSet());
                                 swipeRefreshLayout.setRefreshing(false);
