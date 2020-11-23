@@ -61,7 +61,7 @@ public class Weather {
 
     public static void getWeather(double lat, double lon, Context context) {
 
-        HashMap<String, Double> weather = new HashMap<>();
+        HashMap<String, String> weather = new HashMap<>();
 
         // Initialize attractionMarketViewModel to get the current attraction
         AttractionViewModel attractionViewModel = new ViewModelProvider((MainActivity)context).get(AttractionViewModel.class);
@@ -80,58 +80,98 @@ public class Weather {
                     JSONObject day = daily.getJSONObject(0);
                     long unixDate = day.getLong("dt") * (long) 1000;
                     JSONObject temp = day.getJSONObject("temp");
-                    double dayTemp = temp.getDouble("day");
+                    double dayTempDouble = temp.getDouble("day");
+                    String dayTempString = String.valueOf(dayTempDouble);
+                    String dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    JSONArray weatherArray = day.getJSONArray("weather");
+                    JSONObject weatherObject = weatherArray.getJSONObject(0);
+                    String main = weatherObject.getString("main");
                     Date date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(1);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(2);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(3);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(4);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(5);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(6);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     day = daily.getJSONObject(7);
                     unixDate = day.getLong("dt") * (long) 1000;
                     temp = day.getJSONObject("temp");
-                    dayTemp = temp.getDouble("day");
+                    dayTempDouble = temp.getDouble("day");
+                    dayTempString = String.valueOf(dayTempDouble);
+                    dayTemp = dayTempString.substring(0, dayTempString.indexOf("."));
+                    weatherArray = day.getJSONArray("weather");
+                    weatherObject = weatherArray.getJSONObject(0);
+                    main = weatherObject.getString("main");
                     date = new Date(unixDate);
-                    weather.put(date.toString(), dayTemp);
+                    weather.put(date.toString(), main + " " + dayTemp);
 
                     // Only update the view model if we have an attraction selected
                     if (attractionViewModel.getSelectedAttraction() != null) {
