@@ -1,13 +1,14 @@
 package com.tourtrek.fragments;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.MainThread;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -37,19 +38,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -59,9 +59,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
-import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
@@ -74,8 +72,6 @@ import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.text.ParseException;
-import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.viewModels.AttractionViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,7 +86,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
     private AttractionViewModel attractionViewModel;
-    private RecyclerView.Adapter attractionsAdapter;
+    private CurrentTourAttractionsAdapter attractionsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Button addAttractionButton;
     private EditText locationEditText;
@@ -254,7 +250,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
         // Check to see if this tour belongs to the user
-        tourIsUsers();
+        if (MainActivity.user != null)
+            tourIsUsers();
 
         Glide.with(getContext())
                 .load(tourViewModel.getSelectedTour().getCoverImageURI())
@@ -475,43 +472,29 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Setup collection reference
         CollectionReference attractionsCollection = db.collection("Attractions");
 
-        // Pull out the UID's of each tour that belongs to this user
-        List<String> usersAttractionUIDs = new ArrayList<>();
+        // Grab each attraction for the selected tour
         if (!tourViewModel.getSelectedTour().getAttractions().isEmpty()) {
+
+            // Clear the data set if one exists
+            if (attractionsAdapter != null)
+                attractionsAdapter.clear();
+
             for (DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
-                usersAttractionUIDs.add(documentReference.getId());
+
+                attractionsCollection.document(documentReference.getId()).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                attractionsAdapter.addNewData(documentSnapshot.toObject(Attraction.class));
+                                attractionsAdapter.copyAttractions(attractionsAdapter.getDataSet());
+                                swipeRefreshLayout.setRefreshing(false);
+
+                            }
+                        });
+
             }
         }
-
-        // Query database
-        attractionsCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Attractions collection for this user");
-                    }
-                    else {
-
-                        // Final list of tours for this category
-                        List<Attraction> usersAttractions = new ArrayList<>();
-
-                        // Go through each document and compare the dates
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-
-                            // First check that the document belongs to the user
-                            if (usersAttractionUIDs.contains(document.getId())) {
-                                usersAttractions.add(document.toObject(Attraction.class));
-                            }
-                        }
-
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).clear();
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).addAll(usersAttractions);
-                        ((CurrentTourAttractionsAdapter) attractionsAdapter).copyAttractions(usersAttractions);
-                        swipeRefreshLayout.setRefreshing(false);
-
-                    }
-                });
     }
 
     /**
@@ -640,7 +623,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
      */
     public void setupDeleteTourButton(View view){
         // only visible to a user with the tour in their list of tours
-        if (tourViewModel.getSelectedTour().getTourUID() != null){
+        if (tourViewModel.getSelectedTour().getTourUID() != null && tourViewModel.isUserOwned()){
             deleteTourButton.setVisibility(View.VISIBLE);
         }
 

@@ -43,6 +43,7 @@ public class RegistrationFragmentTest {
         try {
             onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.navigation_profile)).perform(click());
+            onView(isRoot()).perform(waitForView(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(15)));
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "No user is not logged in, continuing test execution");
@@ -168,6 +169,7 @@ public class RegistrationFragmentTest {
         onView(withId(R.id.register_register_btn)).perform(scrollTo());
         onView(withId(R.id.register_register_btn)).perform(click());
         Thread.sleep(1000);
+        onView(isRoot()).perform(waitForView(R.id.register_error_tv, TimeUnit.SECONDS.toMillis(15)));
         onView(withId(R.id.register_error_tv)).check(matches(withText("The given password is invalid. [ Password should be at least 6 characters ]")));
     }
 
@@ -186,7 +188,7 @@ public class RegistrationFragmentTest {
         onView(withId(R.id.register_error_tv)).check(matches(withText("Passwords do not match")));
     }
 
-
 }
+
 
 

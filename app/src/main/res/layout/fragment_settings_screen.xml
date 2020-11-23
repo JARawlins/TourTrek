@@ -45,8 +45,8 @@
                 android:id="@+id/settings_buttons_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:paddingBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:weightSum="1.0">
 
                 <Button
@@ -161,28 +161,30 @@
 
             </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="20dp"
-            android:weightSum="1.0">
-
-            <Button
-                android:id="@+id/settings_update_settings_btn"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:background="@color/colorPrimary"
-                android:enabled="true"
-                android:text="Update Settings"
-                android:textColor="#EEEEEE"
-                android:textAllCaps="false"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:paddingBottom="20dp"
+                android:visibility="gone"
+                android:weightSum="1.0">
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/settings_update_settings_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginStart="24dp"
+                    android:background="@color/colorPrimary"
+                    android:enabled="true"
+                    android:text="Update Settings"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

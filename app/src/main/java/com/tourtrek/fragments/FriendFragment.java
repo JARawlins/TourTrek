@@ -153,19 +153,18 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
                                     // Stop loading progress circle
                                     loadingProgressBar.setVisibility(View.GONE);
 
-                                    // Final result for the query
-                                    User friend=null;
+                                    Boolean exists = false;
 
                                     // Go through each document and compare the dates
                                     for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
 
                                         // First check that the document belongs to the user
                                         if (document.get("email").equals(email)) {
-                                            final DocumentReference friendReference =document.getReference();
-                                            friend =new User();
-                                            friend.setEmail(email);
-                                            friend.setUsername((String) document.get("username"));
-                                            friend.setProfileImageURI((String) document.get("profileImageURI"));
+                                            final DocumentReference friendReference = document.getReference();
+
+                                            exists = true;
+
+                                            User friend = document.toObject(User.class);
 
                                             final ImageView friendImageView = addFriendView.findViewById(R.id.add_friend_profile_iv);
                                             final TextView friendNameTextView= addFriendView.findViewById(R.id.add_friend_friendName_tv);
@@ -192,13 +191,14 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
                                                 }else{
                                                     MainActivity.user.getFriends().add(friendReference);
                                                     Firestore.updateUser();
+                                                    ((FriendsAdapter) friendsAdapter).add(friend);
                                                     Toast.makeText(getContext(), "Successfully Add Friend", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                             addFriendBtn.setVisibility(View.VISIBLE);
                                         }
                                     }
-                                    if(friend==null){
+                                    if(!exists){
                                         errorTextView.setVisibility(View.VISIBLE);
                                         errorTextView.setText("Cannot find user with email entered");
                                     }
@@ -362,6 +362,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
                         }
                         ((FriendsAdapter) friendsAdapter).clear();
                         ((FriendsAdapter) friendsAdapter).addAll(usersFriends);
+
                         friendsSwipeRefreshLayout.setRefreshing(false);
 
                     }

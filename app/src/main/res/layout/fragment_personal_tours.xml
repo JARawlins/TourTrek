@@ -10,7 +10,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,9 +24,7 @@
                 android:id="@+id/personal_current_tours_title_btn"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:layout_weight="1"
                 android:textSize="20sp"
@@ -46,9 +47,7 @@
                         android:id="@+id/personal_current_tours_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
                         android:visibility="invisible" />
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -86,6 +85,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -97,9 +99,7 @@
                 android:id="@+id/personal_future_tours_title_btn"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:clickable="true"
@@ -127,9 +127,7 @@
                         android:id="@+id/personal_future_tours_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
                         android:visibility="invisible" />
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -167,7 +165,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -178,9 +179,7 @@
                 android:id="@+id/personal_past_tours_title_btn"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textSize="20sp"
@@ -203,9 +202,7 @@
                         android:id="@+id/personal_past_tours_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
                         android:visibility="invisible" />
 

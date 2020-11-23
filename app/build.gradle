@@ -88,11 +88,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     debugImplementation 'androidx.fragment:fragment-testing:1.2.5'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0'
 
     // Notifications
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-messaging-directboot:21.0.0'
     implementation 'com.google.firebase:firebase-analytics'
+
+    // Places
+    implementation 'com.google.android.libraries.places:places:2.4.0'
 
 }
 

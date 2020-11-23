@@ -21,6 +21,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -71,52 +72,11 @@ public class PersonalToursFragmentTest {
         }
     }
 
-    @After
-    public void tearDown() throws UiObjectNotFoundException, InterruptedException {
-        // remove all tours
-        MainActivity.user.setTours(new ArrayList<DocumentReference>());
-
-        // don't break attraction fragment testing
-        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
-        onView(withId(R.id.navigation_tours)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
-        onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
-        tourDateConditionsTest("future");
-
-        // sync to database
-        updateUser();
-    }
     /**
      *Create a tour with future start and end dates, then make sure it goes in the future tours bin
      */
     @Test
     public void newFutureTour() throws InterruptedException {
-//        // check for the example tours first so that duplicates are not made every time
-//        try{
-//            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("future tour"))));
-//        }
-//        catch(androidx.test.espresso.PerformException e){
-//            // create a future tour
-//            onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
-//            onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
-//            tourDateConditionsTest("future");
-//
-//            // wait for the personal tours tab to be visible with updated recycler views
-//            onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
-//            sleep(1000);
-//
-//            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("future tour"))));
-//        }
-//
-//        // select the future tour
-//        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("future tour")), click()));
-//
-//        // wait for it to load
-//        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(20)));
-//
-//        // check the dates
-//        onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/2100")));
-//        onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/2101")));
         tourDateConditionsTest("future");
 
         // wait for the personal tours tab to be visible with updated recycler views
@@ -132,13 +92,16 @@ public class PersonalToursFragmentTest {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
         onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
-        sleep(1000);
+        //sleep(1000);
 
 //        onView(withId(R.id.tour_name_et)).check(matches(withText("future tour")));
         onView(withId(R.id.tour_start_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/2100")));
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/2101")));
+
+        //Espresso.pressBack();
+        removeAdded();
     }
 
     /**
@@ -149,7 +112,7 @@ public class PersonalToursFragmentTest {
         tourDateConditionsTest("current");
 
         // wait for the personal tours tab to be visible with updated recycler views
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_current_tours_rv, TimeUnit.SECONDS.toMillis(100)));
         sleep(1000);
 
         // check the the tour appears in the right bin
@@ -168,6 +131,9 @@ public class PersonalToursFragmentTest {
         onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/1900")));
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/2101")));
+
+        //Espresso.pressBack();
+        removeAdded();
     }
 
     /**
@@ -197,6 +163,9 @@ public class PersonalToursFragmentTest {
         onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/1900")));
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/1901")));
+
+       // Espresso.pressBack();
+        removeAdded();
     }
 
     /**
@@ -245,5 +214,17 @@ public class PersonalToursFragmentTest {
         // scroll to the "add tour" button and click it
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
+    }
+
+    /**
+     * Clean up of newly created tours
+     * @throws InterruptedException
+     */
+    private void removeAdded() throws InterruptedException {
+        // find the newly made attraction and select it
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
+        sleep(1000);
+        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_delete_btn)).perform(click());
     }
 }

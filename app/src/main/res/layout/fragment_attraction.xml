@@ -32,6 +32,23 @@
                     android:background="@drawable/item_tour_bg_img"
                     android:scaleType="fitXY" />
 
+                <LinearLayout
+                    android:id="@+id/attraction_cover_loading_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="bottom|center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:id="@+id/attraction_cover_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
                 <FrameLayout
                     android:id="@+id/attraction_cover_container"
                     android:layout_width="match_parent"
@@ -42,7 +59,6 @@
                         android:id="@+id/attraction_cover_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/item_tour_bg_img"
                         android:gravity="left"
                         android:maxWidth="150dp"
                         android:paddingBottom="5dp"
@@ -60,20 +76,40 @@
 
             </FrameLayout>
 
-            <EditText
-                android:id="@+id/attraction_name_et"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:padding="5dp"
-                android:background="#EEEEEE"
-                android:hint="Attraction Name"
-                android:inputType="text"
-                android:selectAllOnFocus="true"
-                android:textColorHighlight="#AAAAAAAA"
-                android:textSize="30dp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <EditText
+                    android:id="@+id/attraction_name_et"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginStart="24dp"
+                    android:maxWidth="250dp"
+                    android:padding="5dp"
+                    android:background="#EEEEEE"
+                    android:hint="Attraction Name"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:inputType="textMultiLine"
+                    android:layout_weight="1"
+                    android:selectAllOnFocus="true"
+                    android:textColorHighlight="#AAAAAAAA"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/attraction_search_ib"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="24dp"
+                    android:src="@drawable/ic_baseline_search_24"/>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -101,6 +137,34 @@
                     android:textAlignment="center"
                     android:textColorHighlight="#AAAAAAAA"
                     android:hint="City, State"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Weather:"
+                    android:textSize="25sp"
+                    android:textColor="@color/colorAccent"
+                    android:layout_marginStart="24dp" />
+
+                <TextView
+                    android:id="@+id/attraction_weather_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:layout_marginEnd="24dp"
+                    android:textSize="20dp"
+                    android:text="N/A"
+                    android:textAlignment="center"
                     android:selectAllOnFocus="true" />
 
             </LinearLayout>
@@ -277,41 +341,43 @@
                 android:id="@+id/attraction_buttons_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="20dp"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
                 android:weightSum="1.0">
 
                 <Button
                     android:id="@+id/attraction_update_btn"
-                    android:layout_width="133dp"
+                    android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="12dp"
                     android:layout_marginStart="24dp"
-                    android:background="@color/colorPrimary"
+                    android:layout_weight="0.4"
+                    android:background="@color/colorPrimaryDark"
                     android:enabled="true"
                     android:text="Update Attraction"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     android:textStyle="bold"
                     android:visibility="visible" />
 
                 <Button
                     android:id="@+id/attraction_delete_btn"
-                    android:layout_width="133dp"
+                    android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="0.4"
+                    android:background="@color/colorAccent"
                     android:enabled="true"
-                    android:text="Permanently Delete Attraction"
+                    android:text="Delete Attraction"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
