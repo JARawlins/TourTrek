@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 // Wait for the weather api to receive the data
                 if (attractionViewModel.getSelectedAttraction().getWeather() != null) {
 
-                    for (Map.Entry<String, Double> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
+                    for (Map.Entry<String, String> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
                         String aDateString = entry.getKey();
 
                         java.text.DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
@@ -241,14 +241,14 @@ public class MainActivity extends AppCompatActivity {
                             Log.e(TAG, "Error converting string date");
                         }
 
-                        Double temperature = entry.getValue();
+                        String temperature = entry.getValue();
 
                         int aMonth = calendar.get(Calendar.MONTH);
                         int aDay = calendar.get(Calendar.DAY_OF_MONTH);
                         int aYear = calendar.get(Calendar.YEAR);
 
                         if (aMonth == month && aDay == day && aYear == year) {
-                            weather.setText(String.format("%s ℉", temperature));
+                            weather.setText(String.format("%s℉", temperature));
                             break;
                         }
                         else
