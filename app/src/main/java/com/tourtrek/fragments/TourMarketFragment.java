@@ -1,5 +1,7 @@
 package com.tourtrek.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.activity.OnBackPressedCallback;
@@ -36,6 +39,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
 import com.tourtrek.utilities.TourLengthSorter;
@@ -56,6 +60,9 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     private TourMarketAdapter tourMarketAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
+    private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
+            "Name Descending", "Location Descending", "Cost Descending"};
+    private String result = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +87,9 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         // Initialize view model
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        SetupSpinner(tourMarketView);
+       showSortingDialog(tourMarketView);
+
+
 
         configureRecyclerView(tourMarketView);
         configureSwipeRefreshLayout(tourMarketView);
@@ -89,18 +98,45 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         return tourMarketView;
     }
 
-    public void SetupSpinner(View view) {
-        Spinner spinner = view.findViewById(R.id.tour_market_spinner);
+    public void showSortingDialog(View view) {
+        Button sortButton = view.findViewById(R.id.tour_market_btn);
+        AlertDialog dialog;
+        AlertDialog.Builder builder;
 
+        //Setup dialog;
+        builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Select Sorting option");
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireActivity(), R.array.categories,
-                android.R.layout.simple_spinner_item);
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                result = items[which];
+            }
+        });
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String key = items[which];
+                sortTours(tourMarketAdapter, key);
+            }
+        });
 
-        spinner.setAdapter(adapter);
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-        spinner.setOnItemSelectedListener(this);
+            }
+        });
+
+        dialog = builder.create();
+        sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
     }
 
     /**
@@ -346,5 +382,6 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
 
         return temp;
     }
+
 }
 

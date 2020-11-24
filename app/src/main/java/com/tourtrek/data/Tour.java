@@ -26,14 +26,17 @@ public class Tour{
     private List<DocumentReference> attractions;
     private String coverImageURI;
     private String tourUID;
-    private List<Integer> ratings;
+    private double totalRating;
+    private double rating;
 
     /**
      * Empty constructor needed for Firestore
      */
     public Tour() {
-        this.ratings = new ArrayList<>();
         this.reviews = new ArrayList<>();
+        this.totalRating = 0;
+        this.rating = 0;
+
     }
 
     /**
@@ -291,4 +294,23 @@ public class Tour{
         this.tourUID = tourUID;
     }
 
+    public double getTotalRating() {
+        return totalRating;
+    }
+
+    public void setTotalRating(double totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void addUser (String user) {
+        this.reviews.add(user);
+    }
 }

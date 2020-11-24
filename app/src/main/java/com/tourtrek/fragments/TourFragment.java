@@ -3,12 +3,10 @@ package com.tourtrek.fragments;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -52,8 +50,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -442,9 +438,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Pull the tours attractions if it already exists in firebase
         if (tourViewModel.getSelectedTour() != null) {
             fetchAttractionsAsync();
-            fetchReviewsAsync();
-            //selectedTourReviews.addAll(getCurrentTourReviews(tourReviews));///////////////////////////////////////////////////////////////
-            System.out.println(formatReviews(tourReviews));
         }
 
         // set the adapter
@@ -986,9 +979,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showReviewDialog(){
 
+        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmm");
+        System.out.println(tourViewModel.getSelectedTour().getTourUID());
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
         //Get elements
-        RatingBar ratingBar = view.findViewById(R.id.tour_rating_bar);
+        RatingBar ratingBar = view.findViewById(R.id.tour_market_tour_rating);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
@@ -996,128 +991,76 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
         builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
+            addNewRating(ratingBar.getRating());
+
+
+            //System.out.println(tourViewModel.getSelectedTour().getRating());
+            //System.out.println(tourViewModel.getSelectedTour().getTotalRating());
             //tourViewModel.getSelectedTour().addReview(ratingBar.getRating());
             //tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
+
         });
         final AlertDialog dialog = builder.create();
         dialog.show();
 
     }
 
-    private DocumentReference getCurrentUserDocumentReference() {
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        // Setup collection reference
-        CollectionReference usersCollection = db.collection("Users");
-        return usersCollection.document(mAuth.getCurrentUser().getUid());
-    }
-
-    private DocumentReference getCurrentTourDocumentReference() {
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        // Setup collection reference
-        CollectionReference usersCollection = db.collection("Tours");
-        return usersCollection.document(tourViewModel.getSelectedTour().getTourUID());
-    }
-
-    private void updateTourInFirebase(String UID, Tour tour){
+    private void updateTourInFirebase(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("Tours").document(UID)
-                .set(tour)
+        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                .set(tourViewModel.getSelectedTour())
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Tour written to firestore");
-                    System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+
                     // Update the user in the firestore
                     Firestore.updateUser();
 
+                    // TODO: only schedule the notification if it hasn't started yet
+                    if (tourViewModel.getSelectedTour().getNotifications())
+                        scheduleNotification();
+
+                    tourViewModel.setSelectedTour(null);
+                    tourViewModel.setIsNewTour(null);
+                    getParentFragmentManager().popBackStack();
+
+                    if (tourViewModel.isNewTour()) {
+                        Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
+
+                        tourViewModel.setIsNewTour(false);
+                    }
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
-    private void fetchReviewsAsync() {
+    private double computeRating(double totalRating, double rating, double newRating) {
 
-        tourReviews = new ArrayList<>();
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Setup collection reference
-        CollectionReference tourReviewsCollection = db.collection("TourReviews");
-
-        // Query database
-        tourReviewsCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Review collection");
-                    }
-                    else {
-
-                        tourReviews = new ArrayList<>();
-                        // Go through each document and compare the dates
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-
-                            tourReviews.add(document.toObject(TourReview.class));
-                        }
-
-                        //tourReviews = getCurrentTourReviews(tourReviews);
-
-                        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-                        System.out.println(formatReviews(tourReviews));
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+        return ((rating * totalRating) + newRating) / (totalRating + 1);
     }
 
-    private List<TourReview> getCurrentTourReviews(List<TourReview> reviews) {
-        List<TourReview> currentTourReviews = new ArrayList<>();
-        if (reviews.size() == 0){
-            return currentTourReviews;
-        } else {
-            for (int i = 0; i < reviews.size(); i++){
-                if (reviews.get(i).getTourUID() == tourViewModel.getSelectedTour().getTourUID()){
-                    currentTourReviews.add(reviews.get(i));
-                }
-            }
+    private void addNewRating(double newRating) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if (tourViewModel.getSelectedTour().getReviews().equals(null)) {
+            tourViewModel.getSelectedTour().setReviews(new ArrayList<>());
+            tourViewModel.getSelectedTour().setRating(0);
+            tourViewModel.getSelectedTour().setTotalRating(0);
         }
 
-        return currentTourReviews;
+        tourViewModel.getSelectedTour().setRating(computeRating(
+                tourViewModel.getSelectedTour().getTotalRating(),
+                tourViewModel.getSelectedTour().getRating(), newRating));
+        tourViewModel.getSelectedTour().setTotalRating(
+                tourViewModel.getSelectedTour().getTotalRating() + newRating);
+
+        tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
+
+        updateTourInFirebase();
     }
 
-    private String formatReviews(List<TourReview> selectedTourReviews){
-
-        if (selectedTourReviews.size() == 0){
-            return "NULL";
-        }
-        String temp = "";
-        for (int i = 0; i < selectedTourReviews.size(); i++){
-            temp += "\n" + "username" + "\n" + selectedTourReviews.get(i).getComment()+ "\n";
-        }
-        return temp;
-    }
-
-    private float computeRating(List<TourReview> reviews) {
-
-        //Check if review is empty
-        if (reviews.size() == 0){
-            return 0;
-        } else {
-            float sum = 0;
-            for (int i = 0; i < reviews.size(); i++) {
-                sum += reviews.get(i).getStars();
-            }
-
-            return sum / reviews.size();
-        }
-    }
 }
 

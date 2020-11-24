@@ -14,11 +14,12 @@
         android:textSize="20dp"/>
 
 
-    <RatingBar android:id="@+id/tour_rating_bar"
+    <RatingBar android:id="@+id/tour_market_tour_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:numStars="5" />
+        android:numStars="5"
+        android:stepSize="1"/>
 
 
 
