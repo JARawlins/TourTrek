@@ -784,10 +784,6 @@ public class AttractionFragment extends Fragment {
                         // Add/Update attraction to the selected tour
                         db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
-                        // TODO: Setup alarm for start time
-                        if (tourViewModel.getSelectedTour().getNotifications())
-                            scheduleNotification();
-
                         if (attractionViewModel.isNewAttraction()) {
                             Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
                             getParentFragmentManager().popBackStack();
@@ -860,50 +856,6 @@ public class AttractionFragment extends Fragment {
                             Log.d(TAG, "Tour written to Firestore");
                         })
                         .addOnFailureListener(e -> Log.w(TAG, "Error writing tour document"));
-    }
-    private void scheduleNotification() {
-
-        // Create view button
-        Intent viewIntent = new Intent(getContext(), MainActivity.class);
-        viewIntent.putExtra("viewId", 1);
-        PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
-
-        // Build the notification to display
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "2");
-        builder.setContentTitle("Attraction Started");
-        builder.setContentText(attractionViewModel.getSelectedAttraction().getName() + " has started");
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
-        builder.setChannelId("2");
-        builder.setContentIntent(viewPendingIntent);
-        builder.setAutoCancel(true);
-        builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
-        Notification notification = builder.build();
-
-        // Get Tour Start Date
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
-
-        try {
-            String startTime = attractionViewModel.getSelectedAttraction().getStartTime();
-            SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-            Date date = df.parse(startTime);
-            calendar.set(Calendar.HOUR, date.getHours());
-            calendar.set(Calendar.MINUTE, date.getMinutes());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // Initialize the alarm manager
-        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
-        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
-        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
-        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
-        intent.putExtra("NOTIFICATION_CHANNEL_ID", "2");
-        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Attraction Start");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
-        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-
     }
 
     public void startAutoCompleteActivity(View view) {
