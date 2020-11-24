@@ -41,12 +41,14 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
         public TextView tourName;
         public ImageView coverImage;
         public TextView location;
+        public TextView rating;
 
         public TourMarketViewHolder(View view) {
             super(view);
             this.tourName = view.findViewById(R.id.item_tour_name);
             this.coverImage = view.findViewById(R.id.item_tour_cover_iv);
             this.location = view.findViewById(R.id.item_tour_location);
+            this.rating = view.findViewById(R.id.tour_market_tour_rating);
         }
 
     }
@@ -74,6 +76,7 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
 
         holder.tourName.setText(toursDataSet.get(position).getName());
         holder.location.setText(toursDataSet.get(position).getLocation());
+        holder.location.setText(String.valueOf(toursDataSet.get(position).getRating()));
 
         Glide.with(context)
                 .load(toursDataSet.get(position).getCoverImageURI())

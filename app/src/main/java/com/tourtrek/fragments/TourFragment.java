@@ -1038,13 +1038,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
-    private double computeRating(double totalRating, double rating, double newRating) {
+    private double computeRating(double totalRating, double newRating) {
 
-        return ((rating * totalRating) + newRating) / (totalRating + 1);
+        return (totalRating + newRating) / tourViewModel.getSelectedTour().getReviews().size();
     }
 
     private void addNewRating(double newRating) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
+
         if (tourViewModel.getSelectedTour().getReviews().equals(null)) {
             tourViewModel.getSelectedTour().setReviews(new ArrayList<>());
             tourViewModel.getSelectedTour().setRating(0);
@@ -1052,12 +1054,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
         tourViewModel.getSelectedTour().setRating(computeRating(
-                tourViewModel.getSelectedTour().getTotalRating(),
-                tourViewModel.getSelectedTour().getRating(), newRating));
+                tourViewModel.getSelectedTour().getTotalRating(), newRating));
         tourViewModel.getSelectedTour().setTotalRating(
                 tourViewModel.getSelectedTour().getTotalRating() + newRating);
 
-        tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
 
         updateTourInFirebase();
     }
