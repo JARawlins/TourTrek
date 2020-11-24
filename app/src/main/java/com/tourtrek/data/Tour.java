@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class Tour{
@@ -25,11 +26,15 @@ public class Tour{
     private List<DocumentReference> attractions;
     private String coverImageURI;
     private String tourUID;
+    private List<Integer> ratings;
 
     /**
      * Empty constructor needed for Firestore
      */
-    public Tour() {}
+    public Tour() {
+        this.ratings = new ArrayList<>();
+        this.reviews = new ArrayList<>();
+    }
 
     /**
      * Getter for name

@@ -4,25 +4,21 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:orientation="vertical">
-    
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Rate this tour"
+        android:textSize="20dp"/>
+
+
     <RatingBar android:id="@+id/tour_rating_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:numStars="5" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        
-        <EditText
-            android:id="@+id/tour_rating_comment_et"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:maxLines="50"
-            android:hint="Enter comment here"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
 
 
 

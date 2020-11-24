@@ -155,6 +155,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         //review button
         rate = tourView.findViewById(R.id.tour_rate_btn);
         rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
                 showReviewDialog();
@@ -982,11 +983,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void showReviewDialog(){
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
         //Get elements
-        EditText comment = view.findViewById(R.id.tour_rating_comment_et);
         RatingBar ratingBar = view.findViewById(R.id.tour_rating_bar);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
@@ -998,32 +999,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-
-            TourReview review = new TourReview();
-            review.setUser(getCurrentUserDocumentReference());
-            review.setStars(ratingBar.getRating());
-            review.setComment(comment.getText().toString());
-            review.setTour(getCurrentTourDocumentReference());
-            review.setUserUID(mAuth.getCurrentUser().getUid());
-            review.setTourUID(tourViewModel.getSelectedTour().getTourUID());
-
-            db.collection("TourReviews").document().set(review)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                List<String> users =  tourViewModel.getSelectedTour().getReviews();
-                                users.add(mAuth.getCurrentUser().getUid());
-                                tourViewModel.getSelectedTour().setReviews(users);
-                                updateTourInFirebase(tourViewModel.getSelectedTour().getTourUID(),
-                                        tourViewModel.getSelectedTour());
-                                Log.w(TAG, "Tour Review written in Database successfully");
-                            }
-                            else {
-                                Log.w(TAG, "Tour Review database writing failed");
-                            }
-                        }
-                    });
+            //tourViewModel.getSelectedTour().addReview(ratingBar.getRating());
+            //tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
         });
         final AlertDialog dialog = builder.create();
         dialog.show();
@@ -1057,8 +1034,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 .set(tour)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Tour written to firestore");
+                    System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
                     // Update the user in the firestore
                     Firestore.updateUser();
+
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
