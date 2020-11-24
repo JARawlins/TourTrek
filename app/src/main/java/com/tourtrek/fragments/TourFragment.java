@@ -3,12 +3,10 @@ package com.tourtrek.fragments;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,6 +15,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -50,6 +49,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -77,7 +77,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 
@@ -758,9 +760,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         // Update the user in the firestore
                         Firestore.updateUser();
 
-                        // TODO: only schedule the notification if it hasn't started yet
                         if (tourViewModel.getSelectedTour().getNotifications())
-                            scheduleNotification();
+                            scheduleAlarms();
+
+                        // Remove any pre-existing alarms for this tour
+                        if (!tourViewModel.getSelectedTour().getNotifications())
+                            removeAlarms();
 
                         tourViewModel.setSelectedTour(null);
                         tourViewModel.setIsNewTour(null);
@@ -812,9 +817,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-
     public void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
-        ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSet());
+        ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetCopy());
 
         List<Attraction> filteredTourList = findAttractions(data, newText);
 
@@ -846,16 +850,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return filteredTourList;
     }
 
-    /**
-     * Update the selected tour
-     *
-     * This method assumes a tour is already created and has a properly filled UID field
-     * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-     */
-    private void syncTour() {
-
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -868,7 +862,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
 
@@ -918,11 +911,84 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return temp;
     }
 
-
     /**
      * Create a notification channel and add an alarm to be triggered by a broadcast receiver
      */
-    private void scheduleNotification() {
+    private void scheduleAlarms() {
+
+        // Set an alarm for each attraction within the tour
+        for (Attraction attraction : attractionsAdapter.getDataSet()) {
+
+            try {
+                Calendar calendar = Calendar.getInstance();
+                String startTime = attraction.getStartTime();
+                SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                Date date = df.parse(startTime);
+                calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                calendar.set(Calendar.MINUTE, date.getMinutes());
+
+                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                Timestamp now = Timestamp.now();
+
+                // Only enable an alarm for the attraction if the attraction hasn't started yet
+                if (attractionStartDate.compareTo(now) > 0)
+                    setAlarmForAttraction(attraction);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Timestamp tourStartDate = new Timestamp(tourViewModel.getSelectedTour().getStartDate());
+        Timestamp now = Timestamp.now();
+
+        // Only enable an alarm for the tour if the tour hasn't started yet
+        if (tourStartDate.compareTo(now) > 0) {
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("alarms", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            // Create view button
+            Intent viewIntent = new Intent(getContext(), MainActivity.class);
+            viewIntent.putExtra("viewId", 1);
+            PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
+
+            // Build the notification to display
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "1");
+            builder.setContentTitle("Tour Started");
+            builder.setContentText(tourViewModel.getSelectedTour().getName() + " has started");
+            builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+            builder.setChannelId("1");
+            builder.setContentIntent(viewPendingIntent);
+            builder.setAutoCancel(true);
+            builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
+            Notification notification = builder.build();
+
+            // Get Tour Start Date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+
+            // Initialize the alarm manager
+            AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+            String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
+            intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
+            intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
+            intent.putExtra("NOTIFICATION_CHANNEL_ID", "1");
+            intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Tour Start");
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
+            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+            // Add reference to new alarm so we can cancel later;
+            Set<String> attractionAlarms = sharedPreferences.getStringSet(tourViewModel.getSelectedTour().getTourUID(), new HashSet<>());
+            attractionAlarms.add(notification_id);
+            editor.putStringSet(tourViewModel.getSelectedTour().getTourUID(), attractionAlarms).apply();
+        }
+    }
+
+    private void setAlarmForAttraction(Attraction attraction) {
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("alarms", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // Create view button
         Intent viewIntent = new Intent(getContext(), MainActivity.class);
@@ -930,11 +996,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
 
         // Build the notification to display
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "1");
-        builder.setContentTitle("Tour Started");
-        builder.setContentText(tourViewModel.getSelectedTour().getName() + " has started");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "2");
+        builder.setContentTitle("Attraction Started");
+        builder.setContentText(attraction.getName() + " has started");
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
-        builder.setChannelId("1");
+        builder.setChannelId("2");
         builder.setContentIntent(viewPendingIntent);
         builder.setAutoCancel(true);
         builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
@@ -942,19 +1008,52 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         // Get Tour Start Date
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+        calendar.setTime(attraction.getStartDate());
+
+        try {
+            String startTime = attraction.getStartTime();
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+            Date date = df.parse(startTime);
+            calendar.set(Calendar.HOUR, date.getHours());
+            calendar.set(Calendar.MINUTE, date.getMinutes());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         // Initialize the alarm manager
-        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmMgr = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
         String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
         intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
         intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
-        intent.putExtra("NOTIFICATION_CHANNEL_ID", "1");
-        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Tour Start");
+        intent.putExtra("NOTIFICATION_CHANNEL_ID", "2");
+        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Attraction Start");
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
+        // Add reference to new alarm so we can cancel later;
+        Set<String> attractionAlarms = sharedPreferences.getStringSet(tourViewModel.getSelectedTour().getTourUID(), new HashSet<>());
+        attractionAlarms.add(notification_id);
+        editor.putStringSet(tourViewModel.getSelectedTour().getTourUID(), attractionAlarms).apply();
+    }
+
+    private void removeAlarms() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("alarms", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> alarms = sharedPreferences.getStringSet(tourViewModel.getSelectedTour().getTourUID(), new HashSet<>());
+
+        // Get the alarm manager
+        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+
+        for (String notification_id : alarms) {
+            Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
+            alarmMgr.cancel(alarmIntent);
+        }
+
+        // Remove all items from shared preferences
+        editor.clear().apply();
     }
 }
 
