@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
@@ -19,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +34,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -108,6 +114,8 @@ public class AttractionFragment extends Fragment {
     private TourViewModel tourViewModel;
     private AttractionViewModel attractionViewModel;
     private ImageView coverImageView;
+    // To keep track of whether we are in an async call
+    private boolean loading;
 
     /**
      * Default for proper back button usage
@@ -119,7 +127,8 @@ public class AttractionFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getParentFragmentManager().popBackStack();
+                if (!loading)
+                    getParentFragmentManager().popBackStack();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -262,8 +271,32 @@ public class AttractionFragment extends Fragment {
 
             }
 
+            LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
+            loadingContainer.setVisibility(View.VISIBLE);
+            ((MainActivity)requireActivity()).disableTabs();
+            loading = true;
+
             Glide.with(getContext())
                     .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
+                            loadingContainer.setVisibility(View.INVISIBLE);
+                            ((MainActivity)requireActivity()).enableTabs();
+                            loading = false;
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
+                            loadingContainer.setVisibility(View.INVISIBLE);
+                            ((MainActivity)requireActivity()).enableTabs();
+                            loading = false;
+                            return false;
+                        }
+                    })
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.default_image)
                     .into(coverImageView);
@@ -506,6 +539,10 @@ public class AttractionFragment extends Fragment {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
 
             if (resultCode == Activity.RESULT_OK) {
+
+                ((MainActivity)requireActivity()).disableTabs();
+                loading = true;
+
                 Place place = Autocomplete.getPlaceFromIntent(data);
 
                 attractionViewModel.getSelectedAttraction().setCoverImageURI("");
@@ -526,6 +563,7 @@ public class AttractionFragment extends Fragment {
                             .addOnSuccessListener(new OnSuccessListener<FetchPhotoResponse>() {
                                 @Override
                                 public void onSuccess(FetchPhotoResponse fetchPhotoResponse) {
+
                                     Bitmap bitmap = fetchPhotoResponse.getBitmap();
 
                                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -540,6 +578,9 @@ public class AttractionFragment extends Fragment {
                                             .into(coverImageView);
 
                                     loadingContainer.setVisibility(View.GONE);
+
+                                    ((MainActivity)requireActivity()).enableTabs();
+                                    loading = false;
 
                                     // Upload Image to firestore storage
                                     final FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -566,7 +607,9 @@ public class AttractionFragment extends Fragment {
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    System.out.println("FAILING");
+                                                    Log.w(TAG, "Failed to upload attraction cover image from Places API");
+                                                    ((MainActivity)requireActivity()).enableTabs();
+                                                    loading = false;
                                                 }
                                             });
                                 }
@@ -574,11 +617,16 @@ public class AttractionFragment extends Fragment {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    System.out.println("FAILING");
+                                    Log.w(TAG, "Failed to fetch attraction photo from Places API");
+                                    ((MainActivity)requireActivity()).enableTabs();
+                                    loading = false;
                                 }
                             });
                 }
                 else {
+
+                    ((MainActivity)requireActivity()).enableTabs();
+                    loading = false;
 
                     // Load image into view
                     Glide.with(requireContext())
@@ -636,12 +684,12 @@ public class AttractionFragment extends Fragment {
                         }
                         else
                             weatherTextView.setText("N/A");
-
                     }
                 }
-
             }
             else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                ((MainActivity)requireActivity()).enableTabs();
+                loading = false;
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Log.i(TAG, status.getStatusMessage());
             }
@@ -703,6 +751,7 @@ public class AttractionFragment extends Fragment {
     private void setupUpdateAttractionButton(View view){
 
         updateAttractionButton.setOnClickListener(v -> {
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             // first get the information from each EditText
             String name = nameEditText.getText().toString();
@@ -775,6 +824,9 @@ public class AttractionFragment extends Fragment {
                 tourViewModel.getSelectedTour().addAttraction(attractionDocumentReference);
             }
 
+            ((MainActivity)requireActivity()).disableTabs();
+            loading = true;
+
             db.collection("Attractions")
                     .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
@@ -792,8 +844,14 @@ public class AttractionFragment extends Fragment {
                             Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
                         }
 
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
                     })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+                    .addOnFailureListener(e -> {
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
+                        Log.w(TAG, "Error writing document");
+                    });
         });
     }
 
