@@ -153,6 +153,10 @@ public class TourFragment extends Fragment {
 
         //review button
         rate = tourView.findViewById(R.id.tour_review_btn);
+
+        if (tourViewModel.isNewTour()) {
+            rate.setVisibility(View.GONE);
+        }
         rate.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
