@@ -1140,9 +1140,9 @@ public class TourFragment extends Fragment {
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
-    private double computeRating(double totalRating, double newRating) {
+    private double computeRating(double totalRating) {
 
-        return (totalRating + newRating) / tourViewModel.getSelectedTour().getReviews().size();
+        return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
     }
 
     private void addNewRating(double newRating) {
@@ -1155,12 +1155,15 @@ public class TourFragment extends Fragment {
             tourViewModel.getSelectedTour().setTotalRating(0);
         }
 
-        tourViewModel.getSelectedTour().setRating(computeRating(
-                tourViewModel.getSelectedTour().getTotalRating(), newRating));
+        //Add the new rating to totalRating
         tourViewModel.getSelectedTour().setTotalRating(
                 tourViewModel.getSelectedTour().getTotalRating() + newRating);
 
+        //compute rating
+        tourViewModel.getSelectedTour().setRating(computeRating(
+                tourViewModel.getSelectedTour().getTotalRating()));
 
+        //update tour
         updateTourInFirebase();
     }
 

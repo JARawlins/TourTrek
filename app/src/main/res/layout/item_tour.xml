@@ -66,6 +66,7 @@
             android:id="@+id/item_tour_ratingBar"
             android:progressTint="#8685ef"
             android:isIndicator="true"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"

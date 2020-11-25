@@ -953,9 +953,9 @@ public class AttractionFragment extends Fragment {
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
-    private double computeRating(double totalRating, double newRating) {
+    private double computeRating(double totalRating) {
 
-        return (totalRating + newRating) / attractionViewModel.getSelectedAttraction().getReviews().size();
+        return totalRating / attractionViewModel.getSelectedAttraction().getReviews().size();
     }
 
     private void addNewRating(double newRating) {
@@ -968,10 +968,14 @@ public class AttractionFragment extends Fragment {
             attractionViewModel.getSelectedAttraction().setTotalRating(0);
         }
 
-        attractionViewModel.getSelectedAttraction().setRating(computeRating(
-                attractionViewModel.getSelectedAttraction().getTotalRating(), newRating));
+        //add new rating to totalRating
         attractionViewModel.getSelectedAttraction().setTotalRating(
                 attractionViewModel.getSelectedAttraction().getTotalRating() + newRating);
+
+        //compute rating
+        attractionViewModel.getSelectedAttraction().setRating(computeRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating()));
+
 
         updateAttractionInFirebase();
     }

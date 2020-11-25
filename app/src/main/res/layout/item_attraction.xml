@@ -57,6 +57,7 @@
             android:layout_height="wrap_content"
             android:progressTint="@color/quantum_orange"
             android:isIndicator="true"
+            style="?android:attr/ratingBarStyleSmall"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/item_attraction_location_tv"
             app:layout_constraintStart_toStartOf="@+id/item_attraction_name_tv"
