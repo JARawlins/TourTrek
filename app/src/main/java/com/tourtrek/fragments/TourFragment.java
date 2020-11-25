@@ -161,12 +161,16 @@ public class TourFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
+
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
-                    showReviewDialog();
-                } else {
-                    Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                    if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                        showReviewDialog();
+                    } else {
+                        Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
             }
         });
 
@@ -1123,18 +1127,7 @@ public class TourFragment extends Fragment {
                     // Update the user in the firestore
                     Firestore.updateUser();
 
-                    tourViewModel.setSelectedTour(null);
-                    tourViewModel.setIsNewTour(null);
-                    getParentFragmentManager().popBackStack();
-
-                    if (tourViewModel.isNewTour()) {
-                        Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
-
-                        tourViewModel.setIsNewTour(false);
-                    }
+                    Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));

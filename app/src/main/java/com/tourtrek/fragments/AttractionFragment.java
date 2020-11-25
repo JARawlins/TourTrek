@@ -941,13 +941,7 @@ public class AttractionFragment extends Fragment {
                     // Add/Update attraction to the selected tour
                     db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
-                    if (attractionViewModel.isNewAttraction()) {
-                        Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
-                        getParentFragmentManager().popBackStack();
-                    }
-                    else {
-                        Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(getContext(), "You successfully rated the attraction", Toast.LENGTH_SHORT).show();
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
