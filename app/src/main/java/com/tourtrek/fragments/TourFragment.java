@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +50,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
@@ -118,6 +124,8 @@ public class TourFragment extends Fragment {
             "Cost Descending", "Rating Descending"};
     private String result = "";
     private boolean added;
+    // To keep track of whether we are in an async call
+    private boolean loading;
     private ImageButton rate;
 
     @Override
@@ -132,7 +140,8 @@ public class TourFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getParentFragmentManager().popBackStack();
+                if (!loading)
+                    getParentFragmentManager().popBackStack();
             }
         };
 
@@ -141,6 +150,9 @@ public class TourFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        ((MainActivity)requireActivity()).disableTabs();
+        loading = true;
 
         // Grab a reference to the current view
         View tourView = inflater.inflate(R.layout.fragment_tour, container, false);
@@ -286,8 +298,32 @@ public class TourFragment extends Fragment {
         if (MainActivity.user != null)
             tourIsUsers();
 
+        LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
+        loadingContainer.setVisibility(View.VISIBLE);
+        ((MainActivity)requireActivity()).disableTabs();
+        loading = true;
+
         Glide.with(getContext())
                 .load(tourViewModel.getSelectedTour().getCoverImageURI())
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
+                        loadingContainer.setVisibility(View.INVISIBLE);
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
+                        loadingContainer.setVisibility(View.INVISIBLE);
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
+                        return false;
+                    }
+                })
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.default_image)
                 .into(coverImageView);
@@ -380,6 +416,9 @@ public class TourFragment extends Fragment {
         });
 
         setupDeleteTourButton(tourView);
+
+        ((MainActivity)requireActivity()).enableTabs();
+        loading = false;
 
         return tourView;
     }
@@ -663,6 +702,8 @@ public class TourFragment extends Fragment {
         // delete listener
         deleteTourButton.setOnClickListener(v -> {
 
+            ((MainActivity)requireActivity()).disableTabs();
+
             String currentTourUID = tourViewModel.getSelectedTour().getTourUID();
             List<DocumentReference> tourRefs = MainActivity.user.getTours();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -705,6 +746,8 @@ public class TourFragment extends Fragment {
 
                                                 // go back
                                                 getParentFragmentManager().popBackStack();
+
+                                                ((MainActivity)requireActivity()).enableTabs();
                                             });
                                 });
                         break;
@@ -723,6 +766,7 @@ public class TourFragment extends Fragment {
         Button editTourUpdateButton = view.findViewById(R.id.tour_update_btn);
 
         editTourUpdateButton.setOnClickListener(view1 -> {
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
             added = true;
@@ -783,6 +827,9 @@ public class TourFragment extends Fragment {
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            ((MainActivity)requireActivity()).disableTabs();
+            loading = true;
+
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
                     .addOnSuccessListener(aVoid -> {
@@ -811,8 +858,18 @@ public class TourFragment extends Fragment {
                             tourViewModel.setIsNewTour(false);
                         }
 
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
                     })
-            .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error writing document");
+
+                            ((MainActivity)requireActivity()).enableTabs();
+                            loading = false;
+                        }
+                    });
         });
     }
 
@@ -959,6 +1016,7 @@ public class TourFragment extends Fragment {
 
             try {
                 Calendar calendar = Calendar.getInstance();
+                calendar.setTime(attraction.getStartDate());
                 String startTime = attraction.getStartTime();
                 SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
                 Date date = df.parse(startTime);

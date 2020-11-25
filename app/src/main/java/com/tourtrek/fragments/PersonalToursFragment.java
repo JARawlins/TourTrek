@@ -318,7 +318,12 @@ public class PersonalToursFragment extends Fragment {
 
             currentTourAdapter.clear();
 
+            if (MainActivity.user.getTours().isEmpty())
+                ((MainActivity)requireActivity()).enableTabs();
+
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
+
+                ((MainActivity)requireActivity()).disableTabs();
 
                 toursCollection.document(documentReference.getId()).get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -344,6 +349,8 @@ public class PersonalToursFragment extends Fragment {
                                     ((PastPersonalToursAdapter) pastTourAdapter).addNewData(documentSnapshot.toObject(Tour.class));
                                     pastSwipeRefreshLayout.setRefreshing(false);
                                 }
+
+                                ((MainActivity)requireActivity()).enableTabs();
                             }
                         });
             }
