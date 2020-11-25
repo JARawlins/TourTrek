@@ -146,11 +146,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
         currentRecyclerView.setLayoutManager(currentToursLayoutManager);
 
+        // Specify an adapter
+        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("current");
 
-        // Specify an adapter
-        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
         currentRecyclerView.setAdapter(currentTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -178,11 +179,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
         futureRecyclerView.setLayoutManager(futureToursLayoutManager);
 
+        // Specify an adapter
+        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("future");
 
-        // Specify an adapter
-        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
         futureRecyclerView.setAdapter(futureTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -209,10 +211,11 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
         pastRecyclerView.setLayoutManager(pastToursLayoutManager);
 
-        fetchToursAsync("past");
-
         // Specify an adapter
         pastTourAdapter = new PastPersonalToursAdapter(getContext());
+
+        fetchToursAsync("past");
+
         pastRecyclerView.setAdapter(pastTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -313,9 +316,7 @@ public class PersonalToursFragment extends Fragment {
         // Pull out the UID's of each tour that belongs to this user
         if (!MainActivity.user.getTours().isEmpty()) {
 
-            // Clear the data set if one exists
-            if (currentTourAdapter != null)
-                currentTourAdapter.clear();
+            currentTourAdapter.clear();
 
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
 
