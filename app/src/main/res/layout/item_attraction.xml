@@ -55,7 +55,7 @@
             android:id="@+id/item_attraction_ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:progressTint="@color/quantum_orange"
+            android:progressTint="#8685ef"
             android:isIndicator="true"
             style="?android:attr/ratingBarStyleSmall"
             app:layout_constraintBottom_toBottomOf="parent"

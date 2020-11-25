@@ -151,7 +151,7 @@ public class AttractionFragment extends Fragment {
         //review button
         rate = attractionView.findViewById(R.id.attraction_review_btn);
 
-        if (attractionViewModel.isNewAttraction()) {
+        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
             rate.setVisibility(View.GONE);
         }
         rate.setOnClickListener(new View.OnClickListener() {
