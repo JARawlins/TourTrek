@@ -75,8 +75,6 @@ public class LoginFragment extends Fragment {
 
         loginButton.setOnClickListener(v -> {
 
-            ((MainActivity)requireActivity()).disableTabs();
-
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             // Close soft keyboard
@@ -101,6 +99,8 @@ public class LoginFragment extends Fragment {
                 view.findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
             }
             else {
+
+                ((MainActivity)requireActivity()).disableTabs();
 
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(requireActivity(), task -> {
