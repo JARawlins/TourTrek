@@ -75,6 +75,8 @@ public class LoginFragment extends Fragment {
 
         loginButton.setOnClickListener(v -> {
 
+            ((MainActivity)requireActivity()).disableTabs();
+
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             // Close soft keyboard
@@ -133,6 +135,8 @@ public class LoginFragment extends Fragment {
                                                 // Stop showing progress bar
                                                 view.findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
                                             }
+
+                                            ((MainActivity)requireActivity()).enableTabs();
                                         });
 
                             } else {
@@ -144,6 +148,8 @@ public class LoginFragment extends Fragment {
 
                                 // Stop loading progress circle
                                 view.findViewById(R.id.login_loading_pb).setVisibility(View.GONE);
+
+                                ((MainActivity)requireActivity()).enableTabs();
                             }
                         });
             }
