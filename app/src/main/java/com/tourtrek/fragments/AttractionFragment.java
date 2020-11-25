@@ -932,10 +932,6 @@ public class AttractionFragment extends Fragment {
                     // Add/Update attraction to the selected tour
                     db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
-                    // TODO: Setup alarm for start time
-                    if (tourViewModel.getSelectedTour().getNotifications())
-                        scheduleNotification();
-
                     if (attractionViewModel.isNewAttraction()) {
                         Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
                         getParentFragmentManager().popBackStack();

@@ -180,7 +180,7 @@ public class TourFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, result);
+                sortAttractions(attractionsAdapter, result);
             }
         });
 
@@ -1113,10 +1113,6 @@ public class TourFragment extends Fragment {
 
                     // Update the user in the firestore
                     Firestore.updateUser();
-
-                    // TODO: only schedule the notification if it hasn't started yet
-                    if (tourViewModel.getSelectedTour().getNotifications())
-                        scheduleNotification();
 
                     tourViewModel.setSelectedTour(null);
                     tourViewModel.setIsNewTour(null);
