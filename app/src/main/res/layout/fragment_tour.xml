@@ -365,7 +365,7 @@
                 android:weightSum="1.0">
 
                 <ImageButton
-                    android:id="@+id/tour_rate_btn"
+                    android:id="@+id/tour_review_btn"
                     android:layout_width="64dp"
                     android:layout_height="60dp"
                     android:background="#00ffffff"

@@ -46,6 +46,7 @@ import com.tourtrek.utilities.TourLengthSorter;
 import com.tourtrek.utilities.TourLocationSorter;
 import com.tourtrek.utilities.TourNameSorter;
 import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.utilities.TourRatingSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
@@ -60,8 +61,9 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     private TourMarketAdapter tourMarketAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TourViewModel tourViewModel;
-    private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Name Descending", "Location Descending", "Cost Descending"};
+    private String[] items = {"Name Ascending", "Location Ascending", "Duration Ascending",
+            "Rating Ascending", "Name Descending", "Location Descending", "Duration Descending",
+            "Rating Descending"};
     private String result = "";
 
     @Override
@@ -118,8 +120,7 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String key = items[which];
-                sortTours(tourMarketAdapter, key);
+                sortTours(tourMarketAdapter, result);
             }
         });
 
@@ -361,6 +362,10 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
                 Collections.sort(temp, new TourLengthSorter());
                 break;
 
+            case "Rating Ascending":
+                Collections.sort(temp, new TourRatingSorter());
+                break;
+
             case "Name Descending":
                 Collections.sort(temp, new TourNameSorter());
                 Collections.reverse(temp);
@@ -373,6 +378,11 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
 
             case "Duration Descending":
                 Collections.sort(temp, new TourLengthSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Rating Descending":
+                Collections.sort(temp, new TourRatingSorter());
                 Collections.reverse(temp);
                 break;
 

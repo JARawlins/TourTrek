@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,11 +31,13 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
 
         public TextView attractionName;
         public TextView attractionLocation;
+        public RatingBar rating;
 
         public CurrentAttractionsViewHolder (View view) {
             super(view);
             this.attractionName = view.findViewById(R.id.item_attraction_name_tv);
             this.attractionLocation = view.findViewById(R.id.item_attraction_location_tv);
+            this.rating = view.findViewById(R.id.item_attraction_ratingBar);
         }
 
     }
@@ -62,6 +65,7 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
 
          holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
          holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
+         holder.rating.setRating((float) currentTourAttractionsDataSet.get(position).getRating());
 
         ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.VISIBLE);

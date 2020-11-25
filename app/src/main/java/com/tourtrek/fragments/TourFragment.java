@@ -65,8 +65,10 @@ import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.data.TourReview;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
+import com.tourtrek.utilities.AttractionRatingSorter;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.utilities.TourRatingSorter;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
@@ -83,7 +85,7 @@ import java.util.List;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 
-public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
@@ -109,17 +111,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private AlertDialog dialog;
     private AlertDialog.Builder builder;
     private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Name Descending", "Location Descending", "Cost Descending"};
+            "Rating Ascending", "Name Descending", "Location Descending",
+            "Cost Descending", "Rating Descending"};
     private String result = "";
     private boolean added;
     private ImageButton rate;
-    private List<TourReview> tourReviews;
-    private List<TourReview> selectedTourReviews;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
-        selectedTourReviews = new ArrayList<>();
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
@@ -149,7 +149,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
         //review button
-        rate = tourView.findViewById(R.id.tour_rate_btn);
+        rate = tourView.findViewById(R.id.tour_review_btn);
         rate.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -875,18 +875,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
 
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
@@ -916,6 +904,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
+            case "Rating Ascending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                break;
+
             case "Name Descending":
                 Collections.sort(temp, new AttractionNameSorter());
                 Collections.reverse(temp);
@@ -928,6 +920,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
             case "Cost Descending":
                 Collections.sort(temp, new AttractionCostSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Rating Descending":
+                Collections.sort(temp, new AttractionRatingSorter());
                 Collections.reverse(temp);
                 break;
 
@@ -979,11 +976,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showReviewDialog(){
 
-        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmm");
-        System.out.println(tourViewModel.getSelectedTour().getTourUID());
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
         //Get elements
-        RatingBar ratingBar = view.findViewById(R.id.tour_market_tour_rating);
+        RatingBar ratingBar = view.findViewById(R.id.tour_ratingBar);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
@@ -993,12 +988,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
 
             addNewRating(ratingBar.getRating());
-
-
-            //System.out.println(tourViewModel.getSelectedTour().getRating());
-            //System.out.println(tourViewModel.getSelectedTour().getTotalRating());
-            //tourViewModel.getSelectedTour().addReview(ratingBar.getRating());
-            //tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
 
         });
         final AlertDialog dialog = builder.create();

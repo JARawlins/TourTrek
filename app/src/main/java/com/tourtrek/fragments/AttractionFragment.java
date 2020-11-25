@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -66,6 +68,7 @@ import com.tourtrek.data.Attraction;
 import com.tourtrek.data.AttractionReview;
 import com.tourtrek.data.TourReview;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
+import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
@@ -116,6 +119,7 @@ public class AttractionFragment extends Fragment {
     private AttractionViewModel attractionViewModel;
     private ImageView coverImageView;
     private ImageButton rateAttraction;
+    private ImageButton rate;
 
     /**
      * Default for proper back button usage
@@ -146,8 +150,9 @@ public class AttractionFragment extends Fragment {
         attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
 
         //review button
-        rateAttraction = attractionView.findViewById(R.id.attraction_rating_btn);
-        rateAttraction.setOnClickListener(new View.OnClickListener() {
+        rate = attractionView.findViewById(R.id.attraction_review_btn);
+        rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
                 showReviewDialog();
@@ -945,8 +950,7 @@ public class AttractionFragment extends Fragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
         //Get elements
-        EditText comment = view.findViewById(R.id.attraction_rating_comment_et);
-        RatingBar ratingBar = view.findViewById(R.id.attraction_rating_bar);
+        RatingBar ratingBar = view.findViewById(R.id.attraction_ratingBar);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
@@ -954,50 +958,65 @@ public class AttractionFragment extends Fragment {
         });
 
         builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            AttractionReview review = new AttractionReview();
-            review.setUser(getCurrentUserDocumentReference());
-            review.setStars(ratingBar.getRating());
-            review.setComment(comment.getText().toString());
-            review.setAttraction(getCurrentAttractionDocumentReference());
+            addNewRating(ratingBar.getRating());
 
-            db.collection("AttractionReviews").document().set(review)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.w(TAG, "Tour Review written in Database successfully");
-                            }
-                            else {
-                                Log.w(TAG, "Tour Review database writing failed");
-                            }
-                        }
-                    });
         });
         final AlertDialog dialog = builder.create();
         dialog.show();
 
     }
 
-    private DocumentReference getCurrentUserDocumentReference() {
-        // Get instance of firestore
+    private void updateAttractionInFirebase(){
+        // Get Firestore instance
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-        // Setup collection reference
-        CollectionReference usersCollection = db.collection("Users");
-        return usersCollection.document(mAuth.getCurrentUser().getUid());
+        db.collection("Attractions")
+                .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
+                .set(attractionViewModel.getSelectedAttraction())
+                .addOnCompleteListener(task -> {
+                    Log.d(TAG, "Attraction written to firestore with UID: " + attractionViewModel.getSelectedAttraction().getAttractionUID());
+
+                    // Add/Update attraction to the selected tour
+                    db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
+
+                    // TODO: Setup alarm for start time
+                    if (tourViewModel.getSelectedTour().getNotifications())
+                        scheduleNotification();
+
+                    if (attractionViewModel.isNewAttraction()) {
+                        Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().popBackStack();
+                    }
+                    else {
+                        Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
+                    }
+
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }
 
-    private DocumentReference getCurrentAttractionDocumentReference() {
-        // Get instance of firestore
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private double computeRating(double totalRating, double newRating) {
 
-        // Setup collection reference
-        CollectionReference usersCollection = db.collection("Attractions");
-        return usersCollection.document(attractionViewModel.getSelectedAttraction().getAttractionUID());
+        return (totalRating + newRating) / attractionViewModel.getSelectedAttraction().getReviews().size();
+    }
+
+    private void addNewRating(double newRating) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        attractionViewModel.getSelectedAttraction().addUser(mAuth.getCurrentUser().getUid());
+
+        if (attractionViewModel.getSelectedAttraction().getReviews().equals(null)) {
+            attractionViewModel.getSelectedAttraction().setReviews(new ArrayList<>());
+            attractionViewModel.getSelectedAttraction().setRating(0);
+            attractionViewModel.getSelectedAttraction().setTotalRating(0);
+        }
+
+        attractionViewModel.getSelectedAttraction().setRating(computeRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating(), newRating));
+        attractionViewModel.getSelectedAttraction().setTotalRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating() + newRating);
+
+        updateAttractionInFirebase();
     }
 
 }

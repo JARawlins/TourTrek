@@ -5,26 +5,20 @@
     android:padding="8dp"
     android:orientation="vertical">
 
-    <RatingBar android:id="@+id/attraction_rating_bar"
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:numStars="5" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/attraction_rating_comment_et"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:maxLines="50"
-            android:hint="Enter comment here"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
+        android:text="Rate this Attraction"
+        android:textSize="20dp"/>
 
 
-
+    <RatingBar android:id="@+id/attraction_ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:numStars="5"
+        android:stepSize="1"/>
 
 </LinearLayout>

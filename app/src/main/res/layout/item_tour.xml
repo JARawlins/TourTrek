@@ -62,17 +62,17 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
-            android:id="@+id/tour_market_tour_rating"
-            android:layout_width="160dp"
-            android:layout_height="61dp"
-            android:layout_gravity="center_horizontal"
-            android:text="No review"
-            android:textSize="30dp"
-            android:textAlignment="center"
-            android:textColor="@color/quantum_yellow"
+        <RatingBar
+            android:id="@+id/item_tour_ratingBar"
+            android:progressTint="#8685ef"
+            android:isIndicator="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/item_tour_location" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
