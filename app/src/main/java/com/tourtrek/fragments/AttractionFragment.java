@@ -118,7 +118,6 @@ public class AttractionFragment extends Fragment {
     private TourViewModel tourViewModel;
     private AttractionViewModel attractionViewModel;
     private ImageView coverImageView;
-    private ImageButton rateAttraction;
     private ImageButton rate;
 
     /**
@@ -155,7 +154,13 @@ public class AttractionFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                showReviewDialog();
+
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                if (!attractionViewModel.getSelectedAttraction().getReviews()
+                        .contains(mAuth.getCurrentUser().getUid())) { showReviewDialog();
+                } else {
+                    Toast.makeText(getContext(), "You cannot rate an attraction more than once", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
