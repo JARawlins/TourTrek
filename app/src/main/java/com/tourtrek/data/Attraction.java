@@ -32,6 +32,7 @@ public class Attraction {
     private HashMap<String, String> weather;
     private double totalRating;
     private double rating;
+    private String ticketURI;
 
     /**
      * Empty constructor needed for Firestore
@@ -245,5 +246,13 @@ public class Attraction {
 
     public void addUser (String user) {
         this.reviews.add(user);
+    }
+
+    public String getTicketURI() {
+        return ticketURI;
+    }
+
+    public void setTicketURI(String ticketURI) {
+        this.ticketURI = ticketURI;
     }
 }
