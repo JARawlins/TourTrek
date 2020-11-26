@@ -88,6 +88,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
+// TODO - perhaps logic ought to be implemented preventing tours with the same name from being displayed in the market
+// TODO - do the above through stopping a user from making a duplicate tour public and displaying a toast
+// TODO - add usernames to tours in the marketplace
+// TODO - cases to test = a non-user should not see the import button, clicking on your own tour in the market should not present the import button,
+// successful importation into personal tours, separation of the two tours.
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -101,6 +106,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private EditText costEditText;
     private Button startDateButton;
     private Button endDateButton;
+    private Button tourImportButton;
     private EditText nameEditText;
     private Button updateTourButton;
     private Button deleteTourButton;
@@ -203,6 +209,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
         deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
         shareButton = tourView.findViewById(R.id.tour_share_btn);
+        tourImportButton = tourView.findViewById(R.id.tour_import_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
         checkBoxesContainer = tourView.findViewById(R.id.tour_checkboxes_container);
@@ -228,6 +235,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         startDateButton.setEnabled(false);
         endDateButton.setEnabled(false);
         coverImageView.setClickable(false);
+        addAttractionButton.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
         coverTextView.setVisibility(View.GONE);
         checkBoxesContainer.setVisibility(View.GONE);
@@ -264,8 +272,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
         // Check to see if this tour belongs to the user
-        if (MainActivity.user != null)
+        if (MainActivity.user != null) {
             tourIsUsers();
+        }
+        else{ // no user is logged in, so disable importing
+            tourImportButton.setVisibility(View.GONE);
+        }
 
         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
         loadingContainer.setVisibility(View.VISIBLE);
@@ -385,6 +397,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
         setupDeleteTourButton(tourView);
+        setupImportTourButton(tourView);
 
         ((MainActivity)requireActivity()).enableTabs();
         loading = false;
@@ -502,8 +515,52 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     /**
+     * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
+     * account.
+     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
+     * @param tourView
+     */
+    private void setupImportTourButton(View tourView) {
+        tourImportButton.setOnClickListener(u -> {
+            // get the current tour
+            Tour tour = tourViewModel.getSelectedTour();
+
+            // create a new Firestore document
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference newTourDoc = db.collection("Tours").document();
+
+            // set the ID of the tour object to that of the new document
+            // the original tour document in the Firestore will not be touched, so changing the ID should be fine
+            tour.setTourUID(newTourDoc.getId());
+            // set the new tour to private by default to avoid cluttering the tour market with it until
+            // after the user has had a chance to modify it
+            tour.setPubliclyAvailable(false);
+
+            // set the content of the new Firestore document
+            newTourDoc.set(tour).addOnCompleteListener(v -> {
+
+                Log.d(TAG, "The tour was imported.");
+//                Toast.makeText(getContext(), "The tour was imported.", Toast.LENGTH_LONG).show();
+
+            })
+                .addOnFailureListener(v1 -> {
+
+                    Log.d(TAG, "Tour importation failed.");
+//                    Toast.makeText(getContext(), "Tour importation failed.", Toast.LENGTH_LONG).show();
+
+                });
+
+            // add the tour to the user's list of tours
+            MainActivity.user.getTours().add(newTourDoc);
+            updateUser();
+
+            // go back
+            getParentFragmentManager().popBackStack();
+        });
+    }
+
+    /**
      * Retrieve all attractions belonging to this user
-     *
      */
     private void fetchAttractionsAsync() {
 
@@ -563,6 +620,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+            tourImportButton.setVisibility(View.GONE);
+            addAttractionButton.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
@@ -592,6 +651,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+            tourImportButton.setVisibility(View.GONE);
+            addAttractionButton.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
