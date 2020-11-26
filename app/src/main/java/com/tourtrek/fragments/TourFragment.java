@@ -84,6 +84,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
+// TODO - when a user imports a tour, they should get a copy of it as their own tour to manipulate
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -97,6 +98,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private EditText costEditText;
     private Button startDateButton;
     private Button endDateButton;
+    private Button tourImportButton;
     private EditText nameEditText;
     private Button updateTourButton;
     private Button deleteTourButton;
@@ -193,6 +195,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
         deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
         shareButton = tourView.findViewById(R.id.tour_share_btn);
+        tourImportButton = tourView.findViewById(R.id.tour_import_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
         checkBoxesContainer = tourView.findViewById(R.id.tour_checkboxes_container);
@@ -218,6 +221,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         startDateButton.setEnabled(false);
         endDateButton.setEnabled(false);
         coverImageView.setClickable(false);
+        addAttractionButton.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
         coverTextView.setVisibility(View.GONE);
         checkBoxesContainer.setVisibility(View.GONE);
@@ -540,6 +544,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+            updateTourButton.setVisibility(View.VISIBLE);
+            tourImportButton.setVisibility(View.GONE);
+            addAttractionButton.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
@@ -569,6 +576,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+            updateTourButton.setVisibility(View.VISIBLE);
+            tourImportButton.setVisibility(View.GONE);
+            addAttractionButton.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             buttonsContainer.setVisibility(View.VISIBLE);
             checkBoxesContainer.setVisibility(View.VISIBLE);
