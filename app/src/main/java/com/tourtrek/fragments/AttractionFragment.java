@@ -592,28 +592,6 @@ public class AttractionFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == Activity.RESULT_OK) {
-            assert data != null;
-            if (dialogIsShowing) {
-                Glide.with(this)
-                        .load(data.getData())
-                        .placeholder(R.drawable.default_image)
-                        .into(ticketImageView);
-
-                //Write to Firebase only when the user confirm
-                confirmButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        uploadTicketToDatabase(data);
-                        dialog.dismiss();
-                    }
-                });
-                return;
-            }
-
-        }
-
-
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
 
             if (resultCode == Activity.RESULT_OK) {
@@ -778,7 +756,7 @@ public class AttractionFragment extends Fragment {
             }
         }
         else {
-            if(resultCode == Activity.RESULT_OK) {
+            if(resultCode == Activity.RESULT_OK && !dialogIsShowing) {
                 assert data != null;
 
                     Glide.with(this)
@@ -787,6 +765,26 @@ public class AttractionFragment extends Fragment {
                             .into(coverImageView);
                     uploadImageToDatabase(data);
             }
+        }
+
+        if(resultCode == Activity.RESULT_OK) {
+            assert data != null;
+            if (dialogIsShowing) {
+                Glide.with(this)
+                        .load(data.getData())
+                        .placeholder(R.drawable.default_image)
+                        .into(ticketImageView);
+
+                //Write to Firebase only when the user confirm
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadTicketToDatabase(data);
+                        dialog.dismiss();
+                    }
+                });
+            }
+
         }
 
     }
