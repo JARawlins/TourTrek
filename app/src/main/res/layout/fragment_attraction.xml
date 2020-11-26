@@ -275,8 +275,7 @@
                     android:layout_marginEnd="24dp"
                     android:background="#EEEEEE"
                     android:textSize="20dp"
-                    android:hint="Pick Date"
-                    android:onClick="showDatePickerDialog" />
+                    android:hint="Pick Date" />
 
             </LinearLayout>
 
