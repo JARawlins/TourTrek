@@ -31,6 +31,23 @@
                     android:background="@drawable/item_tour_bg_img"
                     android:scaleType="fitXY" />
 
+                <LinearLayout
+                    android:id="@+id/tour_cover_loading_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="bottom|center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:id="@+id/tour_cover_loading_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
                 <FrameLayout
                     android:id="@+id/edit_tour_container"
                     android:layout_width="match_parent"
@@ -221,60 +238,60 @@
 
             </LinearLayout>
 
-
-            <FrameLayout
-                android:id="@+id/tour_attractions_rv_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
-
-                <LinearLayout
-                    android:id="@+id/tour_attractions_loading_container"
+                <FrameLayout
+                    android:id="@+id/tour_attractions_rv_container"
                     android:layout_width="match_parent"
-                    android:layout_height="266dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center"
-                    android:background="#EEEEEE"
-                    android:orientation="vertical"
-                    android:visibility="visible">
+                    android:layout_height="0dp"
+                    android:layout_weight="2">
 
-                    <TextView
-                        android:id="@+id/tour_attractions_loading_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:text="Loading Attractions"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="25sp" />
-
-                    <ProgressBar
-                        android:id="@+id/tour_attractions_loading_pb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
-                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/tour_attractions_srl"
-                    android:layout_width="match_parent"
-                    android:layout_height="286dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/tour_attractions_rv"
+                    <LinearLayout
+                        android:id="@+id/tour_attractions_loading_container"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="255dp"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"
+                        android:gravity="center"
                         android:background="#EEEEEE"
-                        android:layout_marginTop="8dp"
-                        android:visibility="invisible" />
+                        android:orientation="vertical"
+                        android:visibility="visible">
 
-                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                        <TextView
+                            android:id="@+id/tour_attractions_loading_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:text="Loading Attractions"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="25sp" />
 
-            </FrameLayout>
+                        <ProgressBar
+                            android:id="@+id/tour_attractions_loading_pb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/tour_attractions_srl"
+                        android:layout_width="match_parent"
+                        android:layout_height="255dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/tour_attractions_rv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:nestedScrollingEnabled="true"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="24dp"
+                            android:background="#EEEEEE"
+                            android:layout_marginTop="8dp"
+                            android:visibility="invisible" />
+
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                </FrameLayout>
 
             <RelativeLayout
                 android:id="@+id/tour_checkboxes_container"
