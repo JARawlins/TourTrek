@@ -399,6 +399,19 @@
                     android:onClick="onToggleStar"
                     android:src="@drawable/ic_star" />
 
+                <Button
+                    android:id="@+id/attraction_add_ticket_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ADD TICKET"/>
+
+                <Button
+                    android:id="@+id/attraction_view_ticket_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VIEW TICKET"/>
+
+
 
             </LinearLayout>
 
