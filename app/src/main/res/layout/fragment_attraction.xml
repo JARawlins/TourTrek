@@ -403,14 +403,8 @@
                     android:id="@+id/attraction_add_ticket_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ADD TICKET"/>
-
-                <Button
-                    android:id="@+id/attraction_view_ticket_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VIEW TICKET"/>
-
+                    android:text="VIEW/ADD TICKET"
+                    android:textSize="10dp"/>
 
 
             </LinearLayout>

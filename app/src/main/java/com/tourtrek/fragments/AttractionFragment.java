@@ -131,7 +131,6 @@ public class AttractionFragment extends Fragment {
     private boolean dialogIsShowing;
     private ImageButton rate;
     private Button addTicketButton;
-    private Button viewTicketButton;
     ImageView ticketImageView;
     Button backButton;
     Button confirmButton;
@@ -168,11 +167,9 @@ public class AttractionFragment extends Fragment {
 
         //add ticket button
         addTicketButton = attractionView.findViewById(R.id.attraction_add_ticket_btn);
-        viewTicketButton = attractionView.findViewById(R.id.attraction_view_ticket_btn);
 
         if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
             addTicketButton.setVisibility(View.GONE);
-            viewTicketButton.setVisibility(View.GONE);
         }
 
         addTicketButton.setOnClickListener(new View.OnClickListener() {
