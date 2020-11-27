@@ -359,23 +359,8 @@
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/tour_update_btn"
-                    android:layout_width="210dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="24dp"
-                    android:layout_weight=".33"
-                    android:background="@color/colorAccent"
-                    android:enabled="true"
-                    android:text="Update Tour"
-                    android:textAllCaps="false"
-                    android:textColor="#EEEEEE"
-                    android:textStyle="bold" />
 
-            </LinearLayout>
-
-            <Button
+               <Button
                 android:id="@+id/tour_add_attraction_btn"
                 android:layout_width="325dp"
                 android:layout_height="match_parent"
@@ -391,6 +376,21 @@
                 android:textAllCaps="false"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="28dp" />
+            </LinearLayout>
+          
+             <Button
+                    android:id="@+id/tour_update_btn"
+                    android:layout_width="210dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="24dp"
+                    android:layout_weight=".33"
+                    android:background="@color/colorAccent"
+                    android:enabled="true"
+                    android:text="Update Tour"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
 
             <Button
                 android:id="@+id/tour_import_btn"
