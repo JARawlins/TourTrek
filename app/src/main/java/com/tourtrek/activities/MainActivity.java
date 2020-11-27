@@ -14,6 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int AUTOCOMPLETE_REQUEST_CODE = 4588;
     private FirebaseAuth mAuth;
+    public static boolean loading;
     public static User user;
 
     @Override
@@ -226,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                 // Wait for the weather api to receive the data
                 if (attractionViewModel.getSelectedAttraction().getWeather() != null) {
 
-                    for (Map.Entry<String, Double> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
+                    for (Map.Entry<String, String> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
                         String aDateString = entry.getKey();
 
                         java.text.DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
@@ -241,14 +247,14 @@ public class MainActivity extends AppCompatActivity {
                             Log.e(TAG, "Error converting string date");
                         }
 
-                        Double temperature = entry.getValue();
+                        String temperature = entry.getValue();
 
                         int aMonth = calendar.get(Calendar.MONTH);
                         int aDay = calendar.get(Calendar.DAY_OF_MONTH);
                         int aYear = calendar.get(Calendar.YEAR);
 
                         if (aMonth == month && aDay == day && aYear == year) {
-                            weather.setText(String.format("%s ℉", temperature));
+                            weather.setText(String.format("%s℉", temperature));
                             break;
                         }
                         else
@@ -268,4 +274,25 @@ public class MainActivity extends AppCompatActivity {
 
         datePickerDialog.show();
     }
+
+    /**
+     * Disable any tabs from being clicked
+     */
+    public void disableTabs() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
+        for (int i = 0 ; bottomNavigationView != null && i < bottomNavigationView.getMenu().size(); i++) {
+            bottomNavigationView.getMenu().getItem(i).setEnabled(false);
+        }
+    }
+
+    /**
+     * Enable all tabs from being clicked
+     */
+    public void enableTabs() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
+        for (int i = 0 ; bottomNavigationView != null && i < bottomNavigationView.getMenu().size(); i++) {
+            bottomNavigationView.getMenu().getItem(i).setEnabled(true);
+        }
+    }
+
 }
