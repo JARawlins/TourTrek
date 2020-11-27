@@ -903,7 +903,6 @@ public class AttractionFragment extends Fragment {
                         Log.w(TAG, "Error writing document");
                     });
         });
-
     }
 
     /**
@@ -959,14 +958,13 @@ public class AttractionFragment extends Fragment {
      * Precondition: not a new tour
      */
     private void updateTourWithDeletion(FirebaseFirestore db){
-        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
-                .set(tourViewModel.getSelectedTour())
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Tour written to Firestore");
-                })
-                .addOnFailureListener(e -> Log.w(TAG, "Error writing tour document"));
+                db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                        .set(tourViewModel.getSelectedTour())
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Tour written to Firestore");
+                        })
+                        .addOnFailureListener(e -> Log.w(TAG, "Error writing tour document"));
     }
-
 
     public void startAutoCompleteActivity(View view) {
         Intent intent = new Autocomplete.IntentBuilder(
@@ -976,6 +974,14 @@ public class AttractionFragment extends Fragment {
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .build(requireContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
+
+    public void updateCoverImage() {
+        Glide.with(getContext())
+                .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.default_image)
+                .into(coverImageView);
     }
 
 
