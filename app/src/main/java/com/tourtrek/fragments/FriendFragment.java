@@ -283,34 +283,10 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
                         friendViewModel.setSelectedFriend(friend);
 
                         // Display the friend selected
+                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, new FriendProfileFragment(), "FriendProfileFragment");
+                        ft.addToBackStack("FriendProfileFragment").commit();
 
-                        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_friend, null);
-
-                        //Set Username
-                        TextView usernameTextView = view.findViewById(R.id.profile_username_tv);
-                        usernameTextView.setText(friendViewModel.getSelectedFriend().getUsername());
-
-                        //Set Profile Picture
-                        ImageView profileUserImageView = view.findViewById(R.id.profile_user_iv);
-                        Glide.with(getContext())
-                                .load(friendViewModel.getSelectedFriend().getProfileImageURI())
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .placeholder(R.drawable.ic_profile)
-                                .circleCrop()
-                                .into(profileUserImageView);
-
-                        //populate friends list of user
-                        friendsOfFriendsRecyclerView = view.findViewById(R.id.friend_friends_rv);
-                        configureRecyclerViews(friendsOfFriendsRecyclerView);
-                        //set up recycler refresh
-                        friendsOfFriendsSwipeRefreshLayout = view.findViewById(R.id.friend_friends_srl);
-                        friendsOfFriendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchUsersAsync());
-
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setView(view);
-                        final AlertDialog dialog = builder.create();
-                        dialog.show();
 
                     }
                 });
@@ -368,7 +344,6 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
                     }
                 });
     }
-
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

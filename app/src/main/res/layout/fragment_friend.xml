@@ -81,7 +81,7 @@
                 android:layout_weight="2">
 
                 <LinearLayout
-                    android:id="@+id/tour_attractions_loading_container2"
+                    android:id="@+id/friend_friends_loading_container"
                     android:layout_width="match_parent"
                     android:layout_height="266dp"
                     android:gravity="center"
