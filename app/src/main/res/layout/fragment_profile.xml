@@ -27,7 +27,7 @@
             android:fontFamily="sans-serif-smallcaps"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="35dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
