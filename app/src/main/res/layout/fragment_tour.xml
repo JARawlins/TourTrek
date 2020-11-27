@@ -370,7 +370,7 @@
                     android:layout_weight="0.33"
                     android:background="@color/colorPrimary"
                     android:enabled="true"
-                    android:text="Share Tour"
+                    android:text="Add Attraction"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
@@ -389,7 +389,8 @@
                 android:text="Update Tour"
                 android:textAllCaps="false"
                 android:textColor="#EEEEEE"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/tour_import_btn"
