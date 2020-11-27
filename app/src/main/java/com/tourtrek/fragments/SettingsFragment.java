@@ -37,8 +37,11 @@ public class SettingsFragment extends Fragment {
     private EditText changePassword1;
     private EditText changePassword2;
     private Button updatePasswordButton;
+    private Button cancelUpdatePasswordButton;
     private Button updateUsernameButton;
+    private Button cancelUpdateUsernameButton;
     private Button updateEmailButton;
+    private Button cancelUpdateEmailButton;
     private boolean nameUpdated = false;
     private boolean EmailUpdated = false;
     private boolean passwordUpdated = false;

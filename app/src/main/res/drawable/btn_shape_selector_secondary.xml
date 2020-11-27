@@ -10,7 +10,7 @@
             <corners
                 android:radius="30dp"/>
             <solid
-                android:color="@color/colorSecondary"/>
+                android:color="@color/colorSecondaryDark"/>
         </shape>
     </item>
 
@@ -24,7 +24,7 @@
             <corners
                 android:radius="30dp"/>
             <solid
-                android:color="@color/colorSecondaryLight"/>
+                android:color="@color/colorSecondary"/>
         </shape>
     </item>
 </selector>
