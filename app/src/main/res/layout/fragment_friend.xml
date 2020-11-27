@@ -33,6 +33,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"
                     android:text="Temp Username"
+                    android:fontFamily="sans-serif-smallcaps"
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold"
                     android:textSize="30dp"
@@ -57,28 +58,27 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp">
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="16dp"
                     android:paddingTop="10dp"
                     android:text="Friends"
-                    android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="28dp"
+                    android:textSize="25dp"
                     android:textStyle="bold" />
 
-
             </LinearLayout>
-
 
             <FrameLayout
                 android:id="@+id/tour_attractions_rv_container2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_height="250dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
 
                 <LinearLayout
                     android:id="@+id/friend_friends_loading_container"
@@ -99,6 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
+                        android:textColor="@color/colorAccent"
                         android:text="Loading Friends"
                         android:textSize="25sp" />
 
@@ -129,27 +130,27 @@
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="16dp"
                     android:paddingTop="10dp"
                     android:text="Tours"
-                    android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="28dp"
+                    android:textSize="25dp"
                     android:textStyle="bold" />
-
 
             </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/tour_attractions_rv_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_height="250dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
 
                 <LinearLayout
                     android:id="@+id/tour_attractions_loading_container"
@@ -171,6 +172,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:text="Loading Tours"
+                        android:textColor="@color/colorAccent"
                         android:textSize="25sp" />
 
                 </LinearLayout>
