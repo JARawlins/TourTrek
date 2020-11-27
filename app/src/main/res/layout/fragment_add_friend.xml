@@ -22,7 +22,7 @@
             <FrameLayout
                 android:id="@+id/add_friends_top_panel_container"
                 android:layout_width="match_parent"
-                android:layout_height="75dp"
+                android:layout_height="100dp"
                 android:background="@drawable/border"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -150,13 +150,11 @@
 
                 <Button
                     android:id="@+id/add_friend_add_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginRight="24dp"
-                    android:text="Add Friend"
-                    android:textStyle="bold"
-                    android:textColor="#EEEEEE"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/ic_baseline_add_24"
+                    android:drawablePadding="10dip"
                     android:layout_gravity="left"
                     android:layout_alignParentRight="true"
                     android:visibility="gone"/>
