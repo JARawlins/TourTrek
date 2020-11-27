@@ -389,10 +389,10 @@
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Import Tour"
+                android:textStyle="bold"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="28dp" />
+                android:textColor="@color/colorPrimary"/>
 
             <Button
                 android:id="@+id/tour_navigation_btn"
@@ -406,10 +406,10 @@
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Navigation"
+                android:textStyle="bold"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="28dp" />
+                android:textColor="@color/colorPrimary"/>
 
             <Button
                 android:id="@+id/tour_delete_btn"

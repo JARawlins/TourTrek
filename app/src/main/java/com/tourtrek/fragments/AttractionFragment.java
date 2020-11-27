@@ -331,7 +331,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && nameEditText.getHint().equals("")) {
                 if (nameEditText.getText().toString().equals("")) {
                     nameEditText.setHint("Attraction Name");
-                    nameEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    nameEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -347,7 +347,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && locationEditText.getHint().equals("")) {
                 if (locationEditText.getText().toString().equals("")) {
                     locationEditText.setHint("City, State");
-                    locationEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -362,7 +362,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && costEditText.getHint().equals("")) {
                 if (costEditText.getText().toString().equals("")) {
                     costEditText.setHint("$0.00");
-                    costEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    costEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -461,7 +461,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && descriptionEditText.getHint().equals("")) {
                 if (descriptionEditText.getText().toString().equals("")) {
                     descriptionEditText.setHint("Details");
-                    descriptionEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    descriptionEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
