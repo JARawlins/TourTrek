@@ -227,7 +227,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="50dp"
                     android:layout_gravity="bottom"
                     android:background="@drawable/btn_shape_selector_accent"
                     android:text="Sort By"
@@ -363,11 +363,11 @@
 
             <Button
                 android:id="@+id/tour_update_btn"
-                android:layout_width="275dp"
-                android:layout_height="42dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_weight=".33"
                 android:background="@drawable/btn_shape_selector_white"
                 android:enabled="true"
                 android:paddingBottom="8dp"
