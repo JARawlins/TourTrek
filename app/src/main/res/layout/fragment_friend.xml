@@ -75,7 +75,7 @@
 
 
             <FrameLayout
-                android:id="@+id/tour_attractions_rv_container2"
+                android:id="@+id/friend_friends_rv_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2">
@@ -90,12 +90,12 @@
                     android:visibility="visible">
 
                     <ProgressBar
-                        android:id="@+id/tour_attractions_loading_pb2"
+                        android:id="@+id/friend_friends_loading_pb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tour_attractions_loading_tv2"
+                        android:id="@+id/friend_friends_loading_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
@@ -146,13 +146,13 @@
             </LinearLayout>
 
             <FrameLayout
-                android:id="@+id/tour_attractions_rv_container"
+                android:id="@+id/friend_tours_rv_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2">
 
                 <LinearLayout
-                    android:id="@+id/tour_attractions_loading_container"
+                    android:id="@+id/friend_tours_loading_container"
                     android:layout_width="match_parent"
                     android:layout_height="266dp"
                     android:gravity="center"
@@ -161,12 +161,12 @@
                     android:visibility="visible">
 
                     <ProgressBar
-                        android:id="@+id/tour_attractions_loading_pb"
+                        android:id="@+id/friend_tours_loading_pb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tour_attractions_loading_tv"
+                        android:id="@+id/friend_tours_loading_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
@@ -176,12 +176,12 @@
                 </LinearLayout>
 
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/tour_attractions_srl"
+                    android:id="@+id/friend_tours_srl"
                     android:layout_width="match_parent"
                     android:layout_height="286dp">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/tour_attractions_rv"
+                        android:id="@+id/friend_tours_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#EEEEEE"
@@ -193,24 +193,6 @@
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             </FrameLayout>
-
-            <Button
-                android:id="@+id/tour_delete_btn"
-                android:layout_width="325dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:paddingBottom="8dp"
-                android:background="#EEEEEE"
-                android:enabled="true"
-                android:text="Remove Tour"
-                android:textSize="28dp"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimaryDark"
-                android:visibility="gone"/>
-
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
