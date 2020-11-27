@@ -967,6 +967,7 @@ public class AttractionFragment extends Fragment {
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing tour document"));
     }
 
+
     public void startAutoCompleteActivity(View view) {
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.FULLSCREEN,
@@ -977,30 +978,5 @@ public class AttractionFragment extends Fragment {
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
-    public void updateCoverImage() {
-        Glide.with(getContext())
-                .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.default_image)
-                .into(coverImageView);
-    }
-
-    public void startAutoCompleteActivity(View view) {
-        Intent intent = new Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.FULLSCREEN,
-                Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS,
-                        Place.Field.PHOTO_METADATAS))
-                .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .build(requireContext());
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-    }
-
-    public void updateCoverImage() {
-        Glide.with(getContext())
-                .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.default_image)
-                .into(coverImageView);
-    }
 
 }
