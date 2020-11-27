@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,6 +50,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -76,7 +79,9 @@ import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.PlacesLocal;
+
 import com.tourtrek.utilities.Weather;
+
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 import com.tourtrek.data.Tour;
@@ -94,8 +99,6 @@ import java.util.Date;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -116,7 +119,6 @@ public class AttractionFragment extends Fragment {
     private EditText nameEditText;
     private EditText descriptionEditText;
     private TextView coverTextView;
-    private TextView weatherTextView;
     private Button startDateButton;
     private Button startTimeButton;
     private Button endDateButton;
@@ -177,7 +179,6 @@ public class AttractionFragment extends Fragment {
         navigationAttractionButton = attractionView.findViewById(R.id.attraction_navigation_btn);
         buttonsContainer = attractionView.findViewById(R.id.attraction_buttons_container);
         searchAttractionButton = attractionView.findViewById(R.id.attraction_search_ib);
-
         weatherTextView = attractionView.findViewById(R.id.attraction_weather_tv);
 
         searchAttractionButton.setOnClickListener(new View.OnClickListener() {
@@ -292,7 +293,6 @@ public class AttractionFragment extends Fragment {
             loadingContainer.setVisibility(View.VISIBLE);
             ((MainActivity)requireActivity()).disableTabs();
             loading = true;
-
             Glide.with(getContext())
                     .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
                     .listener(new RequestListener<Drawable>() {
@@ -367,18 +367,7 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-        startDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // Get the most recent weather data
-                if (attractionViewModel.getSelectedAttraction().getLat() != 0 && attractionViewModel.getSelectedAttraction().getLon() != 0) {
-                    Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
-                }
-
-                ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton, weatherTextView, getContext());
-            }
-        });
+        startDateButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton));
 
         startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -595,19 +584,15 @@ public class AttractionFragment extends Fragment {
 
                 Place place = Autocomplete.getPlaceFromIntent(data);
 
-                attractionViewModel.getSelectedAttraction().setCoverImageURI("");
-                weatherTextView.setText("N/A");
+                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                String attributes = photoMetadata.getAttributions();
 
-                if (place.getPhotoMetadatas() != null) {
-                    PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-                    String attributes = photoMetadata.getAttributions();
+                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
 
-                    FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
+                PlacesClient placesClient = Places.createClient(requireContext());
 
-                    PlacesClient placesClient = Places.createClient(requireContext());
-
-                    LinearLayout loadingContainer = getActivity().findViewById(R.id.attraction_cover_loading_container);
-                    loadingContainer.setVisibility(View.VISIBLE);
+                LinearLayout loadingContainer = getActivity().findViewById(R.id.attraction_cover_loading_container);
+                loadingContainer.setVisibility(View.VISIBLE);
 
                     placesClient.fetchPhoto(photoRequest)
                             .addOnSuccessListener(new OnSuccessListener<FetchPhotoResponse>() {
@@ -616,18 +601,18 @@ public class AttractionFragment extends Fragment {
 
                                     Bitmap bitmap = fetchPhotoResponse.getBitmap();
 
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                                    byte[] data = baos.toByteArray();
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                byte[] data = baos.toByteArray();
 
-                                    // Load image into view
-                                    Glide.with(requireContext())
-                                            .load(data)
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .placeholder(R.drawable.default_image)
-                                            .into(coverImageView);
+                                // Load image into view
+                                Glide.with(requireContext())
+                                        .load(data)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .placeholder(R.drawable.default_image)
+                                        .into(coverImageView);
 
-                                    loadingContainer.setVisibility(View.GONE);
+                                loadingContainer.setVisibility(View.GONE);
 
                                     ((MainActivity)requireActivity()).enableTabs();
                                     loading = false;
@@ -635,21 +620,21 @@ public class AttractionFragment extends Fragment {
                                     // Upload Image to firestore storage
                                     final FirebaseStorage storage = FirebaseStorage.getInstance();
 
-                                    final UUID imageUUID = UUID.randomUUID();
+                                final UUID imageUUID = UUID.randomUUID();
 
-                                    final StorageReference storageReference = storage.getReference().child("AttractionCoverPictures/" + imageUUID);
+                                final StorageReference storageReference = storage.getReference().child("AttractionCoverPictures/" + imageUUID);
 
-                                    final UploadTask uploadTask = storageReference.putBytes(data);
+                                final UploadTask uploadTask = storageReference.putBytes(data);
 
-                                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                            storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
-                                                    .addOnSuccessListener(uri -> {
-                                                        attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
+                                        storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
+                                                .addOnSuccessListener(uri -> {
+                                                    attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
 
-                                                        Log.i(TAG, "Successfully loaded cover image");
+                                                    Log.i(TAG, "Successfully loaded cover image");
 
                                                     });
                                         }
@@ -881,9 +866,9 @@ public class AttractionFragment extends Fragment {
                     .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
-                        Log.d(TAG, "Attraction written to firestore with UID: " + attractionViewModel.getSelectedAttraction().getAttractionUID());
+                        Log.d(TAG, "Attraction written to firestore");
 
-                        // Add/Update attraction to the selected tour
+                        // update the attraction to the tour object in the firestore
                         db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
                         if (attractionViewModel.isNewAttraction()) {
@@ -971,7 +956,7 @@ public class AttractionFragment extends Fragment {
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.FULLSCREEN,
                 Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS,
-                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG))
+                        Place.Field.PHOTO_METADATAS))
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .build(requireContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
