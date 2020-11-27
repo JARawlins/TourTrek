@@ -269,42 +269,46 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
-                </LinearLayout>
-
-                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/tour_attractions_srl"
-                    android:layout_width="match_parent"
-                    android:layout_height="255dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/tour_attractions_rv"
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/tour_attractions_srl"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:nestedScrollingEnabled="true"
+                        android:layout_height="255dp"
                         android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:background="#EEEEEE"
-                        android:layout_marginTop="8dp"
-                        android:visibility="invisible" />
+                        android:layout_marginEnd="24dp">
 
-                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/tour_attractions_rv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="24dp"
+                            android:background="#EEEEEE"
+                            android:nestedScrollingEnabled="true"
+                            android:visibility="invisible" />
+
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                </LinearLayout>
 
             </FrameLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/tour_checkboxes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="5dp">
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:weightSum="1.0">
 
                 <CheckBox
                     android:id="@+id/tour_notifications_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_weight="0.5"
                     android:text="@string/fragment_edit_tour_notifications"
                     android:textColor="@color/colorAccent"
                     android:textSize="25sp" />
@@ -314,12 +318,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:layout_marginEnd="40dp"
+                    android:layout_weight="0.5"
                     android:text="@string/fragment_edit_tour_public"
                     android:textColor="@color/colorAccent"
                     android:textSize="25sp" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/tour_buttons_container"
