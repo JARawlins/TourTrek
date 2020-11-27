@@ -22,9 +22,8 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:gravity="left"
             android:selectAllOnFocus="true"
@@ -32,16 +31,16 @@
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/item_attraction_location_tv"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="10dp"
             android:gravity="right"
             android:selectAllOnFocus="true"
@@ -49,19 +48,23 @@
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <RatingBar
             android:id="@+id/item_attraction_ratingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:progressTint="#8685ef"
-            android:isIndicator="true"
             style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="96dp"
+            android:layout_height="37dp"
+            android:isIndicator="true"
+            android:padding="10dp"
+            android:progressTint="#8685ef"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/item_attraction_location_tv"
+            app:layout_constraintHorizontal_bias="0.89"
             app:layout_constraintStart_toStartOf="@+id/item_attraction_name_tv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/item_attraction_location_tv"
+            app:layout_constraintVertical_bias="0.113" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
