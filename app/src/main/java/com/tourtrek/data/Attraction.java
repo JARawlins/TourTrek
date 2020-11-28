@@ -1,17 +1,24 @@
 package com.tourtrek.data;
 
+import com.google.firebase.firestore.DocumentReference;
+
+import android.location.Address;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class Attraction {
 
     private List<String> reviews;
     private String location;
+    private double lat;
+    private double lon;
     private float cost;
     private String name;
     private String description;
@@ -20,12 +27,53 @@ public class Attraction {
     private String startTime;
     private Date endDate;
     private String endTime;
+    private String address;
     private String coverImageURI;
+    private HashMap<String, String> weather;
+    private double totalRating;
+    private double rating;
+    private String ticketURI;
 
     /**
      * Empty constructor needed for Firestore
      */
-    public Attraction(){}
+    public Attraction(){
+        this.reviews = new ArrayList<>();
+        this.totalRating = 0;
+        this.rating = 0;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
+    public HashMap<String, String> getWeather() {
+        return weather;
+    }
+
+    public void addToWeather(String date, String temperature) {
+        if (weather == null) {
+            weather = new HashMap<>();
+        }
+
+        weather.put(date, temperature);
+    }
+
+    public void setWeather(HashMap<String, String> weather) {
+        this.weather = weather;
+    }
 
     public String getStartTime() {
         return startTime;
@@ -49,6 +97,14 @@ public class Attraction {
 
     public void setCoverImageURI(String coverImageURI) {
         this.coverImageURI = coverImageURI;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     /**
@@ -76,7 +132,7 @@ public class Attraction {
      */
     public List<String> getReviews() {
         if (this.reviews == null){
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         return this.reviews;
     }
@@ -121,6 +177,8 @@ public class Attraction {
     }
 
     public String getLocation() {
+        if (location == null)
+            location = "";
         return this.location;
     }
 
@@ -168,5 +226,33 @@ public class Attraction {
         DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
         return formatter.format(endDate);
+    }
+
+    public double getTotalRating() {
+        return totalRating;
+    }
+
+    public void setTotalRating(double totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void addUser (String user) {
+        this.reviews.add(user);
+    }
+
+    public String getTicketURI() {
+        return ticketURI;
+    }
+
+    public void setTicketURI(String ticketURI) {
+        this.ticketURI = ticketURI;
     }
 }
