@@ -388,7 +388,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="15dp"
+                android:layout_margin="20dp"
                 android:weightSum="1.0">
 
                 <Button
@@ -396,7 +396,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="VIEW/ADD TICKET"
-                    android:textSize="10dp"/>
+                    android:textSize="15dp"/>
 
                 <ImageButton
                     android:id="@+id/attraction_review_btn"
