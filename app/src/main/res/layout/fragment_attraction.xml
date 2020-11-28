@@ -391,6 +391,13 @@
                 android:paddingBottom="15dp"
                 android:weightSum="1.0">
 
+                <Button
+                    android:id="@+id/attraction_add_ticket_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VIEW/ADD TICKET"
+                    android:textSize="10dp"/>
+
                 <ImageButton
                     android:id="@+id/attraction_review_btn"
                     android:layout_width="64dp"
@@ -398,13 +405,6 @@
                     android:background="#00ffffff"
                     android:onClick="onToggleStar"
                     android:src="@drawable/ic_star" />
-
-                <Button
-                    android:id="@+id/attraction_add_ticket_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VIEW/ADD TICKET"
-                    android:textSize="10dp"/>
 
 
             </LinearLayout>
