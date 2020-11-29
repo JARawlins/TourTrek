@@ -10,8 +10,7 @@
         android:id="@+id/tour_market_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp">
-
+        android:layout_marginTop="35dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tour_market_rv"
@@ -20,7 +19,6 @@
             android:scrollbars="vertical"
             android:visibility="invisible"
             />
-
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -49,12 +47,14 @@
     </LinearLayout>
 
     <Button android:id="@+id/tour_market_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SORT BY"
-        android:textColor="#EEEEEE"
-        android:background="@drawable/btn_shape_selector_accent"
+        android:layout_width="375dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:text="Sort By"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        android:background="#EEEEEE"
         android:layout_alignParentTop ="true"
-        android:layout_centerHorizontal = "true"
-        android:layout_marginTop="1dp"/>
+        android:layout_centerHorizontal = "true"/>
+
 </RelativeLayout>
