@@ -3,13 +3,10 @@ package com.tourtrek.fragments;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,12 +15,8 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -36,22 +29,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,23 +51,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -90,18 +71,15 @@ import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
+import com.tourtrek.utilities.AttractionRatingSorter;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
-import org.w3c.dom.Document;
-
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,44 +91,44 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
-import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
 
-// TODO - map scrolling https://stackoverflow.com/questions/14025859/scrollview-is-catching-touch-event-for-google-map
-public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class TourFragment extends Fragment {
 
-    private static final String TAG = "TourFragment";
-    private TourViewModel tourViewModel;
-    private AttractionViewModel attractionViewModel;
-    private CurrentTourAttractionsAdapter attractionsAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private Button addAttractionButton;
-    private EditText locationEditText;
-    private EditText costEditText;
-    private Button startDateButton;
-    private Button endDateButton;
-    private Button tourImportButton;
-    private EditText nameEditText;
-    private Button updateTourButton;
-    private Button deleteTourButton;
-    private TextView coverTextView;
-    private CheckBox notificationsCheckBox;
-    private CheckBox publicCheckBox;
-    private RelativeLayout checkBoxesContainer;
-    private LinearLayout buttonsContainer;
-    private Button shareButton;
-    private ImageView coverImageView;
-    private Button attractionSortButton;
-    private AlertDialog dialog;
-    private AlertDialog.Builder builder;
-    private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Name Descending", "Location Descending", "Cost Descending"};
-    private String result = "";
-    private boolean added;
-    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private Button navigationButton;
-//    private NestedScrollView scrollView;
-    // To keep track of whether we are in an async call
-    private boolean loading;
+        private static final String TAG = "TourFragment";
+        private TourViewModel tourViewModel;
+        private AttractionViewModel attractionViewModel;
+        private CurrentTourAttractionsAdapter attractionsAdapter;
+        private SwipeRefreshLayout swipeRefreshLayout;
+        private Button addAttractionButton;
+        private EditText locationEditText;
+        private EditText costEditText;
+        private Button startDateButton;
+        private Button endDateButton;
+        private Button tourImportButton;
+        private EditText nameEditText;
+        private Button updateTourButton;
+        private Button deleteTourButton;
+        private TextView coverTextView;
+        private CheckBox notificationsCheckBox;
+        private CheckBox publicCheckBox;
+        private RelativeLayout checkBoxesContainer;
+        private LinearLayout buttonsContainer;
+        private Button shareButton;
+        private ImageView coverImageView;
+        private Button attractionSortButton;
+        private AlertDialog dialog;
+        private AlertDialog.Builder builder;
+        private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
+                "Rating Ascending", "Name Descending", "Location Descending",
+                "Cost Descending", "Rating Descending"};
+        private String result = "";
+        private boolean added;
+        private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+        private Button navigationButton;
+        //    private NestedScrollView scrollView;
+        // To keep track of whether we are in an async call
+        private boolean loading;
+        private ImageButton rate;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -187,8 +165,33 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        // Initialize attractionSortButton
-        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+            // Initialize attractionSortButton
+            //review button
+            rate = tourView.findViewById(R.id.tour_review_btn);
+
+            if (tourViewModel.isNewTour()) {
+                rate.setVisibility(View.GONE);
+            }
+            rate.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onClick(View v) {
+
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                        if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                            showReviewDialog();
+                        } else {
+                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+            });
+
+
+            //initialize attractionSortButton
+            attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -1005,17 +1008,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return filteredTourList;
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
+        /**
+         * Update the selected tour
+         * <p>
+         * This method assumes a tour is already created and has a properly filled UID field
+         * https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+         */
+        private void syncTour() {
 
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
 
@@ -1044,10 +1046,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
-            case "Name Descending":
-                Collections.sort(temp, new AttractionNameSorter());
-                Collections.reverse(temp);
-                break;
+                case "Rating Ascending":
+                    Collections.sort(temp, new AttractionRatingSorter());
+                    break;
+
+                case "Name Descending":
+                    Collections.sort(temp, new AttractionNameSorter());
+                    Collections.reverse(temp);
+                    break;
 
             case "Location Descending":
                 Collections.sort(temp, new AttractionLocationSorter());
@@ -1059,11 +1065,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.reverse(temp);
                 break;
 
-            default:
-                return temp;
+                case "Rating Descending":
+                    Collections.sort(temp, new AttractionRatingSorter());
+                    Collections.reverse(temp);
+                    break;
+
+                default:
+                    return temp;
+            }
+            return temp;
         }
-        return temp;
-    }
 
     /**
      * Create a notification channel and add an alarm to be triggered by a broadcast receiver
@@ -1229,5 +1240,79 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
-}
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void showReviewDialog() {
+
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
+            //Get elements
+            RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(view);
+            builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+                dialogInterface.dismiss();
+            });
+
+            Button reviewCancelButton = view.findViewById(R.id.review_cancel_btn);
+            //create review cancel button listener
+            reviewCancelButton.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+
+
+            builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+
+                addNewRating(ratingBar.getRating());
+
+            });
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }
+
+        private void updateTourInFirebase() {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                    .set(tourViewModel.getSelectedTour())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Tour written to firestore");
+
+                        // Update the user in the firestore
+                        Firestore.updateUser();
+
+                        Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
+
+                    })
+                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+        }
+
+        private double computeRating(double totalRating) {
+
+            return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
+        }
+
+        private void addNewRating(double newRating) {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
+
+            if (tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                tourViewModel.getSelectedTour().setReviews(new ArrayList<>());
+                tourViewModel.getSelectedTour().setRating(0);
+                tourViewModel.getSelectedTour().setTotalRating(0);
+            }
+
+            //Add the new rating to totalRating
+            tourViewModel.getSelectedTour().setTotalRating(
+                    tourViewModel.getSelectedTour().getTotalRating() + newRating);
+
+            //compute rating
+            tourViewModel.getSelectedTour().setRating(computeRating(
+                    tourViewModel.getSelectedTour().getTotalRating()));
+
+            //update tour
+            updateTourInFirebase();
+        }
+
+    }
 

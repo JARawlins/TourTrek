@@ -88,8 +88,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
                     android:layout_marginStart="24dp"
-                    android:padding="5dp"
                     android:maxWidth="250dp"
+                    android:padding="5dp"
                     android:background="#EEEEEE"
                     android:hint="Attraction Name"
                     android:textColorHint="@color/colorPrimaryDark"
@@ -329,6 +329,7 @@
                     android:id="@+id/attraction_description_et"
                     android:layout_width="match_parent"
                     android:layout_height="69dp"
+                    android:layout_marginBottom="24dp"
                     android:layout_marginEnd="24dp"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="8dp"
@@ -400,6 +401,32 @@
                         android:visibility="gone" />
 
                 </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/attraction_buttons_container2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="20dp"
+                android:weightSum="1.0">
+
+                <Button
+                    android:id="@+id/attraction_add_ticket_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VIEW/ADD TICKET"
+                    android:textSize="15dp"/>
+
+                <ImageButton
+                    android:id="@+id/attraction_review_btn"
+                    android:layout_width="64dp"
+                    android:layout_height="60dp"
+                    android:background="#00ffffff"
+                    android:onClick="onToggleStar"
+                    android:src="@drawable/ic_star" />
+
 
             </LinearLayout>
 

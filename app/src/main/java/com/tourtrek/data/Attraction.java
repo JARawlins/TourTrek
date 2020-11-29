@@ -1,5 +1,7 @@
 package com.tourtrek.data;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import android.location.Address;
 
 import java.text.DateFormat;
@@ -28,11 +30,18 @@ public class Attraction {
     private String address;
     private String coverImageURI;
     private HashMap<String, String> weather;
+    private double totalRating;
+    private double rating;
+    private String ticketURI;
 
     /**
      * Empty constructor needed for Firestore
      */
-    public Attraction(){}
+    public Attraction(){
+        this.reviews = new ArrayList<>();
+        this.totalRating = 0;
+        this.rating = 0;
+    }
 
     public double getLat() {
         return lat;
@@ -123,7 +132,7 @@ public class Attraction {
      */
     public List<String> getReviews() {
         if (this.reviews == null){
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         return this.reviews;
     }
@@ -217,5 +226,33 @@ public class Attraction {
         DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
         return formatter.format(endDate);
+    }
+
+    public double getTotalRating() {
+        return totalRating;
+    }
+
+    public void setTotalRating(double totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void addUser (String user) {
+        this.reviews.add(user);
+    }
+
+    public String getTicketURI() {
+        return ticketURI;
+    }
+
+    public void setTicketURI(String ticketURI) {
+        this.ticketURI = ticketURI;
     }
 }

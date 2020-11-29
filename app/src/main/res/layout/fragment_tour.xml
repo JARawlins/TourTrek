@@ -365,6 +365,25 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
+                android:weightSum="1.0">
+
+                <ImageButton
+                    android:id="@+id/tour_review_btn"
+                    android:layout_width="64dp"
+                    android:layout_height="60dp"
+                    android:background="#00ffffff"
+                    android:onClick="onToggleStar"
+                    android:src="@drawable/ic_star" />
+
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/tour_update_btn"
                 android:layout_width="match_parent"
