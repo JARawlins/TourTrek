@@ -98,6 +98,7 @@ import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.utilities.TourRatingSorter;
 import com.tourtrek.utilities.PlacesLocal;
+import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
@@ -985,7 +986,9 @@ public class TourFragment extends Fragment {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
 
-                    searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, query);
+                    searchAttractions(attractionsAdapter, query);
+                    Activity currentActivity = requireActivity();
+                    Utilities.hideKeyboard(currentActivity);
 
                     return true;
                 }
@@ -993,7 +996,7 @@ public class TourFragment extends Fragment {
                 @Override
                 public boolean onQueryTextChange(String newText) {
 
-                    searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, newText);
+                    searchAttractions(attractionsAdapter, newText);
 
                     return true;
                 }

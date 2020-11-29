@@ -1,5 +1,6 @@
 package com.tourtrek.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -47,6 +48,7 @@ import com.tourtrek.utilities.TourLocationSorter;
 import com.tourtrek.utilities.TourNameSorter;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.utilities.TourRatingSorter;
+import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
@@ -277,6 +279,8 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
             public boolean onQueryTextSubmit(String query) {
 
                 searchTours(tourMarketAdapter, query);
+                Activity currentActivity = requireActivity();
+                Utilities.hideKeyboard(currentActivity);
 
                 return true;
             }
