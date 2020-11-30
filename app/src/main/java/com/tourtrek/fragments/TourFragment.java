@@ -1000,7 +1000,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         try {
             Intent waIntent = new Intent(Intent.ACTION_SEND);
             waIntent.setType("text/plain");
-            String text = "Insert Tweet Here";
+            String text = "Welcome to TourTrek";
 
             @SuppressWarnings("unused")
             PackageInfo info=pm.getPackageInfo("com.twitter.android", PackageManager.GET_META_DATA);
