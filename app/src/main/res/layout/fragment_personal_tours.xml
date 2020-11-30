@@ -9,7 +9,7 @@
 
     <Button
         android:id="@+id/change_theme_btn"
-        android:layout_width="375dp"
+        android:layout_width="365dp"
         android:layout_height="30dp"
         android:layout_marginTop="16dp"
         android:layout_gravity="center_horizontal"

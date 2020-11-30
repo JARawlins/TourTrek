@@ -63,7 +63,7 @@ public class PersonalToursFragment extends Fragment {
     private SwipeRefreshLayout pastSwipeRefreshLayout;
     private TourViewModel tourViewModel;
     private FirebaseAuth mAuth;
-    private Button btnToggleDark;
+    private Button changeThemeButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,46 +95,40 @@ public class PersonalToursFragment extends Fragment {
         // Initialize view model
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        Button btnToggleDark = personalToursView.findViewById(R.id.change_theme_btn);
-
+        // initialize theme button
+        changeThemeButton = personalToursView.findViewById(R.id.change_theme_btn);
+        // use shared preferences to determine if cool theme is on or off
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         final boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
 
-        // When user reopens the app after applying dark/light mode
+        // when user reopens the app after applying the warm or cool theme
         if (isDarkModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            btnToggleDark.setText("Warm Theme");
+            changeThemeButton.setText("Warm Theme");
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            btnToggleDark.setText("Cool Theme");
+            changeThemeButton.setText("Cool Theme");
         }
 
-        btnToggleDark.setOnClickListener(new View.OnClickListener() {
+        changeThemeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // When user taps the enable/disable
-                // dark mode button
+                // when user touches warm or cool theme button
                 if (isDarkModeOn) {
-                    // if dark mode is on it
-                    // will turn it off
+                    // if the cool theme is enabled, it will turn it off
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    // it will set isDarkModeOn
-                    // boolean to false
                     editor.putBoolean("isDarkModeOn", false);
                     editor.apply();
-                    // change text of Button
-                    btnToggleDark.setText("Enable Dark Mode");
+                    // change the text of theme button
+                    changeThemeButton.setText("Cool Theme");
                 } else {
-                    // if dark mode is off
-                    // it will turn it on
+                    // if the warm theme is enabled, it will turn it off
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    // it will set isDarkModeOn
-                    // boolean to true
                     editor.putBoolean("isDarkModeOn", true);
                     editor.apply();
-                    // change text of Button
-                    btnToggleDark.setText("Disable Dark Mode");
+                    // change the text of theme button
+                    changeThemeButton.setText("Cool Theme");
                 }
             }
         });
