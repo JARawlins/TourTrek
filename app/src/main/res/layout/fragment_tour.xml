@@ -307,21 +307,30 @@
                     android:id="@+id/tour_notifications_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="40dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_weight="0.5"
                     android:text="@string/fragment_edit_tour_notifications"
                     android:textColor="@color/colorAccent"
-                    android:textSize="25sp" />
+                    android:textSize="25dp" />
 
                 <CheckBox
                     android:id="@+id/tour_public_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_weight="0.5"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="0.4"
                     android:text="@string/fragment_edit_tour_public"
                     android:textColor="@color/colorAccent"
-                    android:textSize="25sp" />
+                    android:textSize="25dp" />
+
+                <ImageButton
+                    android:id="@+id/tour_review_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="0.1"
+                    android:background="@drawable/btn_shape_selector_accent"
+                    android:onClick="onToggleStar"
+                    android:src="@drawable/ic_star" />
 
             </LinearLayout>
 
@@ -362,25 +371,6 @@
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/rate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="15dp"
-                android:weightSum="1.0">
-
-                <ImageButton
-                    android:id="@+id/tour_review_btn"
-                    android:layout_width="64dp"
-                    android:layout_height="60dp"
-                    android:background="#00ffffff"
-                    android:onClick="onToggleStar"
-                    android:src="@drawable/ic_star" />
-
 
             </LinearLayout>
 
