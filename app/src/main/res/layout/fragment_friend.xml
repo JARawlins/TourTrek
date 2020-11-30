@@ -197,7 +197,7 @@
             </FrameLayout>
 
             <Button
-                android:id="@+id/tour_delete_btn"
+                android:id="@+id/friend_delete_btn"
                 android:layout_width="325dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="24dp"
@@ -205,7 +205,7 @@
                 android:paddingBottom="8dp"
                 android:background="#EEEEEE"
                 android:enabled="true"
-                android:text="Remove Tour"
+                android:text="Delete Friend"
                 android:textSize="28dp"
                 android:textAlignment="center"
                 android:textAllCaps="false"

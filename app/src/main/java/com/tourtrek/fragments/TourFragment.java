@@ -146,7 +146,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private CheckBox publicCheckBox;
     private Button twitterShareButton;
     private Button myFacebookShareButton;
-    private RelativeLayout checkBoxesContainer;
+    private LinearLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
     private Button shareButton;
     private CallbackManager callbackManager;
