@@ -1144,55 +1144,47 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             // create a new Firestore document
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference newTourDoc = db.collection("Tours").document();
+
+            // part of updating the user's list of tours
             MainActivity.user.getTours().add(newTourDoc);
 
-            // set the ID of the tour object to that of the new document
-            // the original tour document in the Firestore will not be touched, so changing the ID should be fine
-            // set the new tour to private by default to avoid cluttering the tour market with it until
-            // after the user has had a chance to modify it
-            // get the current tour
+            // get a new tour object with an empty list of attractions and the new tour UID
             Tour tour = copyTour(tourViewModel.getSelectedTour(), newTourDoc.getId(), db);
 
-            // update the attractions in the tour with new attractions
+            // oldAttraction = attractions in the tour to be imported
             List<DocumentReference> oldAttractions = tourViewModel.getSelectedTour().getAttractions();
 
-            // iterate through the list of existing attractions and create new attraction documents
+            // iterate through the list of existing attractions and create new ones
             for (DocumentReference attractionRef : oldAttractions){
                 // Add the new attraction document reference to the list of attractions in the tour
                 // Doing it here is important because of lambda expression limitations
                 DocumentReference newAttractionDoc = db.collection("Attractions").document();
                 tour.getAttractions().add(newAttractionDoc);
                 // query the old attraction reference
-                attractionRef.get().addOnSuccessListener(v -> {
+                attractionRef.get().addOnSuccessListener(result -> {
                     // get the old attraction as an object to pull out its fields
-                    Attraction oldAttraction = v.toObject(Attraction.class);
-                    // create the new attraction document
+                    Attraction oldAttraction = result.toObject(Attraction.class);
                     // create the new attraction
                     Attraction newAttraction = new Attraction(oldAttraction.getReviews(), oldAttraction.getLocation(), oldAttraction.getLat(), oldAttraction.getLon(), oldAttraction.getCost(),
                             oldAttraction.getName(), oldAttraction.getDescription(), newAttractionDoc.getId(), oldAttraction.getStartDate(), oldAttraction.getStartTime(),
                             oldAttraction.getEndDate(), oldAttraction.getEndTime(), oldAttraction.getAddress(), oldAttraction.getCoverImageURI(), oldAttraction.getWeather());
-                    // set the new attraction in the database
-                    newAttractionDoc.set(newAttraction).addOnSuccessListener(v1 -> {
+                    // set the new attraction data in Firestore
+                    newAttractionDoc.set(newAttraction).addOnSuccessListener(result2 -> {
                         Log.d("TourFragment", "Attraction set w/ tour importing");
                     });
                 });
             }
 
-            // set the content of the new Firestore document
+            // set the content of the new Firestore Tour document
             newTourDoc.set(tour).addOnCompleteListener(v -> {
-
                 Log.d(TAG, "The tour was imported.");
-//                Toast.makeText(getContext(), "The tour was imported.", Toast.LENGTH_LONG).show();
 
             })
-                    .addOnFailureListener(v1 -> {
+                .addOnFailureListener(v1 -> {
+                    Log.d(TAG, "Tour importation failed.");
+                });
 
-                        Log.d(TAG, "Tour importation failed.");
-//                    Toast.makeText(getContext(), "Tour importation failed.", Toast.LENGTH_LONG).show();
-
-                    });
-
-            // add the tour to the user's list of tours
+            // update the user's list of tours
             updateUser();
 
             // go back
@@ -1200,10 +1192,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
+    /**
+     * Create a new tour which is no different than the one provided except for the UID and having no attraction references.
+     * @param oldTour
+     * @param newUID
+     * @param db
+     * @return
+     */
     private Tour copyTour(Tour oldTour, String newUID, FirebaseFirestore db){
 
         // create a new list of attractions
-//        List<DocumentReference> newAttractions = copyAttractions(oldTour, db);
         List<DocumentReference> newAttractions = new ArrayList<DocumentReference>();
 
         // make a new tour with the same contents as the old one except it is not publicly available and it has a new document ID
@@ -1214,32 +1212,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return newTour;
     }
 
-    private List<DocumentReference> copyAttractions(Tour oldTour, FirebaseFirestore db){
-
-        List<DocumentReference> oldAttractions = oldTour.getAttractions();
-        List<DocumentReference> newAttractions = new ArrayList<>();
-
-        // iterate through the list of existing attractions and create new attraction documents
-        for (DocumentReference attractionRef : oldAttractions){
-            attractionRef.get().addOnSuccessListener(v -> {
-                // get the old attraction as an object to pull out its fields
-                Attraction oldAttraction = v.toObject(Attraction.class);
-                // create the new attraction document
-                DocumentReference newAttractionDoc = db.collection("Attractions").document();
-                // create the new attraction
-                Attraction newAttraction = new Attraction(oldAttraction.getReviews(), oldAttraction.getLocation(), oldAttraction.getLat(), oldAttraction.getLon(), oldAttraction.getCost(),
-                                                    oldAttraction.getName(), oldAttraction.getDescription(), newAttractionDoc.getId(), oldAttraction.getStartDate(), oldAttraction.getStartTime(),
-                                                    oldAttraction.getEndDate(), oldAttraction.getEndTime(), oldAttraction.getAddress(), oldAttraction.getCoverImageURI(), oldAttraction.getWeather());
-                // set the new attraction in the database
-                newAttractionDoc.set(newAttraction).addOnSuccessListener(v1 -> {
-                    // upon success, add the tour to newAttractions
-                    newAttractions.add(newAttractionDoc);
-                });
-            });
-        }
-//        System.out.println(newAttractions);
-        return newAttractions;
-    }
 
 }
 
