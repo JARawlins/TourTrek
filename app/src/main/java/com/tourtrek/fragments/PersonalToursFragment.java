@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -61,6 +63,7 @@ public class PersonalToursFragment extends Fragment {
     private SwipeRefreshLayout pastSwipeRefreshLayout;
     private TourViewModel tourViewModel;
     private FirebaseAuth mAuth;
+    private Button btnToggleDark;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +94,50 @@ public class PersonalToursFragment extends Fragment {
 
         // Initialize view model
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
+
+        Button btnToggleDark = personalToursView.findViewById(R.id.change_theme_btn);
+
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
+
+        // When user reopens the app after applying dark/light mode
+        if (isDarkModeOn) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            btnToggleDark.setText("Warm Theme");
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            btnToggleDark.setText("Cool Theme");
+        }
+
+        btnToggleDark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // When user taps the enable/disable
+                // dark mode button
+                if (isDarkModeOn) {
+                    // if dark mode is on it
+                    // will turn it off
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    // it will set isDarkModeOn
+                    // boolean to false
+                    editor.putBoolean("isDarkModeOn", false);
+                    editor.apply();
+                    // change text of Button
+                    btnToggleDark.setText("Enable Dark Mode");
+                } else {
+                    // if dark mode is off
+                    // it will turn it on
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    // it will set isDarkModeOn
+                    // boolean to true
+                    editor.putBoolean("isDarkModeOn", true);
+                    editor.apply();
+                    // change text of Button
+                    btnToggleDark.setText("Disable Dark Mode");
+                }
+            }
+        });
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 

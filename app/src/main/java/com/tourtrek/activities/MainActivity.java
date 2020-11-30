@@ -56,6 +56,7 @@ import com.tourtrek.viewModels.AttractionViewModel;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -141,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.w(TAG, "Failed to read user from firestore");
                         }
                     });
+
+
+
         }
         else {
             // Set the content view

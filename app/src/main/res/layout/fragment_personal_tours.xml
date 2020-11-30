@@ -7,12 +7,23 @@
     android:background="@drawable/gradient"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/change_theme_btn"
+        android:layout_width="375dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorPrimary"
+        android:textAllCaps="false"
+        android:background="@drawable/btn_shape_selector_white">
+    </Button>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_weight="1"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp">
 
         <LinearLayout
