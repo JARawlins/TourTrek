@@ -12,24 +12,47 @@ import java.util.List;
 
 public class Tour{
 
-    private String name;
-    private Date startDate;
-    private Date endDate;
-    private String location;
+    private String name; // constructor
+    private Date startDate; // constructor
+    private Date endDate; // constructor
+    private String location; // constructor
     private Long length;
-    private float cost;
-    private Boolean notifications;
-    private List<String> reviews;
-    private String description;
-    private Boolean publiclyAvailable;
+    private float cost; // constructor
+    private Boolean notifications; // constructor
+    private List<String> reviews; // constructor
+    private String description; // constructor
+    private Boolean publiclyAvailable; // constructor
     private List<DocumentReference> attractions;
-    private String coverImageURI;
-    private String tourUID;
+    private String coverImageURI; // constructor
+    private String tourUID; // constructor
 
     /**
      * Empty constructor needed for Firestore
      */
     public Tour() {}
+
+    /**
+     * Complete constructor
+     */
+    public Tour(String name, Date startDate, Date endDate, String location, float cost, Boolean notifications,
+                List<String> reviews, String description, Boolean publiclyAvailable, List<DocumentReference> attractions,
+                String coverImageURI, String tourUID){
+
+        // populate all fields except for length and attractions
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.location = location;
+        this.cost = cost;
+        this.notifications = notifications;
+        this.reviews = reviews;
+        this.description = description;
+        this.publiclyAvailable = publiclyAvailable;
+        this.attractions = attractions;
+        this.coverImageURI = coverImageURI;
+        this.tourUID = tourUID;
+
+    }
 
     /**
      * Getter for name
