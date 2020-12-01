@@ -1,18 +1,9 @@
 package com.tourtrek.fragments;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -23,14 +14,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,11 +36,9 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -65,36 +50,21 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.data.AttractionReview;
-import com.tourtrek.data.TourReview;
-import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.PlacesLocal;
-import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
-import com.tourtrek.data.Tour;
 
 import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import org.w3c.dom.Document;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -102,9 +72,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -384,7 +352,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && nameEditText.getHint().equals("")) {
                 if (nameEditText.getText().toString().equals("")) {
                     nameEditText.setHint("Attraction Name");
-                    nameEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    nameEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -400,7 +368,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && locationEditText.getHint().equals("")) {
                 if (locationEditText.getText().toString().equals("")) {
                     locationEditText.setHint("City, State");
-                    locationEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -415,7 +383,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && costEditText.getHint().equals("")) {
                 if (costEditText.getText().toString().equals("")) {
                     costEditText.setHint("$0.00");
-                    costEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    costEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -444,7 +412,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && startDateButton.getHint().equals("")) {
                 if (startDateButton.getText().toString().equals("")) {
                     startDateButton.setHint("Pick Date");
-                    startDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -462,7 +430,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && startTimeButton.getHint().equals("")) {
                 if (startTimeButton.getText().toString().equals("")) {
                     startTimeButton.setHint("Pick Time");
-                    startTimeButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -480,7 +448,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && endDateButton.getHint().equals("")) {
                 if (endDateButton.getText().toString().equals("")) {
                     endDateButton.setHint("Pick Date");
-                    endDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -498,7 +466,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && endTimeButton.getHint().equals("")) {
                 if (endTimeButton.getText().toString().equals("")) {
                     endTimeButton.setHint("Pick Time");
-                    endTimeButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -514,7 +482,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && descriptionEditText.getHint().equals("")) {
                 if (descriptionEditText.getText().toString().equals("")) {
                     descriptionEditText.setHint("Details");
-                    descriptionEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    descriptionEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -1062,7 +1030,7 @@ public class AttractionFragment extends Fragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
         //Get elements
-        RatingBar ratingBar = view.findViewById(R.id.attraction_ratingBar);
+        RatingBar ratingBar = view.findViewById(R.id.attraction_review_rb);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
