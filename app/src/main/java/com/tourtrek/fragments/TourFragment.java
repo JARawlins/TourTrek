@@ -555,6 +555,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 .addOnGlobalLayoutListener(
                         () -> ((CurrentTourAttractionsAdapter)attractionsAdapter).stopLoading());
 
+
+
         // enable clicking a recycler view item to update an attraction
         ItemClickSupport.addTo(attractionsRecyclerView, R.layout.item_attraction)
                 .setOnItemClickListener((recyclerView, position, v) -> {
