@@ -77,6 +77,8 @@ import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.viewModels.TourViewModel;
 
+import org.w3c.dom.Document;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -512,65 +514,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         else
             ((MainActivity) requireActivity()).setActionBarTitle(tourViewModel.getSelectedTour().getName());
 
-    }
-
-    /**
-     * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
-     * account.
-     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
-     * @param tourView
-     */
-    private void setupImportTourButton(View tourView) {
-        tourImportButton.setOnClickListener(u -> {
-            // create a new Firestore document
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference newTourDoc = db.collection("Tours").document();
-
-            // part of updating the user's list of tours
-            MainActivity.user.getTours().add(newTourDoc);
-
-            // get a new tour object with an empty list of attractions and the new tour UID
-            Tour tour = copyTour(tourViewModel.getSelectedTour(), newTourDoc.getId(), db);
-
-            // oldAttraction = attractions in the tour to be imported
-            List<DocumentReference> oldAttractions = tourViewModel.getSelectedTour().getAttractions();
-
-            // iterate through the list of existing attractions and create new ones
-            for (DocumentReference attractionRef : oldAttractions){
-                // Add the new attraction document reference to the list of attractions in the tour
-                // Doing it here is important because of lambda expression limitations
-                DocumentReference newAttractionDoc = db.collection("Attractions").document();
-                tour.getAttractions().add(newAttractionDoc);
-                // query the old attraction reference
-                attractionRef.get().addOnSuccessListener(result -> {
-                    // get the old attraction as an object to pull out its fields
-                    Attraction oldAttraction = result.toObject(Attraction.class);
-                    // create the new attraction
-                    Attraction newAttraction = new Attraction(oldAttraction.getReviews(), oldAttraction.getLocation(), oldAttraction.getLat(), oldAttraction.getLon(), oldAttraction.getCost(),
-                            oldAttraction.getName(), oldAttraction.getDescription(), newAttractionDoc.getId(), oldAttraction.getStartDate(), oldAttraction.getStartTime(),
-                            oldAttraction.getEndDate(), oldAttraction.getEndTime(), oldAttraction.getAddress(), oldAttraction.getCoverImageURI(), oldAttraction.getWeather());
-                    // set the new attraction data in Firestore
-                    newAttractionDoc.set(newAttraction).addOnSuccessListener(result2 -> {
-                        Log.d("TourFragment", "Attraction set w/ tour importing");
-                    });
-                });
-            }
-
-            // set the content of the new Firestore Tour document
-            newTourDoc.set(tour).addOnCompleteListener(v -> {
-                Log.d(TAG, "The tour was imported.");
-
-            })
-                    .addOnFailureListener(v1 -> {
-                        Log.d(TAG, "Tour importation failed.");
-                    });
-
-            // update the user's list of tours
-            updateUser();
-
-            // go back
-            getParentFragmentManager().popBackStack();
-        });
     }
 
     /**
@@ -1190,6 +1133,65 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     /**
+     * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
+     * account.
+     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
+     * @param tourView
+     */
+    private void setupImportTourButton(View tourView) {
+        tourImportButton.setOnClickListener(u -> {
+            // create a new Firestore document
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference newTourDoc = db.collection("Tours").document();
+
+            // part of updating the user's list of tours
+            MainActivity.user.getTours().add(newTourDoc);
+
+            // get a new tour object with an empty list of attractions and the new tour UID
+            Tour tour = copyTour(tourViewModel.getSelectedTour(), newTourDoc.getId(), db);
+
+            // oldAttraction = attractions in the tour to be imported
+            List<DocumentReference> oldAttractions = tourViewModel.getSelectedTour().getAttractions();
+
+            // iterate through the list of existing attractions and create new ones
+            for (DocumentReference attractionRef : oldAttractions){
+                // Add the new attraction document reference to the list of attractions in the tour
+                // Doing it here is important because of lambda expression limitations
+                DocumentReference newAttractionDoc = db.collection("Attractions").document();
+                tour.getAttractions().add(newAttractionDoc);
+                // query the old attraction reference
+                attractionRef.get().addOnSuccessListener(result -> {
+                    // get the old attraction as an object to pull out its fields
+                    Attraction oldAttraction = result.toObject(Attraction.class);
+                    // create the new attraction
+                    Attraction newAttraction = new Attraction(oldAttraction.getReviews(), oldAttraction.getLocation(), oldAttraction.getLat(), oldAttraction.getLon(), oldAttraction.getCost(),
+                            oldAttraction.getName(), oldAttraction.getDescription(), newAttractionDoc.getId(), oldAttraction.getStartDate(), oldAttraction.getStartTime(),
+                            oldAttraction.getEndDate(), oldAttraction.getEndTime(), oldAttraction.getAddress(), oldAttraction.getCoverImageURI(), oldAttraction.getWeather());
+                    // set the new attraction data in Firestore
+                    newAttractionDoc.set(newAttraction).addOnSuccessListener(result2 -> {
+                        Log.d("TourFragment", "Attraction set w/ tour importing");
+                    });
+                });
+            }
+
+            // set the content of the new Firestore Tour document
+            newTourDoc.set(tour).addOnCompleteListener(v -> {
+                Log.d(TAG, "The tour was imported.");
+
+            })
+                .addOnFailureListener(v1 -> {
+                    Log.d(TAG, "Tour importation failed.");
+                });
+
+            // update the user's list of tours
+            updateUser();
+
+            // go back
+            getParentFragmentManager().popBackStack();
+        });
+    }
+
+    /**
      * Create a new tour which is no different than the one provided except for the UID and having no attraction references.
      * @param oldTour
      * @param newUID
@@ -1203,10 +1205,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         // make a new tour with the same contents as the old one except it is not publicly available and it has a new document ID
         Tour newTour = new Tour(oldTour.getName(), oldTour.getStartDate(), oldTour.getEndDate(), oldTour.getLocation(),
-                oldTour.getCost(), oldTour.getNotifications(), oldTour.getReviews(), oldTour.getDescription(),
-                false, newAttractions, oldTour.getCoverImageURI(), newUID);
+                                oldTour.getCost(), oldTour.getNotifications(), oldTour.getReviews(), oldTour.getDescription(),
+                                false, newAttractions, oldTour.getCoverImageURI(), newUID);
 
         return newTour;
     }
+
+
 }
 

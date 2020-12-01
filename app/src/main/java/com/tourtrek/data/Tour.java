@@ -12,19 +12,19 @@ import java.util.List;
 
 public class Tour{
 
-    private String name;
-    private Date startDate;
-    private Date endDate;
-    private String location;
+    private String name; // constructor
+    private Date startDate; // constructor
+    private Date endDate; // constructor
+    private String location; // constructor
     private Long length;
-    private float cost;
-    private Boolean notifications;
-    private List<String> reviews;
-    private String description;
-    private Boolean publiclyAvailable;
+    private float cost; // constructor
+    private Boolean notifications; // constructor
+    private List<String> reviews; // constructor
+    private String description; // constructor
+    private Boolean publiclyAvailable; // constructor
     private List<DocumentReference> attractions;
-    private String coverImageURI;
-    private String tourUID;
+    private String coverImageURI; // constructor
+    private String tourUID; // constructor
 
     /**
      * Empty constructor needed for Firestore
