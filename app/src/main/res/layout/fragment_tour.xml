@@ -346,19 +346,46 @@
                     android:visibility="gone"
                     tools:visibility="gone" />
 
-                <Button
-                    android:id="@+id/tour_share_btn"
-                    android:layout_width="210dp"
-                    android:layout_height="wrap_content"
+                <com.facebook.share.widget.ShareButton
+                    android:id="@+id/tour_fb_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.25"
                     android:background="@color/colorPrimaryDark"
                     android:enabled="true"
-                    android:text="Share Tour"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/tour_my_fb_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.17"
+                    android:enabled="true"
+                    android:background="@drawable/ic_facebook"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/tour_tw_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.17"
+                    android:enabled="true"
+                    android:background="@drawable/ic_twitter"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
 
 
                 <Button
@@ -379,10 +406,11 @@
 
             <Button
                 android:id="@+id/tour_update_btn"
-                android:layout_width="275dp"
+                android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:layout_gravity="center"
                 android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
                 android:layout_weight=".33"
                 android:background="@color/colorAccent"
                 android:enabled="true"
@@ -432,3 +460,6 @@
     </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
+
+
+

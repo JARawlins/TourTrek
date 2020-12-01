@@ -23,6 +23,8 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -77,6 +79,10 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.facebook.CallbackManager;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -114,6 +120,7 @@ import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
+import  com.facebook.FacebookSdk;
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -134,9 +141,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private TextView coverTextView;
     private CheckBox notificationsCheckBox;
     private CheckBox publicCheckBox;
+    private Button twitterShareButton;
+    private Button myFacebookShareButton;
     private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
-    private Button shareButton;
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
     private ImageView coverImageView;
     private Button attractionSortButton;
     private AlertDialog dialog;
@@ -156,6 +166,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        //setup for facebook share
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
 
         // To check that the tour has not been added
         added = false;
@@ -233,7 +247,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
         navigationButton = tourView.findViewById(R.id.tour_navigation_btn);
         deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
-        shareButton = tourView.findViewById(R.id.tour_share_btn);
         tourImportButton = tourView.findViewById(R.id.tour_import_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
@@ -241,6 +254,26 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         publicCheckBox =  tourView.findViewById(R.id.tour_public_cb);
         notificationsCheckBox = tourView.findViewById(R.id.tour_notifications_cb);
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
+        myFacebookShareButton = tourView.findViewById(R.id.tour_my_fb_share_btn);
+
+        ShareButton shareButton = (ShareButton)tourView.findViewById(R.id.tour_fb_share_btn);
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse("https://github.com/lovinganivia/TourTrek/tree/Feature-Share-tour"))
+                    .build();
+            shareButton.setShareContent(linkContent);
+        }
+
+        myFacebookShareButton.setOnClickListener(view -> {
+            shareButton.performClick();
+        });
+
+        twitterShareButton =tourView.findViewById(R.id.tour_tw_share_btn);
+        twitterShareButton.setOnClickListener(view -> {
+            shareOnTwitter();
+        });
+
+
 
         // No navigation with a brand new tour
         if (tourViewModel.isNewTour()){
@@ -401,7 +434,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             if (!hasFocus && startDateButton.getHint().equals("")) {
                 if (startDateButton.getText().toString().equals("")) {
                     startDateButton.setHint("Pick Date");
-                    startDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -421,7 +454,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             if (!hasFocus && endDateButton.getHint().equals("")) {
                 if (endDateButton.getText().toString().equals("")) {
                     endDateButton.setHint("Pick Date");
-                    endDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -535,6 +568,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     ft.addToBackStack("AttractionFragment").commit();
                 });
     }
+
 
     @Override
     public void onResume() {
@@ -675,6 +709,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
         }
+
+        callbackManager.onActivityResult(requestCode, resultCode, imageReturnedIntent);
     }
 
     /**
@@ -1093,6 +1129,30 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             attractionAlarms.add(notification_id);
             editor.putStringSet(tourViewModel.getSelectedTour().getTourUID(), attractionAlarms).apply();
         }
+    }
+
+    void shareOnTwitter()
+    {
+        PackageManager pm=getContext().getPackageManager();
+        try {
+            Intent waIntent = new Intent(Intent.ACTION_SEND);
+            waIntent.setType("text/plain");
+            String text = "Welcome to TourTrek";
+
+            @SuppressWarnings("unused")
+            PackageInfo info=pm.getPackageInfo("com.twitter.android", PackageManager.GET_META_DATA);
+            //Check if package exists or not. If not then code
+            //in catch block will be called
+            waIntent.setPackage("com.twitter.android");
+
+            waIntent.putExtra(Intent.EXTRA_TEXT, text);
+            startActivity(Intent.createChooser(waIntent, "Share with"));
+
+        } catch (PackageManager.NameNotFoundException e) {
+            Toast.makeText(getContext(), "Twitter not Installed", Toast.LENGTH_SHORT).show();
+            return ;
+        }
+        return ;
     }
 
     private void setAlarmForAttraction(Attraction attraction) {
