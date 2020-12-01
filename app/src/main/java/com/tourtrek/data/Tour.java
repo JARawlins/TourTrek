@@ -1,6 +1,5 @@
 package com.tourtrek.data;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.DateFormat;
@@ -25,11 +24,18 @@ public class Tour{
     private List<DocumentReference> attractions;
     private String coverImageURI; // constructor
     private String tourUID; // constructor
+    private double totalRating;
+    private double rating;
 
     /**
      * Empty constructor needed for Firestore
      */
-    public Tour() {}
+    public Tour() {
+        this.reviews = new ArrayList<>();
+        this.totalRating = 0;
+        this.rating = 0;
+
+    }
 
     /**
      * Complete constructor
@@ -261,10 +267,7 @@ public class Tour{
     }
 
     public List<String> getReviews() {
-        if (this.reviews == null){
-            return new ArrayList<>();
-        }
-        return this.reviews;
+        return reviews;
     }
 
     public void setReviews(List<String> reviews) {
@@ -312,4 +315,23 @@ public class Tour{
         this.tourUID = tourUID;
     }
 
+    public double getTotalRating() {
+        return totalRating;
+    }
+
+    public void setTotalRating(double totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void addUser (String user) {
+        this.reviews.add(user);
+    }
 }

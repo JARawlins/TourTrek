@@ -2,6 +2,8 @@ package com.tourtrek.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Notification;
@@ -16,12 +18,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RatingBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -65,7 +68,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -134,6 +137,14 @@ public class AttractionFragment extends Fragment {
     private FusedLocationProviderClient locationClient;
     // To keep track of whether we are in an async call
     private boolean loading;
+    // To keep track of whether tour ticket dialog is showing
+    private boolean dialogIsShowing;
+    private ImageButton rate;
+    private Button addTicketButton;
+    ImageView ticketImageView;
+    Button backButton;
+    Button confirmButton;
+    Dialog dialog;
 
     /**
      * Default for proper back button usage
@@ -163,6 +174,40 @@ public class AttractionFragment extends Fragment {
 
         // Initialize attractionMarketViewModel to get the current attraction
         attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
+
+        //add ticket button
+        addTicketButton = attractionView.findViewById(R.id.attraction_add_ticket_btn);
+
+        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
+            addTicketButton.setVisibility(View.GONE);
+        }
+
+        addTicketButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTicketDialog();
+            }
+        });
+
+        //review button
+        rate = attractionView.findViewById(R.id.attraction_review_btn);
+
+        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
+            rate.setVisibility(View.GONE);
+        }
+        rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                if (!attractionViewModel.getSelectedAttraction().getReviews()
+                        .contains(mAuth.getCurrentUser().getUid())) { showReviewDialog();
+                } else {
+                    Toast.makeText(getContext(), "You cannot rate an attraction more than once", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // Initialize all fields
         nameEditText = attractionView.findViewById(R.id.attraction_name_et);
@@ -759,7 +804,7 @@ public class AttractionFragment extends Fragment {
             }
         }
         else {
-            if(resultCode == Activity.RESULT_OK) {
+            if(resultCode == Activity.RESULT_OK && !dialogIsShowing) {
                 assert data != null;
 
                 Glide.with(this)
@@ -768,6 +813,26 @@ public class AttractionFragment extends Fragment {
                         .into(coverImageView);
                 uploadImageToDatabase(data);
             }
+        }
+
+        if(resultCode == Activity.RESULT_OK) {
+            assert data != null;
+            if (dialogIsShowing) {
+                Glide.with(this)
+                        .load(data.getData())
+                        .placeholder(R.drawable.default_image)
+                        .into(ticketImageView);
+
+                //Write to Firebase only when the user confirm
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadTicketToDatabase(data);
+                        dialog.dismiss();
+                    }
+                });
+            }
+
         }
 
     }
@@ -1072,6 +1137,147 @@ public class AttractionFragment extends Fragment {
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, day);
 
         datePickerDialog.show();
+    }
+
+    private void showReviewDialog(){
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
+        //Get elements
+        RatingBar ratingBar = view.findViewById(R.id.attraction_review_rb);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+
+            addNewRating(ratingBar.getRating());
+
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private void updateAttractionInFirebase(){
+        // Get Firestore instance
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Attractions")
+                .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
+                .set(attractionViewModel.getSelectedAttraction())
+                .addOnCompleteListener(task -> {
+                    Log.d(TAG, "Attraction written to firestore with UID: " + attractionViewModel.getSelectedAttraction().getAttractionUID());
+
+                    // Add/Update attraction to the selected tour
+                    db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
+
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
+
+    private double computeRating(double totalRating) {
+
+        return totalRating / attractionViewModel.getSelectedAttraction().getReviews().size();
+    }
+
+    private void addNewRating(double newRating) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        attractionViewModel.getSelectedAttraction().addUser(mAuth.getCurrentUser().getUid());
+
+        if (attractionViewModel.getSelectedAttraction().getReviews().equals(null)) {
+            attractionViewModel.getSelectedAttraction().setReviews(new ArrayList<>());
+            attractionViewModel.getSelectedAttraction().setRating(0);
+            attractionViewModel.getSelectedAttraction().setTotalRating(0);
+        }
+
+        //add new rating to totalRating
+        attractionViewModel.getSelectedAttraction().setTotalRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating() + newRating);
+
+        //compute rating
+        attractionViewModel.getSelectedAttraction().setRating(computeRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating()));
+
+        Toast.makeText(getContext(), "You successfully rated the attraction", Toast.LENGTH_SHORT).show();
+        updateAttractionInFirebase();
+    }
+
+    private void showTicketDialog() {
+
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.item_attraction_ticket);
+
+        dialog.show();
+        dialogIsShowing = true;
+
+        backButton = dialog.findViewById(R.id.item_attraction_ticket_back_btn);
+        confirmButton = dialog.findViewById(R.id.item_attraction_okay_btn);
+        ticketImageView = dialog.findViewById(R.id.item_attraction_ticket_iv);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogIsShowing = false;
+                dialog.dismiss();
+            }
+        });
+
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogIsShowing = false;
+                dialog.dismiss();
+            }
+        });
+
+        ticketImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Ticket"), PICK_IMAGE);
+        });
+
+        Glide.with(getActivity())
+                .load(attractionViewModel.getSelectedAttraction().getTicketURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_tourist)
+                .into(ticketImageView);
+
+        updateAttractionInFirebase();
+
+    }
+
+
+    public void uploadTicketToDatabase(Intent imageReturnedIntent) {
+
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Uri to the image
+        Uri selectedImage = imageReturnedIntent.getData();
+
+        final UUID imageUUID = UUID.randomUUID();
+
+        final StorageReference storageReference = storage.getReference().child("AttractionTickets/" + imageUUID);
+
+        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
+
+                    storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                                attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
+                            })
+                            .addOnFailureListener(exception -> {
+                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                            });
+                });
     }
 
 }

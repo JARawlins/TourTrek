@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -19,6 +20,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -56,12 +58,26 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -82,7 +98,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.facebook.CallbackManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
@@ -107,6 +125,11 @@ import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
+import com.tourtrek.utilities.AttractionRatingSorter;
+import com.tourtrek.utilities.Firestore;
+import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.utilities.Utilities;
+import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
 import org.w3c.dom.Document;
@@ -156,7 +179,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private AlertDialog dialog;
     private AlertDialog.Builder builder;
     private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Name Descending", "Location Descending", "Cost Descending"};
+            "Rating Ascending", "Name Descending", "Location Descending",
+            "Cost Descending", "Rating Descending"};
     private String result = "";
     private boolean added;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -164,6 +188,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 //    private NestedScrollView scrollView;
     // To keep track of whether we are in an async call
     private boolean loading;
+    private ImageButton rate;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -204,8 +229,33 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        // Initialize attractionSortButton
-        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+            // Initialize attractionSortButton
+            //review button
+            rate = tourView.findViewById(R.id.tour_review_btn);
+
+            if (tourViewModel.isNewTour()) {
+                rate.setVisibility(View.GONE);
+            }
+            rate.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onClick(View v) {
+
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                        if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                            showReviewDialog();
+                        } else {
+                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+            });
+
+
+            //initialize attractionSortButton
+            attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -963,7 +1013,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, query);
+
+                searchAttractions(attractionsAdapter, query);
+                Activity currentActivity = requireActivity();
+                Utilities.hideKeyboard(currentActivity);
 
                 return true;
             }
@@ -971,7 +1024,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                searchAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, newText);
+                searchAttractions(attractionsAdapter, newText);
 
                 return true;
             }
@@ -1051,10 +1104,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
-            case "Name Descending":
-                Collections.sort(temp, new AttractionNameSorter());
-                Collections.reverse(temp);
-                break;
+                case "Rating Ascending":
+                    Collections.sort(temp, new AttractionRatingSorter());
+                    break;
+
+                case "Name Descending":
+                    Collections.sort(temp, new AttractionNameSorter());
+                    Collections.reverse(temp);
+                    break;
 
             case "Location Descending":
                 Collections.sort(temp, new AttractionLocationSorter());
@@ -1066,11 +1123,16 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.reverse(temp);
                 break;
 
-            default:
-                return temp;
+                case "Rating Descending":
+                    Collections.sort(temp, new AttractionRatingSorter());
+                    Collections.reverse(temp);
+                    break;
+
+                default:
+                    return temp;
+            }
+            return temp;
         }
-        return temp;
-    }
 
     /**
      * Create a notification channel and add an alarm to be triggered by a broadcast receiver
@@ -1398,5 +1460,79 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
-}
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void showReviewDialog() {
+
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
+            //Get elements
+            RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(view);
+            builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+                dialogInterface.dismiss();
+            });
+
+            Button reviewCancelButton = view.findViewById(R.id.review_cancel_btn);
+            //create review cancel button listener
+            reviewCancelButton.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+
+
+            builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+
+                addNewRating(ratingBar.getRating());
+
+            });
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }
+
+        private void updateTourInFirebase() {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                    .set(tourViewModel.getSelectedTour())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Tour written to firestore");
+
+                        // Update the user in the firestore
+                        Firestore.updateUser();
+
+                        Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
+
+                    })
+                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+        }
+
+        private double computeRating(double totalRating) {
+
+            return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
+        }
+
+        private void addNewRating(double newRating) {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
+
+            if (tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                tourViewModel.getSelectedTour().setReviews(new ArrayList<>());
+                tourViewModel.getSelectedTour().setRating(0);
+                tourViewModel.getSelectedTour().setTotalRating(0);
+            }
+
+            //Add the new rating to totalRating
+            tourViewModel.getSelectedTour().setTotalRating(
+                    tourViewModel.getSelectedTour().getTotalRating() + newRating);
+
+            //compute rating
+            tourViewModel.getSelectedTour().setRating(computeRating(
+                    tourViewModel.getSelectedTour().getTotalRating()));
+
+            //update tour
+            updateTourInFirebase();
+        }
+
+    }
 
