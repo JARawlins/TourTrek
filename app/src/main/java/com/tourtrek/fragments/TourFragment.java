@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.widget.NestedScrollView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,6 +14,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -25,6 +27,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -53,6 +56,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -404,8 +408,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
                         loadingContainer.setVisibility(View.INVISIBLE);
-                        ((MainActivity)requireActivity()).enableTabs();
-                        loading = false;
+
+                        if (getActivity() != null && isAdded()) {
+                            ((MainActivity) requireActivity()).enableTabs();
+                            loading = false;
+                        }
+
                         return false;
                     }
 
@@ -413,8 +421,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
                         loadingContainer.setVisibility(View.INVISIBLE);
-                        ((MainActivity)requireActivity()).enableTabs();
-                        loading = false;
+                        if (getActivity() != null && isAdded()) {
+                            ((MainActivity) requireActivity()).enableTabs();
+                            loading = false;
+                        }
                         return false;
                     }
                 })
@@ -470,7 +480,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
         startDateButton.setOnClickListener(view -> {
-            ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton);
+            showDatePickerDialog(startDateButton, getContext(), "start");
         });
 
         startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
@@ -490,7 +500,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
         endDateButton.setOnClickListener(view -> {
-            ((MainActivity) requireActivity()).showDatePickerDialog(endDateButton);
+            showDatePickerDialog(endDateButton, getContext(), "end");
         });
 
         endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
@@ -624,13 +634,19 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     public void onResume() {
         super.onResume();
 
+        if (tourViewModel.getSelectedTour() != null) {
+            if (tourViewModel.getSelectedTour().getStartDate() != null)
+                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            if (tourViewModel.getSelectedTour().getEndDate() != null)
+                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+        }
+
         if (tourViewModel.isNewTour() || tourViewModel.getSelectedTour() == null)
             ((MainActivity) requireActivity()).setActionBarTitle("New Tour");
         else
             ((MainActivity) requireActivity()).setActionBarTitle(tourViewModel.getSelectedTour().getName());
 
     }
-
 
     /**
      * Retrieve all attractions belonging to this user
@@ -1286,6 +1302,64 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         // Remove all items from shared preferences
         editor.clear().apply();
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
+    }
+
+    public void showDatePickerDialog(Button button, Context context, String type) {
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+
+                String date = (month + 1) + "/" + day + "/" + year;
+                button.setText(date);
+                button.setBackgroundColor(Color.parseColor("#10000000"));
+
+                // Differentiate between startDate and endDate
+                TourViewModel tourViewModel = new ViewModelProvider((MainActivity)context).get(TourViewModel.class);
+                try {
+                    if (type.equals("start"))
+                        tourViewModel.getSelectedTour().setStartDateFromString(button.getText().toString());
+                    else
+                        tourViewModel.getSelectedTour().setEndDateFromString(button.getText().toString());
+                } catch (ParseException e) {
+                    Log.e(TAG, "Error converting startDate to a firebase Timestamp");
+                }
+            }
+        };
+
+        TourViewModel tourViewModel = new ViewModelProvider((MainActivity)context).get(TourViewModel.class);
+
+        final Calendar calendar = Calendar.getInstance();;
+
+        if (tourViewModel.getSelectedTour().getStartDate() != null)
+            calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, day);
+
+        datePickerDialog.show();
     }
 
     /**

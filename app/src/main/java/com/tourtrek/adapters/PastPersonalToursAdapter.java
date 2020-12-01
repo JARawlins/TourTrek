@@ -71,10 +71,14 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
     /**
      * Adds a new item to our recycler view
      *
-     * @param newTour item to be added
+     * @param tour item to be added
      */
-    public void addNewData(Tour newTour) {
-        pastPersonalToursDataSet.add(newTour);
+    public void addNewData(Tour tour) {
+        for (Tour aTour : pastPersonalToursDataSet) {
+            if (aTour.getTourUID().equals(tour.getTourUID()))
+                return;
+        }
+        pastPersonalToursDataSet.add(tour);
         notifyDataSetChanged();
     }
 
