@@ -1,6 +1,5 @@
 package com.tourtrek.data;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.DateFormat;
@@ -8,7 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class Tour{
@@ -26,8 +24,6 @@ public class Tour{
     private List<DocumentReference> attractions;
     private String coverImageURI; // constructor
     private String tourUID; // constructor
-    private String coverImageURI;
-    private String tourUID;
     private double totalRating;
     private double rating;
 
