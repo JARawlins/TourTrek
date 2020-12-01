@@ -218,7 +218,7 @@
                     android:layout_marginEnd="24dp"
                     android:text="Attractions"
                     android:textAlignment="center"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textSize="28dp"
                     android:textStyle="bold" />
 
@@ -227,12 +227,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:layout_marginEnd="24dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginStart="24dp"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/btn_shape_selector_accent"
+                    android:background="#EEEEEE"
                     android:text="Sort By"
                     android:textStyle="bold"
-                    android:textColor="#EEEEEE"/>
+                    android:textColor="@color/colorPrimaryDark"/>
 
 
 
@@ -269,56 +269,52 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
-                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                        android:id="@+id/tour_attractions_srl"
-                        android:layout_width="match_parent"
-                        android:layout_height="255dp"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/tour_attractions_rv"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="24dp"
-                            android:background="#EEEEEE"
-                            android:nestedScrollingEnabled="true"
-                            android:visibility="invisible" />
-
-                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
                 </LinearLayout>
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/tour_attractions_srl"
+                    android:layout_width="match_parent"
+                    android:layout_height="255dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/tour_attractions_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:nestedScrollingEnabled="true"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:background="#EEEEEE"
+                        android:layout_marginTop="8dp"
+                        android:visibility="invisible" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             </FrameLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/tour_checkboxes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:weightSum="1.0">
+                android:orientation="horizontal"
+                android:paddingTop="5dp">
 
                 <CheckBox
                     android:id="@+id/tour_notifications_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="0.5"
+                    android:layout_marginLeft="40dp"
                     android:text="@string/fragment_edit_tour_notifications"
                     android:textColor="@color/colorAccent"
-                    android:textSize="25dp" />
+                    android:textSize="25sp" />
 
                 <CheckBox
                     android:id="@+id/tour_public_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="0.4"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="40dp"
                     android:text="@string/fragment_edit_tour_public"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp" />
@@ -332,7 +328,7 @@
                     android:onClick="onToggleStar"
                     android:src="@drawable/ic_star" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/tour_buttons_container"
@@ -340,23 +336,65 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:weightSum="1.0">
 
                 <Button
-                    android:id="@+id/tour_share_btn"
+                    android:id="@+id/tour_delete_btn"
                     android:layout_width="210dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/btn_shape_selector_primary"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="0.33"
+                    android:background="@color/colorSecondary"
                     android:enabled="true"
-                    android:text="Share Tour"
+                    android:text="Remove Tour"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <com.facebook.share.widget.ShareButton
+                    android:id="@+id/tour_fb_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.25"
+                    android:background="@color/colorPrimaryDark"
+                    android:enabled="true"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/tour_my_fb_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.17"
+                    android:enabled="true"
+                    android:background="@drawable/ic_facebook"
                     android:textAllCaps="false"
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/tour_tw_share_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.17"
+                    android:enabled="true"
+                    android:background="@drawable/ic_twitter"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
 
 
                 <Button
@@ -364,8 +402,9 @@
                     android:layout_width="210dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/btn_shape_selector_primary"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.33"
+                    android:background="@color/colorPrimary"
                     android:enabled="true"
                     android:text="Add Attraction"
                     android:textAllCaps="false"
@@ -377,17 +416,16 @@
             <Button
                 android:id="@+id/tour_update_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="42dp"
                 android:layout_gravity="center"
-                android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:background="@drawable/btn_shape_selector_white"
+                android:layout_marginStart="24dp"
+                android:layout_weight=".33"
+                android:background="@color/colorAccent"
                 android:enabled="true"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
                 android:text="Update Tour"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="#EEEEEE"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -397,15 +435,16 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:background="@drawable/btn_shape_selector_white"
+                android:layout_marginTop="8dp"
+                android:background="#EEEEEE"
                 android:enabled="true"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Import Tour"
-                android:textStyle="bold"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="28dp" />
 
             <Button
                 android:id="@+id/tour_navigation_btn"
@@ -414,36 +453,22 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/btn_shape_selector_white"
+                android:background="#EEEEEE"
                 android:enabled="true"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Navigation"
-                android:textStyle="bold"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="28dp" />
 
-            <Button
-                android:id="@+id/tour_delete_btn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/btn_shape_selector_accent"
-                android:enabled="true"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:text="Remove Tour"
-                android:textAllCaps="false"
-                android:textColor="#EEEEEE"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:visibility="gone" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
+
+
+
