@@ -80,6 +80,10 @@ public class CurrentPersonalToursAdapter extends RecyclerView.Adapter<CurrentPer
      * @param tour item to be added
      */
     public void addNewData(Tour tour) {
+        for (Tour aTour : currentPersonalToursDataSet) {
+            if (aTour.getTourUID().equals(tour.getTourUID()))
+                return;
+        }
         currentPersonalToursDataSet.add(tour);
         notifyDataSetChanged();
     }
