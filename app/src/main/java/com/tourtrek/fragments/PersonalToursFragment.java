@@ -320,8 +320,6 @@ public class PersonalToursFragment extends Fragment {
         // Pull out the UID's of each tour that belongs to this user
         if (!MainActivity.user.getTours().isEmpty()) {
 
-            currentTourAdapter.clear();
-
             if (MainActivity.user.getTours().isEmpty())
                 ((MainActivity)requireActivity()).enableTabs();
 
@@ -350,9 +348,9 @@ public class PersonalToursFragment extends Fragment {
                                 else if (type.equals("past") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) < 0)
                                     pastTourAdapter.addNewData(documentSnapshot.toObject(Tour.class));
 
-                                pastSwipeRefreshLayout.setRefreshing(false);
                                 currentSwipeRefreshLayout.setRefreshing(false);
                                 futureSwipeRefreshLayout.setRefreshing(false);
+                                pastSwipeRefreshLayout.setRefreshing(false);
 
                                 ((MainActivity)requireActivity()).enableTabs();
                             }
