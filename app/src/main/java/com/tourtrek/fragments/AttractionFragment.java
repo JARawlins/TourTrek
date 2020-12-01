@@ -792,6 +792,7 @@ public class AttractionFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         uploadTicketToDatabase(data);
+                        updateAttractionInFirebase();
                         dialog.dismiss();
                     }
                 });
@@ -1122,21 +1123,35 @@ public class AttractionFragment extends Fragment {
 
         uploadTicketButton.setOnClickListener(view -> {
             Intent intent = new Intent();
-            intent.setType("application/pdf");
+            intent.setType("application/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             int PICK_IMAGE = 1;
             startActivityForResult(Intent.createChooser(intent, "Select Ticket"), PICK_IMAGE);
         });
 
-//        Glide.with(getActivity())
-//                .load(attractionViewModel.getSelectedAttraction().getTicketURI())
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .placeholder(R.drawable.ic_tourist)
-//                .into(pdfView);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference("AttractionTickets/").child(attractionViewModel
+        .getSelectedAttraction().getTicketURI());
 
-        //pdfView.fromUri(attractionViewModel.getSelectedAttraction().getTicketURI());
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                pdfView.fromAsset("http://www.africau.edu/images/default/sample.pdf");
+                System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+                System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("ooooooooooooooooooooooooooooooooooooooooooooooooooo");
 
-        updateAttractionInFirebase();
+            }
+        });
+
+        //Uri uri = Uri.parse(attractionViewModel.getSelectedAttraction().getTicketURI());
+//        System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
+//        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+
 
     }
 
@@ -1168,5 +1183,4 @@ public class AttractionFragment extends Fragment {
                             });
                 });
     }
-
 }
