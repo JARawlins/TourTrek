@@ -64,6 +64,8 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        ((MainActivity)requireActivity()).disableTabs();
+
         View profileFragmentView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         // Get instance of Firebase Authentication
@@ -108,6 +110,9 @@ public class ProfileFragment extends Fragment {
 
         // Setup handler for friends button
         setupAddFriendButtonHandler(profileFragmentView);
+
+        ((MainActivity)requireActivity()).enableTabs();
+
         return profileFragmentView;
     }
 
