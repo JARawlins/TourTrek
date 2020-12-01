@@ -1473,13 +1473,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 dialogInterface.dismiss();
             });
 
-            Button reviewCancelButton = view.findViewById(R.id.review_cancel_btn);
-            //create review cancel button listener
-            reviewCancelButton.setOnClickListener(v -> {
-                dialog.dismiss();
-            });
-
-
             builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
 
                 addNewRating(ratingBar.getRating());
