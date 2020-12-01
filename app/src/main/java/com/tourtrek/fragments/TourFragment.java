@@ -146,9 +146,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private CheckBox publicCheckBox;
     private Button twitterShareButton;
     private Button myFacebookShareButton;
-    private LinearLayout checkBoxesContainer;
+    private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
-    private Button shareButton;
     private CallbackManager callbackManager;
     private ShareDialog shareDialog;
     private ImageView coverImageView;
@@ -251,7 +250,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
         navigationButton = tourView.findViewById(R.id.tour_navigation_btn);
         deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
-        shareButton = tourView.findViewById(R.id.tour_share_btn);
         tourImportButton = tourView.findViewById(R.id.tour_import_btn);
         coverImageView = tourView.findViewById(R.id.tour_cover_iv);
         coverTextView = tourView.findViewById(R.id.tour_cover_tv);
@@ -555,8 +553,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 .addOnGlobalLayoutListener(
                         () -> ((CurrentTourAttractionsAdapter)attractionsAdapter).stopLoading());
 
-
-
         // enable clicking a recycler view item to update an attraction
         ItemClickSupport.addTo(attractionsRecyclerView, R.layout.item_attraction)
                 .setOnItemClickListener((recyclerView, position, v) -> {
@@ -575,6 +571,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     ft.addToBackStack("AttractionFragment").commit();
                 });
     }
+
 
     @Override
     public void onResume() {

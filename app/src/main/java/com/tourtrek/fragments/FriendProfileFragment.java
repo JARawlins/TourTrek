@@ -98,9 +98,15 @@ public class FriendProfileFragment extends Fragment {
         configureDeleteBtn(friendProfileView);
 
         //populate friends list of user
-        friendsRecyclerView = FriendProfileView.findViewById(R.id.friend_friends_rv);
+        friendsRecyclerView = friendProfileView.findViewById(R.id.friend_friends_rv);
         configureRecyclerViewsFriends(friendsRecyclerView);
-        configureSwipeRefreshLayouts(FriendProfileView);
+        configureSwipeRefreshLayouts(friendProfileView);
+
+        //populate tours list of user
+        toursOfFriendsRecyclerView = friendProfileView.findViewById(R.id.friend_tours_rv);
+        configureRecyclerViewsTours(toursOfFriendsRecyclerView);
+        configureSwipeRefreshLayoutsTours(friendProfileView);
+
 
         return friendProfileView;
     }
@@ -141,12 +147,7 @@ public class FriendProfileFragment extends Fragment {
                                         // toast message
                                         Toast.makeText(getContext(), "Friend removed", Toast.LENGTH_SHORT).show();
 
-        //populate tours list of user
-        toursOfFriendsRecyclerView = FriendProfileView.findViewById(R.id.friend_tours_rv);
-        configureRecyclerViewsTours(toursOfFriendsRecyclerView);
-        configureSwipeRefreshLayoutsTours(FriendProfileView);
 
-        return FriendProfileView;
                                         // go back
                                         getParentFragmentManager().popBackStack();
                                     });
