@@ -358,8 +358,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
                         loadingContainer.setVisibility(View.INVISIBLE);
-                        ((MainActivity)requireActivity()).enableTabs();
-                        loading = false;
+
+                        if (getActivity() != null && isAdded()) {
+                            ((MainActivity) requireActivity()).enableTabs();
+                            loading = false;
+                        }
+
                         return false;
                     }
 
@@ -367,8 +371,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
                         loadingContainer.setVisibility(View.INVISIBLE);
-                        ((MainActivity)requireActivity()).enableTabs();
-                        loading = false;
+                        if (getActivity() != null && isAdded()) {
+                            ((MainActivity) requireActivity()).enableTabs();
+                            loading = false;
+                        }
                         return false;
                     }
                 })
