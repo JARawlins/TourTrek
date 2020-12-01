@@ -53,9 +53,9 @@ public class PersonalToursFragment extends Fragment {
     private RecyclerView currentRecyclerView;
     private RecyclerView futureRecyclerView;
     private RecyclerView pastRecyclerView;
-    private RecyclerView.Adapter currentTourAdapter;
-    private RecyclerView.Adapter futureTourAdapter;
-    private RecyclerView.Adapter pastTourAdapter;
+    private CurrentPersonalToursAdapter currentTourAdapter;
+    private FuturePersonalToursAdapter futureTourAdapter;
+    private PastPersonalToursAdapter pastTourAdapter;
     private SwipeRefreshLayout currentSwipeRefreshLayout;
     private SwipeRefreshLayout futureSwipeRefreshLayout;
     private SwipeRefreshLayout pastSwipeRefreshLayout;
@@ -146,11 +146,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
         currentRecyclerView.setLayoutManager(currentToursLayoutManager);
 
+        // Specify an adapter
+        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("current");
 
-        // Specify an adapter
-        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
         currentRecyclerView.setAdapter(currentTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -178,11 +179,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
         futureRecyclerView.setLayoutManager(futureToursLayoutManager);
 
+        // Specify an adapter
+        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("future");
 
-        // Specify an adapter
-        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
         futureRecyclerView.setAdapter(futureTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -209,10 +211,11 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
         pastRecyclerView.setLayoutManager(pastToursLayoutManager);
 
-        fetchToursAsync("past");
-
         // Specify an adapter
         pastTourAdapter = new PastPersonalToursAdapter(getContext());
+
+        fetchToursAsync("past");
+
         pastRecyclerView.setAdapter(pastTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -311,13 +314,16 @@ public class PersonalToursFragment extends Fragment {
         CollectionReference toursCollection = db.collection("Tours");
 
         // Pull out the UID's of each tour that belongs to this user
-        List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
 
-            // Final list of tours for this category
-            List<Tour> usersTours = new ArrayList<>();
+            currentTourAdapter.clear();
+
+            if (MainActivity.user.getTours().isEmpty())
+                ((MainActivity)requireActivity()).enableTabs();
 
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
+
+                ((MainActivity)requireActivity()).disableTabs();
 
                 toursCollection.document(documentReference.getId()).get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -329,26 +335,22 @@ public class PersonalToursFragment extends Fragment {
                                 Timestamp now = Timestamp.now();
 
                                 // the start date is before now and the end date is after now
-                                if (type.equals("current") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(documentSnapshot.toObject(Tour.class));
-                                    ((CurrentPersonalToursAdapter) currentTourAdapter).clear();
-                                    ((CurrentPersonalToursAdapter) currentTourAdapter).addAll(usersTours);
+                                if (type.equals("current") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) > 0) {
+                                    currentTourAdapter.addNewData(documentSnapshot.toObject(Tour.class));
                                     currentSwipeRefreshLayout.setRefreshing(false);
                                 }
                                 // the start date is after now and the end date is after now
-                                else if (type.equals("future") && tourStartDate.compareTo(now) > 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(documentSnapshot.toObject(Tour.class));
-                                    ((FuturePersonalToursAdapter) futureTourAdapter).clear();
-                                    ((FuturePersonalToursAdapter) futureTourAdapter).addAll(usersTours);
+                                else if (type.equals("future") && tourStartDate != null && tourStartDate.compareTo(now) > 0 && tourEndDate != null && tourEndDate.compareTo(now) > 0) {
+                                    ((FuturePersonalToursAdapter) futureTourAdapter).addNewData(documentSnapshot.toObject(Tour.class));
                                     futureSwipeRefreshLayout.setRefreshing(false);
                                 }
                                 // the start date and end dates are before now
-                                else if (type.equals("past") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) < 0) {
-                                    usersTours.add(documentSnapshot.toObject(Tour.class));
-                                    ((PastPersonalToursAdapter) pastTourAdapter).clear();
-                                    ((PastPersonalToursAdapter) pastTourAdapter).addAll(usersTours);
+                                else if (type.equals("past") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) < 0) {
+                                    ((PastPersonalToursAdapter) pastTourAdapter).addNewData(documentSnapshot.toObject(Tour.class));
                                     pastSwipeRefreshLayout.setRefreshing(false);
                                 }
+
+                                ((MainActivity)requireActivity()).enableTabs();
                             }
                         });
             }

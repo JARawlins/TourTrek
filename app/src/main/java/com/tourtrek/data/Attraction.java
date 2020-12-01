@@ -27,12 +27,37 @@ public class Attraction {
     private String endTime;
     private String address;
     private String coverImageURI;
-    private HashMap<String, Double> weather;
+    private HashMap<String, String> weather;
 
     /**
      * Empty constructor needed for Firestore
      */
     public Attraction(){}
+
+    /**
+     * Complete constructor for copying tours
+     * @return
+     */
+    public Attraction(List<String> reviews, String location, double lat, double lon, float cost,
+                      String name, String description, String attractionUID, Date startDate, String startTime,
+                      Date endDate, String endTime, String address, String coverImageURI, HashMap<String, String> weather){
+
+        this.reviews = reviews;
+        this.location = location;
+        this.lat = lat;
+        this.lon = lon;
+        this.cost = cost;
+        this.name = name;
+        this.description = description;
+        this.attractionUID = attractionUID;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.address = address;
+        this.coverImageURI = coverImageURI;
+        this.weather = weather;
+    }
 
     public double getLat() {
         return lat;
@@ -50,11 +75,11 @@ public class Attraction {
         this.lon = lon;
     }
 
-    public HashMap<String, Double> getWeather() {
+    public HashMap<String, String> getWeather() {
         return weather;
     }
 
-    public void addToWeather(String date, Double temperature) {
+    public void addToWeather(String date, String temperature) {
         if (weather == null) {
             weather = new HashMap<>();
         }
@@ -62,7 +87,7 @@ public class Attraction {
         weather.put(date, temperature);
     }
 
-    public void setWeather(HashMap<String, Double> weather) {
+    public void setWeather(HashMap<String, String> weather) {
         this.weather = weather;
     }
 
