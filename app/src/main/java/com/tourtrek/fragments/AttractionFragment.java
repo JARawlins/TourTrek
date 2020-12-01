@@ -1,34 +1,57 @@
 package com.tourtrek.fragments;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RatingBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPhotoResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -36,23 +59,22 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.notifications.AlarmBroadcastReceiver;
+import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
-import com.tourtrek.data.Tour;
-import java.text.DateFormat;
-import org.w3c.dom.Document;
+
+import java.io.ByteArrayOutputStream;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -60,25 +82,43 @@ import java.util.UUID;
  * It runs when a user selects the 'add attraction' option from within the fragment showing the list of attractions in a selected tour.
  * The fragment will consist of a form with text fields corresponding to Attraction variables to fill in and a button to collect
  * the contents of them and push the information to Firestore.
+ *
+ * TODO fix tapping the back button when in a Google Map leading to the add attraction screen
+ * TODO make sure that this location is accessible via the view model
  */
 public class AttractionFragment extends Fragment {
 
     private static final String TAG = "AttractionFragment";
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 4588;
     private EditText locationEditText;
     private EditText costEditText;
     private EditText nameEditText;
     private EditText descriptionEditText;
     private TextView coverTextView;
+    private TextView weatherTextView;
     private Button startDateButton;
     private Button startTimeButton;
     private Button endDateButton;
     private Button endTimeButton;
     private Button updateAttractionButton;
     private Button deleteAttractionButton;
+    private ImageButton searchAttractionButton;
     private LinearLayout buttonsContainer;
     private TourViewModel tourViewModel;
     private AttractionViewModel attractionViewModel;
     private ImageView coverImageView;
+    private Button navigationAttractionButton;
+    private FusedLocationProviderClient locationClient;
+    // To keep track of whether we are in an async call
+    private boolean loading;
+    // To keep track of whether tour ticket dialog is showing
+    private boolean dialogIsShowing;
+    private ImageButton rate;
+    private Button addTicketButton;
+    ImageView ticketImageView;
+    Button backButton;
+    Button confirmButton;
+    Dialog dialog;
 
     /**
      * Default for proper back button usage
@@ -90,7 +130,8 @@ public class AttractionFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getParentFragmentManager().popBackStack();
+                if (!loading)
+                    getParentFragmentManager().popBackStack();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -98,7 +139,6 @@ public class AttractionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Grab a reference to the current view
         View attractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
 
@@ -107,6 +147,40 @@ public class AttractionFragment extends Fragment {
 
         // Initialize attractionMarketViewModel to get the current attraction
         attractionViewModel = new ViewModelProvider(requireActivity()).get(AttractionViewModel.class);
+
+        //add ticket button
+        addTicketButton = attractionView.findViewById(R.id.attraction_add_ticket_btn);
+
+        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
+            addTicketButton.setVisibility(View.GONE);
+        }
+
+        addTicketButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTicketDialog();
+            }
+        });
+
+        //review button
+        rate = attractionView.findViewById(R.id.attraction_review_btn);
+
+        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
+            rate.setVisibility(View.GONE);
+        }
+        rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                if (!attractionViewModel.getSelectedAttraction().getReviews()
+                        .contains(mAuth.getCurrentUser().getUid())) { showReviewDialog();
+                } else {
+                    Toast.makeText(getContext(), "You cannot rate an attraction more than once", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // Initialize all fields
         nameEditText = attractionView.findViewById(R.id.attraction_name_et);
@@ -121,7 +195,18 @@ public class AttractionFragment extends Fragment {
         coverTextView = attractionView.findViewById(R.id.attraction_cover_tv);
         updateAttractionButton = attractionView.findViewById(R.id.attraction_update_btn);
         deleteAttractionButton = attractionView.findViewById(R.id.attraction_delete_btn);
+        navigationAttractionButton = attractionView.findViewById(R.id.attraction_navigation_btn);
         buttonsContainer = attractionView.findViewById(R.id.attraction_buttons_container);
+        searchAttractionButton = attractionView.findViewById(R.id.attraction_search_ib);
+
+        weatherTextView = attractionView.findViewById(R.id.attraction_weather_tv);
+
+        searchAttractionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startAutoCompleteActivity(attractionView);
+            }
+        });
 
         nameEditText.setEnabled(false);
         locationEditText.setEnabled(false);
@@ -141,7 +226,7 @@ public class AttractionFragment extends Fragment {
 
             // set up fields to be made visible since we are creating a new tour
             nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
+//            locationEditText.setEnabled(true);
             costEditText.setEnabled(true);
             startDateButton.setEnabled(true);
             startTimeButton.setEnabled(true);
@@ -174,8 +259,82 @@ public class AttractionFragment extends Fragment {
             descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
             updateAttractionButton.setText("Update Attraction");
 
+            if (attractionViewModel.getSelectedAttraction().getLon() != 0 && attractionViewModel.getSelectedAttraction().getLat() != 0) {
+
+                // Get updated weather
+                Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
+
+                // get temperature
+                // Wait for the weather api to receive the data
+                if (attractionViewModel.getSelectedAttraction().getWeather() != null && attractionViewModel.getSelectedAttraction().getStartDate() != null) {
+
+                    for (Map.Entry<String, String> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
+                        String aDateString = entry.getKey();
+
+                        java.text.DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+
+                        Calendar calendar = Calendar.getInstance();
+
+                        try {
+                            Date aDate = formatter.parse(aDateString);
+                            calendar.setTime(aDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "Error converting string date");
+                        }
+
+                        String temperature = entry.getValue();
+
+                        int aMonth = calendar.get(Calendar.MONTH);
+                        int aDay = calendar.get(Calendar.DAY_OF_MONTH);
+                        int aYear = calendar.get(Calendar.YEAR);
+
+                        Calendar newCalendar = Calendar.getInstance();
+
+                        newCalendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+
+                        int startMonth = newCalendar.get(Calendar.MONTH);
+                        int startDay = newCalendar.get(Calendar.DAY_OF_MONTH);
+                        int startYear = newCalendar.get(Calendar.YEAR);
+
+                        if (aMonth == startMonth && aDay == startDay && aYear == startYear) {
+                            weatherTextView.setText(String.format("%s ℉", temperature));
+                            break;
+                        }
+                        else
+                            weatherTextView.setText("N/A");
+
+                    }
+                }
+
+            }
+
+            LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
+            loadingContainer.setVisibility(View.VISIBLE);
+            ((MainActivity)requireActivity()).disableTabs();
+            loading = true;
+
             Glide.with(getContext())
                     .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
+                            loadingContainer.setVisibility(View.INVISIBLE);
+                            ((MainActivity)requireActivity()).enableTabs();
+                            loading = false;
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
+                            loadingContainer.setVisibility(View.INVISIBLE);
+                            ((MainActivity)requireActivity()).enableTabs();
+                            loading = false;
+                            return false;
+                        }
+                    })
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.default_image)
                     .into(coverImageView);
@@ -193,7 +352,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && nameEditText.getHint().equals("")) {
                 if (nameEditText.getText().toString().equals("")) {
                     nameEditText.setHint("Attraction Name");
-                    nameEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    nameEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -209,7 +368,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && locationEditText.getHint().equals("")) {
                 if (locationEditText.getText().toString().equals("")) {
                     locationEditText.setHint("City, State");
-                    locationEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -224,12 +383,23 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && costEditText.getHint().equals("")) {
                 if (costEditText.getText().toString().equals("")) {
                     costEditText.setHint("$0.00");
-                    costEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    costEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
 
-        startDateButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton));
+        startDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Get the most recent weather data
+                if (attractionViewModel.getSelectedAttraction().getLat() != 0 && attractionViewModel.getSelectedAttraction().getLon() != 0) {
+                    Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
+                }
+
+                ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton, weatherTextView, getContext());
+            }
+        });
 
         startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -242,7 +412,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && startDateButton.getHint().equals("")) {
                 if (startDateButton.getText().toString().equals("")) {
                     startDateButton.setHint("Pick Date");
-                    startDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -260,7 +430,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && startTimeButton.getHint().equals("")) {
                 if (startTimeButton.getText().toString().equals("")) {
                     startTimeButton.setHint("Pick Time");
-                    startTimeButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -278,7 +448,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && endDateButton.getHint().equals("")) {
                 if (endDateButton.getText().toString().equals("")) {
                     endDateButton.setHint("Pick Date");
-                    endDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -296,7 +466,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && endTimeButton.getHint().equals("")) {
                 if (endTimeButton.getText().toString().equals("")) {
                     endTimeButton.setHint("Pick Time");
-                    endTimeButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -312,16 +482,17 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && descriptionEditText.getHint().equals("")) {
                 if (descriptionEditText.getText().toString().equals("")) {
                     descriptionEditText.setHint("Details");
-                    descriptionEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    descriptionEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
 
         // set up the action to carry out via the update button
         setupUpdateAttractionButton(attractionView);
-
         // set up the action to carry out via the delete button
         setupDeleteAttractionButton(attractionView);
+
+        setupNavigationButton();
 
         return attractionView;
     }
@@ -329,6 +500,22 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        // Add info from searching Google Places API
+        if (attractionViewModel.returnedFromSearch()) {
+
+            Glide.with(getContext())
+                    .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.default_image)
+                    .into(coverImageView);
+
+            nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
+            nameEditText.setBackgroundColor(Color.parseColor("#10000000"));
+            locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
+            locationEditText.setBackgroundColor(Color.parseColor("#10000000"));
+            attractionViewModel.setReturnedFromSearch(false);
+        }
 
         if (attractionViewModel.isNewAttraction()){
             ((MainActivity) requireActivity()).setActionBarTitle("Add Attraction");
@@ -342,21 +529,53 @@ public class AttractionFragment extends Fragment {
     public void onDestroyView() {
 
         tourViewModel.setReturnedFromAddAttraction(false);
-        attractionViewModel.setIsNewAttraction(null);
-        attractionViewModel.setSelectedAttraction(null);
+
+        if (!attractionViewModel.returnedFromNavigation()) {
+            attractionViewModel.setIsNewAttraction(null);
+            attractionViewModel.setSelectedAttraction(null);
+        }
+
+        attractionViewModel.setReturnedFromNavigation(false);
 
         super.onDestroyView();
+    }
+
+    /**
+     * Setup of the onClickListener of the "Navigation" button
+     */
+    private void setupNavigationButton(){
+
+        navigationAttractionButton.setOnClickListener(v -> {
+
+            // check that location services are enabled and give a prompt to enable them if needed
+//            Boolean permissionIsGranted = PlacesLocal.checkLocationPermission(getContext());
+//            if (permissionIsGranted){
+//                Log.d(TAG, "Location enabled");
+
+                attractionViewModel.setReturnedFromNavigation(true);
+
+                // switch to the map fragment
+                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment, new MapsFragment(), "MapsFragment");
+                ft.addToBackStack("MapsFragment").commit();
+//            }
+        });
     }
 
     /**
      * Check if the attraction belongs to the current user and make fields visible if so
      */
     public void attractionIsUsers() {
+//        Log.d(TAG, "Checking attraction status..." + "UID " + attractionViewModel.getSelectedAttraction().getAttractionUID() + "user " + MainActivity.user.getUsername());
+        // navigation should be available for every attraction in the database
+        if (attractionViewModel.getSelectedAttraction().getAttractionUID() != null){
+            navigationAttractionButton.setVisibility((View.VISIBLE));
+        }
 
         // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
         if (tourViewModel.isUserOwned() || attractionViewModel.isNewAttraction()){
             nameEditText.setEnabled(true);
-            locationEditText.setEnabled(true);
+//            locationEditText.setEnabled(true);
             costEditText.setEnabled(true);
             startDateButton.setEnabled(true);
             startTimeButton.setEnabled(true);
@@ -385,18 +604,202 @@ public class AttractionFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+
+            if (resultCode == Activity.RESULT_OK) {
+
+                ((MainActivity)requireActivity()).disableTabs();
+                loading = true;
+
+                Place place = Autocomplete.getPlaceFromIntent(data);
+
+                attractionViewModel.getSelectedAttraction().setCoverImageURI("");
+                weatherTextView.setText("N/A");
+
+                if (place.getPhotoMetadatas() != null) {
+                    PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                    String attributes = photoMetadata.getAttributions();
+
+                    FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
+
+                    PlacesClient placesClient = Places.createClient(requireContext());
+
+                    LinearLayout loadingContainer = getActivity().findViewById(R.id.attraction_cover_loading_container);
+                    loadingContainer.setVisibility(View.VISIBLE);
+
+                    placesClient.fetchPhoto(photoRequest)
+                            .addOnSuccessListener(new OnSuccessListener<FetchPhotoResponse>() {
+                                @Override
+                                public void onSuccess(FetchPhotoResponse fetchPhotoResponse) {
+
+                                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
+
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                    byte[] data = baos.toByteArray();
+
+                                    // Load image into view
+                                    Glide.with(requireContext())
+                                            .load(data)
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .placeholder(R.drawable.default_image)
+                                            .into(coverImageView);
+
+                                    loadingContainer.setVisibility(View.GONE);
+
+                                    ((MainActivity)requireActivity()).enableTabs();
+                                    loading = false;
+
+                                    // Upload Image to firestore storage
+                                    final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+                                    final UUID imageUUID = UUID.randomUUID();
+
+                                    final StorageReference storageReference = storage.getReference().child("AttractionCoverPictures/" + imageUUID);
+
+                                    final UploadTask uploadTask = storageReference.putBytes(data);
+
+                                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                            storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
+                                                    .addOnSuccessListener(uri -> {
+                                                        attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
+
+                                                        Log.i(TAG, "Successfully loaded cover image");
+
+                                                    });
+                                        }
+                                    })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Failed to upload attraction cover image from Places API");
+                                                    ((MainActivity)requireActivity()).enableTabs();
+                                                    loading = false;
+                                                }
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Failed to fetch attraction photo from Places API");
+                                    ((MainActivity)requireActivity()).enableTabs();
+                                    loading = false;
+                                }
+                            });
+                }
+                else {
+
+                    ((MainActivity)requireActivity()).enableTabs();
+                    loading = false;
+
+                    // Load image into view
+                    Glide.with(requireContext())
+                            .load(R.drawable.default_image)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(coverImageView);
+                }
+
+                attractionViewModel.setReturnedFromSearch(true);
+
+                attractionViewModel.getSelectedAttraction().setName(place.getName());
+                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
+                attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
+                attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
+
+                // Get updated weather
+                Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
+
+                // get temperature
+                // Wait for the weather api to receive the data
+                if (attractionViewModel.getSelectedAttraction().getWeather() != null && attractionViewModel.getSelectedAttraction().getStartDate() != null) {
+
+                    for (Map.Entry<String, String> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
+                        String aDateString = entry.getKey();
+
+                        java.text.DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+
+                        Calendar calendar = Calendar.getInstance();
+
+                        try {
+                            Date aDate = formatter.parse(aDateString);
+                            calendar.setTime(aDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "Error converting string date");
+                        }
+
+                        String temperature = entry.getValue();
+
+                        int aMonth = calendar.get(Calendar.MONTH);
+                        int aDay = calendar.get(Calendar.DAY_OF_MONTH);
+                        int aYear = calendar.get(Calendar.YEAR);
+
+                        Calendar newCalendar = Calendar.getInstance();
+
+                        newCalendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+
+                        int startMonth = newCalendar.get(Calendar.MONTH);
+                        int startDay = newCalendar.get(Calendar.DAY_OF_MONTH);
+                        int startYear = newCalendar.get(Calendar.YEAR);
+
+                        if (aMonth == startMonth && aDay == startDay && aYear == startYear) {
+                            weatherTextView.setText(String.format("%s ℉", temperature));
+                            break;
+                        }
+                        else
+                            weatherTextView.setText("N/A");
+                    }
+                }
+            }
+            else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                ((MainActivity)requireActivity()).enableTabs();
+                loading = false;
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            }
+            else if (resultCode == Activity.RESULT_CANCELED) {
+                // Do Nothing because the user is exiting intent
+            }
+        }
+        else {
+            if(resultCode == Activity.RESULT_OK && !dialogIsShowing) {
+                assert data != null;
+
+                    Glide.with(this)
+                            .load(data.getData())
+                            .placeholder(R.drawable.default_image)
+                            .into(coverImageView);
+                    uploadImageToDatabase(data);
+            }
+        }
 
         if(resultCode == Activity.RESULT_OK) {
-            assert imageReturnedIntent != null;
+            assert data != null;
+            if (dialogIsShowing) {
+                Glide.with(this)
+                        .load(data.getData())
+                        .placeholder(R.drawable.default_image)
+                        .into(ticketImageView);
 
-            Glide.with(this)
-                    .load(imageReturnedIntent.getData())
-                    .placeholder(R.drawable.default_image)
-                    .into(coverImageView);
-            uploadImageToDatabase(imageReturnedIntent);
+                //Write to Firebase only when the user confirm
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadTicketToDatabase(data);
+                        dialog.dismiss();
+                    }
+                });
+            }
+
         }
+
     }
 
     /**
@@ -439,6 +842,7 @@ public class AttractionFragment extends Fragment {
     private void setupUpdateAttractionButton(View view){
 
         updateAttractionButton.setOnClickListener(v -> {
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             // first get the information from each EditText
             String name = nameEditText.getText().toString();
@@ -511,18 +915,17 @@ public class AttractionFragment extends Fragment {
                 tourViewModel.getSelectedTour().addAttraction(attractionDocumentReference);
             }
 
+            ((MainActivity)requireActivity()).disableTabs();
+            loading = true;
+
             db.collection("Attractions")
                     .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
                     .set(attractionViewModel.getSelectedAttraction())
                     .addOnCompleteListener(task -> {
-                        Log.d(TAG, "Attraction written to firestore");
+                        Log.d(TAG, "Attraction written to firestore with UID: " + attractionViewModel.getSelectedAttraction().getAttractionUID());
 
-                        // update the attraction to the tour object in the firestore
+                        // Add/Update attraction to the selected tour
                         db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
-
-                        // TODO: Setup alarm for start time
-                        if (tourViewModel.getSelectedTour().getNotifications())
-                            scheduleNotification();
 
                         if (attractionViewModel.isNewAttraction()) {
                             Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
@@ -532,8 +935,14 @@ public class AttractionFragment extends Fragment {
                             Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
                         }
 
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
                     })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+                    .addOnFailureListener(e -> {
+                        ((MainActivity)requireActivity()).enableTabs();
+                        loading = false;
+                        Log.w(TAG, "Error writing document");
+                    });
         });
     }
 
@@ -597,49 +1006,165 @@ public class AttractionFragment extends Fragment {
                         })
                         .addOnFailureListener(e -> Log.w(TAG, "Error writing tour document"));
     }
-    private void scheduleNotification() {
 
-        // Create view button
-        Intent viewIntent = new Intent(getContext(), MainActivity.class);
-        viewIntent.putExtra("viewId", 1);
-        PendingIntent viewPendingIntent = PendingIntent.getActivity(getContext(), 0, viewIntent, 0);
+    public void startAutoCompleteActivity(View view) {
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.FULLSCREEN,
+                Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS,
+                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG))
+                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                .build(requireContext());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
 
-        // Build the notification to display
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "2");
-        builder.setContentTitle("Attraction Started");
-        builder.setContentText(attractionViewModel.getSelectedAttraction().getName() + " has started");
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
-        builder.setChannelId("2");
-        builder.setContentIntent(viewPendingIntent);
-        builder.setAutoCancel(true);
-        builder.addAction(R.drawable.ic_profile, "View", viewPendingIntent);
-        Notification notification = builder.build();
+    public void updateCoverImage() {
+        Glide.with(getContext())
+                .load(attractionViewModel.getSelectedAttraction().getCoverImageURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.default_image)
+                .into(coverImageView);
+    }
 
-        // Get Tour Start Date
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
 
-        try {
-            String startTime = attractionViewModel.getSelectedAttraction().getStartTime();
-            SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-            Date date = df.parse(startTime);
-            calendar.set(Calendar.HOUR, date.getHours());
-            calendar.set(Calendar.MINUTE, date.getMinutes());
-        } catch (ParseException e) {
-            e.printStackTrace();
+    private void showReviewDialog(){
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
+        //Get elements
+        RatingBar ratingBar = view.findViewById(R.id.attraction_review_rb);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+
+            addNewRating(ratingBar.getRating());
+
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private void updateAttractionInFirebase(){
+        // Get Firestore instance
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Attractions")
+                .document(attractionViewModel.getSelectedAttraction().getAttractionUID())
+                .set(attractionViewModel.getSelectedAttraction())
+                .addOnCompleteListener(task -> {
+                    Log.d(TAG, "Attraction written to firestore with UID: " + attractionViewModel.getSelectedAttraction().getAttractionUID());
+
+                    // Add/Update attraction to the selected tour
+                    db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
+
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
+
+    private double computeRating(double totalRating) {
+
+        return totalRating / attractionViewModel.getSelectedAttraction().getReviews().size();
+    }
+
+    private void addNewRating(double newRating) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        attractionViewModel.getSelectedAttraction().addUser(mAuth.getCurrentUser().getUid());
+
+        if (attractionViewModel.getSelectedAttraction().getReviews().equals(null)) {
+            attractionViewModel.getSelectedAttraction().setReviews(new ArrayList<>());
+            attractionViewModel.getSelectedAttraction().setRating(0);
+            attractionViewModel.getSelectedAttraction().setTotalRating(0);
         }
 
-        // Initialize the alarm manager
-        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
-        String notification_id = String.valueOf(System.currentTimeMillis() % 10000);
-        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, notification_id);
-        intent.putExtra(AlarmBroadcastReceiver.NOTIFICATION, notification);
-        intent.putExtra("NOTIFICATION_CHANNEL_ID", "2");
-        intent.putExtra("NOTIFICATION_CHANNEL_NAME", "Attraction Start");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(notification_id), intent, PendingIntent.FLAG_ONE_SHOT);
-        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        //add new rating to totalRating
+        attractionViewModel.getSelectedAttraction().setTotalRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating() + newRating);
 
+        //compute rating
+        attractionViewModel.getSelectedAttraction().setRating(computeRating(
+                attractionViewModel.getSelectedAttraction().getTotalRating()));
+
+        Toast.makeText(getContext(), "You successfully rated the attraction", Toast.LENGTH_SHORT).show();
+        updateAttractionInFirebase();
+    }
+
+    private void showTicketDialog() {
+
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.item_attraction_ticket);
+
+        dialog.show();
+        dialogIsShowing = true;
+
+        backButton = dialog.findViewById(R.id.item_attraction_ticket_back_btn);
+        confirmButton = dialog.findViewById(R.id.item_attraction_okay_btn);
+        ticketImageView = dialog.findViewById(R.id.item_attraction_ticket_iv);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogIsShowing = false;
+                dialog.dismiss();
+            }
+        });
+
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogIsShowing = false;
+                dialog.dismiss();
+            }
+        });
+
+        ticketImageView.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            int PICK_IMAGE = 1;
+            startActivityForResult(Intent.createChooser(intent, "Select Ticket"), PICK_IMAGE);
+        });
+
+        Glide.with(getActivity())
+                .load(attractionViewModel.getSelectedAttraction().getTicketURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_tourist)
+                .into(ticketImageView);
+
+        updateAttractionInFirebase();
+
+    }
+
+
+    public void uploadTicketToDatabase(Intent imageReturnedIntent) {
+
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Uri to the image
+        Uri selectedImage = imageReturnedIntent.getData();
+
+        final UUID imageUUID = UUID.randomUUID();
+
+        final StorageReference storageReference = storage.getReference().child("AttractionTickets/" + imageUUID);
+
+        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
+
+                    storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                                attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
+                            })
+                            .addOnFailureListener(exception -> {
+                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                            });
+                });
     }
 
 }
