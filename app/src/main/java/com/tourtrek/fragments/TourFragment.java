@@ -3,10 +3,13 @@ package com.tourtrek.fragments;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,6 +18,10 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -29,11 +36,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +59,18 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -71,6 +92,7 @@ import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
@@ -79,6 +101,7 @@ import com.tourtrek.viewModels.TourViewModel;
 
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,11 +113,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
-// TODO - perhaps logic ought to be implemented preventing tours with the same name from being displayed in the market
-// TODO - do the above through stopping a user from making a duplicate tour public and displaying a toast
-// TODO - add usernames to tours in the marketplace
-// TODO - cases to test = a non-user should not see the import button, clicking on your own tour in the market should not present the import button,
-// successful importation into personal tours, separation of the two tours.
+import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -117,7 +136,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private CheckBox publicCheckBox;
     private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
-    Button shareButton;
+    private Button shareButton;
     private ImageView coverImageView;
     private Button attractionSortButton;
     private AlertDialog dialog;
@@ -126,6 +145,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             "Name Descending", "Location Descending", "Cost Descending"};
     private String result = "";
     private boolean added;
+    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private Button navigationButton;
+//    private NestedScrollView scrollView;
     // To keep track of whether we are in an async call
     private boolean loading;
 
@@ -164,7 +186,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        //initialize attractionSortButton
+        // Initialize attractionSortButton
         attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
@@ -209,6 +231,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         startDateButton = tourView.findViewById(R.id.tour_start_date_btn);
         endDateButton = tourView.findViewById(R.id.tour_end_date_btn);
         updateTourButton = tourView.findViewById(R.id.tour_update_btn);
+        navigationButton = tourView.findViewById(R.id.tour_navigation_btn);
         deleteTourButton = tourView.findViewById(R.id.tour_delete_btn);
         shareButton = tourView.findViewById(R.id.tour_share_btn);
         tourImportButton = tourView.findViewById(R.id.tour_import_btn);
@@ -218,6 +241,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         publicCheckBox =  tourView.findViewById(R.id.tour_public_cb);
         notificationsCheckBox = tourView.findViewById(R.id.tour_notifications_cb);
         buttonsContainer = tourView.findViewById(R.id.tour_buttons_container);
+
+        // No navigation with a brand new tour
+        if (tourViewModel.isNewTour()){
+            navigationButton.setVisibility(View.GONE);
+        }
 
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
@@ -404,8 +432,11 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         ((MainActivity)requireActivity()).enableTabs();
         loading = false;
 
+        setupNavigationButton(tourView);
+
         return tourView;
     }
+
 
     @Override
     public void onDestroyView() {
@@ -437,7 +468,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         }
 
-        if (!tourViewModel.returnedFromAddAttraction()) {
+        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation()) {
             tourViewModel.setSelectedTour(null);
             tourViewModel.setIsNewTour(null);
         }
@@ -517,6 +548,51 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     /**
+     * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
+     * account.
+     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
+     * @param tourView
+     */
+    private void setupImportTourButton(View tourView) {
+        tourImportButton.setOnClickListener(u -> {
+            // get the current tour
+            Tour tour = tourViewModel.getSelectedTour();
+
+            // create a new Firestore document
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference newTourDoc = db.collection("Tours").document();
+
+            // set the ID of the tour object to that of the new document
+            // the original tour document in the Firestore will not be touched, so changing the ID should be fine
+            tour.setTourUID(newTourDoc.getId());
+            // set the new tour to private by default to avoid cluttering the tour market with it until
+            // after the user has had a chance to modify it
+            tour.setPubliclyAvailable(false);
+
+            // set the content of the new Firestore document
+            newTourDoc.set(tour).addOnCompleteListener(v -> {
+
+                Log.d(TAG, "The tour was imported.");
+//                Toast.makeText(getContext(), "The tour was imported.", Toast.LENGTH_LONG).show();
+
+            })
+                .addOnFailureListener(v1 -> {
+
+                    Log.d(TAG, "Tour importation failed.");
+//                    Toast.makeText(getContext(), "Tour importation failed.", Toast.LENGTH_LONG).show();
+
+                });
+
+            // add the tour to the user's list of tours
+            MainActivity.user.getTours().add(newTourDoc);
+            updateUser();
+
+            // go back
+            getParentFragmentManager().popBackStack();
+        });
+    }
+
+    /**
      * Retrieve all attractions belonging to this user
      */
     private void fetchAttractionsAsync() {
@@ -577,6 +653,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+
+            updateTourButton.setVisibility(View.VISIBLE);
             tourImportButton.setVisibility(View.GONE);
             addAttractionButton.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
@@ -608,6 +686,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+
+            updateTourButton.setVisibility(View.VISIBLE);
             tourImportButton.setVisibility(View.GONE);
             addAttractionButton.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
@@ -676,7 +756,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     /**
      * Remove the tour from the user's list of tours in the database and return to the prior screen
-     * // TODO deal with the problem of deleting a tour which is referenced by another user
      *
      * @param view
      */
@@ -935,7 +1014,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
@@ -1211,6 +1289,24 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return newTour;
     }
 
+
+    private void setupNavigationButton(View tourView){
+        navigationButton.setOnClickListener(v -> {
+
+            // check that location services are enabled and give a prompt to enable them if needed
+//            Boolean permissionIsGranted = PlacesLocal.checkLocationPermission(getContext());
+//            if (permissionIsGranted){
+//                Log.d(TAG, "Location enabled");
+
+                tourViewModel.setReturnedFromNavigation(true);
+
+                // switch to the map fragment
+                final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment, new MapsFragment(), "MapsFragment");
+                ft.addToBackStack("MapsFragment").commit();
+//            }
+        });
+    }
 
 }
 
