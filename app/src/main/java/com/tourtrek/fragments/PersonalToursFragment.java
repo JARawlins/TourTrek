@@ -79,6 +79,8 @@ public class PersonalToursFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        ((MainActivity)requireActivity()).disableTabs();
+
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
 
         mAuth = FirebaseAuth.getInstance();
@@ -116,6 +118,8 @@ public class PersonalToursFragment extends Fragment {
         configureRecyclerViews(personalToursView);
         configureSwipeRefreshLayouts(personalToursView);
         configureOnClickRecyclerView();
+
+        ((MainActivity)requireActivity()).enableTabs();
 
         return personalToursView;
     }

@@ -77,7 +77,6 @@ public class ProfileFragment extends Fragment {
             return profileFragmentView;
         }
 
-        // TODO: This is where we will load the users information into their profile
 
         // Set the users username on their profile
         TextView usernameTextView = profileFragmentView.findViewById(R.id.profile_username_tv);
@@ -167,8 +166,6 @@ public class ProfileFragment extends Fragment {
         Button settingsButton = view.findViewById(R.id.profile_settings_btn);
 
         settingsButton.setOnClickListener(v -> {
-           // Toast.makeText(getContext(), "Test123", Toast.LENGTH_SHORT).show();
-            //TODO: open settings xml
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new SettingsFragment(), "SettingsFragment");
             ft.addToBackStack("SettingsFragment").commit();
