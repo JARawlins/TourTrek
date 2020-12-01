@@ -1,9 +1,19 @@
 package com.tourtrek.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -17,12 +27,15 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -36,9 +49,11 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -50,21 +65,30 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
+import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
+import com.tourtrek.data.Tour;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import org.w3c.dom.Document;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,7 +96,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -139,6 +165,7 @@ public class AttractionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Grab a reference to the current view
         View attractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
 
@@ -397,7 +424,7 @@ public class AttractionFragment extends Fragment {
                     Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
                 }
 
-                ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton, weatherTextView, getContext());
+                showDatePickerDialog(startDateButton, weatherTextView, getContext(), "start");
             }
         });
 
@@ -435,7 +462,7 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-        endDateButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showDatePickerDialog(endDateButton));
+        endDateButton.setOnClickListener(view -> showDatePickerDialog(endDateButton, null, getContext(), "end"));
 
         endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -489,6 +516,7 @@ public class AttractionFragment extends Fragment {
 
         // set up the action to carry out via the update button
         setupUpdateAttractionButton(attractionView);
+
         // set up the action to carry out via the delete button
         setupDeleteAttractionButton(attractionView);
 
@@ -500,6 +528,13 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (attractionViewModel.getSelectedAttraction() != null) {
+            if (attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getEndDate() != null)
+                endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
+        }
 
         // Add info from searching Google Places API
         if (attractionViewModel.returnedFromSearch()) {
@@ -772,11 +807,11 @@ public class AttractionFragment extends Fragment {
             if(resultCode == Activity.RESULT_OK && !dialogIsShowing) {
                 assert data != null;
 
-                    Glide.with(this)
-                            .load(data.getData())
-                            .placeholder(R.drawable.default_image)
-                            .into(coverImageView);
-                    uploadImageToDatabase(data);
+                Glide.with(this)
+                        .load(data.getData())
+                        .placeholder(R.drawable.default_image)
+                        .into(coverImageView);
+                uploadImageToDatabase(data);
             }
         }
 
@@ -1025,6 +1060,84 @@ public class AttractionFragment extends Fragment {
                 .into(coverImageView);
     }
 
+    public void showDatePickerDialog(Button button, TextView weather, Context context, String type) {
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+
+                String date = (month + 1) + "/" + day + "/" + year;
+                button.setText(date);
+                button.setBackgroundColor(Color.parseColor("#10000000"));
+
+                try {
+                    if (type.equals("start"))
+                        attractionViewModel.getSelectedAttraction().setStartDateFromString(button.getText().toString());
+                    else
+                        attractionViewModel.getSelectedAttraction().setEndDateFromString(button.getText().toString());
+                } catch (ParseException e) {
+                    Log.e(TAG, "Error converting startDate to a firebase Timestamp");
+                }
+
+                if (weather != null) {
+                    AttractionViewModel attractionViewModel = new ViewModelProvider((MainActivity)context).get(AttractionViewModel.class);
+
+                    // Wait for the weather api to receive the data
+                    if (attractionViewModel.getSelectedAttraction().getWeather() != null) {
+
+                        for (Map.Entry<String, String> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
+                            String aDateString = entry.getKey();
+
+                            java.text.DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+
+                            Calendar calendar = Calendar.getInstance();
+
+                            try {
+                                Date aDate = formatter.parse(aDateString);
+                                calendar.setTime(aDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                Log.e(TAG, "Error converting string date");
+                            }
+
+                            String temperature = entry.getValue();
+
+                            int aMonth = calendar.get(Calendar.MONTH);
+                            int aDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            int aYear = calendar.get(Calendar.YEAR);
+
+                            if (aMonth == month && aDay == day && aYear == year) {
+                                weather.setText(String.format("%s℉", temperature));
+                                break;
+                            }
+                            else
+                                weather.setText("N/A");
+
+                        }
+                    }
+                }
+            }
+        };
+
+        TourViewModel tourViewModel = new ViewModelProvider((MainActivity)context).get(TourViewModel.class);
+
+        final Calendar calendar = Calendar.getInstance();;
+
+        if (tourViewModel.getSelectedTour().getStartDate() != null) {
+            if (type.equals("end") && attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+            else
+                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+        }
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, day);
+
+        datePickerDialog.show();
+    }
 
     private void showReviewDialog(){
 
