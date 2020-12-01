@@ -120,8 +120,6 @@ import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
-
-// TODO - map scrolling https://stackoverflow.com/questions/14025859/scrollview-is-catching-touch-event-for-google-map
 import  com.facebook.FacebookSdk;
 
 
