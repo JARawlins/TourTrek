@@ -42,13 +42,14 @@ public class FriendFragmentTest {
 
 
     @Before
-    public void setup() {
+    public void setup() throws InterruptedException {
 
         mainActivityScenario = mainActivityScenarioRule.getScenario();
 
         // If any user is logged in, make sure to log them out
         try {
             onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(3)));
+
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
@@ -59,6 +60,7 @@ public class FriendFragmentTest {
             onView(withId(R.id.login_password_et)).perform(typeText("123456"), ViewActions.closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
+            sleep(1000);
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(1000)));
             onView(withId(R.id.profile_friend_btn)).perform(click());
