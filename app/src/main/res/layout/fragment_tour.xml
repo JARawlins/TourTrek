@@ -349,10 +349,24 @@
                     android:textColor="#EEEEEE"
                     android:textStyle="bold" />
 
+                <Button
+                    android:id="@+id/tour_add_friend_btn"
+                    android:layout_width="210dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/btn_shape_selector_primary"
+                    android:enabled="true"
+                    android:text="Add Friend"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:textStyle="bold" />
+
 
                 <Button
                     android:id="@+id/tour_add_attraction_btn"
-                    android:layout_width="210dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
