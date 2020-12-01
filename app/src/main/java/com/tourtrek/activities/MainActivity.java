@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -77,6 +80,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 4588;
     private FirebaseAuth mAuth;
     public static boolean loading;
     public static User user;
@@ -211,4 +215,5 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationView.getMenu().getItem(i).setEnabled(true);
         }
     }
+
 }
