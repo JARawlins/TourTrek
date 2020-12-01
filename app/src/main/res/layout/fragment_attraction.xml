@@ -346,9 +346,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="5dp"
-                    android:weightSum="1.0">
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp">
 
                     <Button
                         android:id="@+id/attraction_update_btn"
@@ -356,7 +355,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="24dp"
                         android:layout_marginStart="24dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
                         android:background="@drawable/btn_shape_selector_white"
                         android:enabled="true"
                         android:text="Update Attraction"
@@ -372,7 +371,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="24dp"
                         android:layout_marginStart="24dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
                         android:background="@drawable/btn_shape_selector_white"
                         android:enabled="true"
                         android:text="Navigation"
@@ -388,7 +387,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="24dp"
                         android:layout_marginStart="24dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
                         android:background="@drawable/btn_shape_selector_white"
                         android:enabled="true"
                         android:text="Delete Attraction"
