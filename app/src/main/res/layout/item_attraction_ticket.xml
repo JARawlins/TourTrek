@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_attraction_ticket_iv" />
 
-    <com.github.barteksc.pdfviewer.PDFView
+    <VerticalViewPager
         android:id="@+id/item_attraction_ticket_iv"
         android:layout_width="301dp"
         android:layout_height="431dp"

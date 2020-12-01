@@ -1122,11 +1122,9 @@ public class AttractionFragment extends Fragment {
         });
 
         uploadTicketButton.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("application/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
+
             int PICK_IMAGE = 1;
-            startActivityForResult(Intent.createChooser(intent, "Select Ticket"), PICK_IMAGE);
+            startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), PICK_IMAGE);
         });
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -1182,5 +1180,29 @@ public class AttractionFragment extends Fragment {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
                 });
+    }
+
+    private Intent getFileChooserIntent() {
+        String[] mimeTypes = {"image/*", "application/pdf"};
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
+            if (mimeTypes.length > 0) {
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            }
+        } else {
+            String mimeTypesStr = "";
+
+            for (String mimeType : mimeTypes) {
+                mimeTypesStr += mimeType + "|";
+            }
+
+            intent.setType(mimeTypesStr.substring(0, mimeTypesStr.length() - 1));
+        }
+
+        return intent;
     }
 }
