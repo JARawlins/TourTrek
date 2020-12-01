@@ -32,6 +32,29 @@ public class Tour{
     public Tour() {}
 
     /**
+     * Complete constructor
+     */
+    public Tour(String name, Date startDate, Date endDate, String location, float cost, Boolean notifications,
+                List<String> reviews, String description, Boolean publiclyAvailable, List<DocumentReference> attractions,
+                String coverImageURI, String tourUID){
+
+        // populate all fields except for length and attractions
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.location = location;
+        this.cost = cost;
+        this.notifications = notifications;
+        this.reviews = reviews;
+        this.description = description;
+        this.publiclyAvailable = publiclyAvailable;
+        this.attractions = attractions;
+        this.coverImageURI = coverImageURI;
+        this.tourUID = tourUID;
+
+    }
+
+    /**
      * Getter for name
      *
      * @return current name
