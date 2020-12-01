@@ -3,6 +3,7 @@ package com.tourtrek.fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -152,6 +154,7 @@ public class AttractionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Grab a reference to the current view
         View attractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
 
@@ -331,7 +334,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && nameEditText.getHint().equals("")) {
                 if (nameEditText.getText().toString().equals("")) {
                     nameEditText.setHint("Attraction Name");
-                    nameEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    nameEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -347,7 +350,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && locationEditText.getHint().equals("")) {
                 if (locationEditText.getText().toString().equals("")) {
                     locationEditText.setHint("City, State");
-                    locationEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -362,7 +365,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && costEditText.getHint().equals("")) {
                 if (costEditText.getText().toString().equals("")) {
                     costEditText.setHint("$0.00");
-                    costEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    costEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -376,7 +379,7 @@ public class AttractionFragment extends Fragment {
                     Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
                 }
 
-                ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton, weatherTextView, getContext());
+                showDatePickerDialog(startDateButton, weatherTextView, getContext(), "start");
             }
         });
 
@@ -391,7 +394,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && startDateButton.getHint().equals("")) {
                 if (startDateButton.getText().toString().equals("")) {
                     startDateButton.setHint("Pick Date");
-                    startDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -409,12 +412,12 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && startTimeButton.getHint().equals("")) {
                 if (startTimeButton.getText().toString().equals("")) {
                     startTimeButton.setHint("Pick Time");
-                    startTimeButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
 
-        endDateButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showDatePickerDialog(endDateButton));
+        endDateButton.setOnClickListener(view -> showDatePickerDialog(endDateButton, null, getContext(), "end"));
 
         endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -427,7 +430,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && endDateButton.getHint().equals("")) {
                 if (endDateButton.getText().toString().equals("")) {
                     endDateButton.setHint("Pick Date");
-                    endDateButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -445,7 +448,7 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && endTimeButton.getHint().equals("")) {
                 if (endTimeButton.getText().toString().equals("")) {
                     endTimeButton.setHint("Pick Time");
-                    endTimeButton.setBackgroundColor(Color.parseColor("#E4A561"));
+                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
@@ -461,13 +464,14 @@ public class AttractionFragment extends Fragment {
             if (!hasFocus && descriptionEditText.getHint().equals("")) {
                 if (descriptionEditText.getText().toString().equals("")) {
                     descriptionEditText.setHint("Details");
-                    descriptionEditText.setBackgroundColor(Color.parseColor("#E4A561"));
+                    descriptionEditText.setBackgroundColor(Color.parseColor("#FF4859"));
                 }
             }
         });
 
         // set up the action to carry out via the update button
         setupUpdateAttractionButton(attractionView);
+
         // set up the action to carry out via the delete button
         setupDeleteAttractionButton(attractionView);
 
@@ -479,6 +483,13 @@ public class AttractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (attractionViewModel.getSelectedAttraction() != null) {
+            if (attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getEndDate() != null)
+                endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
+        }
 
         // Add info from searching Google Places API
         if (attractionViewModel.returnedFromSearch()) {
@@ -589,7 +600,7 @@ public class AttractionFragment extends Fragment {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
 
             if (resultCode == Activity.RESULT_OK) {
-              
+
                 ((MainActivity)requireActivity()).disableTabs();
                 loading = true;
 
@@ -984,5 +995,83 @@ public class AttractionFragment extends Fragment {
                 .into(coverImageView);
     }
 
+    public void showDatePickerDialog(Button button, TextView weather, Context context, String type) {
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+
+                String date = (month + 1) + "/" + day + "/" + year;
+                button.setText(date);
+                button.setBackgroundColor(Color.parseColor("#10000000"));
+
+                try {
+                    if (type.equals("start"))
+                        attractionViewModel.getSelectedAttraction().setStartDateFromString(button.getText().toString());
+                    else
+                        attractionViewModel.getSelectedAttraction().setEndDateFromString(button.getText().toString());
+                } catch (ParseException e) {
+                    Log.e(TAG, "Error converting startDate to a firebase Timestamp");
+                }
+
+                if (weather != null) {
+                    AttractionViewModel attractionViewModel = new ViewModelProvider((MainActivity)context).get(AttractionViewModel.class);
+
+                    // Wait for the weather api to receive the data
+                    if (attractionViewModel.getSelectedAttraction().getWeather() != null) {
+
+                        for (Map.Entry<String, String> entry : attractionViewModel.getSelectedAttraction().getWeather().entrySet()) {
+                            String aDateString = entry.getKey();
+
+                            java.text.DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+
+                            Calendar calendar = Calendar.getInstance();
+
+                            try {
+                                Date aDate = formatter.parse(aDateString);
+                                calendar.setTime(aDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                Log.e(TAG, "Error converting string date");
+                            }
+
+                            String temperature = entry.getValue();
+
+                            int aMonth = calendar.get(Calendar.MONTH);
+                            int aDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            int aYear = calendar.get(Calendar.YEAR);
+
+                            if (aMonth == month && aDay == day && aYear == year) {
+                                weather.setText(String.format("%s℉", temperature));
+                                break;
+                            }
+                            else
+                                weather.setText("N/A");
+
+                        }
+                    }
+                }
+            }
+        };
+
+        TourViewModel tourViewModel = new ViewModelProvider((MainActivity)context).get(TourViewModel.class);
+
+        final Calendar calendar = Calendar.getInstance();;
+
+        if (tourViewModel.getSelectedTour().getStartDate() != null) {
+            if (type.equals("end") && attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+            else
+                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+        }
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, day);
+
+        datePickerDialog.show();
+    }
 
 }
