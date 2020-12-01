@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -27,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -52,14 +55,15 @@ public class PersonalToursFragment extends Fragment {
     private RecyclerView currentRecyclerView;
     private RecyclerView futureRecyclerView;
     private RecyclerView pastRecyclerView;
-    private RecyclerView.Adapter currentTourAdapter;
-    private RecyclerView.Adapter futureTourAdapter;
-    private RecyclerView.Adapter pastTourAdapter;
+    private CurrentPersonalToursAdapter currentTourAdapter;
+    private FuturePersonalToursAdapter futureTourAdapter;
+    private PastPersonalToursAdapter pastTourAdapter;
     private SwipeRefreshLayout currentSwipeRefreshLayout;
     private SwipeRefreshLayout futureSwipeRefreshLayout;
     private SwipeRefreshLayout pastSwipeRefreshLayout;
     private TourViewModel tourViewModel;
     private FirebaseAuth mAuth;
+    private Button changeThemeButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +94,44 @@ public class PersonalToursFragment extends Fragment {
 
         // Initialize view model
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
+
+        // initialize theme button
+        changeThemeButton = personalToursView.findViewById(R.id.change_theme_btn);
+        // use shared preferences to determine if cool theme is on or off
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
+
+        // when user reopens the app after applying the warm or cool theme
+        if (isDarkModeOn) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            changeThemeButton.setText("Warm Theme");
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            changeThemeButton.setText("Cool Theme");
+        }
+
+        changeThemeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // when user touches warm or cool theme button
+                if (isDarkModeOn) {
+                    // if the cool theme is enabled, it will turn it off
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean("isDarkModeOn", false);
+                    editor.apply();
+                    // change the text of theme button
+                    changeThemeButton.setText("Cool Theme");
+                } else {
+                    // if the warm theme is enabled, it will turn it off
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean("isDarkModeOn", true);
+                    editor.apply();
+                    // change the text of theme button
+                    changeThemeButton.setText("Cool Theme");
+                }
+            }
+        });
 
         Button personalFutureToursTitleButton = personalToursView.findViewById(R.id.personal_future_tours_title_btn);
 
@@ -145,11 +187,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
         currentRecyclerView.setLayoutManager(currentToursLayoutManager);
 
+        // Specify an adapter
+        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("current");
 
-        // Specify an adapter
-        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
         currentRecyclerView.setAdapter(currentTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -177,11 +220,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
         futureRecyclerView.setLayoutManager(futureToursLayoutManager);
 
+        // Specify an adapter
+        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("future");
 
-        // Specify an adapter
-        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
         futureRecyclerView.setAdapter(futureTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -208,10 +252,11 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
         pastRecyclerView.setLayoutManager(pastToursLayoutManager);
 
-        fetchToursAsync("past");
-
         // Specify an adapter
         pastTourAdapter = new PastPersonalToursAdapter(getContext());
+
+        fetchToursAsync("past");
+
         pastRecyclerView.setAdapter(pastTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -310,71 +355,50 @@ public class PersonalToursFragment extends Fragment {
         CollectionReference toursCollection = db.collection("Tours");
 
         // Pull out the UID's of each tour that belongs to this user
-        List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
+
+            currentTourAdapter.clear();
+
+            if (MainActivity.user.getTours().isEmpty())
+                ((MainActivity)requireActivity()).enableTabs();
+
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
-                usersToursUIDs.add(documentReference.getId());
-            }
-        }
 
-        // Query database
-        toursCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                ((MainActivity)requireActivity()).disableTabs();
 
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Tours collection");
-                    }
-                    else {
+                toursCollection.document(documentReference.getId()).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                        // Final list of tours for this category
-                        List<Tour> usersTours = new ArrayList<>();
-
-                        // Go through each document and compare the dates
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-
-                            // First check that the document belongs to the user
-                            if (usersToursUIDs.contains(document.getId())) {
-
-                                Timestamp tourStartDate = (Timestamp) document.get("startDate");
-                                Timestamp tourEndDate = (Timestamp) document.get("endDate");
+                                Timestamp tourStartDate = (Timestamp) documentSnapshot.get("startDate");
+                                Timestamp tourEndDate = (Timestamp) documentSnapshot.get("endDate");
                                 Timestamp now = Timestamp.now();
 
                                 // the start date is before now and the end date is after now
-                                if (type.equals("current") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(document.toObject(Tour.class));
+                                if (type.equals("current") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) > 0) {
+
+                                    currentTourAdapter.addNewData(documentSnapshot.toObject(Tour.class));
+                                    currentSwipeRefreshLayout.setRefreshing(false);
                                 }
                                 // the start date is after now and the end date is after now
-                                else if (type.equals("future") && tourStartDate.compareTo(now) > 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(document.toObject(Tour.class));
+                                else if (type.equals("future") && tourStartDate != null && tourStartDate.compareTo(now) > 0 && tourEndDate != null && tourEndDate.compareTo(now) > 0) {
+
+                                    ((FuturePersonalToursAdapter) futureTourAdapter).addNewData(documentSnapshot.toObject(Tour.class));
+                                    futureSwipeRefreshLayout.setRefreshing(false);
                                 }
                                 // the start date and end dates are before now
-                                else if (type.equals("past") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) < 0) {
-                                    usersTours.add(document.toObject(Tour.class));
+                                else if (type.equals("past") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) < 0) {
+
+                                    ((PastPersonalToursAdapter) pastTourAdapter).addNewData(documentSnapshot.toObject(Tour.class));
+                                    pastSwipeRefreshLayout.setRefreshing(false);
                                 }
+
+                                ((MainActivity)requireActivity()).enableTabs();
                             }
-                        }
-
-                        switch (type) {
-
-                            case "current":
-                                ((CurrentPersonalToursAdapter) currentTourAdapter).clear();
-                                ((CurrentPersonalToursAdapter) currentTourAdapter).addAll(usersTours);
-                                currentSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                            case "future":
-                                ((FuturePersonalToursAdapter) futureTourAdapter).clear();
-                                ((FuturePersonalToursAdapter) futureTourAdapter).addAll(usersTours);
-                                futureSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                            case "past":
-                                ((PastPersonalToursAdapter) pastTourAdapter).clear();
-                                ((PastPersonalToursAdapter) pastTourAdapter).addAll(usersTours);
-                                pastSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                        }
-                    }
-                });
+                        });
+            }
+        }
     }
 
     @Override
