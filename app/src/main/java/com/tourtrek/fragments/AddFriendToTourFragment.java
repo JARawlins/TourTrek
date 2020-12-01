@@ -20,6 +20,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.adapters.FriendsAdapter;
@@ -49,6 +50,7 @@ public class AddFriendToTourFragment extends Fragment {
 
     private FriendViewModel friendViewModel;
     private TourViewModel tourViewModel;
+    private DocumentReference tour;
 
     /**
      * Default for proper back button usage
@@ -71,29 +73,34 @@ public class AddFriendToTourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Grab a reference to the current view
-        View addFriendView = inflater.inflate(R.layout.fragment_add_friend_to_tour, container, false);
+        View FriendSearchView = inflater.inflate(R.layout.fragment_add_friend_to_tour, container, false);
 
         // Initialize view model
         friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
-        // set up the action to carry out via the search button
-        setupSearchButton(addFriendView);
 
-        return addFriendView;
+        // set up the action to carry out via the search button
+        setupSearchButton(FriendSearchView);
+
+        return FriendSearchView;
     }
 
     private void setupSearchButton(View addFriendView) {
 
 
         final EditText emailEditText = addFriendView.findViewById(R.id.add_friend_to_tour_email_et);
-        Button searchButton = addFriendView.findViewById(R.id.add_friend_to_tour_search_btn);
+        final Button searchButton = addFriendView.findViewById(R.id.add_friend_to_tour_search_btn);
         final ProgressBar loadingProgressBar = addFriendView.findViewById(R.id.add_friend_to_tour_loading_pb);
         final TextView errorTextView = addFriendView.findViewById(R.id.add_friend_to_tour_error_tv);
+        final ImageView friendImageView = addFriendView.findViewById(R.id.add_friend_to_tour_profile_iv);
+        final TextView friendNameTextView = addFriendView.findViewById(R.id.add_friend_to_tour_friendName_tv);
+        final Button addFriendButton = addFriendView.findViewById(R.id.add_friend_to_tour_add_btn);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Toast.makeText(getActivity(),
+                        "clicked search", Toast.LENGTH_SHORT).show();
                 // Close keyboard
                 Utilities.hideKeyboard(requireActivity());
 
@@ -124,21 +131,20 @@ public class AddFriendToTourFragment extends Fragment {
                     // Get instance of firestore
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                    // Setup collection reference
+                    // Setup collection references
                     CollectionReference usersCollection = db.collection("Users");
 
-                    // Add UID of users friends to a list
-                    List<String> usersUIDs = new ArrayList<>();
-                    if (!MainActivity.user.getFriends().isEmpty()) {
-                        for (DocumentReference documentReference : MainActivity.user.getFriends()) {
-                            usersUIDs.add(documentReference.getId());
-                        }
-                    }
+
+//                    // Add UID of users friends to a list
+//                    List<String> usersUIDs = new ArrayList<>();
+//                    if (!MainActivity.user.getFriends().isEmpty()) {
+//                        for (DocumentReference documentReference : MainActivity.user.getFriends()) {
+//                            usersUIDs.add(documentReference.getId());
+//                        }
+//                    }
 
                     // Query database
-                    usersCollection
-                            .get()
-                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                    usersCollection.get().addOnSuccessListener(queryDocumentSnapshots -> {
 
                                 if (queryDocumentSnapshots.isEmpty()) {
                                     Log.w(TAG, "No documents found with current email");
@@ -153,18 +159,14 @@ public class AddFriendToTourFragment extends Fragment {
                                     // Go through each document and compare the dates
                                     for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
 
-                                        // First check that the document belongs to the user
-                                        if (document.get("email").equals(email) & MainActivity.user.getFriends().contains(document.getReference())) {
-                                            final DocumentReference friendReference = document.getReference();
-
+                                        if (document.get("email").equals(email) && MainActivity.user.getFriends().contains(document.getReference())) {
+                                            errorTextView.setVisibility(View.GONE);
                                             exists = true;
 
                                             User friend = document.toObject(User.class);
                                             friendViewModel.setSelectedFriend(friend);
 
-                                            final ImageView friendImageView = addFriendView.findViewById(R.id.add_friend_to_tour_profile_iv);
-                                            final TextView friendNameTextView= addFriendView.findViewById(R.id.add_friend_to_tour_friendName_tv);
-                                            final Button addFriendBtn= addFriendView.findViewById(R.id.add_friend_to_tour_add_btn);
+
 
                                             //load profile picture for friend
                                             Glide.with(getContext())
@@ -178,24 +180,27 @@ public class AddFriendToTourFragment extends Fragment {
                                             friendNameTextView.setText(friend.getUsername());
                                             friendNameTextView.setVisibility(View.VISIBLE);
 
-                                            // setupAddFriendButton(addFriendView,friend.getEmail());
-                                            //tourViewModel.getSelectedTour().getTourUID() us this to get tour from database and the try create document object to pass to friend.addtourtotour
-                                            addFriendBtn.setOnClickListener(view1 -> {
-                                               // friend.addTourToTours(tourViewModel.getSelectedTour().getTourUID());
+                                            addFriendButton.setVisibility(View.VISIBLE);
+                                            //get document reference variable for current tour
+                                            tour = db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID());
 
-                                                Toast.makeText(getContext(), "Successfully Add Friend", Toast.LENGTH_SHORT).show();
+
+
+                                            addFriendButton.setOnClickListener(view1 -> {
+                                                friend.addTourToTours(tour);
+
+                                                Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
 
                                             });
-                                            addFriendBtn.setVisibility(View.VISIBLE);
-                                        }
-                                        else{
-                                            errorTextView.setVisibility(View.VISIBLE);
-                                            errorTextView.setText("This user must be on your friends list");
+
                                         }
                                     }
                                     if(!exists){
+                                        friendNameTextView.setVisibility(View.GONE);
+                                        addFriendButton.setVisibility(View.GONE);
+                                        friendImageView.setVisibility(View.GONE);
                                         errorTextView.setVisibility(View.VISIBLE);
-                                        errorTextView.setText("Cannot find user with email entered");
+                                        errorTextView.setText("Cannot find user with email entered on friends list");
                                     }
                                 }
                             });

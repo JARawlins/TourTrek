@@ -132,20 +132,22 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/default_image"
                     android:visibility="gone"/>
+
                 <TextView
                     android:id="@+id/add_friend_to_tour_friendName_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_toRightOf="@+id/add_friend_profile_iv"
                     android:layout_alignParentBottom="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_toRightOf="@+id/add_friend_to_tour_profile_iv"
                     android:text="friendName"
-                    android:textColor="@color/colorAccent"
-                    android:textStyle="bold"
-                    android:textSize="30dp"
                     android:textAlignment="gravity"
-                    android:visibility="gone"/>
+                    android:textColor="@color/colorAccent"
+                    android:textSize="30dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/add_friend_to_tour_add_btn"
@@ -163,7 +165,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".fragment.AddFriendFragment"
+                tools:context=".fragment.AddFriendToTourFragment"
                 android:layout_marginTop="16dp"/>
 
         </LinearLayout>

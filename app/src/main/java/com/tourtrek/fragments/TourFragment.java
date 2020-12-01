@@ -462,6 +462,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         setupDeleteTourButton(tourView);
         setupImportTourButton(tourView);
+        setupAddFriendToTourButton(tourView);
 
         ((MainActivity)requireActivity()).enableTabs();
         loading = false;
@@ -502,7 +503,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         }
 
-        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation()) {
+        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation() && !tourViewModel.returnedFromAddFriendToTour()) {
             tourViewModel.setSelectedTour(null);
             tourViewModel.setIsNewTour(null);
         }
@@ -627,47 +628,18 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     /**
-     * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
-     * account.
+     * This method creates a on click listener for the add friend button. Once clicked it opens a new fragment
+     * that allows the user to search for a friend and then add the tour to their tours list
      * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
      * @param tourView
      */
     private void setupAddFriendToTourButton(View tourView) {
-        tourImportButton.setOnClickListener(u -> {
-            // get the current tour
-            Tour tour = tourViewModel.getSelectedTour();
-
-            // create a new Firestore document
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference newTourDoc = db.collection("Tours").document();
-
-            // set the ID of the tour object to that of the new document
-            // the original tour document in the Firestore will not be touched, so changing the ID should be fine
-            tour.setTourUID(newTourDoc.getId());
-            // set the new tour to private by default to avoid cluttering the tour market with it until
-            // after the user has had a chance to modify it
-            tour.setPubliclyAvailable(false);
-
-            // set the content of the new Firestore document
-            newTourDoc.set(tour).addOnCompleteListener(v -> {
-
-                Log.d(TAG, "The tour was imported.");
-//                Toast.makeText(getContext(), "The tour was imported.", Toast.LENGTH_LONG).show();
-
-            })
-                    .addOnFailureListener(v1 -> {
-
-                        Log.d(TAG, "Tour importation failed.");
-//                    Toast.makeText(getContext(), "Tour importation failed.", Toast.LENGTH_LONG).show();
-
-                    });
-
-            // add the tour to the user's list of tours
-            MainActivity.user.getTours().add(newTourDoc);
-            updateUser();
-
-            // go back
-            getParentFragmentManager().popBackStack();
+        Button addFriend = tourView.findViewById(R.id.tour_add_friend_btn);
+        tourViewModel.setReturnedFromAddFriendToTour(true);
+        addFriend.setOnClickListener(u -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddFriendToTourFragment(), "AddFriendToTourFragment");
+            ft.addToBackStack("AddFriendToTourFragment").commit();
         });
     }
     /**
