@@ -51,6 +51,16 @@ public class AddFriendToTourFragment extends Fragment {
     private FriendViewModel friendViewModel;
     private TourViewModel tourViewModel;
     private DocumentReference tour;
+    private EditText emailEditText;
+    private Button searchButton;
+    private ProgressBar loadingProgressBar;
+    private TextView errorTextView;
+    private ImageView friendImageView;
+    private TextView friendNameTextView;
+    private Button addFriendButton;
+    private User friend;
+    private String friendID;
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     /**
      * Default for proper back button usage
@@ -79,23 +89,39 @@ public class AddFriendToTourFragment extends Fragment {
         friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
+        //set up fields
+        emailEditText = FriendSearchView.findViewById(R.id.add_friend_to_tour_email_et);
+        searchButton = FriendSearchView.findViewById(R.id.add_friend_to_tour_search_btn);
+        loadingProgressBar = FriendSearchView.findViewById(R.id.add_friend_to_tour_loading_pb);
+        errorTextView = FriendSearchView.findViewById(R.id.add_friend_to_tour_error_tv);
+        friendImageView = FriendSearchView.findViewById(R.id.add_friend_to_tour_profile_iv);
+        friendNameTextView = FriendSearchView.findViewById(R.id.add_friend_to_tour_friendName_tv);
+        addFriendButton = FriendSearchView.findViewById(R.id.add_friend_to_tour_add_btn);
+
         // set up the action to carry out via the search button
         setupSearchButton(FriendSearchView);
+        setupAddButton(FriendSearchView);
 
         return FriendSearchView;
     }
 
+    private void setupAddButton(View friendSearchView) {
+        addFriendButton.setOnClickListener(view1 -> {
+            friend.addTourToTours(tour);
+
+            db.collection("Users").document(friendID).get();
+            //addTour(friend,tour);
+
+            Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
+
+        });
+    }
+    private void addTour(User user, DocumentReference tour){
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    }
+
     private void setupSearchButton(View addFriendView) {
-
-
-        final EditText emailEditText = addFriendView.findViewById(R.id.add_friend_to_tour_email_et);
-        final Button searchButton = addFriendView.findViewById(R.id.add_friend_to_tour_search_btn);
-        final ProgressBar loadingProgressBar = addFriendView.findViewById(R.id.add_friend_to_tour_loading_pb);
-        final TextView errorTextView = addFriendView.findViewById(R.id.add_friend_to_tour_error_tv);
-        final ImageView friendImageView = addFriendView.findViewById(R.id.add_friend_to_tour_profile_iv);
-        final TextView friendNameTextView = addFriendView.findViewById(R.id.add_friend_to_tour_friendName_tv);
-        final Button addFriendButton = addFriendView.findViewById(R.id.add_friend_to_tour_add_btn);
-
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,7 +189,8 @@ public class AddFriendToTourFragment extends Fragment {
                                             errorTextView.setVisibility(View.GONE);
                                             exists = true;
 
-                                            User friend = document.toObject(User.class);
+                                            friendID = document.getId();
+                                            friend = document.toObject(User.class);
                                             friendViewModel.setSelectedFriend(friend);
 
 
@@ -186,12 +213,12 @@ public class AddFriendToTourFragment extends Fragment {
 
 
 
-                                            addFriendButton.setOnClickListener(view1 -> {
-                                                friend.addTourToTours(tour);
-
-                                                Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
-
-                                            });
+//                                            addFriendButton.setOnClickListener(view1 -> {
+//                                                friend.addTourToTours(tour);
+//
+//                                                Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
+//
+//                                            });
 
                                         }
                                     }
