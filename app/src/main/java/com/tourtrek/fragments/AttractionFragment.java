@@ -3,6 +3,7 @@ package com.tourtrek.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -122,6 +124,7 @@ public class AttractionFragment extends Fragment {
     Dialog dialog;
     PDFView pdfView;
     Button uploadTicketButton;
+    String fileExtension;
 
     /**
      * Default for proper back button usage
@@ -786,7 +789,8 @@ public class AttractionFragment extends Fragment {
         if(resultCode == Activity.RESULT_OK && dialogIsShowing) {
             assert data != null;
 
-            if (data.getData().toString().contains("photo")) {
+            if (!getMimeType(data.getData()).contains("pdf")) {
+                fileExtension = "pdf";
                 pdfView.setVisibility(View.INVISIBLE);
                 ticketImageView.setVisibility(View.VISIBLE);
                 Glide.with(this)
@@ -804,6 +808,7 @@ public class AttractionFragment extends Fragment {
                     }
                 });
             } else {
+                fileExtension = "image";
                 pdfView.setVisibility(View.VISIBLE);
                 ticketImageView.setVisibility(View.INVISIBLE);
                 pdfView.fromUri(data.getData()).load();
@@ -1085,7 +1090,7 @@ public class AttractionFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         attractionViewModel.getSelectedAttraction().addUser(mAuth.getCurrentUser().getUid());
 
-        if (attractionViewModel.getSelectedAttraction().getReviews().equals(null)) {
+        if (attractionViewModel.getSelectedAttraction().getReviews() == null) {
             attractionViewModel.getSelectedAttraction().setReviews(new ArrayList<>());
             attractionViewModel.getSelectedAttraction().setRating(0);
             attractionViewModel.getSelectedAttraction().setTotalRating(0);
@@ -1104,7 +1109,6 @@ public class AttractionFragment extends Fragment {
     }
 
     private void showTicketDialog() {
-
 
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.item_attraction_ticket);
@@ -1142,14 +1146,7 @@ public class AttractionFragment extends Fragment {
             startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), PICK_IMAGE);
         });
 
-
         getTicketFromFirebase();
-
-        //Uri uri = Uri.parse(attractionViewModel.getSelectedAttraction().getTicketURI());
-//        System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
-//        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-
-
     }
 
     private void getTicketFromFirebase() {
@@ -1165,7 +1162,9 @@ public class AttractionFragment extends Fragment {
                             .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                 @Override
                                 public void onSuccess(byte[] bytes) {
-                                    if (true) {
+                                    System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+                                    System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
+                                    if (attractionViewModel.getSelectedAttraction().getTicketURI().toLowerCase().contains("pdf")) {
                                         ticketImageView.setVisibility(View.INVISIBLE);
                                         pdfView.setVisibility(View.VISIBLE);
                                         pdfView.fromBytes(bytes).load();
@@ -1178,22 +1177,11 @@ public class AttractionFragment extends Fragment {
 
                                 }
                             });
-
-//                //pdfView.fromUri(uri).load();
-//                ticketImageView.setVisibility(View.VISIBLE);
-//                pdfView.setVisibility(View.INVISIBLE);
-//                ticketImageView.setImageURI(uri);
-                System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-                System.out.println(uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println("ooooooooooooooooooooooooooooommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmooooooooooooooo");
-                System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
-                System.out.println(storageReference.getPath());
-                System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
-
+                Log.i(TAG, "Get Ticket from firebase failed");
             }
         });
     }
@@ -1206,7 +1194,7 @@ public class AttractionFragment extends Fragment {
         // Uri to the image
         Uri selectedImage = imageReturnedIntent.getData();
 
-        final String imageUUID = attractionViewModel.getSelectedAttraction().getAttractionUID();
+        final String imageUUID = attractionViewModel.getSelectedAttraction().getAttractionUID() + fileExtension;
 
         final StorageReference storageReference = storage.getReference().child("AttractionTickets/" + imageUUID);
 
@@ -1220,6 +1208,7 @@ public class AttractionFragment extends Fragment {
                     storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
+                                updateAttractionInFirebase();
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
@@ -1249,5 +1238,19 @@ public class AttractionFragment extends Fragment {
         }
 
         return intent;
+    }
+
+    public String getMimeType(Uri uri) {
+        String mimeType = null;
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            ContentResolver cr = getContext().getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
     }
 }
