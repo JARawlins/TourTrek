@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -52,9 +53,9 @@ public class PersonalToursFragment extends Fragment {
     private RecyclerView currentRecyclerView;
     private RecyclerView futureRecyclerView;
     private RecyclerView pastRecyclerView;
-    private RecyclerView.Adapter currentTourAdapter;
-    private RecyclerView.Adapter futureTourAdapter;
-    private RecyclerView.Adapter pastTourAdapter;
+    private CurrentPersonalToursAdapter currentTourAdapter;
+    private FuturePersonalToursAdapter futureTourAdapter;
+    private PastPersonalToursAdapter pastTourAdapter;
     private SwipeRefreshLayout currentSwipeRefreshLayout;
     private SwipeRefreshLayout futureSwipeRefreshLayout;
     private SwipeRefreshLayout pastSwipeRefreshLayout;
@@ -77,6 +78,8 @@ public class PersonalToursFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        ((MainActivity)requireActivity()).disableTabs();
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
 
@@ -116,6 +119,8 @@ public class PersonalToursFragment extends Fragment {
         configureSwipeRefreshLayouts(personalToursView);
         configureOnClickRecyclerView();
 
+        ((MainActivity)requireActivity()).enableTabs();
+
         return personalToursView;
     }
 
@@ -145,11 +150,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager currentToursLayoutManager = new LinearLayoutManager(getContext());
         currentRecyclerView.setLayoutManager(currentToursLayoutManager);
 
+        // Specify an adapter
+        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("current");
 
-        // Specify an adapter
-        currentTourAdapter = new CurrentPersonalToursAdapter(getContext());
         currentRecyclerView.setAdapter(currentTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -177,11 +183,12 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager futureToursLayoutManager = new LinearLayoutManager(getContext());
         futureRecyclerView.setLayoutManager(futureToursLayoutManager);
 
+        // Specify an adapter
+        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
+
         // Get all current tours
         fetchToursAsync("future");
 
-        // Specify an adapter
-        futureTourAdapter = new FuturePersonalToursAdapter(getContext());
         futureRecyclerView.setAdapter(futureTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -208,10 +215,11 @@ public class PersonalToursFragment extends Fragment {
         RecyclerView.LayoutManager pastToursLayoutManager = new LinearLayoutManager(getContext());
         pastRecyclerView.setLayoutManager(pastToursLayoutManager);
 
-        fetchToursAsync("past");
-
         // Specify an adapter
         pastTourAdapter = new PastPersonalToursAdapter(getContext());
+
+        fetchToursAsync("past");
+
         pastRecyclerView.setAdapter(pastTourAdapter);
 
         // Stop showing progressBar when items are loaded
@@ -310,71 +318,45 @@ public class PersonalToursFragment extends Fragment {
         CollectionReference toursCollection = db.collection("Tours");
 
         // Pull out the UID's of each tour that belongs to this user
-        List<String> usersToursUIDs = new ArrayList<>();
         if (!MainActivity.user.getTours().isEmpty()) {
+
+            if (MainActivity.user.getTours().isEmpty())
+                ((MainActivity)requireActivity()).enableTabs();
+
             for (DocumentReference documentReference : MainActivity.user.getTours()) {
-                usersToursUIDs.add(documentReference.getId());
-            }
-        }
 
-        // Query database
-        toursCollection
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                ((MainActivity)requireActivity()).disableTabs();
 
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        Log.w(TAG, "No documents found in the Tours collection");
-                    }
-                    else {
+                toursCollection.document(documentReference.getId()).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                        // Final list of tours for this category
-                        List<Tour> usersTours = new ArrayList<>();
-
-                        // Go through each document and compare the dates
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-
-                            // First check that the document belongs to the user
-                            if (usersToursUIDs.contains(document.getId())) {
-
-                                Timestamp tourStartDate = (Timestamp) document.get("startDate");
-                                Timestamp tourEndDate = (Timestamp) document.get("endDate");
+                                Timestamp tourStartDate = (Timestamp) documentSnapshot.get("startDate");
+                                Timestamp tourEndDate = (Timestamp) documentSnapshot.get("endDate");
                                 Timestamp now = Timestamp.now();
 
                                 // the start date is before now and the end date is after now
-                                if (type.equals("current") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(document.toObject(Tour.class));
-                                }
+                                if (type.equals("current") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) > 0)
+                                    currentTourAdapter.addNewData(documentSnapshot.toObject(Tour.class));
+
                                 // the start date is after now and the end date is after now
-                                else if (type.equals("future") && tourStartDate.compareTo(now) > 0 && tourEndDate.compareTo(now) > 0) {
-                                    usersTours.add(document.toObject(Tour.class));
-                                }
+                                else if (type.equals("future") && tourStartDate != null && tourStartDate.compareTo(now) > 0 && tourEndDate != null && tourEndDate.compareTo(now) > 0)
+                                    futureTourAdapter.addNewData(documentSnapshot.toObject(Tour.class));
+
                                 // the start date and end dates are before now
-                                else if (type.equals("past") && tourStartDate.compareTo(now) < 0 && tourEndDate.compareTo(now) < 0) {
-                                    usersTours.add(document.toObject(Tour.class));
-                                }
-                            }
-                        }
+                                else if (type.equals("past") && tourStartDate != null && tourStartDate.compareTo(now) < 0 && tourEndDate != null && tourEndDate.compareTo(now) < 0)
+                                    pastTourAdapter.addNewData(documentSnapshot.toObject(Tour.class));
 
-                        switch (type) {
-
-                            case "current":
-                                ((CurrentPersonalToursAdapter) currentTourAdapter).clear();
-                                ((CurrentPersonalToursAdapter) currentTourAdapter).addAll(usersTours);
                                 currentSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                            case "future":
-                                ((FuturePersonalToursAdapter) futureTourAdapter).clear();
-                                ((FuturePersonalToursAdapter) futureTourAdapter).addAll(usersTours);
                                 futureSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                            case "past":
-                                ((PastPersonalToursAdapter) pastTourAdapter).clear();
-                                ((PastPersonalToursAdapter) pastTourAdapter).addAll(usersTours);
                                 pastSwipeRefreshLayout.setRefreshing(false);
-                                break;
-                        }
-                    }
-                });
+
+                                ((MainActivity)requireActivity()).enableTabs();
+                            }
+                        });
+            }
+        }
     }
 
     @Override
