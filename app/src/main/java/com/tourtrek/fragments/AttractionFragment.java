@@ -93,6 +93,8 @@ public class AttractionFragment extends Fragment {
 
     private static final String TAG = "AttractionFragment";
     private static final int AUTOCOMPLETE_REQUEST_CODE = 4588;
+    private static final int ADD_PDF_CODE = 4589;
+    private static final int COVER_IMAGE_CODE = 4590;
     private EditText locationEditText;
     private EditText costEditText;
     private EditText nameEditText;
@@ -115,7 +117,7 @@ public class AttractionFragment extends Fragment {
     // To keep track of whether we are in an async call
     private boolean loading;
     // To keep track of whether tour ticket dialog is showing
-    private boolean dialogIsShowing;
+    //private boolean dialogIsShowing;
     private Button addTicketButton;
     private ImageView ticketImageView;
     private Button backButton;
@@ -590,8 +592,7 @@ public class AttractionFragment extends Fragment {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
-                    int PICK_IMAGE = 1;
-                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), COVER_IMAGE_CODE);
                 }
             });
         }
@@ -762,8 +763,37 @@ public class AttractionFragment extends Fragment {
                 // Do Nothing because the user is exiting intent
             }
         }
-        else {
-            if(resultCode == Activity.RESULT_OK && !dialogIsShowing) {
+        else if (requestCode == ADD_PDF_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                assert data != null;
+
+                if (!getMimeType(data.getData()).contains("pdf")) {
+                    fileExtension = "image";
+                    pdfView.setVisibility(View.INVISIBLE);
+                    ticketImageView.setVisibility(View.VISIBLE);
+                    Glide.with(this)
+                            .load(data.getData())
+                            .placeholder(R.drawable.default_image)
+                            .into(ticketImageView);
+
+                } else {
+                    fileExtension = "pdf";
+                    pdfView.setVisibility(View.VISIBLE);
+                    ticketImageView.setVisibility(View.INVISIBLE);
+                    pdfView.fromUri(data.getData()).load();
+                }
+
+                //Write to Firebase only when the user confirm
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadTicketToDatabase(data);
+                    }
+                });
+            }
+        }
+        else if (requestCode == COVER_IMAGE_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
                 assert data != null;
 
                 Glide.with(this)
@@ -773,38 +803,6 @@ public class AttractionFragment extends Fragment {
                 uploadImageToDatabase(data);
             }
         }
-
-        if(resultCode == Activity.RESULT_OK && dialogIsShowing) {
-            assert data != null;
-
-            if (!getMimeType(data.getData()).contains("pdf")) {
-                fileExtension = "image";
-                pdfView.setVisibility(View.INVISIBLE);
-                ticketImageView.setVisibility(View.VISIBLE);
-                Glide.with(this)
-                        .load(data.getData())
-                        .placeholder(R.drawable.default_image)
-                        .into(ticketImageView);
-
-                //Write to Firebase only when the user confirm
-                confirmButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        uploadTicketToDatabase(data);
-                        updateAttractionInFirebase();
-                        dialog.dismiss();
-                    }
-                });
-            } else {
-                fileExtension = "pdf";
-                pdfView.setVisibility(View.VISIBLE);
-                ticketImageView.setVisibility(View.INVISIBLE);
-                pdfView.fromUri(data.getData()).load();
-                uploadTicketToDatabase(data);
-            }
-
-        }
-
     }
 
     /**
@@ -823,20 +821,26 @@ public class AttractionFragment extends Fragment {
 
         final StorageReference storageReference = storage.getReference().child("AttractionCoverPictures/" + imageUUID);
 
-        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+        storageReference.putFile(selectedImage)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
 
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
-
-                    storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
-                            .addOnSuccessListener(uri -> {
-                                attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
-                            })
-                            .addOnFailureListener(exception -> {
-                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
-                            });
+                        storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
+                                .addOnSuccessListener(uri -> {
+                                    attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
+                                })
+                                .addOnFailureListener(exception -> {
+                                    Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage");
+                    }
                 });
     }
 
@@ -1160,7 +1164,6 @@ public class AttractionFragment extends Fragment {
         dialog.setContentView(R.layout.item_attraction_ticket);
 
         dialog.show();
-        dialogIsShowing = true;
 
         backButton = dialog.findViewById(R.id.item_attraction_ticket_back_btn);
         confirmButton = dialog.findViewById(R.id.item_attraction_okay_btn);
@@ -1171,7 +1174,7 @@ public class AttractionFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogIsShowing = false;
+
                 dialog.dismiss();
             }
         });
@@ -1179,7 +1182,7 @@ public class AttractionFragment extends Fragment {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogIsShowing = false;
+
                 dialog.dismiss();
             }
         });
@@ -1187,9 +1190,7 @@ public class AttractionFragment extends Fragment {
         uploadTicketButton.setOnClickListener(view -> {
             ticketImageView.setVisibility(View.VISIBLE);
             pdfView.setVisibility(View.VISIBLE);
-
-            int PICK_IMAGE = 1;
-            startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), PICK_IMAGE);
+            startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), ADD_PDF_CODE);
         });
 
         getTicketFromFirebase();
@@ -1240,6 +1241,7 @@ public class AttractionFragment extends Fragment {
 
     public void uploadTicketToDatabase(Intent imageReturnedIntent) {
 
+
         final FirebaseStorage storage = FirebaseStorage.getInstance();
 
         // Uri to the image
@@ -1261,6 +1263,10 @@ public class AttractionFragment extends Fragment {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
                                 attractionViewModel.getSelectedAttraction().setTicket(imageUUID);
                                 updateAttractionInFirebase();
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                }
+
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
