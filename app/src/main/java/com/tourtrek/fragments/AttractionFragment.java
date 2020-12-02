@@ -118,13 +118,13 @@ public class AttractionFragment extends Fragment {
     private boolean dialogIsShowing;
     private ImageButton rate;
     private Button addTicketButton;
-    ImageView ticketImageView;
-    Button backButton;
-    Button confirmButton;
-    Dialog dialog;
-    PDFView pdfView;
-    Button uploadTicketButton;
-    String fileExtension;
+    private ImageView ticketImageView;
+    private Button backButton;
+    private Button confirmButton;
+    private Dialog dialog;
+    private PDFView pdfView;
+    private Button uploadTicketButton;
+    private String fileExtension;
 
     /**
      * Default for proper back button usage
@@ -790,7 +790,7 @@ public class AttractionFragment extends Fragment {
             assert data != null;
 
             if (!getMimeType(data.getData()).contains("pdf")) {
-                fileExtension = "pdf";
+                fileExtension = "image";
                 pdfView.setVisibility(View.INVISIBLE);
                 ticketImageView.setVisibility(View.VISIBLE);
                 Glide.with(this)
@@ -808,7 +808,7 @@ public class AttractionFragment extends Fragment {
                     }
                 });
             } else {
-                fileExtension = "image";
+                fileExtension = "pdf";
                 pdfView.setVisibility(View.VISIBLE);
                 ticketImageView.setVisibility(View.INVISIBLE);
                 pdfView.fromUri(data.getData()).load();
@@ -1150,10 +1150,16 @@ public class AttractionFragment extends Fragment {
     }
 
     private void getTicketFromFirebase() {
+        if (attractionViewModel.getSelectedAttraction().getTicket() == null ||
+                attractionViewModel.getSelectedAttraction().getTicket().length() <= 5) {
+            attractionViewModel.getSelectedAttraction().setTicket(
+                    attractionViewModel.getSelectedAttraction().getAttractionUID() + "image"
+            );
+        }
         FirebaseStorage storage = FirebaseStorage.getInstance();
         final StorageReference storageReference = storage.getReference()
                 .child("AttractionTickets")
-                .child(attractionViewModel.getSelectedAttraction().getAttractionUID());
+                .child(attractionViewModel.getSelectedAttraction().getTicket());
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -1162,9 +1168,8 @@ public class AttractionFragment extends Fragment {
                             .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                 @Override
                                 public void onSuccess(byte[] bytes) {
-                                    System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-                                    System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
-                                    if (attractionViewModel.getSelectedAttraction().getTicketURI().toLowerCase().contains("pdf")) {
+
+                                    if (attractionViewModel.getSelectedAttraction().getTicket().toLowerCase().contains("pdf")) {
                                         ticketImageView.setVisibility(View.INVISIBLE);
                                         pdfView.setVisibility(View.VISIBLE);
                                         pdfView.fromBytes(bytes).load();
@@ -1208,6 +1213,7 @@ public class AttractionFragment extends Fragment {
                     storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
+                                attractionViewModel.getSelectedAttraction().setTicket(imageUUID);
                                 updateAttractionInFirebase();
                             })
                             .addOnFailureListener(exception -> {
