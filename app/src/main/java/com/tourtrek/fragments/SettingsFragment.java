@@ -2,6 +2,7 @@ package com.tourtrek.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,12 +105,13 @@ public class SettingsFragment extends Fragment {
 
         Button feedbackButton = view.findViewById(R.id.settings_feedback_btn);
         feedbackButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("plain/text");
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
             intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback@tourtrek.com" });
             intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
             intent.putExtra(Intent.EXTRA_TEXT, "<Enter Feedback Here>");
-            startActivity(Intent.createChooser(intent, "Select Email Client"));
+            if (intent.resolveActivity(getContext().getPackageManager()) != null)
+                startActivity(intent);
         });
     }
     private void showChangeUsernameDialog(){
