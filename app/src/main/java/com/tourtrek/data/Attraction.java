@@ -40,6 +40,31 @@ public class Attraction {
         this.ticket = "";
     }
 
+    /**
+     * Complete constructor for copying tours
+     * @return
+     */
+    public Attraction(List<String> reviews, String location, double lat, double lon, float cost,
+                      String name, String description, String attractionUID, Date startDate, String startTime,
+                      Date endDate, String endTime, String address, String coverImageURI, HashMap<String, String> weather){
+
+        this.reviews = reviews;
+        this.location = location;
+        this.lat = lat;
+        this.lon = lon;
+        this.cost = cost;
+        this.name = name;
+        this.description = description;
+        this.attractionUID = attractionUID;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.address = address;
+        this.coverImageURI = coverImageURI;
+        this.weather = weather;
+    }
+
     public double getLat() {
         return lat;
     }
