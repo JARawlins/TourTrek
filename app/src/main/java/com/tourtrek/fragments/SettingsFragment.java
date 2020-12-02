@@ -1,6 +1,7 @@
 package com.tourtrek.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +100,16 @@ public class SettingsFragment extends Fragment {
         privacyPolicyButton.setOnClickListener(v -> {
             DialogFragment dialogFragment = TermsAndConditionsDialogFragment.newInstance("Privacy Policy");
             dialogFragment.show(getParentFragmentManager(), "dialog");
+        });
+
+        Button feedbackButton = view.findViewById(R.id.settings_feedback_btn);
+        feedbackButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback@tourtrek.com" });
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+            intent.putExtra(Intent.EXTRA_TEXT, "<Enter Feedback Here>");
+            startActivity(Intent.createChooser(intent, "Select Email Client"));
         });
     }
     private void showChangeUsernameDialog(){
