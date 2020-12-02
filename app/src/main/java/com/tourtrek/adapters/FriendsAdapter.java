@@ -1,14 +1,11 @@
 package com.tourtrek.adapters;
 
 import android.content.Context;
-import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
@@ -38,7 +34,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
             super(view);
             this.friendName = view.findViewById(R.id.item_friend_friendName_tv);
             this.friendProfilePicture = view.findViewById(R.id.item_friend_profile_iv);
+
         }
+    }
+
+    public interface OnFriendListener{
+        void onFriendClick(int position);
     }
 
     public FriendsAdapter(Context context) {
@@ -76,6 +77,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
 
     @Override
     public int getItemCount() {
