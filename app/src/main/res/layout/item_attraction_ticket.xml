@@ -23,13 +23,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_attraction_ticket_iv" />
 
-    <VerticalViewPager
-        android:id="@+id/item_attraction_ticket_iv"
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/item_attraction_ticket_pv"
         android:layout_width="301dp"
         android:layout_height="431dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/item_attraction_ticket_iv"
+        android:layout_width="306dp"
+        android:layout_height="425dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:layout_editor_absoluteX="-3dp"
+        tools:layout_editor_absoluteY="33dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -49,4 +60,6 @@
         android:text="UPLOAD"
         app:layout_constraintEnd_toStartOf="@+id/item_attraction_okay_btn"
         app:layout_constraintTop_toBottomOf="@+id/item_attraction_ticket_iv" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

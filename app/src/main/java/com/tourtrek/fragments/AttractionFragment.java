@@ -782,10 +782,16 @@ public class AttractionFragment extends Fragment {
             }
         }
 
-        if(resultCode == Activity.RESULT_OK) {
+        if(resultCode == Activity.RESULT_OK && dialogIsShowing) {
             assert data != null;
-            if (dialogIsShowing) {
-               pdfView.fromUri(data.getData()).load();
+
+            if (data.getData().toString().contains("photo")) {
+                pdfView.setVisibility(View.INVISIBLE);
+                ticketImageView.setVisibility(View.VISIBLE);
+                Glide.with(this)
+                        .load(data.getData())
+                        .placeholder(R.drawable.default_image)
+                        .into(ticketImageView);
 
                 //Write to Firebase only when the user confirm
                 confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -796,6 +802,11 @@ public class AttractionFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
+            } else {
+                pdfView.setVisibility(View.VISIBLE);
+                ticketImageView.setVisibility(View.INVISIBLE);
+                pdfView.fromUri(data.getData()).load();
+                uploadTicketToDatabase(data);
             }
 
         }
@@ -1102,7 +1113,8 @@ public class AttractionFragment extends Fragment {
 
         backButton = dialog.findViewById(R.id.item_attraction_ticket_back_btn);
         confirmButton = dialog.findViewById(R.id.item_attraction_okay_btn);
-        pdfView = dialog.findViewById(R.id.item_attraction_ticket_iv);
+        pdfView = dialog.findViewById(R.id.item_attraction_ticket_pv);
+        ticketImageView = dialog.findViewById(R.id.item_attraction_ticket_iv);
         uploadTicketButton = dialog.findViewById(R.id.attraction_upload_ticket_btn);
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -1122,26 +1134,38 @@ public class AttractionFragment extends Fragment {
         });
 
         uploadTicketButton.setOnClickListener(view -> {
+            ticketImageView.setVisibility(View.VISIBLE);
+            pdfView.setVisibility(View.VISIBLE);
 
             int PICK_IMAGE = 1;
             startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), PICK_IMAGE);
+            uploadTicketToDatabase(getFileChooserIntent());
         });
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference("AttractionTickets/").child(attractionViewModel
-        .getSelectedAttraction().getTicketURI());
+        //Get image from datababe
+        Glide.with(this)
+                .load(attractionViewModel.getSelectedAttraction().getTicketURI())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(ticketImageView);
+        ticketImageView.setVisibility(View.VISIBLE);
 
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        final StorageReference storageReference = storage.getReference()
+                .child("AttractionTickets/" + attractionViewModel.getSelectedAttraction().getAttractionUID());
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                pdfView.fromAsset("http://www.africau.edu/images/default/sample.pdf");
-                System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-                System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
+                pdfView.fromUri(uri).load();
+                //ticketImageView.setVisibility(View.INVISIBLE);
+               // pdfView.setVisibility(View.VISIBLE);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println("ooooooooooooooooooooooooooooooooooooooooooooooooooo");
+                System.out.println("ooooooooooooooooooooooooooooommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmooooooooooooooo");
+                System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
+                System.out.println(storageReference.getPath());
+                System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
 
             }
         });
@@ -1161,7 +1185,7 @@ public class AttractionFragment extends Fragment {
         // Uri to the image
         Uri selectedImage = imageReturnedIntent.getData();
 
-        final UUID imageUUID = UUID.randomUUID();
+        final String imageUUID = attractionViewModel.getSelectedAttraction().getAttractionUID();
 
         final StorageReference storageReference = storage.getReference().child("AttractionTickets/" + imageUUID);
 
@@ -1175,6 +1199,8 @@ public class AttractionFragment extends Fragment {
                     storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
+                                System.out.println(uri.toString());
+                                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
