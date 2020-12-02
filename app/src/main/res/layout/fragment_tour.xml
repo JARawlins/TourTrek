@@ -417,6 +417,7 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/btn_shape_selector_white"
                 android:enabled="true"
                 android:text="Import Tour"
@@ -463,12 +464,12 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/btn_shape_selector_white"
+                android:background="@drawable/btn_shape_selector_accent"
                 android:enabled="true"
-                android:text="Remove Tour"
+                android:text="Delete Tour"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="#EEEEEE"
                 android:textSize="28dp"
                 android:visibility="gone" />
 
