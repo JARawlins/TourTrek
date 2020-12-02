@@ -42,5 +42,6 @@
     <string name="Edit_Success_TOAST_STRING">Successfully Updated Tour</string>
     <string name="Add_Friend_Success_TOAST_STRING">Successfully Add Friend</string>
     <string name="facebook_app_id">456155985393505</string>
+    <string name="view_add_ticket">View/Add ticket</string>
 
 </resources>
