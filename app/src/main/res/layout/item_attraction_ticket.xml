@@ -38,7 +38,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars">
+
+    </com.github.barteksc.pdfviewer.PDFView>
 
     <ImageView
         android:id="@+id/item_attraction_ticket_iv"
@@ -63,16 +65,42 @@
 
     <Button
         android:id="@+id/attraction_upload_ticket_btn"
-        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="7dp"
-        android:text="UPLOAD"
         android:background="@drawable/btn_shape_selector_white"
+        android:text="UPLOAD"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toStartOf="@+id/item_attraction_okay_btn"
         app:layout_constraintTop_toBottomOf="@+id/item_attraction_ticket_iv" />
+
+    <LinearLayout
+        android:id="@+id/item_attraction_ticket_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+        <ProgressBar
+            android:id="@+id/attraction_ticket_loading_pb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/item_attraction_ticket_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="115dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/item_attraction_ticket_back_btn"
+        app:layout_constraintTop_toBottomOf="@+id/item_attraction_ticket_pv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
