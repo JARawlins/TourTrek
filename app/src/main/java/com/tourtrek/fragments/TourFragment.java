@@ -381,7 +381,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         else {
             nameEditText.setText(tourViewModel.getSelectedTour().getName());
             locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
-            costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
+            costEditText.setText(String.format("$%.2f", tourViewModel.getSelectedTour().getCost()));
             startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
             endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
             notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
