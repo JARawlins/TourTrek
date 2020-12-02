@@ -1,20 +1,11 @@
 package com.tourtrek.fragments;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -22,16 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
-
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,17 +24,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RatingBar;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -71,43 +54,28 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
-import com.tourtrek.data.Tour;
 
 import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import org.w3c.dom.Document;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -148,7 +116,6 @@ public class AttractionFragment extends Fragment {
     private boolean loading;
     // To keep track of whether tour ticket dialog is showing
     private boolean dialogIsShowing;
-    private ImageButton rate;
     private Button addTicketButton;
     private ImageView ticketImageView;
     private Button backButton;
@@ -198,26 +165,6 @@ public class AttractionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 showTicketDialog();
-            }
-        });
-
-        //review button
-        rate = attractionView.findViewById(R.id.attraction_review_btn);
-
-        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
-            rate.setVisibility(View.GONE);
-        }
-        rate.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                if (!attractionViewModel.getSelectedAttraction().getReviews()
-                        .contains(mAuth.getCurrentUser().getUid())) { showReviewDialog();
-                } else {
-                    Toast.makeText(getContext(), "You cannot rate an attraction more than once", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 
@@ -1160,27 +1107,6 @@ public class AttractionFragment extends Fragment {
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, day);
 
         datePickerDialog.show();
-    }
-
-    private void showReviewDialog(){
-
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
-        //Get elements
-        RatingBar ratingBar = view.findViewById(R.id.attraction_review_rb);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(view);
-        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
-            dialogInterface.dismiss();
-        });
-
-        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
-
-            addNewRating(ratingBar.getRating());
-
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
     }
 
     private void updateAttractionInFirebase(){
