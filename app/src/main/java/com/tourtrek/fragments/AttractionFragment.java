@@ -278,7 +278,7 @@ public class AttractionFragment extends Fragment {
             // Set all the fields
             nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
             locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
-            costEditText.setText("$" + attractionViewModel.getSelectedAttraction().getCost());
+            costEditText.setText(String.format("$%.2f", attractionViewModel.getSelectedAttraction().getCost()));
             startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
             startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
             endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());

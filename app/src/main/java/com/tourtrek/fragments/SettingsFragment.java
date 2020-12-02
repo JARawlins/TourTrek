@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,6 +29,7 @@ import com.google.rpc.context.AttributeContext;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
 import com.tourtrek.data.User;
+import com.tourtrek.utilities.TermsAndConditionsDialogFragment;
 
 //extends preferenceFragmentCompact
 public class SettingsFragment extends Fragment {
@@ -91,6 +93,12 @@ public class SettingsFragment extends Fragment {
         updateEmailButton = view.findViewById(R.id.settings_change_email_btn);
         updateEmailButton.setOnClickListener(v -> {
             showChangeEmailDialog();
+        });
+
+        Button privacyPolicyButton = view.findViewById(R.id.settings_privacy_policy_btn);
+        privacyPolicyButton.setOnClickListener(v -> {
+            DialogFragment dialogFragment = TermsAndConditionsDialogFragment.newInstance("Privacy Policy");
+            dialogFragment.show(getParentFragmentManager(), "dialog");
         });
     }
     private void showChangeUsernameDialog(){
