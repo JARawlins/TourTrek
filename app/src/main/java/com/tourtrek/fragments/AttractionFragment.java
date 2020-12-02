@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -1139,25 +1140,51 @@ public class AttractionFragment extends Fragment {
 
             int PICK_IMAGE = 1;
             startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), PICK_IMAGE);
-            uploadTicketToDatabase(getFileChooserIntent());
         });
 
-        //Get image from datababe
-        Glide.with(this)
-                .load(attractionViewModel.getSelectedAttraction().getTicketURI())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(ticketImageView);
-        ticketImageView.setVisibility(View.VISIBLE);
 
+        getTicketFromFirebase();
+
+        //Uri uri = Uri.parse(attractionViewModel.getSelectedAttraction().getTicketURI());
+//        System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
+//        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+
+
+    }
+
+    private void getTicketFromFirebase() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         final StorageReference storageReference = storage.getReference()
-                .child("AttractionTickets/" + attractionViewModel.getSelectedAttraction().getAttractionUID());
+                .child("AttractionTickets")
+                .child(attractionViewModel.getSelectedAttraction().getAttractionUID());
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                pdfView.fromUri(uri).load();
-                //ticketImageView.setVisibility(View.INVISIBLE);
-               // pdfView.setVisibility(View.VISIBLE);
+
+                    storageReference.getBytes(1024*1024)
+                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    if (true) {
+                                        ticketImageView.setVisibility(View.INVISIBLE);
+                                        pdfView.setVisibility(View.VISIBLE);
+                                        pdfView.fromBytes(bytes).load();
+                                    } else {
+                                        ticketImageView.setVisibility(View.VISIBLE);
+                                        pdfView.setVisibility(View.INVISIBLE);
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        ticketImageView.setImageBitmap(bitmap);
+                                    }
+
+                                }
+                            });
+
+//                //pdfView.fromUri(uri).load();
+//                ticketImageView.setVisibility(View.VISIBLE);
+//                pdfView.setVisibility(View.INVISIBLE);
+//                ticketImageView.setImageURI(uri);
+                System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+                System.out.println(uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -1169,12 +1196,6 @@ public class AttractionFragment extends Fragment {
 
             }
         });
-
-        //Uri uri = Uri.parse(attractionViewModel.getSelectedAttraction().getTicketURI());
-//        System.out.println(attractionViewModel.getSelectedAttraction().getTicketURI());
-//        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-
-
     }
 
 
@@ -1199,8 +1220,6 @@ public class AttractionFragment extends Fragment {
                     storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
-                                System.out.println(uri.toString());
-                                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());

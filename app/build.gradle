@@ -114,7 +114,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:1.7.25'
 
     //pdf
-    implementation 'com.github.barteksc:android-pdf-viewer:2.0.3'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
 }
 
 tasks.withType(Test) {
