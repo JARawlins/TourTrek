@@ -108,8 +108,7 @@ public class AddFriendToTourFragment extends Fragment {
     private void setupAddButton(View friendSearchView) {
         addFriendButton.setOnClickListener(view1 -> {
             friend.addTourToTours(tour);
-
-            db.collection("Users").document(friendID).get();
+            Firestore.updateUser(friend,friendID);
             //addTour(friend,tour);
 
             Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();

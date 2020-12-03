@@ -630,7 +630,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 });
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -647,51 +646,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         else
             ((MainActivity) requireActivity()).setActionBarTitle(tourViewModel.getSelectedTour().getName());
 
-    }
-
-    /**
-     * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
-     * account.
-     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
-     * @param tourView
-     */
-    private void setupImportTourButton(View tourView) {
-        tourImportButton.setOnClickListener(u -> {
-            // get the current tour
-            Tour tour = tourViewModel.getSelectedTour();
-
-            // create a new Firestore document
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference newTourDoc = db.collection("Tours").document();
-
-            // set the ID of the tour object to that of the new document
-            // the original tour document in the Firestore will not be touched, so changing the ID should be fine
-            tour.setTourUID(newTourDoc.getId());
-            // set the new tour to private by default to avoid cluttering the tour market with it until
-            // after the user has had a chance to modify it
-            tour.setPubliclyAvailable(false);
-
-            // set the content of the new Firestore document
-            newTourDoc.set(tour).addOnCompleteListener(v -> {
-
-                Log.d(TAG, "The tour was imported.");
-//                Toast.makeText(getContext(), "The tour was imported.", Toast.LENGTH_LONG).show();
-
-            })
-                .addOnFailureListener(v1 -> {
-
-                    Log.d(TAG, "Tour importation failed.");
-//                    Toast.makeText(getContext(), "Tour importation failed.", Toast.LENGTH_LONG).show();
-
-                });
-
-            // add the tour to the user's list of tours
-            MainActivity.user.getTours().add(newTourDoc);
-            updateUser();
-
-            // go back
-            getParentFragmentManager().popBackStack();
-        });
     }
 
     /**
