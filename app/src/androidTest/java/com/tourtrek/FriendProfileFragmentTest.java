@@ -8,6 +8,7 @@ import android.view.ViewParent;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.tourtrek.activities.MainActivity;
@@ -32,6 +33,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
@@ -70,22 +72,43 @@ public class FriendProfileFragmentTest {
             onView(withId(R.id.profile_friend_btn)).perform(click());
         }
     }
+    /**
+    *This test checks to make sure you can view a friend's friends by checking a specific profile for a specific friend
+     **/
     @Test
     public void viewFriendsFriends(){
+        //click on friend at position 1 inside recyclerview
         onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
-        ViewInteraction recyclerView2 = onView(
-                allOf(withId(R.id.add_friend_my_friends_rv),
-                        childAtPosition(
-                                withId(R.id.add_friend_my_friends_srl),
-                                0)));
-        recyclerView2.perform(actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
 
+        //make sure that this friends list contains the friend "Testing Account"
         onView(isRoot()).perform(waitForView(R.id.item_friend_friendName_tv, TimeUnit.SECONDS.toMillis(1000)));
         ViewInteraction textView = onView(
-                allOf(withId(R.id.item_friend_friendName_tv), withText("Billy Bob"),
+                allOf(withId(R.id.item_friend_friendName_tv), withText("Testing Account"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
-        textView.check(matches(withText("Billy Bob")));
+        textView.check(matches(withText("Testing Account")));
+    }
+
+    /**
+     *This test checks to make sure you can view a friend's tours by checking a specific profile for a specific tour
+     **/
+    @Test
+    public void viewFriendsTours(){
+        //click on friend at position 1 in friends list
+        onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
+
+        //scroll to friends tours recycler view
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+
+        //check to make sure user has tour name "Triple D"
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(1000)));
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.item_tour_name), withText("Triple D"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("Triple D")));
     }
 
     private static Matcher<View> childAtPosition(
