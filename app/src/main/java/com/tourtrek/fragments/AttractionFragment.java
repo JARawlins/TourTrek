@@ -747,6 +747,7 @@ public class AttractionFragment extends Fragment {
                 attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
                 attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
                 attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
+                attractionViewModel.getSelectedAttraction().setRating(place.getRating());
 
                 // Get updated weather
                 Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
@@ -1046,7 +1047,7 @@ public class AttractionFragment extends Fragment {
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.FULLSCREEN,
                 Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS,
-                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG))
+                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG, Place.Field.RATING))
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .build(requireContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
