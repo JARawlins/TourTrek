@@ -68,6 +68,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -276,14 +277,21 @@ public class AttractionFragment extends Fragment {
             attractionIsUsers();
 
             // Set all the fields
-            nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
-            locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
+            if (attractionViewModel.getSelectedAttraction().getName() != null)
+                nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
+            if (attractionViewModel.getSelectedAttraction().getLocation() != null)
+                locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
             costEditText.setText(String.format("$%.2f", attractionViewModel.getSelectedAttraction().getCost()));
-            startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
-            startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
-            endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
-            endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
-            descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
+            if (attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getStartTime() != null)
+                startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
+            if (attractionViewModel.getSelectedAttraction().getEndDate() != null)
+                endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getEndTime() != null)
+                endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
+            if (attractionViewModel.getSelectedAttraction().getDescription() != null)
+                descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
             updateAttractionButton.setText("Update Attraction");
 
             if (attractionViewModel.getSelectedAttraction().getLon() != 0 && attractionViewModel.getSelectedAttraction().getLat() != 0) {
@@ -747,6 +755,7 @@ public class AttractionFragment extends Fragment {
                 attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
                 attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
                 attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
+                attractionViewModel.getSelectedAttraction().setRating(place.getRating());
 
                 // Get updated weather
                 Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
@@ -934,6 +943,22 @@ public class AttractionFragment extends Fragment {
             attractionViewModel.getSelectedAttraction().setStartTime(startTime);
             attractionViewModel.getSelectedAttraction().setEndTime(endTime);
 
+            // Check that the attraction lies within the tour dates
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+            Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+            calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+            Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+            calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+            Timestamp tourStartDate = new Timestamp(calendar.getTime());
+            calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+            Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+            if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // Remove $ from cost
             if (cost.startsWith("$"))
                 attractionViewModel.getSelectedAttraction().setCost(Float.parseFloat(cost.substring(1)));
@@ -1046,7 +1071,7 @@ public class AttractionFragment extends Fragment {
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.FULLSCREEN,
                 Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS,
-                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG))
+                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG, Place.Field.RATING))
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .build(requireContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
@@ -1251,7 +1276,6 @@ public class AttractionFragment extends Fragment {
 
     }
 
-
     public void uploadTicketToDatabase(Intent imageReturnedIntent) {
 
         final FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -1279,5 +1303,4 @@ public class AttractionFragment extends Fragment {
                             });
                 });
     }
-
 }

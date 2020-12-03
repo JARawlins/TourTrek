@@ -382,11 +382,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             tourViewModel.setIsUserOwned(true);
         }
         else {
-            nameEditText.setText(tourViewModel.getSelectedTour().getName());
-            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+            if (tourViewModel.getSelectedTour().getName() != null)
+                nameEditText.setText(tourViewModel.getSelectedTour().getName());
+            if (tourViewModel.getSelectedTour().getLocation() != null)
+                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
             costEditText.setText(String.format("$%.2f", tourViewModel.getSelectedTour().getCost()));
-            startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
-            endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+            if (tourViewModel.getSelectedTour().getStartDate() != null)
+                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            if (tourViewModel.getSelectedTour().getEndDate() != null)
+                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
             notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
             publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
         }
@@ -966,7 +970,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
 
             // parse date to firebase format
-            Date date;
             try {
                 tourViewModel.getSelectedTour().setStartDateFromString(startDateButton.getText().toString());
             } catch (ParseException e) {
@@ -996,6 +999,42 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
             ((MainActivity)requireActivity()).disableTabs();
             loading = true;
+
+            // Set all attraction dates to null if they fall outside the tour date
+            for(DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                documentReference.get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                Attraction attraction = documentSnapshot.toObject(Attraction.class);
+
+                                if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
+                                    // Check if the attraction falls within the new tour dates
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTime(attraction.getStartDate());
+                                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(attraction.getEndDate());
+                                    Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                                    Timestamp tourStartDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                                    Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                                        documentReference.update("startDate", null);
+                                        documentReference.update("endDate", null);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+            }
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
@@ -1185,24 +1224,26 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Set an alarm for each attraction within the tour
         for (Attraction attraction : attractionsAdapter.getDataSet()) {
 
-            try {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(attraction.getStartDate());
-                String startTime = attraction.getStartTime();
-                SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-                Date date = df.parse(startTime);
-                calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
-                calendar.set(Calendar.MINUTE, date.getMinutes());
+            if (attraction.getStartDate() != null && attraction.getEndDate() != null && attraction.getStartTime() != null && attraction.getEndTime() != null) {
+                try {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(attraction.getStartDate());
+                    String startTime = attraction.getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(startTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
 
-                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-                Timestamp now = Timestamp.now();
+                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                    Timestamp now = Timestamp.now();
 
-                // Only enable an alarm for the attraction if the attraction hasn't started yet
-                if (attractionStartDate.compareTo(now) > 0)
-                    setAlarmForAttraction(attraction);
+                    // Only enable an alarm for the attraction if the attraction hasn't started yet
+                    if (attractionStartDate.compareTo(now) > 0)
+                        setAlarmForAttraction(attraction);
 
-            } catch (ParseException e) {
-                e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -1484,7 +1525,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return newTour;
     }
 
-
     private void setupNavigationButton(View tourView){
         navigationButton.setOnClickListener(v -> {
 
@@ -1503,59 +1543,51 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void showReviewDialog() {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void showReviewDialog() {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
+        //Get elements
+        RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
 
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
-            //Get elements
-            RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setView(view);
-            builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
-                dialogInterface.dismiss();
-            });
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
 
-            Button reviewCancelButton = view.findViewById(R.id.review_cancel_btn);
-            //create review cancel button listener
-            reviewCancelButton.setOnClickListener(v -> {
-                dialog.dismiss();
-            });
+            addNewRating(ratingBar.getRating());
 
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-            builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+    }
 
-                addNewRating(ratingBar.getRating());
+    private void updateTourInFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            });
-            final AlertDialog dialog = builder.create();
-            dialog.show();
+        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                .set(tourViewModel.getSelectedTour())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Tour written to firestore");
 
-        }
+                    // Update the user in the firestore
+                    Firestore.updateUser();
 
-        private void updateTourInFirebase() {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
 
-            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
-                    .set(tourViewModel.getSelectedTour())
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Tour written to firestore");
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
 
-                        // Update the user in the firestore
-                        Firestore.updateUser();
+    private double computeRating(double totalRating) {
 
-                        Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
+        return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
+    }
 
-                    })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
-        }
-
-        private double computeRating(double totalRating) {
-
-            return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
-        }
-
-        private void addNewRating(double newRating) {
+    private void addNewRating(double newRating) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
 
@@ -1577,5 +1609,5 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             updateTourInFirebase();
         }
 
-    }
+}
 

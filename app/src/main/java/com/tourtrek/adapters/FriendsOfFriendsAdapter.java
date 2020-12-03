@@ -1,6 +1,7 @@
 package com.tourtrek.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,6 +66,9 @@ public class FriendsOfFriendsAdapter extends RecyclerView.Adapter<FriendsOfFrien
         ((MainActivity) context).findViewById(R.id.friend_friends_rv).setVisibility(View.INVISIBLE);
 
         holder.friendName.setText(friendsDataSet.get(position).getUsername());
+        holder.friendName.setTextColor(Color.parseColor("#4E1533"));
+        holder.friendName.setTextSize(25);
+
         //load profile picture for friend
         Glide.with((MainActivity) context)
                 .load(friendsDataSet.get(position).getProfileImageURI())
