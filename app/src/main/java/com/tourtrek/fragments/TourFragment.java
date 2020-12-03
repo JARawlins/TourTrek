@@ -6,7 +6,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.widget.NestedScrollView;
-import androidx.core.widget.NestedScrollView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -148,7 +147,6 @@ import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
-import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
 import  com.facebook.FacebookSdk;
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -174,7 +172,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private Button myFacebookShareButton;
     private RelativeLayout checkBoxesContainer;
     private LinearLayout buttonsContainer;
-    private Button shareButton;
     private CallbackManager callbackManager;
     private ShareDialog shareDialog;
     private ImageView coverImageView;
@@ -232,33 +229,33 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-        // Initialize attractionSortButton
-        //review button
-        rate = tourView.findViewById(R.id.tour_review_btn);
+            // Initialize attractionSortButton
+            //review button
+            rate = tourView.findViewById(R.id.tour_review_btn);
 
-        if (tourViewModel.isNewTour()) {
-            rate.setVisibility(View.GONE);
-        }
-        rate.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
-                    if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
-                        showReviewDialog();
-                    } else {
-                        Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
+            if (tourViewModel.isNewTour()) {
+                rate.setVisibility(View.GONE);
             }
-        });
+            rate.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onClick(View v) {
+
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                        if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                            showReviewDialog();
+                        } else {
+                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+            });
 
 
-        //initialize attractionSortButton
-        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+            //initialize attractionSortButton
+            attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -337,7 +334,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             navigationButton.setVisibility(View.GONE);
         }
 
-
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
 
@@ -383,11 +379,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             tourViewModel.setIsUserOwned(true);
         }
         else {
-            nameEditText.setText(tourViewModel.getSelectedTour().getName());
-            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+            if (tourViewModel.getSelectedTour().getName() != null)
+                nameEditText.setText(tourViewModel.getSelectedTour().getName());
+            if (tourViewModel.getSelectedTour().getLocation() != null)
+                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
             costEditText.setText(String.format("$%.2f", tourViewModel.getSelectedTour().getCost()));
-            startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
-            endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+            if (tourViewModel.getSelectedTour().getStartDate() != null)
+                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            if (tourViewModel.getSelectedTour().getEndDate() != null)
+                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
             notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
             publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
         }
@@ -819,7 +819,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     /**
      * Remove the tour from the user's list of tours in the database and return to the prior screen
      *
-     *
      * @param view
      */
     public void setupDeleteTourButton(View view){
@@ -928,7 +927,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
 
             // parse date to firebase format
-            Date date;
             try {
                 tourViewModel.getSelectedTour().setStartDateFromString(startDateButton.getText().toString());
             } catch (ParseException e) {
@@ -958,6 +956,42 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
             ((MainActivity)requireActivity()).disableTabs();
             loading = true;
+
+            // Set all attraction dates to null if they fall outside the tour date
+            for(DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                documentReference.get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                Attraction attraction = documentSnapshot.toObject(Attraction.class);
+
+                                if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
+                                    // Check if the attraction falls within the new tour dates
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTime(attraction.getStartDate());
+                                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(attraction.getEndDate());
+                                    Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                                    Timestamp tourStartDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                                    Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                                        documentReference.update("startDate", null);
+                                        documentReference.update("endDate", null);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+            }
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
@@ -1109,14 +1143,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
-            case "Rating Ascending":
-                Collections.sort(temp, new AttractionRatingSorter());
-                break;
+                case "Rating Ascending":
+                    Collections.sort(temp, new AttractionRatingSorter());
+                    break;
 
-            case "Name Descending":
-                Collections.sort(temp, new AttractionNameSorter());
-                Collections.reverse(temp);
-                break;
+                case "Name Descending":
+                    Collections.sort(temp, new AttractionNameSorter());
+                    Collections.reverse(temp);
+                    break;
 
             case "Location Descending":
                 Collections.sort(temp, new AttractionLocationSorter());
@@ -1128,10 +1162,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.reverse(temp);
                 break;
 
-            case "Rating Descending":
-                Collections.sort(temp, new AttractionRatingSorter());
-                Collections.reverse(temp);
-                break;
+                case "Rating Descending":
+                    Collections.sort(temp, new AttractionRatingSorter());
+                    Collections.reverse(temp);
+                    break;
 
                 default:
                     return temp;
@@ -1147,24 +1181,26 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Set an alarm for each attraction within the tour
         for (Attraction attraction : attractionsAdapter.getDataSet()) {
 
-            try {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(attraction.getStartDate());
-                String startTime = attraction.getStartTime();
-                SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-                Date date = df.parse(startTime);
-                calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
-                calendar.set(Calendar.MINUTE, date.getMinutes());
+            if (attraction.getStartDate() != null && attraction.getEndDate() != null && attraction.getStartTime() != null && attraction.getEndTime() != null) {
+                try {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(attraction.getStartDate());
+                    String startTime = attraction.getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(startTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
 
-                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-                Timestamp now = Timestamp.now();
+                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                    Timestamp now = Timestamp.now();
 
-                // Only enable an alarm for the attraction if the attraction hasn't started yet
-                if (attractionStartDate.compareTo(now) > 0)
-                    setAlarmForAttraction(attraction);
+                    // Only enable an alarm for the attraction if the attraction hasn't started yet
+                    if (attractionStartDate.compareTo(now) > 0)
+                        setAlarmForAttraction(attraction);
 
-            } catch (ParseException e) {
-                e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

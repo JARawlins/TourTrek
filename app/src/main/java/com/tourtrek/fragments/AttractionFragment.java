@@ -23,8 +23,6 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -70,7 +68,6 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -112,6 +109,9 @@ import java.util.UUID;
  * It runs when a user selects the 'add attraction' option from within the fragment showing the list of attractions in a selected tour.
  * The fragment will consist of a form with text fields corresponding to Attraction variables to fill in and a button to collect
  * the contents of them and push the information to Firestore.
+ *
+ * TODO fix tapping the back button when in a Google Map leading to the add attraction screen
+ * TODO make sure that this location is accessible via the view model
  */
 public class AttractionFragment extends Fragment {
 
@@ -166,6 +166,7 @@ public class AttractionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Grab a reference to the current view
         View attractionView = inflater.inflate(R.layout.fragment_attraction, container, false);
 
@@ -276,14 +277,21 @@ public class AttractionFragment extends Fragment {
             attractionIsUsers();
 
             // Set all the fields
-            nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
-            locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
+            if (attractionViewModel.getSelectedAttraction().getName() != null)
+                nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
+            if (attractionViewModel.getSelectedAttraction().getLocation() != null)
+                locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
             costEditText.setText(String.format("$%.2f", attractionViewModel.getSelectedAttraction().getCost()));
-            startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
-            startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
-            endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
-            endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
-            descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
+            if (attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getStartTime() != null)
+                startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
+            if (attractionViewModel.getSelectedAttraction().getEndDate() != null)
+                endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getEndTime() != null)
+                endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
+            if (attractionViewModel.getSelectedAttraction().getDescription() != null)
+                descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
             updateAttractionButton.setText("Update Attraction");
 
             if (attractionViewModel.getSelectedAttraction().getLon() != 0 && attractionViewModel.getSelectedAttraction().getLat() != 0) {
@@ -357,12 +365,7 @@ public class AttractionFragment extends Fragment {
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
                             loadingContainer.setVisibility(View.INVISIBLE);
-                            try {
-                                ((MainActivity)requireActivity()).enableTabs();
-                            }
-                            catch (java.lang.IllegalStateException e){
-                                Log.d("AttractionFragment", "Not associated with an activity.");
-                            }
+                            ((MainActivity)requireActivity()).enableTabs();
                             loading = false;
                             return false;
                         }
@@ -521,6 +524,7 @@ public class AttractionFragment extends Fragment {
 
         // set up the action to carry out via the update button
         setupUpdateAttractionButton(attractionView);
+
         // set up the action to carry out via the delete button
         setupDeleteAttractionButton(attractionView);
 
