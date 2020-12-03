@@ -95,21 +95,21 @@ public class FriendFragmentTest {
         onView(withId(R.id.add_friend_error_tv)).check(matches(withText("Friend already exists")));
     }
 
-    @Test
-    public void addFriendSuccessfullyFeedback() throws InterruptedException {
-
-        onView(withId(R.id.add_friend_email_et)).perform((typeText("Robert@gmail.com")), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.add_friend_search_btn)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.add_friend_add_btn, TimeUnit.SECONDS.toMillis(5), TimeUnit.SECONDS.toMillis(10)));
-        onView(withId(R.id.add_friend_add_btn)).perform(click());
-        onView(withText(R.string.Add_Friend_Success_TOAST_STRING)).inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
-        sleep(1000);
-        onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-        onView(isRoot()).perform(waitForView(R.id.friend_delete_btn, TimeUnit.SECONDS.toMillis(5)));
-        onView(withId(R.id.friend_delete_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.friend_delete_btn)).perform(click());
-    }
+//    @Test
+//    public void addFriendSuccessfullyFeedback() throws InterruptedException {
+//
+//        onView(withId(R.id.add_friend_email_et)).perform((typeText("Robert@gmail.com")), ViewActions.closeSoftKeyboard());
+//        onView(withId(R.id.add_friend_search_btn)).perform(click());
+//        onView(isRoot()).perform(waitForView(R.id.add_friend_add_btn, TimeUnit.SECONDS.toMillis(5), TimeUnit.SECONDS.toMillis(10)));
+//        onView(withId(R.id.add_friend_add_btn)).perform(click());
+//        onView(withText(R.string.Add_Friend_Success_TOAST_STRING)).inRoot(new ToastMatcher())
+//                .check(matches(isDisplayed()));
+//        sleep(1000);
+//        onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+//        onView(isRoot()).perform(waitForView(R.id.friend_delete_btn, TimeUnit.SECONDS.toMillis(5)));
+//        onView(withId(R.id.friend_delete_btn)).perform(nestedScrollTo());
+//        onView(withId(R.id.friend_delete_btn)).perform(click());
+//    }
 
     @Test
     public void deleteFriendSuccessfully() throws InterruptedException {
