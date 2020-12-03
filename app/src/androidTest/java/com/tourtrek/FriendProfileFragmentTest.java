@@ -72,11 +72,16 @@ public class FriendProfileFragmentTest {
             onView(withId(R.id.profile_friend_btn)).perform(click());
         }
     }
+    /**
+    *This test checks to make sure you can view a friend's friends by checking a specific profile for a specific friend
+     **/
     @Test
     public void viewFriendsFriends(){
+        //click on friend at position 1 inside recyclerview
         onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
 
+        //make sure that this friends list contains the friend "Testing Account"
         onView(isRoot()).perform(waitForView(R.id.item_friend_friendName_tv, TimeUnit.SECONDS.toMillis(1000)));
         ViewInteraction textView = onView(
                 allOf(withId(R.id.item_friend_friendName_tv), withText("Testing Account"),
@@ -85,13 +90,19 @@ public class FriendProfileFragmentTest {
         textView.check(matches(withText("Testing Account")));
     }
 
+    /**
+     *This test checks to make sure you can view a friend's tours by checking a specific profile for a specific tour
+     **/
     @Test
     public void viewFriendsTours(){
+        //click on friend at position 1 in friends list
         onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
         onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
 
+        //scroll to friends tours recycler view
         onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
 
+        //check to make sure user has tour name "Triple D"
         onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(1000)));
         ViewInteraction textView = onView(
                 allOf(withId(R.id.item_tour_name), withText("Triple D"),
