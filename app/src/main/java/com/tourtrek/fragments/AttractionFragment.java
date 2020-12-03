@@ -68,6 +68,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -935,6 +936,22 @@ public class AttractionFragment extends Fragment {
             attractionViewModel.getSelectedAttraction().setStartTime(startTime);
             attractionViewModel.getSelectedAttraction().setEndTime(endTime);
 
+            // Check that the attraction lies within the tour dates
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+            Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+            calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+            Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+            calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+            Timestamp tourStartDate = new Timestamp(calendar.getTime());
+            calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+            Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+            if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // Remove $ from cost
             if (cost.startsWith("$"))
                 attractionViewModel.getSelectedAttraction().setCost(Float.parseFloat(cost.substring(1)));
@@ -1252,7 +1269,6 @@ public class AttractionFragment extends Fragment {
 
     }
 
-
     public void uploadTicketToDatabase(Intent imageReturnedIntent) {
 
         final FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -1280,5 +1296,4 @@ public class AttractionFragment extends Fragment {
                             });
                 });
     }
-
 }

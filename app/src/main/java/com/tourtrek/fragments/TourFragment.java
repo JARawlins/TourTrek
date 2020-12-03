@@ -1441,7 +1441,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return newTour;
     }
 
-
     private void setupNavigationButton(View tourView){
         navigationButton.setOnClickListener(v -> {
 
@@ -1460,52 +1459,51 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void showReviewDialog() {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void showReviewDialog() {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
+        //Get elements
+        RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
 
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
-            //Get elements
-            RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setView(view);
-            builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
-                dialogInterface.dismiss();
-            });
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
 
-            builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+            addNewRating(ratingBar.getRating());
 
-                addNewRating(ratingBar.getRating());
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-            });
-            final AlertDialog dialog = builder.create();
-            dialog.show();
+    }
 
-        }
+    private void updateTourInFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        private void updateTourInFirebase() {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                .set(tourViewModel.getSelectedTour())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Tour written to firestore");
 
-            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
-                    .set(tourViewModel.getSelectedTour())
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Tour written to firestore");
+                    // Update the user in the firestore
+                    Firestore.updateUser();
 
-                        // Update the user in the firestore
-                        Firestore.updateUser();
+                    Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
 
-                        Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
 
-                    })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
-        }
+    private double computeRating(double totalRating) {
 
-        private double computeRating(double totalRating) {
+        return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
+    }
 
-            return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
-        }
-
-        private void addNewRating(double newRating) {
+    private void addNewRating(double newRating) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
 
@@ -1527,5 +1525,5 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             updateTourInFirebase();
         }
 
-    }
+}
 
