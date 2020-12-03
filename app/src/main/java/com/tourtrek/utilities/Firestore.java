@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.data.User;
 
 import java.util.Objects;
 
@@ -34,6 +35,27 @@ public class Firestore {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating users document", e);
+                    }
+                });
+
+    }
+
+    public static void updateUser(User user, String userUID) {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Users").document(userUID)
+                .set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "User: " + userUID + " successfully updated");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating user: " + userUID, e);
                     }
                 });
 

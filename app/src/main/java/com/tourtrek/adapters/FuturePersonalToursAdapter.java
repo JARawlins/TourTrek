@@ -73,6 +73,10 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
      * @param tour item to be added
      */
     public void addNewData(Tour tour) {
+        for (Tour aTour : futurePersonalToursDataSet) {
+            if (aTour.getTourUID().equals(tour.getTourUID()))
+                return;
+        }
         futurePersonalToursDataSet.add(tour);
         notifyDataSetChanged();
     }
