@@ -612,7 +612,7 @@ public class AttractionFragment extends Fragment {
 //        Log.d(TAG, "Checking attraction status..." + "UID " + attractionViewModel.getSelectedAttraction().getAttractionUID() + "user " + MainActivity.user.getUsername());
         // navigation should be available for every attraction in the database
         if (attractionViewModel.getSelectedAttraction().getAttractionUID() != null){
-            navigationAttractionButton.setVisibility((View.VISIBLE));
+            navigationAttractionButton.setVisibility(View.VISIBLE);
         }
 
         // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
