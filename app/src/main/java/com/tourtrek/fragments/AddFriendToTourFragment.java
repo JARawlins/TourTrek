@@ -124,8 +124,6 @@ public class AddFriendToTourFragment extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(),
-                        "clicked search", Toast.LENGTH_SHORT).show();
                 // Close keyboard
                 Utilities.hideKeyboard(requireActivity());
 

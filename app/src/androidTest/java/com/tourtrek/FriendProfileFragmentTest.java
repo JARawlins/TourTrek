@@ -8,6 +8,7 @@ import android.view.ViewParent;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.tourtrek.activities.MainActivity;
@@ -32,6 +33,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
@@ -73,19 +75,29 @@ public class FriendProfileFragmentTest {
     @Test
     public void viewFriendsFriends(){
         onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
-        ViewInteraction recyclerView2 = onView(
-                allOf(withId(R.id.add_friend_my_friends_rv),
-                        childAtPosition(
-                                withId(R.id.add_friend_my_friends_srl),
-                                0)));
-        recyclerView2.perform(actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
 
         onView(isRoot()).perform(waitForView(R.id.item_friend_friendName_tv, TimeUnit.SECONDS.toMillis(1000)));
         ViewInteraction textView = onView(
-                allOf(withId(R.id.item_friend_friendName_tv), withText("Billy Bob"),
+                allOf(withId(R.id.item_friend_friendName_tv), withText("Testing Account"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
-        textView.check(matches(withText("Billy Bob")));
+        textView.check(matches(withText("Testing Account")));
+    }
+
+    @Test
+    public void viewFriendsTours(){
+        onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
+
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(1000)));
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.item_tour_name), withText("Triple D"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("Triple D")));
     }
 
     private static Matcher<View> childAtPosition(
