@@ -1,6 +1,7 @@
 package com.tourtrek.data;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -184,4 +185,6 @@ public class User {
 
         this.friends.add(friendDocument);
     }
+
+
 }
