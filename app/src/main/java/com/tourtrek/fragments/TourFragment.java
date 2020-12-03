@@ -108,7 +108,10 @@ import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -892,6 +895,31 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         break;
                     }
                 }
+
+                // Setup collection reference
+                CollectionReference toursCollection = db.collection("Users");
+
+                DocumentReference documentReference = db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID());
+
+                // Setup basic query information
+                Query query = toursCollection.whereArrayContains("tours", documentReference);
+
+                query.get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot users) {
+                                for (DocumentSnapshot user : users.getDocuments()) {
+                                    Log.i(TAG, "Tour Removed from user: " + user.getId());
+                                    user.getReference().update("tours", FieldValue.arrayRemove(documentReference));
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Unable to remove the tour from user:", e);
+                            }
+                        });
             }
             // the tour is not private - error
             else{
