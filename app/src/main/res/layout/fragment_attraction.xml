@@ -400,22 +400,6 @@
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
                     android:textSize="28dp"
-                    android:visibility="visible" />
-
-                <Button
-                    android:id="@+id/attraction_navigation_btn"
-                    android:layout_width="422dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/btn_shape_selector_white"
-                    android:enabled="true"
-                    android:text="Navigation"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="28dp"
                     android:visibility="gone" />
 
                 <Button
@@ -428,6 +412,22 @@
                     android:background="@drawable/btn_shape_selector_white"
                     android:enabled="true"
                     android:text="Delete Attraction"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="28dp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/attraction_navigation_btn"
+                    android:layout_width="422dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginStart="24dp"
+                    android:background="@drawable/btn_shape_selector_white"
+                    android:enabled="true"
+                    android:text="Navigation"
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
