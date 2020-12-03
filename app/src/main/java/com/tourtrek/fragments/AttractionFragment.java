@@ -59,6 +59,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
@@ -126,7 +127,8 @@ public class AttractionFragment extends Fragment {
     private Button uploadTicketButton;
     private String fileExtension;
     private boolean saving;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
+    private TextView progressBarTextView;
 
     /**
      * Default for proper back button usage
@@ -1152,10 +1154,11 @@ public class AttractionFragment extends Fragment {
         ticketImageView = dialog.findViewById(R.id.item_attraction_ticket_iv);
         uploadTicketButton = dialog.findViewById(R.id.attraction_upload_ticket_btn);
 
-        //loading container
+        //progress bar
         progressBar = dialog.findViewById(R.id.item_attraction_ticket_progressBar);
+        progressBarTextView = dialog.findViewById(R.id.item_attraction_ticket_percent_tv);
         progressBar.setVisibility(View.INVISIBLE);
-        //((MainActivity)requireActivity()).enableTabs();
+        progressBarTextView.setVisibility(View.INVISIBLE);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1228,9 +1231,6 @@ public class AttractionFragment extends Fragment {
 
     public void uploadTicketToDatabase(Intent imageReturnedIntent) {
 
-        progressBar.setVisibility(View.VISIBLE);
-        //((MainActivity)requireActivity()).enableTabs();
-
         final FirebaseStorage storage = FirebaseStorage.getInstance();
 
         // Uri to the image
@@ -1242,6 +1242,9 @@ public class AttractionFragment extends Fragment {
 
         final UploadTask uploadTask = storageReference.putFile(selectedImage);
 
+        progressBar.setVisibility(View.VISIBLE);
+        progressBarTextView.setVisibility(View.VISIBLE);
+
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
                 .addOnSuccessListener(taskSnapshot -> {
@@ -1252,8 +1255,7 @@ public class AttractionFragment extends Fragment {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
                                 attractionViewModel.getSelectedAttraction().setTicket(imageUUID);
                                 updateAttractionInFirebase();
-                                progressBar.setVisibility(View.INVISIBLE);
-                                ((MainActivity)requireActivity()).enableTabs();
+                                progressBar.setProgress(0);
                                 if (dialog != null) {
                                     dialog.dismiss();
                                 }
@@ -1262,7 +1264,15 @@ public class AttractionFragment extends Fragment {
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
-                });
+                })
+        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                progressBar.setProgress((int) progress);
+                progressBarTextView.setText(progress + " %");
+            }
+        });
     }
 
     private Intent getFileChooserIntent() {
