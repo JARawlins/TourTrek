@@ -308,7 +308,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="150dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -327,7 +327,7 @@
                 <EditText
                     android:id="@+id/attraction_description_et"
                     android:layout_width="match_parent"
-                    android:layout_height="69dp"
+                    android:layout_height="70dp"
                     android:layout_marginBottom="24dp"
                     android:layout_marginEnd="24dp"
                     android:layout_marginStart="24dp"
@@ -342,13 +342,48 @@
                     android:textColorHighlight="#AAAAAAAA"
                     android:textSize="20dp" />
 
-                <LinearLayout
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/attraction_buttons_container2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                android:weightSum="1.0">
+
+                <Button
+                    android:id="@+id/attraction_add_ticket_btn"
+                    android:layout_width="175dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_weight="0.9"
+                    android:text="View or Add A Ticket"
+                    android:textAllCaps="false"
+                    android:textColor="#EEEEEE"
+                    android:background="@drawable/btn_shape_selector_primary"
+                    android:textSize="15dp"/>
+
+                <ImageButton
+                    android:id="@+id/attraction_review_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="0.1"
+                    android:background="@color/colorPrimary"
+                    android:onClick="onToggleStar"
+                    android:src="@drawable/ic_star" />
+
+            </LinearLayout>
+
+            <LinearLayout
                     android:id="@+id/attraction_buttons_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/attraction_update_btn"
@@ -398,35 +433,8 @@
                         android:textSize="28dp"
                         android:visibility="gone" />
 
-                </LinearLayout>
-
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/attraction_buttons_container2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:weightSum="1.0">
-
-                <Button
-                    android:id="@+id/attraction_add_ticket_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View/Add ticket"
-                    android:textSize="15dp"/>
-
-                <ImageButton
-                    android:id="@+id/attraction_review_btn"
-                    android:layout_width="64dp"
-                    android:layout_height="60dp"
-                    android:background="#00ffffff"
-                    android:onClick="onToggleStar"
-                    android:src="@drawable/ic_star" />
-
-
-            </LinearLayout>
 
         </LinearLayout>
 
