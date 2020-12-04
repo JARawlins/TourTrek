@@ -1,11 +1,16 @@
 package com.tourtrek.fragments;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -13,6 +18,18 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
+
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +55,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -55,27 +75,43 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
+import com.tourtrek.notifications.AlarmBroadcastReceiver;
+import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
+import com.tourtrek.data.Tour;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import org.w3c.dom.Document;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -117,7 +153,6 @@ public class AttractionFragment extends Fragment {
     // To keep track of whether we are in an async call
     private boolean loading;
     // To keep track of whether tour ticket dialog is showing
-    //private boolean dialogIsShowing;
     private Button addTicketButton;
     private ImageView ticketImageView;
     private Button backButton;
@@ -191,7 +226,7 @@ public class AttractionFragment extends Fragment {
         updateAttractionButton = attractionView.findViewById(R.id.attraction_update_btn);
         deleteAttractionButton = attractionView.findViewById(R.id.attraction_delete_btn);
         navigationAttractionButton = attractionView.findViewById(R.id.attraction_navigation_btn);
-        buttonsContainer = attractionView.findViewById(R.id.attraction_buttons_container);
+//        buttonsContainer = attractionView.findViewById(R.id.attraction_buttons_container);
         searchAttractionButton = attractionView.findViewById(R.id.attraction_search_ib);
 
         weatherTextView = attractionView.findViewById(R.id.attraction_weather_tv);
@@ -212,7 +247,7 @@ public class AttractionFragment extends Fragment {
         endTimeButton.setEnabled(false);
         coverImageView.setClickable(false);
         coverTextView.setVisibility(View.GONE);
-        buttonsContainer.setVisibility(View.GONE);
+//        buttonsContainer.setVisibility(View.GONE);
 
         // no attraction selected -> new one
         if (attractionViewModel.getSelectedAttraction() == null) {
@@ -231,7 +266,7 @@ public class AttractionFragment extends Fragment {
             coverImageView.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             descriptionEditText.setVisibility(View.VISIBLE);
-            buttonsContainer.setVisibility(View.VISIBLE);
+//            buttonsContainer.setVisibility(View.VISIBLE);
 
             updateAttractionButton.setText("Add Attraction");
 
@@ -244,14 +279,21 @@ public class AttractionFragment extends Fragment {
             attractionIsUsers();
 
             // Set all the fields
-            nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
-            locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
+            if (attractionViewModel.getSelectedAttraction().getName() != null)
+                nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
+            if (attractionViewModel.getSelectedAttraction().getLocation() != null)
+                locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
             costEditText.setText(String.format("$%.2f", attractionViewModel.getSelectedAttraction().getCost()));
-            startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
-            startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
-            endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
-            endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
-            descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
+            if (attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getStartTime() != null)
+                startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
+            if (attractionViewModel.getSelectedAttraction().getEndDate() != null)
+                endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getEndTime() != null)
+                endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
+            if (attractionViewModel.getSelectedAttraction().getDescription() != null)
+                descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
             updateAttractionButton.setText("Update Attraction");
 
             if (attractionViewModel.getSelectedAttraction().getLon() != 0 && attractionViewModel.getSelectedAttraction().getLat() != 0) {
@@ -325,7 +367,12 @@ public class AttractionFragment extends Fragment {
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
                             loadingContainer.setVisibility(View.INVISIBLE);
-                            ((MainActivity)requireActivity()).enableTabs();
+                            try {
+                                ((MainActivity)requireActivity()).enableTabs();
+                            }
+                            catch (java.lang.IllegalStateException e){
+                                Log.d("AttractionFragment", "Not associated with an activity.");
+                            }
                             loading = false;
                             return false;
                         }
@@ -572,7 +619,10 @@ public class AttractionFragment extends Fragment {
 //        Log.d(TAG, "Checking attraction status..." + "UID " + attractionViewModel.getSelectedAttraction().getAttractionUID() + "user " + MainActivity.user.getUsername());
         // navigation should be available for every attraction in the database
         if (attractionViewModel.getSelectedAttraction().getAttractionUID() != null){
-            navigationAttractionButton.setVisibility((View.VISIBLE));
+            navigationAttractionButton.setVisibility(View.VISIBLE);
+            if (tourViewModel.isUserOwned()){
+                deleteAttractionButton.setVisibility(View.VISIBLE);
+            }
         }
 
         // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
@@ -586,7 +636,8 @@ public class AttractionFragment extends Fragment {
             endTimeButton.setEnabled(true);
             coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
-            buttonsContainer.setVisibility(View.VISIBLE);
+//            buttonsContainer.setVisibility(View.VISIBLE);
+            updateAttractionButton.setVisibility(View.VISIBLE);
 
             // to enable deletion of attractions selected from the tour's recycler view
             if (attractionViewModel.getSelectedAttraction().getAttractionUID() != null){
@@ -714,6 +765,7 @@ public class AttractionFragment extends Fragment {
                 attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
                 attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
                 attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
+                attractionViewModel.getSelectedAttraction().setRating(place.getRating());
 
                 // Get updated weather
                 Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
@@ -915,6 +967,24 @@ public class AttractionFragment extends Fragment {
             attractionViewModel.getSelectedAttraction().setStartTime(startTime);
             attractionViewModel.getSelectedAttraction().setEndTime(endTime);
 
+            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
+                // Check that the attraction lies within the tour dates
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+                Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                Timestamp tourStartDate = new Timestamp(calendar.getTime());
+                calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                    Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
             // Remove $ from cost
             if (cost.startsWith("$"))
                 attractionViewModel.getSelectedAttraction().setCost(Float.parseFloat(cost.substring(1)));
@@ -1027,7 +1097,7 @@ public class AttractionFragment extends Fragment {
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.FULLSCREEN,
                 Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS,
-                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG))
+                        Place.Field.PHOTO_METADATAS, Place.Field.LAT_LNG, Place.Field.RATING))
                 .setTypeFilter(TypeFilter.ESTABLISHMENT)
                 .build(requireContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
@@ -1132,7 +1202,6 @@ public class AttractionFragment extends Fragment {
 
                     // Add/Update attraction to the selected tour
                     db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
-                    saving = false;
 
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -1230,7 +1299,6 @@ public class AttractionFragment extends Fragment {
             }
         });
     }
-
 
     public void uploadTicketToDatabase(Intent imageReturnedIntent) {
 
