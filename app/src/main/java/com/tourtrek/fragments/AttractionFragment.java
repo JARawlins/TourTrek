@@ -23,6 +23,8 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -68,6 +70,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -365,7 +368,12 @@ public class AttractionFragment extends Fragment {
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             LinearLayout loadingContainer = attractionView.findViewById(R.id.attraction_cover_loading_container);
                             loadingContainer.setVisibility(View.INVISIBLE);
-                            ((MainActivity)requireActivity()).enableTabs();
+                            try {
+                                ((MainActivity)requireActivity()).enableTabs();
+                            }
+                            catch (java.lang.IllegalStateException e){
+                                Log.d("AttractionFragment", "Not associated with an activity.");
+                            }
                             loading = false;
                             return false;
                         }
@@ -657,7 +665,7 @@ public class AttractionFragment extends Fragment {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
 
             if (resultCode == Activity.RESULT_OK) {
-
+              
                 ((MainActivity)requireActivity()).disableTabs();
                 loading = true;
 
@@ -947,20 +955,22 @@ public class AttractionFragment extends Fragment {
             attractionViewModel.getSelectedAttraction().setStartTime(startTime);
             attractionViewModel.getSelectedAttraction().setEndTime(endTime);
 
-            // Check that the attraction lies within the tour dates
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
-            Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-            calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
-            Timestamp attractionEndDate = new Timestamp(calendar.getTime());
-            calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
-            Timestamp tourStartDate = new Timestamp(calendar.getTime());
-            calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
-            Timestamp tourEndDate = new Timestamp(calendar.getTime());
+            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
+                // Check that the attraction lies within the tour dates
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+                Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                Timestamp tourStartDate = new Timestamp(calendar.getTime());
+                calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                Timestamp tourEndDate = new Timestamp(calendar.getTime());
 
-            if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
-                Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
-                return;
+                if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                    Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             // Remove $ from cost
