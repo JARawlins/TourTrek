@@ -74,11 +74,7 @@ public class AddFriendToTourFragmentTest {
             onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
             sleep(1000);
             onView(withId(R.id.navigation_tours)).perform(click());
-            //need to click on a tour and then click add friend. Then check if that friends profile contains the tour
 
-
-//            onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(1000)));
-//            onView(withId(R.id.profile_friend_btn)).perform(click());
         }
     }
 
