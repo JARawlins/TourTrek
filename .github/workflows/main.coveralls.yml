@@ -33,4 +33,5 @@ jobs:
         with:
           # 
           github-token: ${{ secrets.GITHUB_TOKEN }};
+          path-to-lcov: TourTrek/blob/master/app/build/reports/coverage/debug/lcov.xml
           repo_token: x2ieAXHuDt5a65QFGwRVH7mjaqzvyx6DD
