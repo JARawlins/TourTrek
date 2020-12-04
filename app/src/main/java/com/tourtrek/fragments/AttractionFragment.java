@@ -173,6 +173,9 @@ public class AttractionFragment extends Fragment {
             }
         });
 
+        if (!tourViewModel.isUserOwned()) {
+            addTicketButton.setVisibility(View.INVISIBLE);
+        }
 
         // Initialize all fields
         nameEditText = attractionView.findViewById(R.id.attraction_name_et);
