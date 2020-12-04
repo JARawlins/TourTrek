@@ -1,6 +1,7 @@
 package com.tourtrek.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,10 @@ public class FuturePersonalToursAdapter extends RecyclerView.Adapter<FuturePerso
         ((MainActivity) context).findViewById(R.id.personal_future_tours_rv).setVisibility(View.INVISIBLE);
 
         holder.tourName.setText(futurePersonalToursDataSet.get(position).getName());
+        holder.tourName.setTextColor(Color.parseColor("#4E1533"));
         holder.location.setText(futurePersonalToursDataSet.get(position).getLocation());
+        holder.location.setTextColor(Color.parseColor("#4E1533"));
+        holder.itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
 
         ((MainActivity) context).findViewById(R.id.personal_future_tours_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.personal_future_tours_rv).setVisibility(View.VISIBLE);
