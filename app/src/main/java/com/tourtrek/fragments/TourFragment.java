@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.widget.NestedScrollView;
+import androidx.core.widget.NestedScrollView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -147,6 +148,7 @@ import java.util.Set;
 import java.util.UUID;
 import static com.tourtrek.utilities.Firestore.updateUser;
 import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
+import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
 import  com.facebook.FacebookSdk;
 
 public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -229,33 +231,33 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-            // Initialize attractionSortButton
-            //review button
-            rate = tourView.findViewById(R.id.tour_review_btn);
+        // Initialize attractionSortButton
+        //review button
+        rate = tourView.findViewById(R.id.tour_review_btn);
 
-            if (tourViewModel.isNewTour()) {
-                rate.setVisibility(View.GONE);
-            }
-            rate.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onClick(View v) {
+        if (tourViewModel.isNewTour()) {
+            rate.setVisibility(View.GONE);
+        }
+        rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
 
-                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                    if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
-                        if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
-                            showReviewDialog();
-                        } else {
-                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
-                        }
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                    if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                        showReviewDialog();
+                    } else {
+                        Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
                     }
-
                 }
-            });
+
+            }
+        });
 
 
-            //initialize attractionSortButton
-            attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+        //initialize attractionSortButton
+        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -333,6 +335,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         if (tourViewModel.isNewTour()){
             navigationButton.setVisibility(View.GONE);
         }
+
 
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
@@ -682,6 +685,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                                 swipeRefreshLayout.setRefreshing(false);
 
                             }
+                        })
+                        .addOnFailureListener(v -> {
+                           Log.d("TourFragment", "Failure in fetchAttractionsAsync");
                         });
 
             }
@@ -818,6 +824,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     /**
      * Remove the tour from the user's list of tours in the database and return to the prior screen
+     *
      *
      * @param view
      */
@@ -988,7 +995,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-
+                                Log.d("TourFragment", "Failure setting attraction dates to null");
                             }
                         });
             }
@@ -1143,14 +1150,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
-                case "Rating Ascending":
-                    Collections.sort(temp, new AttractionRatingSorter());
-                    break;
+            case "Rating Ascending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                break;
 
-                case "Name Descending":
-                    Collections.sort(temp, new AttractionNameSorter());
-                    Collections.reverse(temp);
-                    break;
+            case "Name Descending":
+                Collections.sort(temp, new AttractionNameSorter());
+                Collections.reverse(temp);
+                break;
 
             case "Location Descending":
                 Collections.sort(temp, new AttractionLocationSorter());
@@ -1162,10 +1169,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.reverse(temp);
                 break;
 
-                case "Rating Descending":
-                    Collections.sort(temp, new AttractionRatingSorter());
-                    Collections.reverse(temp);
-                    break;
+            case "Rating Descending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                Collections.reverse(temp);
+                break;
 
                 default:
                     return temp;
