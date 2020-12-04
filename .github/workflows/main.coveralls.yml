@@ -33,3 +33,4 @@ jobs:
         with:
           # 
           github-token: ${{ secrets.GITHUB_TOKEN }};
+          repo_token: x2ieAXHuDt5a65QFGwRVH7mjaqzvyx6DD
