@@ -43,5 +43,5 @@ jobs:
           # User defined upload name. Visible in Codecov UI
           name: Automated Github Upload
           # Repository upload token - get it from codecov.io. Required only for private repositories
-          token: 8e4ab1e4-c15e-4eb8-8319-60f50827111a
+          token: e5dc26a9-056d-46c6-9627-61b5f97778b5 #8e4ab1e4-c15e-4eb8-8319-60f50827111a
           files: TourTrek/app/build/reports/coverage/debug/*
