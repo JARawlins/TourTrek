@@ -277,14 +277,21 @@ public class AttractionFragment extends Fragment {
             attractionIsUsers();
 
             // Set all the fields
-            nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
-            locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
+            if (attractionViewModel.getSelectedAttraction().getName() != null)
+                nameEditText.setText(attractionViewModel.getSelectedAttraction().getName());
+            if (attractionViewModel.getSelectedAttraction().getLocation() != null)
+                locationEditText.setText(attractionViewModel.getSelectedAttraction().getLocation());
             costEditText.setText(String.format("$%.2f", attractionViewModel.getSelectedAttraction().getCost()));
-            startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
-            startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
-            endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
-            endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
-            descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
+            if (attractionViewModel.getSelectedAttraction().getStartDate() != null)
+                startDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveStartDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getStartTime() != null)
+                startTimeButton.setText(attractionViewModel.getSelectedAttraction().getStartTime());
+            if (attractionViewModel.getSelectedAttraction().getEndDate() != null)
+                endDateButton.setText(attractionViewModel.getSelectedAttraction().retrieveEndDateAsString());
+            if (attractionViewModel.getSelectedAttraction().getEndTime() != null)
+                endTimeButton.setText(attractionViewModel.getSelectedAttraction().getEndTime());
+            if (attractionViewModel.getSelectedAttraction().getDescription() != null)
+                descriptionEditText.setText(attractionViewModel.getSelectedAttraction().getDescription());
             updateAttractionButton.setText("Update Attraction");
 
             if (attractionViewModel.getSelectedAttraction().getLon() != 0 && attractionViewModel.getSelectedAttraction().getLat() != 0) {
