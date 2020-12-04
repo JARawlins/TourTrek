@@ -60,8 +60,6 @@ public class EditTourFragmentTest {
         }
     }
 
-
-
     @Test
     public void editSuccessfullyFeedback() throws InterruptedException {
         onView(withId(R.id.login_email_et)).perform(typeText("cctest@gmail.com"), ViewActions.closeSoftKeyboard());
@@ -74,7 +72,7 @@ public class EditTourFragmentTest {
         onView(withId(R.id.tour_name_et)).perform((typeText("EditTourTestTour")), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
-        onView(withText(R.string.Edit_Success_TOAST_STRING)).inRoot(new ToastMatcher())
+        onView(withText("Successfully Updated Tour")).inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
     }
 }
