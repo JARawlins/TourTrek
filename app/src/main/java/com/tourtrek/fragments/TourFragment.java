@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +39,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -139,7 +139,7 @@ public class TourFragment extends Fragment {
     // To keep track of whether we are in an async call
     private boolean loading;
     private ImageButton rate;
-    private SearchView attractionSearchView;
+    private android.widget.SearchView attractionSearchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -242,22 +242,22 @@ public class TourFragment extends Fragment {
             }
         });
 
-        attractionSearchView = tourView.findViewById(R.id.attraction_search_sv);
+        attractionSearchView = (android.widget.SearchView)tourView.findViewById(R.id.attraction_search_sv);
 
         attractionSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 searchAttractions(attractionsAdapter, query);
                 Activity currentActivity = requireActivity();
                 Utilities.hideKeyboard(currentActivity);
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 searchAttractions(attractionsAdapter, newText);
-                return true;
+                return false;
             }
         });
 
