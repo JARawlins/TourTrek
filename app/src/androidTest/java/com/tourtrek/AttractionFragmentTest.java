@@ -15,6 +15,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
@@ -42,6 +45,13 @@ public class AttractionFragmentTest {
 
     public static final String TAG = "AttractionFragmentTest";
     private ActivityScenario mainActivityScenario;
+    Calendar calendar = java.util.Calendar.getInstance();
+
+    int day = calendar.get(Calendar.DAY_OF_MONTH);
+    int month = calendar.get(Calendar.MONTH);
+    int year = calendar.get(Calendar.YEAR);
+
+
 
     @Rule
     public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
@@ -81,7 +91,7 @@ public class AttractionFragmentTest {
      * https://stackoverflow.com/questions/43149728/select-date-from-calendar-in-android-espresso/43180527
      */
     @Test
-    public void missingInfoTests() throws InterruptedException {
+    public void noName() throws InterruptedException {
         // test the case of no attraction name
 //        onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
 //        onView(withId(R.id.tour_add_attraction_btn)).perform(click());
@@ -166,12 +176,20 @@ public class AttractionFragmentTest {
 //        onView(withText("Successfully Added Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 //        Espresso.pressBack();
 
+
         // attraction updating
-        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(50)));
         onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(50)));
+
+//        // hit the image upload listener
+//        onView(withId(R.id.attraction_cover_iv)).perform(nestedScrollTo());
+//        onView(withId(R.id.attraction_cover_iv)).perform(click());
+//
+//        Espresso.pressBack();
+//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(50)));
         onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_update_btn)).perform(click());
 
@@ -389,7 +407,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_start_date_btn)).perform(nestedScrollTo());
         if (!condition.equals("noStartDate")){
             onView(withId(R.id.attraction_start_date_btn)).perform(click());
-            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 10));
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(year, month+1, day+1));
             onView(withId(android.R.id.button1)).perform(click());
         }
 
@@ -405,12 +423,12 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
         if (condition.equals("invalidDates")){
             onView(withId(R.id.attraction_end_date_btn)).perform(click());
-            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 9));
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(year, month+1, day));
             onView(withId(android.R.id.button1)).perform(click());
         }
         else if (!condition.equals("noEndDate")){
             onView(withId(R.id.attraction_end_date_btn)).perform(click());
-            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 12));
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(year, month+1, day+2));
             onView(withId(android.R.id.button1)).perform(click());
         }
 
@@ -429,11 +447,17 @@ public class AttractionFragmentTest {
     }
 
     @Test
-    public void textChangeListenerTests(){
+    public void textChangeListenerTests() throws InterruptedException {
+        // name and location focus listeners
         onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo(), click());
         onView(withId(R.id.attraction_cost_et)).perform(nestedScrollTo(), click());
-        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo(), click());
         onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo(), click());
+        onView(withId(R.id.attraction_cost_et)).perform(nestedScrollTo(), click());
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo(), click(), closeSoftKeyboard());
+
+        Espresso.pressBack();
+        removeAdded();
     }
 
     /**

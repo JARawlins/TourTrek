@@ -400,21 +400,21 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-        locationEditText.setOnFocusChangeListener((view, hasFocus) -> {
-
-            if (locationEditText.getHint().equals("City, State")) {
-                locationEditText.setHint("");
-            }
-
-            locationEditText.setBackgroundColor(Color.parseColor("#10000000"));
-
-            if (!hasFocus && locationEditText.getHint().equals("")) {
-                if (locationEditText.getText().toString().equals("")) {
-                    locationEditText.setHint("City, State");
-                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
-                }
-            }
-        });
+//        locationEditText.setOnFocusChangeListener((view, hasFocus) -> {
+//
+//            if (locationEditText.getHint().equals("City, State")) {
+//                locationEditText.setHint("");
+//            }
+//
+//            locationEditText.setBackgroundColor(Color.parseColor("#10000000"));
+//
+//            if (!hasFocus && locationEditText.getHint().equals("")) {
+//                if (locationEditText.getText().toString().equals("")) {
+//                    locationEditText.setHint("City, State");
+//                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
+//                }
+//            }
+//        });
 
         costEditText.setOnFocusChangeListener((view, hasFocus) -> {
             if (costEditText.getHint().equals("$0.00")) {
@@ -444,75 +444,75 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-        startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
-
-            if (startDateButton.getHint().equals("Pick Date")) {
-                startDateButton.setHint("");
-            }
-
-            startDateButton.setBackgroundColor(Color.parseColor("#10000000"));
-
-            if (!hasFocus && startDateButton.getHint().equals("")) {
-                if (startDateButton.getText().toString().equals("")) {
-                    startDateButton.setHint("Pick Date");
-                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
-                }
-            }
-        });
+//        startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
+//
+//            if (startDateButton.getHint().equals("Pick Date")) {
+//                startDateButton.setHint("");
+//            }
+//
+//            startDateButton.setBackgroundColor(Color.parseColor("#10000000"));
+//
+//            if (!hasFocus && startDateButton.getHint().equals("")) {
+//                if (startDateButton.getText().toString().equals("")) {
+//                    startDateButton.setHint("Pick Date");
+//                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
+//                }
+//            }
+//        });
 
         startTimeButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showTimePickerDialog(startTimeButton));
 
-        startTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
-
-            if (startTimeButton.getHint().equals("Pick Time")) {
-                startTimeButton.setHint("");
-            }
-
-            startTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
-
-            if (!hasFocus && startTimeButton.getHint().equals("")) {
-                if (startTimeButton.getText().toString().equals("")) {
-                    startTimeButton.setHint("Pick Time");
-                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
-                }
-            }
-        });
+//        startTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
+//
+//            if (startTimeButton.getHint().equals("Pick Time")) {
+//                startTimeButton.setHint("");
+//            }
+//
+//            startTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
+//
+//            if (!hasFocus && startTimeButton.getHint().equals("")) {
+//                if (startTimeButton.getText().toString().equals("")) {
+//                    startTimeButton.setHint("Pick Time");
+//                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
+//                }
+//            }
+//        });
 
         endDateButton.setOnClickListener(view -> showDatePickerDialog(endDateButton, null, getContext(), "end"));
 
-        endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
-
-            if (endDateButton.getHint().equals("Pick Date")) {
-                endDateButton.setHint("");
-            }
-
-            endDateButton.setBackgroundColor(Color.parseColor("#10000000"));
-
-            if (!hasFocus && endDateButton.getHint().equals("")) {
-                if (endDateButton.getText().toString().equals("")) {
-                    endDateButton.setHint("Pick Date");
-                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
-                }
-            }
-        });
+//        endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
+//
+//            if (endDateButton.getHint().equals("Pick Date")) {
+//                endDateButton.setHint("");
+//            }
+//
+//            endDateButton.setBackgroundColor(Color.parseColor("#10000000"));
+//
+//            if (!hasFocus && endDateButton.getHint().equals("")) {
+//                if (endDateButton.getText().toString().equals("")) {
+//                    endDateButton.setHint("Pick Date");
+//                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
+//                }
+//            }
+//        });
 
         endTimeButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showTimePickerDialog(endTimeButton));
 
-        endTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
-
-            if (endTimeButton.getHint().equals("Pick Time")) {
-                endTimeButton.setHint("");
-            }
-
-            endTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
-
-            if (!hasFocus && endTimeButton.getHint().equals("")) {
-                if (endTimeButton.getText().toString().equals("")) {
-                    endTimeButton.setHint("Pick Time");
-                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
-                }
-            }
-        });
+//        endTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
+//
+//            if (endTimeButton.getHint().equals("Pick Time")) {
+//                endTimeButton.setHint("");
+//            }
+//
+//            endTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
+//
+//            if (!hasFocus && endTimeButton.getHint().equals("")) {
+//                if (endTimeButton.getText().toString().equals("")) {
+//                    endTimeButton.setHint("Pick Time");
+//                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
+//                }
+//            }
+//        });
 
         descriptionEditText.setOnFocusChangeListener((view, hasFocus) -> {
 
