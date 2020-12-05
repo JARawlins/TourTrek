@@ -236,6 +236,27 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp">
+
+                <SearchView
+                    android:id="@+id/attraction_search_sv"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_gravity="bottom"
+                    android:background="#EEEEEE"
+                    android:queryHint="Search attraction"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+            </LinearLayout>
+
             <FrameLayout
                 android:id="@+id/tour_attractions_rv_container"
                 android:layout_width="match_parent"
