@@ -45,9 +45,8 @@ public class FriendProfileFragment extends Fragment {
     private Button deleteFriendButton;
 
 
-    private SwipeRefreshLayout friendsOfFriendsSwipeRefreshLayout;
-    private RecyclerView toursOfFriendsRecyclerView;
     private SwipeRefreshLayout toursOfFriendsSwipeRefreshLayout;
+    private RecyclerView toursOfFriendsRecyclerView;
     private FriendsOfFriendsAdapter friendsListAdapter;
     private ToursOfFriendsAdapter toursListAdapter;
 
@@ -293,8 +292,8 @@ public class FriendProfileFragment extends Fragment {
     public void configureSwipeRefreshLayoutsTours(View view) {
 
 
-        friendsSwipeRefreshLayout = view.findViewById(R.id.friend_tours_srl);
-        friendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync());
+        toursOfFriendsSwipeRefreshLayout = view.findViewById(R.id.friend_tours_srl);
+        toursOfFriendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync());
 
     }
     /**

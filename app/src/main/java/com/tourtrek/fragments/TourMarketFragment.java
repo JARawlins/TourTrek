@@ -403,4 +403,3 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
     }
 
 }
-

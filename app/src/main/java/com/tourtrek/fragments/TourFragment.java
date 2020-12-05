@@ -109,7 +109,10 @@ import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -528,6 +531,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         setupDeleteTourButton(tourView);
         setupImportTourButton(tourView);
+        setupAddFriendToTourButton(tourView);
 
         ((MainActivity)requireActivity()).enableTabs();
         loading = false;
@@ -568,7 +572,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         }
 
-        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation()) {
+        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation() && !tourViewModel.returnedFromAddFriendToTour()) {
             tourViewModel.setSelectedTour(null);
             tourViewModel.setIsNewTour(null);
         }
@@ -636,7 +640,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 });
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -655,6 +658,21 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     }
 
+    /**
+     * This method creates a on click listener for the add friend button. Once clicked it opens a new fragment
+     * that allows the user to search for a friend and then add the tour to their tours list
+     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
+     * @param tourView
+     */
+    private void setupAddFriendToTourButton(View tourView) {
+        Button addFriend = tourView.findViewById(R.id.tour_add_friend_btn);
+        tourViewModel.setReturnedFromAddFriendToTour(true);
+        addFriend.setOnClickListener(u -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddFriendToTourFragment(), "AddFriendToTourFragment");
+            ft.addToBackStack("AddFriendToTourFragment").commit();
+        });
+    }
     /**
      * Retrieve all attractions belonging to this user
      */
@@ -888,6 +906,31 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         break;
                     }
                 }
+
+                // Setup collection reference
+                CollectionReference toursCollection = db.collection("Users");
+
+                DocumentReference documentReference = db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID());
+
+                // Setup basic query information
+                Query query = toursCollection.whereArrayContains("tours", documentReference);
+
+                query.get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot users) {
+                                for (DocumentSnapshot user : users.getDocuments()) {
+                                    Log.i(TAG, "Tour Removed from user: " + user.getId());
+                                    user.getReference().update("tours", FieldValue.arrayRemove(documentReference));
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Unable to remove the tour from user:", e);
+                            }
+                        });
             }
             // the tour is not private - error
             else{
