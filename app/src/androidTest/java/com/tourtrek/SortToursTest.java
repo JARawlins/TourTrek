@@ -7,6 +7,7 @@ import android.view.ViewParent;
 import android.widget.DatePicker;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -26,6 +27,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -42,12 +44,13 @@ import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 
 
-public class RateTourTest {
+public class SortToursTest {
 
-    public static final String TAG = "TourFragmentTest";
+    public static final String TAG = "TourMarketFragmentTest";
     private ActivityScenario mainActivityScenario;
 
     @Rule
@@ -60,7 +63,7 @@ public class RateTourTest {
 
         login();
 
-        create_tour();
+        create_tour("A");
 
     }
 
@@ -68,21 +71,22 @@ public class RateTourTest {
     @Test
     public void rateSuccessfulTest() throws InterruptedException {
 
-        rate_tour();
-        check("You successfully rated the tour");
+        onView(isRoot()).perform(waitForView(R.id.navigation_tour_market, TimeUnit.SECONDS.toMillis(15)));
+        onView(withId(R.id.navigation_tour_market)).perform(click());
+
+        sleep(1000);
+
+        sortBy();
+
+        sleep(1000);
+
+        onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        sleep(100);
+        onView(withId(R.id.tour_name_et)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_name_et)).check(matches(withText("A")));
+
     }
-
-    @Test
-    public void alreadyRatedTourTest() throws InterruptedException {
-
-        rate_tour();
-        sleep(2000);
-        onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_review_btn)).perform(click());
-        check("You cannot rate a tour more than once");
-    }
-
-
 
     public void login() throws InterruptedException, UiObjectNotFoundException {
 
@@ -106,17 +110,50 @@ public class RateTourTest {
     @After
     public void destroy() throws InterruptedException {
         sleep(100);
-        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_delete_btn)).perform(click());
+
+        onView(withId(R.id.tour_public_cb)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_public_cb)).perform(click());
+
+        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_update_btn)).perform(click());
+
+        sleep(2000);
+
+        onView(withId(R.id.navigation_tours)).perform(click());
+        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
+
+
+
+        delete_tour();
     }
 
-    public void create_tour() {
+    public void delete_tour() throws InterruptedException {
+        //Clich on the future tour
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
+
+        try {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("A"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("A")), click()));
+
+        } catch (androidx.test.espresso.PerformException e) {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        } finally {
+            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
+
+            //delete tour
+            onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
+            onView(withId(R.id.tour_delete_btn)).perform(click());
+        }
+    }
+
+    public void create_tour(String name) {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
 
         //enter info to create tour
-        onView(withId(R.id.tour_name_et)).perform(typeText("my tour"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText(name), closeSoftKeyboard());
         onView(withId(R.id.tour_location_et)).perform(typeText("Madison, WI, USA"), closeSoftKeyboard());
         onView(withId(R.id.tour_cost_et)).perform(typeText("0"), closeSoftKeyboard());
 
@@ -132,53 +169,42 @@ public class RateTourTest {
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 29));
         onView(withId(android.R.id.button1)).perform(click());
 
+        onView(withId(R.id.tour_public_cb)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_public_cb)).perform(click());
+
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
     }
 
-    public void delete_tour() throws InterruptedException {
-        //Clich on the future tour
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
-
-        try {
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("my tour"))));
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("my tour")), click()));
-
-        } catch (androidx.test.espresso.PerformException e) {
-            sleep(2000);
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        } finally {
-            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
-
-            //delete tour
-            onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
-            onView(withId(R.id.tour_delete_btn)).perform(click());
-        }
-    }
-
-    public void rate_tour() throws InterruptedException {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
-        sleep(1000);
-        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
-
-        onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_review_btn)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.tour_review_rb, TimeUnit.SECONDS.toMillis(100)));
-        onView(withId(R.id.tour_review_rb)).perform(click());
 
 
-        ViewInteraction appCompatButton8 = onView(
-                allOf(withId(android.R.id.button1), withText("SUBMIT"),
+    public void sortBy() {
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.tour_market_btn), withText("Sort By"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.nav_host_fragment),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatButton2.perform(click());
+
+        DataInteraction appCompatCheckedTextView = onData(anything())
+                .inAdapterView(allOf(withClassName(is("com.android.internal.app.AlertController$RecycleListView")),
+                        childAtPosition(
+                                withClassName(is("android.widget.FrameLayout")),
+                                0)))
+                .atPosition(0);
+        appCompatCheckedTextView.perform(click());
+
+        ViewInteraction appCompatButton3 = onView(
+                allOf(withId(android.R.id.button1), withText("OK"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 3)));
-        appCompatButton8.perform(scrollTo(), click());
-    }
-    public void check(String msg) {
-        onView(withText(msg)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        appCompatButton3.perform(scrollTo(), click());
     }
 
     private static Matcher<View> childAtPosition(
