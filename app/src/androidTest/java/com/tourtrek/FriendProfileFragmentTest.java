@@ -53,14 +53,12 @@ public class FriendProfileFragmentTest {
         mainActivityScenario = mainActivityScenarioRule.getScenario();
 
         // If any user is logged in, make sure to log them out
-        try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(3)));
-
+        if(MainActivity.user != null){
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.navigation_profile)).perform(click());
+            onView(isRoot()).perform(waitForView(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.profile_logout_btn)).perform(click());
-        } catch (Exception NoMatchingViewException) {
-            Log.w(TAG, "No user is not logged in, continuing test execution");
-        } finally {
+        }
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(withId(R.id.login_email_et)).perform(typeText("testingaccount@gmail.com"), ViewActions.closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("password"), ViewActions.closeSoftKeyboard());
@@ -70,10 +68,13 @@ public class FriendProfileFragmentTest {
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(1000)));
             onView(withId(R.id.profile_friend_btn)).perform(click());
-        }
+
     }
     /**
     *This test checks to make sure you can view a friend's friends by checking a specific profile for a specific friend
+     *
+     * This test depends on the testing accounts second friend in the recycler view being an account named "Michael" that contains
+     *  a friend named "Testing Account"
      **/
     @Test
     public void viewFriendsFriends(){
@@ -92,6 +93,9 @@ public class FriendProfileFragmentTest {
 
     /**
      *This test checks to make sure you can view a friend's tours by checking a specific profile for a specific tour
+     *
+     * This test depends on the testing accounts second friend in the recycler view being an account named "Michael" that contains
+     * the tour named "Triple D"
      **/
     @Test
     public void viewFriendsTours(){
@@ -109,24 +113,5 @@ public class FriendProfileFragmentTest {
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
         textView.check(matches(withText("Triple D")));
-    }
-
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
     }
 }
