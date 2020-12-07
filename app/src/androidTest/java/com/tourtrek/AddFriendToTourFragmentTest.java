@@ -271,8 +271,6 @@ public class AddFriendToTourFragmentTest {
                             withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                             isDisplayed()));
         textView2.check(matches(withText("aaaaFun Times")));
-
-        //TODO: Want to force a fail right here
         }
         catch(NoMatchingViewException e){
                 assert true;
