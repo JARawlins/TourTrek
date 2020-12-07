@@ -13,17 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,23 +36,21 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.adapters.TourMarketAdapter;
 import com.tourtrek.data.Tour;
+import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.utilities.TourLengthSorter;
 import com.tourtrek.utilities.TourLocationSorter;
 import com.tourtrek.utilities.TourNameSorter;
-import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.utilities.TourRatingSorter;
 import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.TourViewModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class TourMarketFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class TourMarketFragment extends Fragment {
 
     private static final String TAG = "TourMarketFragment";
     private RecyclerView recyclerView;
@@ -302,17 +296,6 @@ public class TourMarketFragment extends Fragment implements AdapterView.OnItemSe
         super.onResume();
         ((MainActivity) requireActivity()).setActionBarTitle("Tour Market");
     }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortTours(tourMarketAdapter, key);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {}
 
     public void searchTours(TourMarketAdapter adapter, String newText){
         ArrayList<Tour> data = new ArrayList<>(adapter.getDataSet());

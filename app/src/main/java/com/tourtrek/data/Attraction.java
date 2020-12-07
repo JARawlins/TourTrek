@@ -63,6 +63,10 @@ public class Attraction {
         this.address = address;
         this.coverImageURI = coverImageURI;
         this.weather = weather;
+        this.reviews = new ArrayList<>();
+        this.totalRating = 0;
+        this.rating = 0;
+        this.ticket = "";
     }
 
     public double getLat() {

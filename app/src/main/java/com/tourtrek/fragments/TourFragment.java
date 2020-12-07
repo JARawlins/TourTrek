@@ -77,6 +77,7 @@ import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.AttractionCostSorter;
+import com.tourtrek.utilities.AttractionDateSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.utilities.AttractionRatingSorter;
@@ -129,8 +130,8 @@ public class TourFragment extends Fragment {
     private AlertDialog dialog;
     private AlertDialog.Builder builder;
     private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Rating Ascending", "Name Descending", "Location Descending",
-            "Cost Descending", "Rating Descending"};
+            "Rating Ascending","Date and Time Ascending", "Name Descending", "Location Descending",
+            "Cost Descending", "Rating Descending", "Date and Time Descending"};
     private String result = "";
     private boolean added;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -1075,6 +1076,10 @@ public class TourFragment extends Fragment {
                 Collections.sort(temp, new AttractionRatingSorter());
                 break;
 
+            case "Date and Time Ascending":
+                Collections.sort(temp, new AttractionDateSorter());
+                break;
+
             case "Name Descending":
                 Collections.sort(temp, new AttractionNameSorter());
                 Collections.reverse(temp);
@@ -1092,6 +1097,11 @@ public class TourFragment extends Fragment {
 
             case "Rating Descending":
                 Collections.sort(temp, new AttractionRatingSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Date and Time Descending":
+                Collections.sort(temp, new AttractionDateSorter());
                 Collections.reverse(temp);
                 break;
 
