@@ -43,18 +43,18 @@ public class AttractionFragmentTest {
     public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
 
     @Before
-    public void setup() throws InterruptedException, UiObjectNotFoundException {
+    public void setup() throws InterruptedException {
 
         mainActivityScenario = mainActivityScenarioRule.getScenario();
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
-        try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1000)));
+        if(MainActivity.user != null){
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.navigation_profile)).perform(click());
+            onView(isRoot()).perform(waitForView(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.profile_logout_btn)).perform(click());
-        } catch (Exception NoMatchingViewException) {
-            Log.w(TAG, "Not logged in");
-        } finally {
+        }
+
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(1000)));
             onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
@@ -68,7 +68,7 @@ public class AttractionFragmentTest {
             onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
             onView(withId(R.id.tour_add_attraction_btn)).perform(click());
         }
-    }
+
 
     /**
      * An error message should display when the user inputs no name, but every other field
