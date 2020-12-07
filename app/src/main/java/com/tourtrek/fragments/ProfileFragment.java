@@ -73,6 +73,7 @@ public class ProfileFragment extends Fragment {
 
         // Display login screen if no user was previous logged in
         if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            ((MainActivity)requireActivity()).enableTabs();
             NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
             return profileFragmentView;
         }

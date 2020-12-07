@@ -98,6 +98,14 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
 
         if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
 
+            holder.startDate.setText(currentTourAttractionsDataSet.get(position).getStartDate().toString() + "  " +
+                    currentTourAttractionsDataSet.get(position).getStartTime());
+            holder.startDate.setTextColor(Color.parseColor("#3C1533"));
+            holder.endDate.setText(currentTourAttractionsDataSet.get(position).getEndDate().toString() + "  " +
+                    currentTourAttractionsDataSet.get(position).getEndTime());
+            holder.endDate.setTextColor(Color.parseColor("#3C1533"));
+
+
             // get instances of the calendar and set the start time for the attraction
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(attraction.getStartDate());
