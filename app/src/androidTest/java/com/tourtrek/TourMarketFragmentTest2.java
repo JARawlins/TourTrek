@@ -1,6 +1,7 @@
 package com.tourtrek;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -9,6 +10,7 @@ import android.widget.DatePicker;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -31,6 +33,7 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -38,6 +41,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.tourtrek.EspressoExtensions.nestedScrollTo;
@@ -48,9 +52,9 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 
 
-public class SortToursTest {
+public class TourMarketFragmentTest2 {
 
-    public static final String TAG = "TourMarketFragmentTest";
+    public static final String TAG = "TourMarketFragmentTest2";
     private ActivityScenario mainActivityScenario;
 
     @Rule
@@ -105,7 +109,53 @@ public class SortToursTest {
         test(7);
     }
 
+    @Test
+    public void searchTourTest() throws InterruptedException {
 
+        create_tour("A");
+
+        onView(isRoot()).perform(waitForView(R.id.navigation_tour_market, TimeUnit.SECONDS.toMillis(15)));
+        onView(withId(R.id.navigation_tour_market)).perform(click());
+
+        sleep(1000);
+
+        search("A");
+
+        sleep(1000);
+
+        sortBy(0);
+
+        sleep(1000);
+
+        onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        sleep(100);
+        onView(withId(R.id.tour_name_et)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_name_et)).check(matches(withText("A")));
+
+    }
+
+    @After
+    public void destroy() throws InterruptedException {
+        sleep(1000);
+
+        onView(withId(R.id.tour_public_cb)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_public_cb)).perform(click());
+
+        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_update_btn)).perform(click());
+
+        sleep(2000);
+
+        onView(withId(R.id.navigation_tours)).perform(click());
+        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
+
+
+
+        delete_tour();
+
+        sleep(1000);
+    }
 
     private void test(int pos) throws InterruptedException {
         create_tour("A");
@@ -117,15 +167,15 @@ public class SortToursTest {
 
         sortBy(pos);
 
-        sleep(100);
+        sleep(1000);
 
         sortBy(0);
 
-        sleep(1000);
+        sleep(2000);
 
         onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-        sleep(100);
+        sleep(1000);
         onView(withId(R.id.tour_name_et)).perform(nestedScrollTo());
         onView(withId(R.id.tour_name_et)).check(matches(withText("A")));
     }
@@ -149,25 +199,7 @@ public class SortToursTest {
         }
     }
 
-    @After
-    public void destroy() throws InterruptedException {
-        sleep(100);
 
-        onView(withId(R.id.tour_public_cb)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_public_cb)).perform(click());
-
-        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_update_btn)).perform(click());
-
-        sleep(2000);
-
-        onView(withId(R.id.navigation_tours)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
-
-
-
-        delete_tour();
-    }
 
     public void delete_tour() throws InterruptedException {
         //Clich on the future tour
@@ -247,6 +279,37 @@ public class SortToursTest {
                                         0),
                                 3)));
         appCompatButton3.perform(scrollTo(), click());
+    }
+
+    private void search(String key) throws InterruptedException {
+        ViewInteraction appCompatImageView = onView(
+                allOf(withId(R.id.search_button), withContentDescription("Search"),
+                        childAtPosition(
+                                allOf(withId(R.id.search_bar),
+                                        childAtPosition(
+                                                withId(R.id.tour_market_search_itm),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        appCompatImageView.perform(click());
+
+        ViewInteraction searchAutoComplete = onView(
+                allOf(withId(R.id.search_src_text),
+                        childAtPosition(
+                                allOf(withId(R.id.search_plate),
+                                        childAtPosition(
+                                                withId(R.id.search_edit_frame),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete.perform(replaceText("pas"));
+
+        sleep(2500);
+
+        onView(withId(R.id.search_edit_frame)).perform(ViewActions.pressKey(KeyEvent.KEYCODE_ENTER));
+        sleep(2500);
+        searchAutoComplete.perform(replaceText(key), closeSoftKeyboard());
+        sleep(2000);
     }
 
     private static Matcher<View> childAtPosition(
