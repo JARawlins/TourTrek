@@ -1,34 +1,16 @@
 package com.tourtrek.fragments;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.core.widget.NestedScrollView;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -36,25 +18,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -64,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,41 +39,30 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.facebook.CallbackManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -119,10 +76,6 @@ import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.Firestore;
-import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.utilities.PlacesLocal;
-import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
@@ -133,25 +86,20 @@ import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
-import org.w3c.dom.Document;
-
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import static com.tourtrek.utilities.Firestore.updateUser;
-import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
-import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
-import  com.facebook.FacebookSdk;
 
-public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+import static com.tourtrek.utilities.Firestore.updateUser;
+
+public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
@@ -191,6 +139,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     // To keep track of whether we are in an async call
     private boolean loading;
     private ImageButton rate;
+    private android.widget.SearchView attractionSearchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -290,6 +239,25 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public void onClick(View v) {
                 dialog.show();
+            }
+        });
+
+        attractionSearchView = (android.widget.SearchView)tourView.findViewById(R.id.attraction_search_sv);
+
+        attractionSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                searchAttractions(attractionsAdapter, query);
+                Activity currentActivity = requireActivity();
+                Utilities.hideKeyboard(currentActivity);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchAttractions(attractionsAdapter, newText);
+                return false;
             }
         });
 
@@ -1043,41 +1011,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        // Show the top app bar with the search icon
-        inflater.inflate(R.menu.tour_search_menu, menu);
-
-        // Get the menu item
-        MenuItem item = menu.findItem(R.id.tour_search_itm);
-
-        SearchView searchView = (SearchView) item.getActionView();
-
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-
-                searchAttractions(attractionsAdapter, query);
-                Activity currentActivity = requireActivity();
-                Utilities.hideKeyboard(currentActivity);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                searchAttractions(attractionsAdapter, newText);
-
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
     public void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
         ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetCopy());
 
@@ -1109,18 +1042,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
         return filteredTourList;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
     }
 
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
