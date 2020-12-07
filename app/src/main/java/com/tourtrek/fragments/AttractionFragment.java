@@ -1,16 +1,11 @@
 package com.tourtrek.fragments;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,18 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
-
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,9 +38,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -75,43 +55,28 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
-import com.tourtrek.data.Tour;
 
 import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import org.w3c.dom.Document;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -161,7 +126,6 @@ public class AttractionFragment extends Fragment {
     private PDFView pdfView;
     private Button uploadTicketButton;
     private String fileExtension;
-    private boolean saving;
     private ProgressBar progressBar;
     private TextView progressBarTextView;
 
@@ -761,11 +725,11 @@ public class AttractionFragment extends Fragment {
 
                 attractionViewModel.setReturnedFromSearch(true);
 
-                attractionViewModel.getSelectedAttraction().setName(place.getName());
-                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
-                attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
-                attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
-                attractionViewModel.getSelectedAttraction().setRating(place.getRating());
+                attractionViewModel.getSelectedAttraction().setName(place.getName()==null?"":place.getName());
+                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress()==null?"":place.getAddress());
+                attractionViewModel.getSelectedAttraction().setLat(place.getLatLng()==null?0.00:place.getLatLng().latitude);
+                attractionViewModel.getSelectedAttraction().setLon(place.getLatLng()==null?0.00:place.getLatLng().longitude);
+                attractionViewModel.getSelectedAttraction().setRating(place.getRating()==null?0.00:place.getRating());
 
                 // Get updated weather
                 Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
@@ -922,18 +886,6 @@ public class AttractionFragment extends Fragment {
             String endDate = endDateButton.getText().toString();
             String endTime = endTimeButton.getText().toString();
 
-            // error-handling of dates
-            try {
-                Date start = simpleDateFormat.parse(startDate);
-                Date end = simpleDateFormat.parse(endDate);
-                if (end.compareTo(start) < 0){
-                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
             if (name.equals("") ||
                     location.equals("") ||
                     cost.equals("") ||
@@ -944,6 +896,57 @@ public class AttractionFragment extends Fragment {
                     description.equals("")) {
                 Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
                 return;
+            }
+
+            attractionViewModel.getSelectedAttraction().setName(name);
+            attractionViewModel.getSelectedAttraction().setLocation(location);
+            attractionViewModel.getSelectedAttraction().setDescription(description);
+            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
+            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
+
+            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
+
+                try {
+                    // Check that the attraction lies within the tour dates
+                    Calendar calendar = Calendar.getInstance();
+
+                    calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+                    String attractionStartTime = attractionViewModel.getSelectedAttraction().getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(attractionStartTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+                    String attractionEndTime = attractionViewModel.getSelectedAttraction().getEndTime();
+                    date = df.parse(attractionEndTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                    Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                    Timestamp tourStartDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                    Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                    if (attractionStartDate.compareTo(attractionEndDate) > 0) {
+                        Toast.makeText(getContext(), "Attraction must start before it ends", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                        Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                catch (ParseException e) {
+                    Log.e(TAG, "Error parsion date/time", e);
+                }
             }
 
             try {
@@ -959,30 +962,6 @@ public class AttractionFragment extends Fragment {
             } catch (ParseException e) {
                 Log.e(TAG, "Error converting startDate to a firebase Timestamp");
                 return;
-            }
-
-            attractionViewModel.getSelectedAttraction().setName(name);
-            attractionViewModel.getSelectedAttraction().setLocation(location);
-            attractionViewModel.getSelectedAttraction().setDescription(description);
-            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
-            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
-
-            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
-                // Check that the attraction lies within the tour dates
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
-                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-                calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
-                Timestamp attractionEndDate = new Timestamp(calendar.getTime());
-                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
-                Timestamp tourStartDate = new Timestamp(calendar.getTime());
-                calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
-                Timestamp tourEndDate = new Timestamp(calendar.getTime());
-
-                if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
-                    Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
-                    return;
-                }
             }
 
             // Remove $ from cost
@@ -1208,7 +1187,6 @@ public class AttractionFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document");
-                        saving = false;
                     }
                 });
     }
@@ -1258,7 +1236,6 @@ public class AttractionFragment extends Fragment {
     }
 
     private void getTicketFromFirebase() {
-        saving = true;
         if (attractionViewModel.getSelectedAttraction().getTicket() == null ||
                 attractionViewModel.getSelectedAttraction().getTicket().length() <= 5) {
             attractionViewModel.getSelectedAttraction().setTicket(

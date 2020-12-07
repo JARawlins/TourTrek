@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewInteraction;
@@ -19,7 +20,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,11 +29,10 @@ import java.util.concurrent.TimeUnit;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -42,12 +41,11 @@ import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 
 
-public class RateTourTest {
+public class SortAndSearchAttractionFragmentTest {
 
-    public static final String TAG = "TourFragmentTest";
+    public static final String TAG = "SortAndSearchAttractionFragmentTest";
     private ActivityScenario mainActivityScenario;
 
     @Rule
@@ -62,27 +60,19 @@ public class RateTourTest {
 
         create_tour();
 
+        //add_attraction("madison");
+
+        //add_attraction("kenya");
+
+
     }
 
 
     @Test
-    public void rateSuccessfulTest() throws InterruptedException {
+    public void SortByTest() throws InterruptedException {
 
-        rate_tour();
-        check("You successfully rated the tour");
+
     }
-
-    @Test
-    public void alreadyRatedTourTest() throws InterruptedException {
-
-        rate_tour();
-        sleep(2000);
-        onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_review_btn)).perform(click());
-        check("You cannot rate a tour more than once");
-    }
-
-
 
     public void login() throws InterruptedException, UiObjectNotFoundException {
 
@@ -103,12 +93,6 @@ public class RateTourTest {
         }
     }
 
-    @After
-    public void destroy() throws InterruptedException {
-        sleep(100);
-        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_delete_btn)).perform(click());
-    }
 
     public void create_tour() {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
@@ -156,29 +140,72 @@ public class RateTourTest {
         }
     }
 
-    public void rate_tour() throws InterruptedException {
+    public void add_attraction(String key) throws InterruptedException {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
         sleep(1000);
         onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
 
-        onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_review_btn)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.tour_review_rb, TimeUnit.SECONDS.toMillis(100)));
-        onView(withId(R.id.tour_review_rb)).perform(click());
+        onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_add_attraction_btn)).perform(click());
+        sleep(50);
 
-
-        ViewInteraction appCompatButton8 = onView(
-                allOf(withId(android.R.id.button1), withText("SUBMIT"),
+        onView(withId(R.id.attraction_search_ib)).perform(click());
+        sleep(1000);
+        onView(withId(R.id.places_autocomplete_search_bar)).perform(replaceText(key));
+        sleep(1000);
+        onView(isRoot()).perform(waitForView(R.id.places_autocomplete_content, TimeUnit.SECONDS.toMillis(30)));
+        ViewInteraction recyclerView = onView(
+                allOf(withId(R.id.places_autocomplete_list),
                         childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
+                                withId(R.id.places_autocomplete_content),
                                 3)));
-        appCompatButton8.perform(scrollTo(), click());
-    }
-    public void check(String msg) {
-        onView(withText(msg)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        recyclerView.perform(actionOnItemAtPosition(0, click()));
+
+
+
+        //enter info to create attraction
+        sleep(2000);
+
+        onView(isRoot()).perform(waitForView(R.id.attraction_cover_iv, TimeUnit.SECONDS.toMillis(100)));
+
+        onView(withId(R.id.attraction_cost_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_cost_et)).perform(typeText("600"), closeSoftKeyboard());
+
+        onView(withId(R.id.attraction_start_date_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_start_date_btn)).perform(click());
+
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 22));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.attraction_start_time_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_start_time_btn)).perform(click());
+
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(11,00));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_end_date_btn)).perform(click());
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 29));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.attraction_end_time_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_end_time_btn)).perform(click());
+
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(11,00));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_description_et)).perform(typeText("nice food"), closeSoftKeyboard());
+
+        sleep(1500);
+
+        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_update_btn)).perform(click());
+        sleep(3000);
+
+        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_update_btn)).perform(click());
     }
 
     private static Matcher<View> childAtPosition(
