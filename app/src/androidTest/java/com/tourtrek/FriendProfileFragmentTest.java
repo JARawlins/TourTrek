@@ -53,13 +53,15 @@ public class FriendProfileFragmentTest {
         mainActivityScenario = mainActivityScenarioRule.getScenario();
 
         // If any user is logged in, make sure to log them out
-        sleep(1000);
-        if(MainActivity.user != null){
+        try{
             onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.profile_logout_btn)).perform(click());
+        }catch (Exception NoMatchingViewException) {
+            Log.w(TAG, "No user is not logged in, continuing test execution");
         }
+        finally {
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(withId(R.id.login_email_et)).perform(typeText("testingaccount@gmail.com"), ViewActions.closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("password"), ViewActions.closeSoftKeyboard());
@@ -68,6 +70,7 @@ public class FriendProfileFragmentTest {
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(1000)));
             onView(withId(R.id.profile_friend_btn)).perform(click());
+        }
 
     }
     /**
