@@ -42,6 +42,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -81,8 +82,10 @@ import com.tourtrek.utilities.AttractionDateSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.utilities.AttractionRatingSorter;
+import com.tourtrek.utilities.AttractionsInfoDialogFragment;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
+import com.tourtrek.utilities.TermsAndConditionsDialogFragment;
 import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
@@ -180,6 +183,12 @@ public class TourFragment extends Fragment {
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
+
+        Button attractionInformationButton = tourView.findViewById(R.id.tour_attractions_info_btn);
+        attractionInformationButton.setOnClickListener(v -> {
+            DialogFragment dialogFragment = AttractionsInfoDialogFragment.newInstance("Attractions Info");
+            dialogFragment.show(getParentFragmentManager(), "dialog");
+        });
 
         // Initialize attractionSortButton
         //review button
