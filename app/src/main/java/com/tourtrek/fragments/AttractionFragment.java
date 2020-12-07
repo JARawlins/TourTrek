@@ -725,11 +725,11 @@ public class AttractionFragment extends Fragment {
 
                 attractionViewModel.setReturnedFromSearch(true);
 
-                attractionViewModel.getSelectedAttraction().setName(place.getName());
-                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
-                attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
-                attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
-                attractionViewModel.getSelectedAttraction().setRating(place.getRating());
+                attractionViewModel.getSelectedAttraction().setName(place.getName()==null?"":place.getName());
+                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress()==null?"":place.getAddress());
+                attractionViewModel.getSelectedAttraction().setLat(place.getLatLng()==null?0.00:place.getLatLng().latitude);
+                attractionViewModel.getSelectedAttraction().setLon(place.getLatLng()==null?0.00:place.getLatLng().longitude);
+                attractionViewModel.getSelectedAttraction().setRating(place.getRating()==null?0.00:place.getRating());
 
                 // Get updated weather
                 Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
