@@ -71,4 +71,11 @@
 
     </string>
 
+
+    <string name="attraction_highlight_info">
+        Normal attractions have a white background and red text.
+        \n\nAttractions that are happening in current time are inverted (the background is red and the text is white).
+        \n\nYou may sort the attractions based on name, location, cost, rating, or date.
+    </string>
+
 </resources>
