@@ -886,18 +886,6 @@ public class AttractionFragment extends Fragment {
             String endDate = endDateButton.getText().toString();
             String endTime = endTimeButton.getText().toString();
 
-            // error-handling of dates
-            try {
-                Date start = simpleDateFormat.parse(startDate);
-                Date end = simpleDateFormat.parse(endDate);
-                if (end.compareTo(start) < 0){
-                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
             if (name.equals("") ||
                     location.equals("") ||
                     cost.equals("") ||
@@ -908,6 +896,57 @@ public class AttractionFragment extends Fragment {
                     description.equals("")) {
                 Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
                 return;
+            }
+
+            attractionViewModel.getSelectedAttraction().setName(name);
+            attractionViewModel.getSelectedAttraction().setLocation(location);
+            attractionViewModel.getSelectedAttraction().setDescription(description);
+            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
+            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
+
+            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
+
+                try {
+                    // Check that the attraction lies within the tour dates
+                    Calendar calendar = Calendar.getInstance();
+
+                    calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+                    String attractionStartTime = attractionViewModel.getSelectedAttraction().getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(attractionStartTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+                    String attractionEndTime = attractionViewModel.getSelectedAttraction().getEndTime();
+                    date = df.parse(attractionEndTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                    Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                    Timestamp tourStartDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                    Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                    if (attractionStartDate.compareTo(attractionEndDate) > 0) {
+                        Toast.makeText(getContext(), "Attraction must start before it ends", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                        Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                catch (ParseException e) {
+                    Log.e(TAG, "Error parsion date/time", e);
+                }
             }
 
             try {
@@ -923,30 +962,6 @@ public class AttractionFragment extends Fragment {
             } catch (ParseException e) {
                 Log.e(TAG, "Error converting startDate to a firebase Timestamp");
                 return;
-            }
-
-            attractionViewModel.getSelectedAttraction().setName(name);
-            attractionViewModel.getSelectedAttraction().setLocation(location);
-            attractionViewModel.getSelectedAttraction().setDescription(description);
-            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
-            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
-
-            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
-                // Check that the attraction lies within the tour dates
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
-                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-                calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
-                Timestamp attractionEndDate = new Timestamp(calendar.getTime());
-                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
-                Timestamp tourStartDate = new Timestamp(calendar.getTime());
-                calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
-                Timestamp tourEndDate = new Timestamp(calendar.getTime());
-
-                if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
-                    Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
-                    return;
-                }
             }
 
             // Remove $ from cost

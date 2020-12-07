@@ -1,13 +1,7 @@
 package com.tourtrek.fragments;
 
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +11,7 @@ import android.widget.Button;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -40,16 +32,12 @@ import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.adapters.FuturePersonalToursAdapter;
 import com.tourtrek.adapters.PastPersonalToursAdapter;
 import com.tourtrek.data.Tour;
-import com.tourtrek.notifications.AlarmBroadcastReceiver;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.TourViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PersonalToursFragment extends Fragment {
 
-    private static final String TAG = "ToursFragment";
+    private static final String TAG = "PersonalToursFragment";
     private RecyclerView currentRecyclerView;
     private RecyclerView futureRecyclerView;
     private RecyclerView pastRecyclerView;
@@ -79,6 +67,7 @@ public class PersonalToursFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // Disable tabs while the view is loading
         ((MainActivity)requireActivity()).disableTabs();
 
         View personalToursView = inflater.inflate(R.layout.fragment_personal_tours, container, false);
@@ -87,6 +76,7 @@ public class PersonalToursFragment extends Fragment {
 
         // Display login screen if no user was previous logged in
         if (mAuth.getCurrentUser() == null || MainActivity.user == null) {
+            ((MainActivity)requireActivity()).enableTabs();
             NavHostFragment.findNavController(this).navigate(R.id.navigation_login);
             return personalToursView;
         }
