@@ -41,6 +41,7 @@ public class RegistrationFragmentTest {
     public void setup() throws InterruptedException {
 
         // If any user is logged in, make sure to log them out
+
         try{
                 onView(withId(R.id.navigation_profile)).perform(click());
                 onView(isRoot()).perform(waitForView(R.id.profile_logout_btn, TimeUnit.SECONDS.toMillis(1)));
@@ -49,6 +50,7 @@ public class RegistrationFragmentTest {
             Log.w(TAG, "No user is not logged in, continuing test execution");
         }
         finally {
+
 
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.login_register_btn, TimeUnit.SECONDS.toMillis(1)));

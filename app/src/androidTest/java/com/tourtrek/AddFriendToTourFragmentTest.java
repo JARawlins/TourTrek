@@ -1,6 +1,8 @@
 package com.tourtrek;
 
+
 import android.util.Log;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -22,7 +24,9 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.NoMatchingViewException;
+
 import androidx.test.espresso.PerformException;
+
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.PickerActions;
@@ -67,7 +71,9 @@ public class AddFriendToTourFragmentTest {
 
     @Before
     public void setup() throws InterruptedException {
+
         deletedTour = true;
+
 
         mainActivityScenario = mainActivityScenarioRule.getScenario();
 
@@ -90,6 +96,7 @@ public class AddFriendToTourFragmentTest {
              onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(5)));
              onView(withId(R.id.navigation_tours)).perform(click());
          }
+
     }
 
     /**
@@ -97,7 +104,9 @@ public class AddFriendToTourFragmentTest {
      */
     public void createNewTour(){
         //click new tour
+
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(5)));
+
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
         //enter fields
@@ -111,18 +120,22 @@ public class AddFriendToTourFragmentTest {
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(1920, 11, 1));
         onView(withId(android.R.id.button1)).perform(click());
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo(),click());
+
         deletedTour = false;
+
     }
 
     /**
      *clicks on friend in position 1 which should be user "Michael"
      */
     public void  clickFriendAccount(){
+
         onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.navigation_profile)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.profile_friend_btn)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(5)));
+
         onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
     }
 
@@ -154,16 +167,19 @@ public class AddFriendToTourFragmentTest {
 //        deleteTour();
 //    }
 
+
     /**
      * adds friend with email address michael@gmail.com to active tour
      */
     public void searchForFriendToAddToTour(String email){
         //click on add friend to tour button
+
         onView(isRoot()).perform(waitForView(R.id.tour_add_friend_btn, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.tour_add_friend_btn)).perform(nestedScrollTo(), click());
 
         //type in friend email to search
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_email_et, TimeUnit.SECONDS.toMillis(5)));
+
         ViewInteraction appCompatEditText3 = onView(
                 allOf(withId(R.id.add_friend_to_tour_email_et),
                         childAtPosition(
@@ -197,15 +213,16 @@ public class AddFriendToTourFragmentTest {
         //create new past tour
         createNewTour();
 
-
         //click on new tour
         sleep(1000);
         onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
         //search for friend
         searchForFriendToAddToTour("michael@gmail.com");
         //click add button
+
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.add_friend_to_tour_add_btn)).perform(nestedScrollTo(), click());
+
 
         //open friends account
             clickFriendAccount();
@@ -213,7 +230,9 @@ public class AddFriendToTourFragmentTest {
         //scroll to friends tours recycler view
         onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
         //check to make sure user has tour name "Fun Times"
+
         onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
+
         ViewInteraction textView = onView(
                 allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
@@ -237,8 +256,10 @@ public class AddFriendToTourFragmentTest {
         //search for friend
         searchForFriendToAddToTour("michael@gmail.com");
         //click add button
+
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.add_friend_to_tour_add_btn)).perform(nestedScrollTo(),click());
+
 
         //open friends account
         clickFriendAccount();
@@ -246,7 +267,9 @@ public class AddFriendToTourFragmentTest {
         //scroll to friends tours recycler view
         onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
         //check to make sure user has tour name "Fun Times"
+
         onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
+
         ViewInteraction textView = onView(
                 allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
@@ -256,21 +279,26 @@ public class AddFriendToTourFragmentTest {
         //delete tour
         deleteTour();
 
+
         //open friends account
         onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(5)));
+
         onView(withId(R.id.navigation_profile)).perform(click());
         clickFriendAccount();
 
         //scroll to friends tours recycler view
         onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
         //check to make sure user has tour name "Fun Times"
+
         onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
+
         try {
             ViewInteraction textView2 = onView(
                     allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
                             withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                             isDisplayed()));
         textView2.check(matches(withText("aaaaFun Times")));
+          
         }
         catch(NoMatchingViewException e){
                 assert true;
@@ -283,6 +311,7 @@ public class AddFriendToTourFragmentTest {
      **/
     @Test
     public void canSearchForFriendToAdd(){
+
         //click on a tour
         onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
 
@@ -290,7 +319,9 @@ public class AddFriendToTourFragmentTest {
         searchForFriendToAddToTour("michael@gmail.com");
 
         //make sure friend that was searched for appears
+
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(1)));
+
         ViewInteraction textView = onView(
                 allOf(withId(R.id.add_friend_to_tour_friendName_tv), withText("Michael"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class))),
@@ -303,6 +334,7 @@ public class AddFriendToTourFragmentTest {
      **/
     @Test
     public void cantAddStrangerToTour(){
+
         //click on a tour
         onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
 
@@ -311,6 +343,7 @@ public class AddFriendToTourFragmentTest {
 
         //make sure error message appears
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
+
         onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
     }
 
@@ -319,6 +352,7 @@ public class AddFriendToTourFragmentTest {
      **/
     @Test
     public void cantSearchForInvalidUser(){
+
         //click on a tour
         onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
 
@@ -326,7 +360,9 @@ public class AddFriendToTourFragmentTest {
         searchForFriendToAddToTour("asasaa@sads.cass");
 
         //make sure error message appears
+
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
+
         onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
     }
 

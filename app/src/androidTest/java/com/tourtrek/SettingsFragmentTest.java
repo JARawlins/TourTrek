@@ -1,3 +1,4 @@
+
 package com.tourtrek;
 
 import android.util.Log;
@@ -202,3 +203,4 @@ public class SettingsFragmentTest {
 
 
 }
+
