@@ -1,6 +1,7 @@
 package com.tourtrek;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -8,7 +9,10 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.DataInteraction;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -20,27 +24,35 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.is;
 
 
 public class SortAndSearchAttractionFragmentTest {
@@ -60,18 +72,108 @@ public class SortAndSearchAttractionFragmentTest {
 
         create_tour();
 
-        //add_attraction("madison");
-
-        //add_attraction("kenya");
-
-
+        add_attraction("madison");
     }
 
 
     @Test
-    public void SortByTest() throws InterruptedException {
+    public void sortByNameAscendingTest() throws InterruptedException {
+        test(0);
+    }
 
+    @Test
+    public void sortByLocationAscendingTest() throws InterruptedException {
+        test(1);
+    }
 
+    @Test
+    public void sortByCostAscendingTest() throws InterruptedException {
+        test(2);
+    }
+
+    @Test
+    public void sortByReviewAscendingTest() throws InterruptedException {
+        test(3);
+    }
+
+    @Test
+    public void sortByDateAndTimeAscendingTest() throws InterruptedException {
+        test(4);
+    }
+
+    @Test
+    public void sortByNameDescendingTest() throws InterruptedException {
+        test(5);
+    }
+
+    @Test
+    public void sortByLocationDescendingTest() throws InterruptedException {
+        test(6);
+    }
+
+    @Test
+    public void sortByCostDescendingTest() throws InterruptedException {
+        test(7);
+    }
+
+    @Test
+    public void sortByReviewDescendingTest() throws InterruptedException {
+        test(8);
+    }
+
+    @Test
+    public void sortByDateAndTimeDescendingTest() throws InterruptedException {
+        test(9);
+    }
+
+    @Test
+    public void searchAttractionTest() throws InterruptedException {
+        sleep(2000);
+        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        sleep(1000);
+
+        search("Madison");
+
+        sleep(2000);
+
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        sleep(1000);
+        onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_name_et)).check(matches(withText("Madison Park")));
+    }
+
+    @After
+    public void destroy() throws InterruptedException {
+        sleep(3000);
+        Espresso.pressBack();
+        sleep(2500);
+
+        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_delete_btn)).perform(click());
+        sleep(4000);
+    }
+
+    private void test(int pos) throws InterruptedException {
+        sleep(2000);
+        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        sleep(1000);
+
+        sortBy(pos);
+
+        sleep(2000);
+
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        sleep(1000);
+        onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_name_et)).check(matches(withText("Madison Park")));
     }
 
     public void login() throws InterruptedException, UiObjectNotFoundException {
@@ -107,7 +209,7 @@ public class SortAndSearchAttractionFragmentTest {
         onView(withId(R.id.tour_start_date_btn)).perform(nestedScrollTo());
 
         onView(withId(R.id.tour_start_date_btn)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 15));
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 20));
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
@@ -175,7 +277,7 @@ public class SortAndSearchAttractionFragmentTest {
         onView(withId(R.id.attraction_start_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_start_date_btn)).perform(click());
 
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 22));
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 25));
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.attraction_start_time_btn)).perform(nestedScrollTo());
@@ -186,7 +288,7 @@ public class SortAndSearchAttractionFragmentTest {
 
         onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_end_date_btn)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 29));
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 26));
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.attraction_end_time_btn)).perform(nestedScrollTo());
@@ -206,6 +308,74 @@ public class SortAndSearchAttractionFragmentTest {
 
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
+    }
+
+    public void sortBy(int pos) {
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.tour_attraction_sort_btn), withText("Sort By"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        6),
+                                1),
+                        isDisplayed()));
+        appCompatButton2.perform(click());
+
+        DataInteraction appCompatCheckedTextView = onData(anything())
+                .inAdapterView(allOf(withClassName(is("com.android.internal.app.AlertController$RecycleListView")),
+                        childAtPosition(
+                                withClassName(is("android.widget.FrameLayout")),
+                                0)))
+                .atPosition(pos);
+        appCompatCheckedTextView.perform(click());
+
+        ViewInteraction appCompatButton3 = onView(
+                allOf(withId(android.R.id.button1), withText("OK"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.ScrollView")),
+                                        0),
+                                3)));
+        appCompatButton3.perform(scrollTo(), click());
+    }
+
+    private void search(String key) throws InterruptedException {
+        sleep(2000);
+        onView(withId(R.id.attraction_search_sv)).perform(nestedScrollTo());
+
+
+        ViewInteraction appCompatImageView = onView(
+                allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Search"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withId(R.id.attraction_search_sv),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        appCompatImageView.perform(click());
+
+        sleep(3000);
+
+        ViewInteraction searchAutoComplete = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete.perform(replaceText("madison"));
+        sleep(3000);
+
+        searchAutoComplete.perform(ViewActions.pressKey(KeyEvent.KEYCODE_ENTER));
+
+        sleep(3500);
+
+        searchAutoComplete.perform(replaceText(key), closeSoftKeyboard());
+
+        sleep(500);
     }
 
     private static Matcher<View> childAtPosition(
