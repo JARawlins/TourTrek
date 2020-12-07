@@ -81,6 +81,18 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
         holder.attractionLocation.setTextSize(15);
         holder.rating.setRating((float) currentTourAttractionsDataSet.get(position).getRating());
 
+        if (currentTourAttractionsDataSet.get(position).getStartDate() != null &&
+        currentTourAttractionsDataSet.get(position).getStartTime() != null) {
+            holder.startDate.setText(currentTourAttractionsDataSet.get(position).getStartDate().toString() + "  " +
+                    currentTourAttractionsDataSet.get(position).getStartTime());
+        }
+
+        if (currentTourAttractionsDataSet.get(position).getEndDate() != null &&
+                currentTourAttractionsDataSet.get(position).getEndTime() != null) {
+            holder.endDate.setText(currentTourAttractionsDataSet.get(position).getEndDate().toString() + "  " +
+                    currentTourAttractionsDataSet.get(position).getEndTime());
+        }
+
         // highlighting the attraction item when it is happening
         Attraction attraction = currentTourAttractionsDataSet.get(position);
 
