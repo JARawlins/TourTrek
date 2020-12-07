@@ -1,29 +1,15 @@
 package com.tourtrek.fragments;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.app.AlarmManager;
+import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -32,33 +18,20 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,41 +39,30 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.facebook.CallbackManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -114,11 +76,8 @@ import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.Firestore;
-import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.utilities.PlacesLocal;
-import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
+import com.tourtrek.utilities.AttractionDateSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.utilities.AttractionRatingSorter;
@@ -128,24 +87,20 @@ import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
-import org.w3c.dom.Document;
-
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import static com.tourtrek.utilities.Firestore.updateUser;
-import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
-import  com.facebook.FacebookSdk;
 
-public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+import static com.tourtrek.utilities.Firestore.updateUser;
+
+public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
@@ -175,8 +130,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private AlertDialog dialog;
     private AlertDialog.Builder builder;
     private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Rating Ascending", "Name Descending", "Location Descending",
-            "Cost Descending", "Rating Descending"};
+            "Rating Ascending","Date and Time Ascending", "Name Descending", "Location Descending",
+            "Cost Descending", "Rating Descending", "Date and Time Descending"};
     private String result = "";
     private boolean added;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -185,6 +140,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     // To keep track of whether we are in an async call
     private boolean loading;
     private ImageButton rate;
+    private android.widget.SearchView attractionSearchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -225,33 +181,33 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-            // Initialize attractionSortButton
-            //review button
-            rate = tourView.findViewById(R.id.tour_review_btn);
+        // Initialize attractionSortButton
+        //review button
+        rate = tourView.findViewById(R.id.tour_review_btn);
 
-            if (tourViewModel.isNewTour()) {
-                rate.setVisibility(View.GONE);
-            }
-            rate.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onClick(View v) {
+        if (tourViewModel.isNewTour()) {
+            rate.setVisibility(View.GONE);
+        }
+        rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
 
-                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                    if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
-                        if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
-                            showReviewDialog();
-                        } else {
-                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
-                        }
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                    if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                        showReviewDialog();
+                    } else {
+                        Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
                     }
-
                 }
-            });
+
+            }
+        });
 
 
-            //initialize attractionSortButton
-            attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+        //initialize attractionSortButton
+        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -284,6 +240,25 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public void onClick(View v) {
                 dialog.show();
+            }
+        });
+
+        attractionSearchView = (android.widget.SearchView)tourView.findViewById(R.id.attraction_search_sv);
+
+        attractionSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                searchAttractions(attractionsAdapter, query);
+                Activity currentActivity = requireActivity();
+                Utilities.hideKeyboard(currentActivity);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchAttractions(attractionsAdapter, newText);
+                return false;
             }
         });
 
@@ -330,6 +305,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             navigationButton.setVisibility(View.GONE);
         }
 
+
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
 
@@ -375,11 +351,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             tourViewModel.setIsUserOwned(true);
         }
         else {
-            nameEditText.setText(tourViewModel.getSelectedTour().getName());
-            locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
-            costEditText.setText("$" + tourViewModel.getSelectedTour().getCost());
-            startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
-            endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+            if (tourViewModel.getSelectedTour().getName() != null)
+                nameEditText.setText(tourViewModel.getSelectedTour().getName());
+            if (tourViewModel.getSelectedTour().getLocation() != null)
+                locationEditText.setText(tourViewModel.getSelectedTour().getLocation());
+            costEditText.setText(String.format("$%.2f", tourViewModel.getSelectedTour().getCost()));
+            if (tourViewModel.getSelectedTour().getStartDate() != null)
+                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            if (tourViewModel.getSelectedTour().getEndDate() != null)
+                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
             notificationsCheckBox.setChecked(tourViewModel.getSelectedTour().getNotifications());
             publicCheckBox.setChecked(tourViewModel.getSelectedTour().isPubliclyAvailable());
         }
@@ -404,8 +384,12 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
                         loadingContainer.setVisibility(View.INVISIBLE);
-                        ((MainActivity)requireActivity()).enableTabs();
-                        loading = false;
+
+                        if (getActivity() != null && isAdded()) {
+                            ((MainActivity) requireActivity()).enableTabs();
+                            loading = false;
+                        }
+
                         return false;
                     }
 
@@ -413,8 +397,10 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         LinearLayout loadingContainer = tourView.findViewById(R.id.tour_cover_loading_container);
                         loadingContainer.setVisibility(View.INVISIBLE);
-                        ((MainActivity)requireActivity()).enableTabs();
-                        loading = false;
+                        if (getActivity() != null && isAdded()) {
+                            ((MainActivity) requireActivity()).enableTabs();
+                            loading = false;
+                        }
                         return false;
                     }
                 })
@@ -470,7 +456,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
         startDateButton.setOnClickListener(view -> {
-            ((MainActivity) requireActivity()).showDatePickerDialog(startDateButton);
+            showDatePickerDialog(startDateButton, getContext(), "start");
         });
 
         startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
@@ -490,7 +476,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
         endDateButton.setOnClickListener(view -> {
-            ((MainActivity) requireActivity()).showDatePickerDialog(endDateButton);
+            showDatePickerDialog(endDateButton, getContext(), "end");
         });
 
         endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
@@ -624,13 +610,19 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     public void onResume() {
         super.onResume();
 
+        if (tourViewModel.getSelectedTour() != null) {
+            if (tourViewModel.getSelectedTour().getStartDate() != null)
+                startDateButton.setText(tourViewModel.getSelectedTour().retrieveStartDateAsString());
+            if (tourViewModel.getSelectedTour().getEndDate() != null)
+                endDateButton.setText(tourViewModel.getSelectedTour().retrieveEndDateAsString());
+        }
+
         if (tourViewModel.isNewTour() || tourViewModel.getSelectedTour() == null)
             ((MainActivity) requireActivity()).setActionBarTitle("New Tour");
         else
             ((MainActivity) requireActivity()).setActionBarTitle(tourViewModel.getSelectedTour().getName());
 
     }
-
 
     /**
      * Retrieve all attractions belonging to this user
@@ -662,6 +654,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                                 swipeRefreshLayout.setRefreshing(false);
 
                             }
+                        })
+                        .addOnFailureListener(v -> {
+                           Log.d("TourFragment", "Failure in fetchAttractionsAsync");
                         });
 
             }
@@ -799,6 +794,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     /**
      * Remove the tour from the user's list of tours in the database and return to the prior screen
      *
+     *
      * @param view
      */
     public void setupDeleteTourButton(View view){
@@ -907,7 +903,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
 
             // parse date to firebase format
-            Date date;
             try {
                 tourViewModel.getSelectedTour().setStartDateFromString(startDateButton.getText().toString());
             } catch (ParseException e) {
@@ -937,6 +932,42 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
             ((MainActivity)requireActivity()).disableTabs();
             loading = true;
+
+            // Set all attraction dates to null if they fall outside the tour date
+            for(DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
+                documentReference.get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                Attraction attraction = documentSnapshot.toObject(Attraction.class);
+
+                                if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
+                                    // Check if the attraction falls within the new tour dates
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTime(attraction.getStartDate());
+                                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(attraction.getEndDate());
+                                    Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                                    Timestamp tourStartDate = new Timestamp(calendar.getTime());
+                                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                                    Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                                        documentReference.update("startDate", null);
+                                        documentReference.update("endDate", null);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("TourFragment", "Failure setting attraction dates to null");
+                            }
+                        });
+            }
 
             db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
                     .set(tourViewModel.getSelectedTour())
@@ -981,41 +1012,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        // Show the top app bar with the search icon
-        inflater.inflate(R.menu.tour_search_menu, menu);
-
-        // Get the menu item
-        MenuItem item = menu.findItem(R.id.tour_search_itm);
-
-        SearchView searchView = (SearchView) item.getActionView();
-
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-
-                searchAttractions(attractionsAdapter, query);
-                Activity currentActivity = requireActivity();
-                Utilities.hideKeyboard(currentActivity);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                searchAttractions(attractionsAdapter, newText);
-
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
     public void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
         ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetCopy());
 
@@ -1049,18 +1045,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return filteredTourList;
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
-
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
 
         ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetFiltered());
@@ -1088,14 +1072,18 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
-                case "Rating Ascending":
-                    Collections.sort(temp, new AttractionRatingSorter());
-                    break;
+            case "Rating Ascending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                break;
 
-                case "Name Descending":
-                    Collections.sort(temp, new AttractionNameSorter());
-                    Collections.reverse(temp);
-                    break;
+            case "Date and Time Ascending":
+                Collections.sort(temp, new AttractionDateSorter());
+                break;
+
+            case "Name Descending":
+                Collections.sort(temp, new AttractionNameSorter());
+                Collections.reverse(temp);
+                break;
 
             case "Location Descending":
                 Collections.sort(temp, new AttractionLocationSorter());
@@ -1107,10 +1095,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.reverse(temp);
                 break;
 
-                case "Rating Descending":
-                    Collections.sort(temp, new AttractionRatingSorter());
-                    Collections.reverse(temp);
-                    break;
+            case "Rating Descending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Date and Time Descending":
+                Collections.sort(temp, new AttractionDateSorter());
+                Collections.reverse(temp);
+                break;
 
                 default:
                     return temp;
@@ -1126,24 +1119,26 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Set an alarm for each attraction within the tour
         for (Attraction attraction : attractionsAdapter.getDataSet()) {
 
-            try {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(attraction.getStartDate());
-                String startTime = attraction.getStartTime();
-                SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-                Date date = df.parse(startTime);
-                calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
-                calendar.set(Calendar.MINUTE, date.getMinutes());
+            if (attraction.getStartDate() != null && attraction.getEndDate() != null && attraction.getStartTime() != null && attraction.getEndTime() != null) {
+                try {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(attraction.getStartDate());
+                    String startTime = attraction.getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(startTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
 
-                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-                Timestamp now = Timestamp.now();
+                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                    Timestamp now = Timestamp.now();
 
-                // Only enable an alarm for the attraction if the attraction hasn't started yet
-                if (attractionStartDate.compareTo(now) > 0)
-                    setAlarmForAttraction(attraction);
+                    // Only enable an alarm for the attraction if the attraction hasn't started yet
+                    if (attractionStartDate.compareTo(now) > 0)
+                        setAlarmForAttraction(attraction);
 
-            } catch (ParseException e) {
-                e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -1288,6 +1283,64 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         editor.clear().apply();
     }
 
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
+    }
+
+    public void showDatePickerDialog(Button button, Context context, String type) {
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+
+                String date = (month + 1) + "/" + day + "/" + year;
+                button.setText(date);
+                button.setBackgroundColor(Color.parseColor("#10000000"));
+
+                // Differentiate between startDate and endDate
+                TourViewModel tourViewModel = new ViewModelProvider((MainActivity)context).get(TourViewModel.class);
+                try {
+                    if (type.equals("start"))
+                        tourViewModel.getSelectedTour().setStartDateFromString(button.getText().toString());
+                    else
+                        tourViewModel.getSelectedTour().setEndDateFromString(button.getText().toString());
+                } catch (ParseException e) {
+                    Log.e(TAG, "Error converting startDate to a firebase Timestamp");
+                }
+            }
+        };
+
+        TourViewModel tourViewModel = new ViewModelProvider((MainActivity)context).get(TourViewModel.class);
+
+        final Calendar calendar = Calendar.getInstance();;
+
+        if (tourViewModel.getSelectedTour().getStartDate() != null)
+            calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, day);
+
+        datePickerDialog.show();
+    }
+
     /**
      * Upon clicking the "Import Tour" button, a copy of the current tour should be added to the user's
      * account.
@@ -1367,7 +1420,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return newTour;
     }
 
-
     private void setupNavigationButton(View tourView){
         navigationButton.setOnClickListener(v -> {
 
@@ -1386,59 +1438,51 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void showReviewDialog() {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void showReviewDialog() {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
+        //Get elements
+        RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
 
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_tour_review, null);
-            //Get elements
-            RatingBar ratingBar = view.findViewById(R.id.tour_review_rb);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setView(view);
-            builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
-                dialogInterface.dismiss();
-            });
+        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
 
-            Button reviewCancelButton = view.findViewById(R.id.review_cancel_btn);
-            //create review cancel button listener
-            reviewCancelButton.setOnClickListener(v -> {
-                dialog.dismiss();
-            });
+            addNewRating(ratingBar.getRating());
 
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-            builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
+    }
 
-                addNewRating(ratingBar.getRating());
+    private void updateTourInFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            });
-            final AlertDialog dialog = builder.create();
-            dialog.show();
+        db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
+                .set(tourViewModel.getSelectedTour())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Tour written to firestore");
 
-        }
+                    // Update the user in the firestore
+                    Firestore.updateUser();
 
-        private void updateTourInFirebase() {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
 
-            db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID())
-                    .set(tourViewModel.getSelectedTour())
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Tour written to firestore");
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
+    }
 
-                        // Update the user in the firestore
-                        Firestore.updateUser();
+    private double computeRating(double totalRating) {
 
-                        Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
+        return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
+    }
 
-                    })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
-        }
-
-        private double computeRating(double totalRating) {
-
-            return (totalRating) / tourViewModel.getSelectedTour().getReviews().size();
-        }
-
-        private void addNewRating(double newRating) {
+    private void addNewRating(double newRating) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             tourViewModel.getSelectedTour().addUser(mAuth.getCurrentUser().getUid());
 
@@ -1460,5 +1504,5 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             updateTourInFirebase();
         }
 
-    }
+}
 

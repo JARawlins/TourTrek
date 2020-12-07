@@ -33,9 +33,10 @@
                     android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"
                     android:text="Temp Username"
+                    android:fontFamily="sans-serif-smallcaps"
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold"
-                    android:textSize="30dp"
+                    android:textSize="35dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -54,8 +55,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="16dp">
 
 
                 <TextView
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
-                    android:paddingTop="10dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Friends"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
@@ -78,6 +78,8 @@
                 android:id="@+id/friend_friends_rv_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:layout_weight="2">
 
                 <LinearLayout
@@ -107,16 +109,13 @@
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                     android:id="@+id/friend_friends_srl"
                     android:layout_width="match_parent"
-                    android:layout_height="286dp">
+                    android:layout_height="250dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/friend_friends_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#EEEEEE"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
                         android:visibility="invisible" />
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -129,19 +128,17 @@
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
-                    android:paddingTop="10dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Tours"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="28dp"
                     android:textStyle="bold" />
-
 
             </LinearLayout>
 
@@ -149,9 +146,10 @@
                 android:id="@+id/friend_tours_rv_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
 
-                <LinearLayout
+            <LinearLayout
                     android:id="@+id/friend_tours_loading_container"
                     android:layout_width="match_parent"
                     android:layout_height="266dp"
@@ -200,13 +198,11 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:background="@drawable/btn_shape_selector_accent"
                 android:enabled="true"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
                 android:text="Delete Friend"
-                android:textAllCaps="false"
                 android:textColor="#EEEEEE"
                 android:textStyle="bold"
                 android:visibility="gone"/>
