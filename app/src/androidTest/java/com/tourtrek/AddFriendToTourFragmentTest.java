@@ -260,16 +260,10 @@ public class AddFriendToTourFragmentTest {
         textView2.check(matches(withText("aaaaFun Times")));
 
         //TODO: Want to force a fail right here
-
         }
         catch(NoMatchingViewException e){
                 assert true;
         }
-
-
-
-
-
     }
 
     /**
