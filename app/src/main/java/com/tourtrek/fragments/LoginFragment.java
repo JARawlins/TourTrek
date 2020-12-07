@@ -44,7 +44,6 @@ public class LoginFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-
     }
 
     @Override

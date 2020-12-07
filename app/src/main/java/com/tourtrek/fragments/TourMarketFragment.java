@@ -266,6 +266,8 @@ public class TourMarketFragment extends Fragment {
 
         SearchView searchView = (SearchView) item.getActionView();
 
+        searchView.setMaxWidth(700);
+
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
