@@ -62,6 +62,7 @@ public class PastPersonalToursAdapter extends RecyclerView.Adapter<PastPersonalT
         holder.location.setText(pastPersonalToursDataSet.get(position).getLocation());
         holder.location.setTextColor(Color.parseColor("#4E1533"));
         holder.itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
+        holder.itemView.setMinimumHeight(30);
 
         ((MainActivity) context).findViewById(R.id.personal_past_tours_loading_container).setVisibility(View.INVISIBLE);
         ((MainActivity) context).findViewById(R.id.personal_past_tours_rv).setVisibility(View.VISIBLE);
