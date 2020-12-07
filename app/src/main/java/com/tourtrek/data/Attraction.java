@@ -1,14 +1,9 @@
 package com.tourtrek.data;
 
-import com.google.firebase.firestore.DocumentReference;
-
-import android.location.Address;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +28,7 @@ public class Attraction {
     private double totalRating;
     private double rating;
     private String ticketURI;
+    private String ticket;
 
     /**
      * Empty constructor needed for Firestore
@@ -41,6 +37,7 @@ public class Attraction {
         this.reviews = new ArrayList<>();
         this.totalRating = 0;
         this.rating = 0;
+        this.ticket = "";
     }
 
     /**
@@ -66,6 +63,10 @@ public class Attraction {
         this.address = address;
         this.coverImageURI = coverImageURI;
         this.weather = weather;
+        this.reviews = new ArrayList<>();
+        this.totalRating = 0;
+        this.rating = 0;
+        this.ticket = "";
     }
 
     public double getLat() {
@@ -279,5 +280,13 @@ public class Attraction {
 
     public void setTicketURI(String ticketURI) {
         this.ticketURI = ticketURI;
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 }
