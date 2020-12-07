@@ -53,6 +53,7 @@ public class FriendProfileFragmentTest {
         mainActivityScenario = mainActivityScenarioRule.getScenario();
 
         // If any user is logged in, make sure to log them out
+        sleep(1000);
         if(MainActivity.user != null){
             onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1)));
             onView(withId(R.id.navigation_profile)).perform(click());
@@ -64,7 +65,6 @@ public class FriendProfileFragmentTest {
             onView(withId(R.id.login_password_et)).perform(typeText("password"), ViewActions.closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
-            sleep(1000);
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(1000)));
             onView(withId(R.id.profile_friend_btn)).perform(click());
