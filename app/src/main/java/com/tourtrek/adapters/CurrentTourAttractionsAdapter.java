@@ -38,12 +38,16 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
         public TextView attractionName;
         public TextView attractionLocation;
         public RatingBar rating;
+        private TextView startDate;
+        private TextView endDate;
 
         public CurrentAttractionsViewHolder (View view) {
             super(view);
             this.attractionName = view.findViewById(R.id.item_attraction_name_tv);
             this.attractionLocation = view.findViewById(R.id.item_attraction_location_tv);
             this.rating = view.findViewById(R.id.item_attraction_ratingBar);
+            this.startDate = view.findViewById(R.id.item_attraction_start_tv);
+            this.endDate = view.findViewById(R.id.item_attraction_end_tv);
         }
 
     }
@@ -76,6 +80,10 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
         holder.attractionLocation.setTextColor(Color.parseColor("#FF4859"));
         holder.attractionLocation.setTextSize(15);
         holder.rating.setRating((float) currentTourAttractionsDataSet.get(position).getRating());
+        holder.startDate.setText(currentTourAttractionsDataSet.get(position).getStartDate().toString() + "  " +
+                currentTourAttractionsDataSet.get(position).getStartTime().toString());
+        holder.endDate.setText(currentTourAttractionsDataSet.get(position).getEndDate().toString() + "  " +
+                currentTourAttractionsDataSet.get(position).getEndTime().toString());
 
         // highlighting the attraction item when it is happening
         Attraction attraction = currentTourAttractionsDataSet.get(position);
