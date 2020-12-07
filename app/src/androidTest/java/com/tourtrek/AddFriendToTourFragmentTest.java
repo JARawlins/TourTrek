@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.PickerActions;
@@ -27,6 +28,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.setFailureHandler;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
@@ -191,7 +193,7 @@ public class AddFriendToTourFragmentTest {
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(1)));
         onView(withId(R.id.add_friend_to_tour_add_btn)).perform(click());
 
-        //check friends account for the tour
+        //open friends account
             clickFriendAccount();
 
         //scroll to friends tours recycler view
@@ -203,6 +205,70 @@ public class AddFriendToTourFragmentTest {
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
         textView.check(matches(withText("aaaaFun Times")));
+
+    }
+
+    /**
+     * Checks to make sure that after adding a friend to a tour and then deleting that tour it doesn't show up on friends tour list after
+     * previously having been there
+     */
+    @Test
+    public void tourGetsDeletedFromFriend() throws InterruptedException {
+        //create new past tour
+        createNewTour();
+
+        //click on new tour
+        sleep(1000);
+        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        //search for friend
+        searchForFriendToAddToTour("michael@gmail.com");
+        //click add button
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(1)));
+        onView(withId(R.id.add_friend_to_tour_add_btn)).perform(click());
+
+        //open friends account
+        clickFriendAccount();
+
+        //scroll to friends tours recycler view
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+        //check to make sure user has tour name "Fun Times"
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(1000)));
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("aaaaFun Times")));
+
+        //delete tour
+        deleteTour();
+        deletedTour = true;
+
+        //open friends account
+        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1000)));
+        onView(withId(R.id.navigation_profile)).perform(click());
+        clickFriendAccount();
+
+        //scroll to friends tours recycler view
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+        //check to make sure user has tour name "Fun Times"
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(1000)));
+        try {
+            ViewInteraction textView2 = onView(
+                    allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
+                            withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                            isDisplayed()));
+        textView2.check(matches(withText("aaaaFun Times")));
+
+        //TODO: Want to force a fail right here
+
+        }
+        catch(NoMatchingViewException e){
+                assert true;
+        }
+
+
+
+
 
     }
 
