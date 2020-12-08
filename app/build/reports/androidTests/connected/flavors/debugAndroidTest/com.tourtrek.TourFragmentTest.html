@@ -22,19 +22,19 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">5</div>
+<div class="counter">6</div>
 <p>tests</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">1</div>
+<div class="counter">6</div>
 <p>failures</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">1m17.56s</div>
+<div class="counter">7m9.78s</div>
 <p>duration</p>
 </div>
 </td>
@@ -44,7 +44,7 @@
 </td>
 <td>
 <div class="infoBox failures" id="successRate">
-<div class="percent">80%</div>
+<div class="percent">0%</div>
 <p>successful</p>
 </div>
 </td>
@@ -66,22 +66,125 @@
 <a name="additionSuccessfulTest"></a>
 <h3 class="failures">additionSuccessfulTest</h3>
 <span class="code">
-<pre>androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: with text: is &quot;No were attractions displayed - try adding some!&quot;
-
-View Hierarchy:
-+&gt;LinearLayout{id=-1, visibility=VISIBLE, width=849, height=172, has-focus=false, has-focusable=false, has-window-focus=false, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,84)(wrapxwrap) gr=BOTTOM CENTER ty=TOAST fmt=TRANSLUCENT wanim=0x1030004
-fl=NOT_FOCUSABLE NOT_TOUCHABLE KEEP_SCREEN_ON HARDWARE_ACCELERATED}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
-|
-+-&gt;AppCompatTextView{id=16908299, res-name=message, visibility=VISIBLE, width=681, height=66, has-focus=false, has-focusable=false, has-window-focus=false, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@4c0bcd0, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=53.0, text=Tap on a marker for navigation., input-type=0, ime-target=false, has-links=false}
-|
+<pre>androidx.test.espresso.NoMatchingRootException: Matcher 'is toast' did not match any of the following roots: [Root{application-window-token=android.view.ViewRootImpl$W@53f5655, window-token=android.view.ViewRootImpl$W@53f5655, has-window-focus=true, layout-params-type=1, layout-params-string={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, decor-view-string=DecorView{id=-1, visibility=VISIBLE, width=1080, height=2160, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}}]
 at dalvik.system.VMStack.getThreadStackTrace(Native Method)
-at java.lang.Thread.getStackTrace(Thread.java:1720)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
 at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
 at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
 at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
 at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
-at com.tourtrek.TourFragmentTest.navigationWithoutAttractions(TourFragmentTest.java:290)
-at com.tourtrek.TourFragmentTest.additionSuccessfulTest(TourFragmentTest.java:141)
+at com.tourtrek.TourFragmentTest.additionSuccessfulTest(TourFragmentTest.java:134)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="deletionPublicTourTest"></a>
+<h3 class="failures">deletionPublicTourTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingRootException: Matcher 'is toast' did not match any of the following roots: [Root{application-window-token=android.view.ViewRootImpl$W@683b37c, window-token=android.view.ViewRootImpl$W@683b37c, has-window-focus=true, layout-params-type=1, layout-params-string={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, decor-view-string=DecorView{id=-1, visibility=VISIBLE, width=1080, height=2160, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}}]
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.TourFragmentTest.deletionPublicTourTest(TourFragmentTest.java:190)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="invalidTimeTest"></a>
+<h3 class="failures">invalidTimeTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingRootException: Matcher 'is toast' did not match any of the following roots: [Root{application-window-token=android.view.ViewRootImpl$W@98ec224, window-token=android.view.ViewRootImpl$W@98ec224, has-window-focus=true, layout-params-type=1, layout-params-string={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, decor-view-string=DecorView{id=-1, visibility=VISIBLE, width=1080, height=2160, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}}]
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.TourFragmentTest.invalidTimeTest(TourFragmentTest.java:123)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="noEndDateTest"></a>
+<h3 class="failures">noEndDateTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingRootException: Matcher 'is toast' did not match any of the following roots: [Root{application-window-token=android.view.ViewRootImpl$W@66836ee, window-token=android.view.ViewRootImpl$W@66836ee, has-window-focus=true, layout-params-type=1, layout-params-string={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, decor-view-string=DecorView{id=-1, visibility=VISIBLE, width=1080, height=2160, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}}]
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.TourFragmentTest.noEndDateTest(TourFragmentTest.java:115)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="noStartDateTest"></a>
+<h3 class="failures">noStartDateTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingRootException: Matcher 'is toast' did not match any of the following roots: [Root{application-window-token=android.view.ViewRootImpl$W@ad22a1e, window-token=android.view.ViewRootImpl$W@ad22a1e, has-window-focus=true, layout-params-type=1, layout-params-string={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, decor-view-string=DecorView{id=-1, visibility=VISIBLE, width=1080, height=2160, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}}]
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.TourFragmentTest.noStartDateTest(TourFragmentTest.java:107)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="noTourNameTest"></a>
+<h3 class="failures">noTourNameTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingRootException: Matcher 'is toast' did not match any of the following roots: [Root{application-window-token=android.view.ViewRootImpl$W@4fb42e6, window-token=android.view.ViewRootImpl$W@4fb42e6, has-window-focus=true, layout-params-type=1, layout-params-string={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, decor-view-string=DecorView{id=-1, visibility=VISIBLE, width=1080, height=2160, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND FIT_INSETS_CONTROLLED
+fitSides=}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}}]
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.TourFragmentTest.noTourNameTest(TourFragmentTest.java:89)
 </pre>
 </span>
 </div>
@@ -92,35 +195,39 @@ at com.tourtrek.TourFragmentTest.additionSuccessfulTest(TourFragmentTest.java:14
 <thead>
 <tr>
 <th>Test</th>
-<th>Pixel_XL_API_29(AVD) - 10</th>
+<th>Pixel_3_API_30(AVD) - 11</th>
 </tr>
 </thead>
 <tr>
 <td>additionSuccessfulTest</td>
-<td class="failures">failed (16.201s)</td>
+<td class="failures">failed (1m11.15s)</td>
+</tr>
+<tr>
+<td>deletionPublicTourTest</td>
+<td class="failures">failed (1m13.46s)</td>
 </tr>
 <tr>
 <td>invalidTimeTest</td>
-<td class="success">passed (16.518s)</td>
+<td class="failures">failed (1m10.06s)</td>
 </tr>
 <tr>
 <td>noEndDateTest</td>
-<td class="success">passed (11.690s)</td>
+<td class="failures">failed (1m9.60s)</td>
 </tr>
 <tr>
 <td>noStartDateTest</td>
-<td class="success">passed (11.976s)</td>
+<td class="failures">failed (1m12.20s)</td>
 </tr>
 <tr>
 <td>noTourNameTest</td>
-<td class="success">passed (21.172s)</td>
+<td class="failures">failed (1m13.32s)</td>
 </tr>
 </table>
 </div>
 </div>
 <div id="footer">
 <p>Generated by 
-<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 4, 2020 1:17:07 AM</p>
+<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 7, 2020 10:28:59 PM</p>
 </div>
 </div>
 </body>

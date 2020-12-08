@@ -28,13 +28,13 @@
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">0</div>
+<div class="counter">1</div>
 <p>failures</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">3m33.11s</div>
+<div class="counter">1m15.17s</div>
 <p>duration</p>
 </div>
 </td>
@@ -43,8 +43,8 @@
 </div>
 </td>
 <td>
-<div class="infoBox success" id="successRate">
-<div class="percent">100%</div>
+<div class="infoBox failures" id="successRate">
+<div class="percent">87%</div>
 <p>successful</p>
 </div>
 </td>
@@ -54,56 +54,100 @@
 <div id="tabs">
 <ul class="tabLinks">
 <li>
-<a href="#tab0">Tests</a>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Tests</a>
 </li>
 </ul>
 <div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="RegisterWithShortPasswords"></a>
+<h3 class="failures">RegisterWithShortPasswords</h3>
+<span class="code">
+<pre>androidx.test.espresso.base.DefaultFailureHandler$AssertionFailedWithCauseError: 'with text: is &quot;The given password is invalid. [ Password should be at least 6 characters ]&quot;' doesn't match the selected view.
+Expected: with text: is &quot;The given password is invalid. [ Password should be at least 6 characters ]&quot;
+Got: androidx.appcompat.widget.AppCompatTextView{cde1f0b G.ED..... ......I. 0,0-0,0 #7f0801c1 app:id/register_error_tv aid=1073741840}
+View Details: AppCompatTextView{id=2131231169, res-name=register_error_tv, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@58ac1e8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=, input-type=0, ime-target=false, has-links=false}
+
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1736)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:5)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.RegistrationFragmentTest.RegisterWithShortPasswords(RegistrationFragmentTest.java:177)
+... 29 trimmed
+Caused by: junit.framework.AssertionFailedError: 'with text: is &quot;The given password is invalid. [ Password should be at least 6 characters ]&quot;' doesn't match the selected view.
+Expected: with text: is &quot;The given password is invalid. [ Password should be at least 6 characters ]&quot;
+Got: androidx.appcompat.widget.AppCompatTextView{cde1f0b G.ED..... ......I. 0,0-0,0 #7f0801c1 app:id/register_error_tv aid=1073741840}
+View Details: AppCompatTextView{id=2131231169, res-name=register_error_tv, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@58ac1e8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=, input-type=0, ime-target=false, has-links=false}
+
+at androidx.test.espresso.matcher.ViewMatchers.assertThat(ViewMatchers.java:16)
+at androidx.test.espresso.assertion.ViewAssertions$MatchesViewAssertion.check(ViewAssertions.java:11)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAssertion.check(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$2.call(ViewInteraction.java:12)
+at androidx.test.espresso.ViewInteraction$2.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:938)
+at android.os.Handler.dispatchMessage(Handler.java:99)
+at android.os.Looper.loop(Looper.java:223)
+at android.app.ActivityThread.main(ActivityThread.java:7656)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:592)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:947)
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
 <h2>Tests</h2>
 <table>
 <thead>
 <tr>
 <th>Test</th>
-<th>Pixel_XL_API_29(AVD) - 10</th>
+<th>Pixel_3_API_30(AVD) - 11</th>
 </tr>
 </thead>
 <tr>
 <td>RegisterWithMismatchedPasswords</td>
-<td class="success">passed (31.775s)</td>
+<td class="success">passed (10.303s)</td>
 </tr>
 <tr>
 <td>RegisterWithNoEmail</td>
-<td class="success">passed (26.218s)</td>
+<td class="success">passed (7.424s)</td>
 </tr>
 <tr>
 <td>RegisterWithNoPassword</td>
-<td class="success">passed (26.867s)</td>
+<td class="success">passed (9.739s)</td>
 </tr>
 <tr>
 <td>RegisterWithNoPassword2</td>
-<td class="success">passed (13.808s)</td>
+<td class="success">passed (9.207s)</td>
 </tr>
 <tr>
 <td>RegisterWithNoUsername</td>
-<td class="success">passed (26.147s)</td>
+<td class="success">passed (7.939s)</td>
 </tr>
 <tr>
 <td>RegisterWithShortPasswords</td>
-<td class="success">passed (28.777s)</td>
+<td class="failures">failed (11.061s)</td>
 </tr>
 <tr>
 <td>RegisterWithWrongEmail1</td>
-<td class="success">passed (28.608s)</td>
+<td class="success">passed (9.962s)</td>
 </tr>
 <tr>
 <td>RegisterWithWrongEmail2</td>
-<td class="success">passed (30.912s)</td>
+<td class="success">passed (9.539s)</td>
 </tr>
 </table>
 </div>
 </div>
 <div id="footer">
 <p>Generated by 
-<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 4, 2020 1:17:07 AM</p>
+<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 7, 2020 10:28:59 PM</p>
 </div>
 </div>
 </body>
