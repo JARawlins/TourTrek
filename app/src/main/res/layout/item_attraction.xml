@@ -35,8 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:text="date+time"
-                android:textColor="@color/quantum_yellow"/>
+                android:text="unknown"
+                android:textColor="@color/quantum_bluegrey900"/>
 
 
         </LinearLayout>
@@ -60,8 +60,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="Date+time"
-                android:textColor="@color/quantum_yellow"/>
+                android:text="unknown"
+                android:textColor="@color/quantum_bluegrey900"/>
 
 
         </LinearLayout>

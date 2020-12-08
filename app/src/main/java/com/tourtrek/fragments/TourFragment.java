@@ -42,6 +42,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -84,6 +85,7 @@ import com.tourtrek.utilities.AttractionDateSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.utilities.AttractionRatingSorter;
+import com.tourtrek.utilities.AttractionsInfoDialogFragment;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.utilities.Utilities;
@@ -183,6 +185,12 @@ public class TourFragment extends Fragment {
 
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
+
+        Button attractionInformationButton = tourView.findViewById(R.id.tour_attractions_info_btn);
+        attractionInformationButton.setOnClickListener(v -> {
+            DialogFragment dialogFragment = AttractionsInfoDialogFragment.newInstance("Attractions Info");
+            dialogFragment.show(getParentFragmentManager(), "dialog");
+        });
 
         // Initialize attractionSortButton
         //review button
@@ -1027,19 +1035,14 @@ public class TourFragment extends Fragment {
                         if (!tourViewModel.getSelectedTour().getNotifications())
                             removeAlarms();
 
-                        tourViewModel.setSelectedTour(null);
-                        tourViewModel.setIsNewTour(null);
-
-                        getParentFragmentManager().popBackStack();
-
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
-
-                            tourViewModel.setIsNewTour(false);
                         }
+
+                        getParentFragmentManager().popBackStack();
 
                         ((MainActivity)requireActivity()).enableTabs();
                         loading = false;
