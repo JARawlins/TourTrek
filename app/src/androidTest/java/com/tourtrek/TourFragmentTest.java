@@ -271,7 +271,7 @@ public class TourFragmentTest {
 
     // Generic navigation test
     public void navigationWithoutAttractions() throws InterruptedException {
-        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(30)));
 
         sleep(500); // give time for the recycler view items to load
 

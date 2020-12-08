@@ -75,7 +75,7 @@ public class SortAndSearchAttractionFragmentTest {
         add_attraction("madison");
 
         sleep(2500);
-        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.navigation_profile)).perform(click());
         sleep(500);
         onView(withId(R.id.navigation_tours)).perform(click());

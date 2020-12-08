@@ -69,7 +69,7 @@ public class EditTourFragmentTest {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.navigation_tours)).perform(click());
         onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.tour_name_et)).perform((typeText("EditTourTestTour")), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
