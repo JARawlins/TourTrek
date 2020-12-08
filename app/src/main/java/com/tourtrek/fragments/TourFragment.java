@@ -992,18 +992,14 @@ public class TourFragment extends Fragment {
                         if (!tourViewModel.getSelectedTour().getNotifications())
                             removeAlarms();
 
-                        tourViewModel.setSelectedTour(null);
-                        tourViewModel.setIsNewTour(null);
-                        getParentFragmentManager().popBackStack();
-
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
-
-                            tourViewModel.setIsNewTour(false);
                         }
+
+                        getParentFragmentManager().popBackStack();
 
                         ((MainActivity)requireActivity()).enableTabs();
                         loading = false;
