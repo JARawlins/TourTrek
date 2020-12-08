@@ -12,6 +12,7 @@ public class TourViewModel extends ViewModel {
     private MutableLiveData<Boolean> isUserOwned = new MutableLiveData<>();
     private MutableLiveData<Boolean> returnedFromAddAttraction = new MutableLiveData<>();
     private MutableLiveData<Boolean> returnedFromNavigation = new MutableLiveData<>();
+    private MutableLiveData<Boolean> returnedFromAddFriendToTour = new MutableLiveData<>();
 
     public Tour getSelectedTour() {
         return selectedTour.getValue();
@@ -61,5 +62,16 @@ public class TourViewModel extends ViewModel {
 
     public void setReturnedFromNavigation(boolean returnedFromNavigation) {
         this.returnedFromNavigation.setValue(returnedFromNavigation);
+    }
+
+    public boolean returnedFromAddFriendToTour() {
+        if (returnedFromAddFriendToTour.getValue() == null) {
+            returnedFromAddFriendToTour.setValue(false);
+        }
+        return returnedFromAddFriendToTour.getValue();
+    }
+
+    public void setReturnedFromAddFriendToTour(boolean returnedFromAddFriendToTour) {
+        this.returnedFromAddFriendToTour.setValue(returnedFromAddFriendToTour);
     }
 }

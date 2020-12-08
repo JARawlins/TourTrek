@@ -87,7 +87,7 @@ public class FriendFragmentTest {
     @Test
     public void addFriendAlreadyExisted() throws InterruptedException {
 
-        onView(withId(R.id.add_friend_email_et)).perform((typeText("email@gmail.com")), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.add_friend_email_et)).perform((typeText("testingaccount@gmail.com")), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.add_friend_search_btn)).perform(click());
         onView(isRoot()).perform(waitForView(R.id.add_friend_add_btn, TimeUnit.SECONDS.toMillis(3), TimeUnit.SECONDS.toMillis(10)));
         onView(withId(R.id.add_friend_add_btn)).perform(click());

@@ -388,4 +388,3 @@ public class TourMarketFragment extends Fragment {
     }
 
 }
-
