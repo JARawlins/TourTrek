@@ -85,7 +85,6 @@ import com.tourtrek.utilities.AttractionRatingSorter;
 import com.tourtrek.utilities.AttractionsInfoDialogFragment;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.utilities.TermsAndConditionsDialogFragment;
 import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
@@ -1512,6 +1511,5 @@ public class TourFragment extends Fragment {
             //update tour
             updateTourInFirebase();
         }
-
 }
 
