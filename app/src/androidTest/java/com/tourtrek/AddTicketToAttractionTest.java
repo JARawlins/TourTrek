@@ -71,14 +71,14 @@ public class AddTicketToAttractionTest {
     @Test
     public void addTicketTest() throws InterruptedException {
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
 
         sleep(1000);
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         sleep(100);
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.attraction_add_ticket_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_add_ticket_btn)).perform(click());
         sleep(1000);
@@ -95,14 +95,14 @@ public class AddTicketToAttractionTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.login_email_et)).perform(typeText("user@gmail.com"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("000000"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
@@ -116,10 +116,10 @@ public class AddTicketToAttractionTest {
         Espresso.pressBack();
         sleep(1000);
 
-        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.navigation_profile)).perform(click());
 
-        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.navigation_tours)).perform(click());
 
         delete_tour();
@@ -127,7 +127,7 @@ public class AddTicketToAttractionTest {
     }
 
     public void create_tour(String name) {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
 
@@ -154,7 +154,7 @@ public class AddTicketToAttractionTest {
 
     public void delete_tour() throws InterruptedException {
         //Clich on the future tour
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
 
         try {
             sleep(2000);
@@ -165,7 +165,7 @@ public class AddTicketToAttractionTest {
             sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         } finally {
-            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
             //delete tour
             onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
@@ -174,7 +174,7 @@ public class AddTicketToAttractionTest {
     }
 
     public void add_attraction() throws InterruptedException {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
         sleep(1000);
 
         try {
@@ -184,7 +184,7 @@ public class AddTicketToAttractionTest {
         } catch (Exception e) {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_add_attraction_btn)).perform(click());

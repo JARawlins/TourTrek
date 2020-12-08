@@ -89,14 +89,14 @@ public class RateTourTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.login_email_et)).perform(typeText("user@gmail.com"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("000000"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
@@ -112,7 +112,7 @@ public class RateTourTest {
     }
 
     public void create_tour(String name) throws InterruptedException {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
 
@@ -140,7 +140,7 @@ public class RateTourTest {
 
     public void delete_tour() throws InterruptedException {
         //Clich on the future tour
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
 
         try {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("my tour"))));
@@ -150,7 +150,7 @@ public class RateTourTest {
             sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         } finally {
-            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
             //delete tour
             onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
@@ -159,7 +159,7 @@ public class RateTourTest {
     }
 
     public void rate_tour() throws InterruptedException {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(200)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
         try {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("rating"))));
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("rating")), click()));
@@ -167,11 +167,11 @@ public class RateTourTest {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
         sleep(500);
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_review_btn)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.tour_review_rb, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.tour_review_rb, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.tour_review_rb)).perform(click());
 
         ViewInteraction appCompatButton8 = onView(
