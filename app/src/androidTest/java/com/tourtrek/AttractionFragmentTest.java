@@ -177,7 +177,8 @@ public class AttractionFragmentTest {
 //        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMIllis(1000)));
 //        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
 //    }
-
+// TODO - ticket testing
+// TODO - rating testing
 
 //    /**
 //     * test to check that an attraction is successfully added to the recycler view of the current tour following addition
@@ -455,3 +456,4 @@ public class AttractionFragmentTest {
         };
     }
 }
+
