@@ -1041,7 +1041,8 @@ public class TourFragment extends Fragment {
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
                         }
-
+                        tourViewModel.setIsNewTour(null);
+                        tourViewModel.setSelectedTour(null);
                         getParentFragmentManager().popBackStack();
 
                         ((MainActivity)requireActivity()).enableTabs();
