@@ -10,7 +10,6 @@ import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.DataInteraction;
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.PickerActions;
@@ -59,6 +58,7 @@ public class SortAndSearchAttractionFragmentTest {
 
     public static final String TAG = "SortAndSearchAttractionFragmentTest";
     private ActivityScenario mainActivityScenario;
+    private String name = "sorting";
 
     @Rule
     public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
@@ -73,63 +73,41 @@ public class SortAndSearchAttractionFragmentTest {
         create_tour();
 
         add_attraction("madison");
+
+        sleep(2500);
+        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+        onView(withId(R.id.navigation_profile)).perform(click());
+        sleep(500);
+        onView(withId(R.id.navigation_tours)).perform(click());
     }
 
 
     @Test
-    public void sortByNameAscendingTest() throws InterruptedException {
-        test(0);
-    }
+    public void attractionSearchTest() throws InterruptedException {
 
-    @Test
-    public void sortByLocationAscendingTest() throws InterruptedException {
-        test(1);
-    }
-
-    @Test
-    public void sortByCostAscendingTest() throws InterruptedException {
-        test(2);
-    }
-
-    @Test
-    public void sortByReviewAscendingTest() throws InterruptedException {
-        test(3);
-    }
-
-    @Test
-    public void sortByDateAndTimeAscendingTest() throws InterruptedException {
-        test(4);
-    }
-
-    @Test
-    public void sortByNameDescendingTest() throws InterruptedException {
-        test(5);
-    }
-
-    @Test
-    public void sortByLocationDescendingTest() throws InterruptedException {
-        test(6);
-    }
-
-    @Test
-    public void sortByCostDescendingTest() throws InterruptedException {
-        test(7);
-    }
-
-    @Test
-    public void sortByReviewDescendingTest() throws InterruptedException {
-        test(8);
-    }
-
-    @Test
-    public void sortByDateAndTimeDescendingTest() throws InterruptedException {
-        test(9);
-    }
-
-    @Test
-    public void searchAttractionTest() throws InterruptedException {
         sleep(2000);
-        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        try {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText(name))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(name)), click()));
+        } catch (Exception e) {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
+
+        sleep(2000);
+        onView(withId(R.id.tour_attraction_sort_btn)).perform(nestedScrollTo());
+
+        test(0);
+        test(1);
+        test(2);
+        test(3);
+        test(4);
+        test(5);
+        test(6);
+        test(7);
+        test(8);
+        test(9);
 
         sleep(1000);
 
@@ -137,28 +115,39 @@ public class SortAndSearchAttractionFragmentTest {
 
         sleep(2000);
 
-        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+        try {
+            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Madison Park"))));
+            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Madison Park")), click()));
+            sleep(1000);
+            onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+            onView(withId(R.id.attraction_description_et)).check(matches(withText("nice food")));
 
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        } catch (Exception e) {
+            try {
+                sleep(2000);
+                onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+                sleep(1000);
+                onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+                onView(withId(R.id.attraction_description_et)).check(matches(withText("nice food")));
+            } catch (Exception e2) {
 
-        sleep(1000);
-        onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo());
-        onView(withId(R.id.attraction_name_et)).check(matches(withText("Madison Park")));
+            }
+        }
+
+
     }
 
     @After
     public void destroy() throws InterruptedException {
-        sleep(3000);
-        Espresso.pressBack();
-        sleep(100);
+        sleep(2000);
         onView(withId(R.id.navigation_profile)).perform(click());
         sleep(100);
         onView(withId(R.id.navigation_tours)).perform(click());
         sleep(2500);
 
         try {
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("sorting"))));
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("sorting")), click()));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText(name))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(name)), click()));
         } catch (Exception e) {
             sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -168,33 +157,16 @@ public class SortAndSearchAttractionFragmentTest {
 
         onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_delete_btn)).perform(click());
-        sleep(4000);
+        sleep(2000);
     }
 
     private void test(int pos) throws InterruptedException {
+
         sleep(2000);
-
-        try {
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("sorting"))));
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("sorting")), click()));
-        } catch (Exception e) {
-            sleep(2000);
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        }
-
-        sleep(1000);
 
         sortBy(pos);
 
         sleep(2000);
-
-        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-
-        sleep(1000);
-        onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo());
-        onView(withId(R.id.attraction_name_et)).check(matches(withText("Madison Park")));
     }
 
     public void login() throws InterruptedException, UiObjectNotFoundException {
@@ -223,7 +195,7 @@ public class SortAndSearchAttractionFragmentTest {
 
 
         //enter info to create tour
-        onView(withId(R.id.tour_name_et)).perform(typeText("sorting"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText(name), closeSoftKeyboard());
         onView(withId(R.id.tour_location_et)).perform(typeText("Madison, WI, USA"), closeSoftKeyboard());
         onView(withId(R.id.tour_cost_et)).perform(typeText("0"), closeSoftKeyboard());
 
@@ -244,10 +216,10 @@ public class SortAndSearchAttractionFragmentTest {
     }
 
     public void add_attraction(String key) throws InterruptedException {
+        sleep(2500);
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
 
         try {
-            sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("sorting"))));
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("sorting")), click()));
         } catch (Exception e) {
@@ -318,22 +290,11 @@ public class SortAndSearchAttractionFragmentTest {
 
         }
         sleep(3000);
-
-        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_update_btn)).perform(click());
-
     }
 
     public void sortBy(int pos) {
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.tour_attraction_sort_btn), withText("Sort By"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.LinearLayout")),
-                                        6),
-                                1),
-                        isDisplayed()));
-        appCompatButton2.perform(click());
+        onView(withId(R.id.tour_attraction_sort_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_attraction_sort_btn)).perform(click());
 
         DataInteraction appCompatCheckedTextView = onData(anything())
                 .inAdapterView(allOf(withClassName(is("com.android.internal.app.AlertController$RecycleListView")),
