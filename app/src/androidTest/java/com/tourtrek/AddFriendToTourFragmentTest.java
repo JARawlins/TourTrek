@@ -73,12 +73,7 @@ public class AddFriendToTourFragmentTest {
     public void setup() throws InterruptedException {
 
         deletedTour = true;
-
-
         mainActivityScenario = mainActivityScenarioRule.getScenario();
-
-
-
 
          try{
              onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(5)));
@@ -343,7 +338,7 @@ public class AddFriendToTourFragmentTest {
 
         //make sure error message appears
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
-
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_error_tv, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
     }
 
@@ -362,7 +357,7 @@ public class AddFriendToTourFragmentTest {
         //make sure error message appears
 
         onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
-
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_error_tv, TimeUnit.SECONDS.toMillis(5)));
         onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
     }
 
