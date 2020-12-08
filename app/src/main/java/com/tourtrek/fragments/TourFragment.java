@@ -186,6 +186,8 @@ public class TourFragment extends Fragment {
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
+        Log.d(TAG, tourViewModel.getSelectedTour().getTourUID());
+
         Button attractionInformationButton = tourView.findViewById(R.id.tour_attractions_info_btn);
         attractionInformationButton.setOnClickListener(v -> {
             DialogFragment dialogFragment = AttractionsInfoDialogFragment.newInstance("Attractions Info");
