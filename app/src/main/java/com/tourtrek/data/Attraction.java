@@ -46,7 +46,8 @@ public class Attraction {
      */
     public Attraction(List<String> reviews, String location, double lat, double lon, float cost,
                       String name, String description, String attractionUID, Date startDate, String startTime,
-                      Date endDate, String endTime, String address, String coverImageURI, HashMap<String, String> weather){
+                      Date endDate, String endTime, String address, String coverImageURI, HashMap<String, String> weather,
+                      double totalRating, double rating){
 
         this.reviews = reviews;
         this.location = location;
@@ -64,8 +65,9 @@ public class Attraction {
         this.coverImageURI = coverImageURI;
         this.weather = weather;
         this.reviews = new ArrayList<>();
-        this.totalRating = 0;
-        this.rating = 0;
+        this.totalRating = totalRating;
+        this.rating = rating;
+        this.ticketURI = "";
         this.ticket = "";
     }
 

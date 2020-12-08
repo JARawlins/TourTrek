@@ -175,13 +175,13 @@ public class TourFragmentTest {
     public void deletionPublicTourTest() throws InterruptedException {
         tourConditionsTest("deletionPublic");
 
-        onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(30)));
 
         sleep(1000); // give time for the recycler view items to load
 
         // find the newly made attraction and select it
         onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-        onView(isRoot()).perform(waitForView(R.id.tour_public_cb, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.tour_public_cb, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_delete_btn)).perform(click());
         sleep(1000);
@@ -197,7 +197,7 @@ public class TourFragmentTest {
 
         // find the newly made tour and select it
         onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-        onView(isRoot()).perform(waitForView(R.id.tour_delete_btn, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.tour_delete_btn, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_delete_btn)).perform(click());
 

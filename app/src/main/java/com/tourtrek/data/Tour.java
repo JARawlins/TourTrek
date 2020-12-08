@@ -42,7 +42,7 @@ public class Tour{
      */
     public Tour(String name, Date startDate, Date endDate, String location, float cost, Boolean notifications,
                 List<String> reviews, String description, Boolean publiclyAvailable, List<DocumentReference> attractions,
-                String coverImageURI, String tourUID){
+                String coverImageURI, String tourUID, double totalRating, double rating){
 
         // populate all fields except for length and attractions
         this.name = name;
@@ -57,7 +57,8 @@ public class Tour{
         this.attractions = attractions;
         this.coverImageURI = coverImageURI;
         this.tourUID = tourUID;
-
+        this.totalRating = totalRating;
+        this.rating = rating;
     }
 
     /**

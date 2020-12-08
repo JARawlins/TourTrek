@@ -89,6 +89,7 @@ import java.util.UUID;
  *
  * TODO fix tapping the back button when in a Google Map leading to the add attraction screen
  * TODO make sure that this location is accessible via the view model
+ * Test
  */
 public class AttractionFragment extends Fragment {
 

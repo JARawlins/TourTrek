@@ -1423,7 +1423,8 @@ public class TourFragment extends Fragment {
                     // create the new attraction
                     Attraction newAttraction = new Attraction(oldAttraction.getReviews(), oldAttraction.getLocation(), oldAttraction.getLat(), oldAttraction.getLon(), oldAttraction.getCost(),
                             oldAttraction.getName(), oldAttraction.getDescription(), newAttractionDoc.getId(), oldAttraction.getStartDate(), oldAttraction.getStartTime(),
-                            oldAttraction.getEndDate(), oldAttraction.getEndTime(), oldAttraction.getAddress(), oldAttraction.getCoverImageURI(), oldAttraction.getWeather());
+                            oldAttraction.getEndDate(), oldAttraction.getEndTime(), oldAttraction.getAddress(), oldAttraction.getCoverImageURI(), oldAttraction.getWeather(),
+                            oldAttraction.getTotalRating(), oldAttraction.getRating());
                     // set the new attraction data in Firestore
                     newAttractionDoc.set(newAttraction).addOnSuccessListener(result2 -> {
                         Log.d("TourFragment", "Attraction set w/ tour importing");
@@ -1463,7 +1464,7 @@ public class TourFragment extends Fragment {
         // make a new tour with the same contents as the old one except it is not publicly available and it has a new document ID
         Tour newTour = new Tour(oldTour.getName(), oldTour.getStartDate(), oldTour.getEndDate(), oldTour.getLocation(),
                                 oldTour.getCost(), oldTour.getNotifications(), oldTour.getReviews(), oldTour.getDescription(),
-                                false, newAttractions, oldTour.getCoverImageURI(), newUID);
+                                false, newAttractions, oldTour.getCoverImageURI(), newUID, oldTour.getTotalRating(), oldTour.getRating());
 
         return newTour;
     }

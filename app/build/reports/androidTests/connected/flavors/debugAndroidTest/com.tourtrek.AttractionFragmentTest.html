@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Test results - Class com.tourtrek.AttractionFragmentTest</title>
+<link href="css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="css/style.css" rel="stylesheet" type="text/css"/>
+<script src="js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class com.tourtrek.AttractionFragmentTest</h1>
+<div class="breadcrumbs">
+<a href="index.html">all</a> &gt; 
+<a href="com.tourtrek.html">com.tourtrek</a> &gt; AttractionFragmentTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">14</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">4</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">21m8.62s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox failures" id="successRate">
+<div class="percent">71%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Tests</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="existingAttractionTests"></a>
+<h3 class="failures">existingAttractionTests</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'single click - At Coordinates: 719, 2293 and precision: 16, 16' on view 'with id is &lt;com.tourtrek:id/navigation_tours&gt;'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.AttractionFragmentTest.setup(AttractionFragmentTest.java:62)
+... 28 trimmed
+Caused by: androidx.test.espresso.PerformException: Error performing 'click (after 3 attempts)' on view 'unknown'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.action.MotionEvents.sendDown(MotionEvents.java:32)
+at androidx.test.espresso.action.Tap.sendSingleTap(Tap.java:4)
+at androidx.test.espresso.action.Tap.access$100(Tap.java:1)
+at androidx.test.espresso.action.Tap$1.sendTap(Tap.java:3)
+at androidx.test.espresso.action.GeneralClickAction.perform(GeneralClickAction.java:6)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAction.perform(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:22)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="invalidDatesTest"></a>
+<h3 class="failures">invalidDatesTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: with text: is &quot;Start dates must be before end dates!&quot;
+
+View Hierarchy:
++&gt;LinearLayout{id=-1, visibility=VISIBLE, width=825, height=172, has-focus=false, has-focusable=false, has-window-focus=false, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,84)(wrapxwrap) gr=BOTTOM CENTER ty=TOAST fmt=TRANSLUCENT wanim=0x1030004
+fl=NOT_FOCUSABLE NOT_TOUCHABLE KEEP_SCREEN_ON HARDWARE_ACCELERATED}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-&gt;AppCompatTextView{id=16908299, res-name=message, visibility=VISIBLE, width=657, height=66, has-focus=false, has-focusable=false, has-window-focus=false, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@30a5435, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=53.0, text=Successfully Added Attraction, input-type=0, ime-target=false, has-links=false}
+|
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1720)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.AttractionFragmentTest.invalidDatesTest(AttractionFragmentTest.java:154)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="noCost"></a>
+<h3 class="failures">noCost</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'Wait for a specific view with id 2131231041 for 1000000millis' on view 'is a root view.'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.AttractionFragmentTest.setup(AttractionFragmentTest.java:63)
+... 28 trimmed
+Caused by: java.util.concurrent.TimeoutException
+at com.tourtrek.EspressoExtensions$2.perform(EspressoExtensions.java:144)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAction.perform(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:22)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="noEndDate"></a>
+<h3 class="failures">noEndDate</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'single click - At Coordinates: 719, 2293 and precision: 16, 16' on view 'with id is &lt;com.tourtrek:id/navigation_tours&gt;'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.AttractionFragmentTest.setup(AttractionFragmentTest.java:62)
+... 28 trimmed
+Caused by: androidx.test.espresso.PerformException: Error performing 'click (after 3 attempts)' on view 'unknown'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.action.MotionEvents.sendDown(MotionEvents.java:32)
+at androidx.test.espresso.action.Tap.sendSingleTap(Tap.java:4)
+at androidx.test.espresso.action.Tap.access$100(Tap.java:1)
+at androidx.test.espresso.action.Tap$1.sendTap(Tap.java:3)
+at androidx.test.espresso.action.GeneralClickAction.perform(GeneralClickAction.java:6)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAction.perform(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:22)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Pixel_XL_API_29(AVD) - 10</th>
+</tr>
+</thead>
+<tr>
+<td>additionSuccessfulTest</td>
+<td class="success">passed (24.413s)</td>
+</tr>
+<tr>
+<td>deletionTest</td>
+<td class="success">passed (25.664s)</td>
+</tr>
+<tr>
+<td>existingAttractionTests</td>
+<td class="failures">failed (4.446s)</td>
+</tr>
+<tr>
+<td>invalidDatesTest</td>
+<td class="failures">failed (25.670s)</td>
+</tr>
+<tr>
+<td>mapTest</td>
+<td class="success">passed (29.855s)</td>
+</tr>
+<tr>
+<td>missingInfoTests</td>
+<td class="success">passed (17.109s)</td>
+</tr>
+<tr>
+<td>noCost</td>
+<td class="failures">failed (16m47.91s)</td>
+</tr>
+<tr>
+<td>noDescription</td>
+<td class="success">passed (24.450s)</td>
+</tr>
+<tr>
+<td>noEndDate</td>
+<td class="failures">failed (7.782s)</td>
+</tr>
+<tr>
+<td>noEndTime</td>
+<td class="success">passed (28.651s)</td>
+</tr>
+<tr>
+<td>noLocation</td>
+<td class="success">passed (17.584s)</td>
+</tr>
+<tr>
+<td>noStartDate</td>
+<td class="success">passed (21.560s)</td>
+</tr>
+<tr>
+<td>noStartTime</td>
+<td class="success">passed (20.542s)</td>
+</tr>
+<tr>
+<td>textChangeListenerTests</td>
+<td class="success">passed (12.989s)</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="footer">
+<p>Generated by 
+<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 8, 2020 1:40:27 AM</p>
+</div>
+</div>
+</body>

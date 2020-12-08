@@ -28,13 +28,13 @@
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">1</div>
+<div class="counter">4</div>
 <p>failures</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">4m34.48s</div>
+<div class="counter">8m47.71s</div>
 <p>duration</p>
 </div>
 </td>
@@ -44,7 +44,7 @@
 </td>
 <td>
 <div class="infoBox failures" id="successRate">
-<div class="percent">88%</div>
+<div class="percent">55%</div>
 <p>successful</p>
 </div>
 </td>
@@ -63,13 +63,10 @@
 <div id="tab0" class="tab">
 <h2>Failed tests</h2>
 <div class="test">
-<a name="sortByLocationAscendingTest"></a>
-<h3 class="failures">sortByLocationAscendingTest</h3>
+<a name="searchTourTest"></a>
+<h3 class="failures">searchTourTest</h3>
 <span class="code">
-<pre>androidx.test.espresso.PerformException: Error performing 'scroll to' on view 'Animations or transitions are enabled on the target device.
-For more info check: https://developer.android.com/training/testing/espresso/setup#set-up-environment
-
-with id is &lt;com.tourtrek:id/tour_public_cb&gt;'.
+<pre>androidx.test.espresso.PerformException: Error performing 'scroll to' on view 'with id is &lt;com.tourtrek:id/tour_public_cb&gt;'.
 at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
 at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
 at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
@@ -80,19 +77,382 @@ at com.tourtrek.TourMarketFragmentTest2.destroy(TourMarketFragmentTest2.java:142
 ... 28 trimmed
 Caused by: java.lang.RuntimeException: Action will not be performed because the target view does not match one or more of the following constraints:
 (view has effective visibility=VISIBLE and is descendant of a: (is assignable from class: class android.widget.ScrollView or is assignable from class: class android.widget.HorizontalScrollView or is assignable from class: class androidx.core.widget.NestedScrollView))
-Target view: &quot;AppCompatCheckBox{id=2131231317, res-name=tour_public_cb, visibility=VISIBLE, width=0, height=0, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=true, is-selected=false, layout-params=android.widget.RelativeLayout$LayoutParams@a3cd6e8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Public, input-type=0, ime-target=false, has-links=false, is-checked=true}&quot;
+Target view: &quot;AppCompatCheckBox{id=2131231317, res-name=tour_public_cb, visibility=VISIBLE, width=0, height=0, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=true, is-selected=false, layout-params=android.widget.RelativeLayout$LayoutParams@934f68f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Public, input-type=0, ime-target=false, has-links=false, is-checked=true}&quot;
 at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:20)
 at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
 at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
 at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
 at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-at android.os.Handler.handleCallback(Handler.java:938)
-at android.os.Handler.dispatchMessage(Handler.java:99)
-at android.os.Looper.loop(Looper.java:223)
-at android.app.ActivityThread.main(ActivityThread.java:7656)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
 at java.lang.reflect.Method.invoke(Native Method)
-at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:592)
-at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:947)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="sortByDurationDescendingTest"></a>
+<h3 class="failures">sortByDurationDescendingTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: with id is &lt;com.tourtrek:id/tour_public_cb&gt;
+
+View Hierarchy:
++&gt;DecorView{id=-1, visibility=VISIBLE, width=1440, height=2560, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++-&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1440, height=2392, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@93ff232, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++--&gt;ViewStub{id=16908692, res-name=action_mode_bar_stub, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b18b83, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++--&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1440, height=2308, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@9811d39, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=84.0, child-count=1}
+|
++---&gt;ActionBarOverlayLayout{id=2131230921, res-name=decor_content_parent, visibility=VISIBLE, width=1440, height=2308, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@598ad2c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----&gt;ContentFrameLayout{id=16908290, res-name=content, visibility=VISIBLE, width=1440, height=2112, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.ActionBarOverlayLayout$LayoutParams@57f958a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=196.0, child-count=1}
+|
++-----&gt;LinearLayout{id=2131231047, res-name=main_container, visibility=VISIBLE, width=1440, height=2112, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@6c3a71, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------&gt;FragmentContainerView{id=2131231085, res-name=nav_host_fragment, visibility=VISIBLE, width=1440, height=1916, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@8ea08d7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1440, height=1916, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@f5c5b73, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++--------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@486c6a9, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=56.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@4b7b95c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----------&gt;AppCompatButton{id=2131231121, res-name=personal_current_tours_title_btn, visibility=VISIBLE, width=1272, height=108, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@5dc2465, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=28.0, text=Current Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=428, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@bb50f48, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=136.0, child-count=2}
+|
++-----------&gt;SwipeRefreshLayout{id=2131231120, res-name=personal_current_tours_srl, visibility=VISIBLE, width=1272, height=428, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@b68d5c7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;CircleImageView{id=-1, visibility=GONE, width=140, height=140, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@bafd7f4, tag=null, root-is-layout-requested=false, has-input-connection=false, x=566.0, y=-140.0}
+|
++------------&gt;RecyclerView{id=2131231119, res-name=personal_current_tours_rv, visibility=VISIBLE, width=1272, height=428, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@8637b1d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++-----------&gt;LinearLayout{id=2131231118, res-name=personal_current_tours_loading_container, visibility=INVISIBLE, width=1272, height=428, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@f130763, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;AppCompatTextView{id=2131231117, res-name=personal_current_tours_future_loading_tv, visibility=VISIBLE, width=871, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@ec7f60, tag=null, root-is-layout-requested=false, has-input-connection=false, x=200.0, y=36.0, text=Loading Current Tours, input-type=0, ime-target=false, has-links=false}
+|
++------------&gt;ProgressBar{id=2131231116, res-name=personal_current_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@7c1ac19, tag=null, root-is-layout-requested=false, has-input-connection=false, x=552.0, y=223.0}
+|
++--------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@da4b6bf, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=676.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@df0a0ea, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----------&gt;AppCompatButton{id=2131231126, res-name=personal_future_tours_title_btn, visibility=VISIBLE, width=1272, height=118, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@f77ffdb, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Future Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@4afe1b6, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=118.0, child-count=2}
+|
++-----------&gt;SwipeRefreshLayout{id=2131231125, res-name=personal_future_tours_srl, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@6fe658d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;CircleImageView{id=-1, visibility=GONE, width=140, height=140, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@5506342, tag=null, root-is-layout-requested=false, has-input-connection=false, x=566.0, y=-140.0}
+|
++------------&gt;RecyclerView{id=2131231124, res-name=personal_future_tours_rv, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@14e8090, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-------------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1166, height=141, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=androidx.recyclerview.widget.RecyclerView$LayoutParams@185718e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=53.0, y=32.0, child-count=1}
+|
++--------------&gt;ConstraintLayout{id=2131231018, res-name=item_personal_tour_container, visibility=VISIBLE, width=1166, height=141, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c17b945, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------------&gt;AppCompatTextView{id=2131231020, res-name=item_personal_tour_name, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@eb189a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=35.0, y=35.0, text=A, input-type=0, ime-target=false, has-links=false}
+|
++---------------&gt;AppCompatTextView{id=2131231019, res-name=item_personal_tour_location, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@6b495cb, tag=null, root-is-layout-requested=false, has-input-connection=false, x=606.0, y=35.0, text=Madison, Wi, input-type=0, ime-target=false, has-links=false}
+|
++-----------&gt;LinearLayout{id=2131231123, res-name=personal_future_tours_loading_container, visibility=INVISIBLE, width=1272, height=446, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@67fa4c1, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;AppCompatTextView{id=2131231122, res-name=personal_future_tours_future_loading_tv, visibility=VISIBLE, width=832, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@6d22466, tag=null, root-is-layout-requested=false, has-input-connection=false, x=220.0, y=45.0, text=Loading Future Tours, input-type=0, ime-target=false, has-links=false}
+|
++------------&gt;ProgressBar{id=2131231133, res-name=personal_tours_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b74c3a7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=552.0, y=232.0}
+|
++--------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@220cbfd, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=1296.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@88b2dc0, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----------&gt;AppCompatButton{id=2131231132, res-name=personal_past_tours_title_btn, visibility=VISIBLE, width=1272, height=118, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@db32af9, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Past Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@5d565ec, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=118.0, child-count=2}
+|
++-----------&gt;SwipeRefreshLayout{id=2131231131, res-name=personal_past_tours_srl, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@1fa87bb, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;CircleImageView{id=-1, visibility=GONE, width=140, height=140, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@2a8f4d8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=566.0, y=-140.0}
+|
++------------&gt;RecyclerView{id=2131231130, res-name=personal_past_tours_rv, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@39a4031, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++-----------&gt;LinearLayout{id=2131231127, res-name=personal_past_tours_loading_container, visibility=INVISIBLE, width=1272, height=446, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@9bfe497, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;AppCompatTextView{id=2131231129, res-name=personal_past_tours_loading_tv, visibility=VISIBLE, width=759, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@2248684, tag=null, root-is-layout-requested=false, has-input-connection=false, x=256.0, y=45.0, text=Loading Past Tours, input-type=0, ime-target=false, has-links=false}
+|
++------------&gt;ProgressBar{id=2131231128, res-name=personal_past_tours_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@8a1ae6d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=552.0, y=232.0}
+|
++------&gt;BottomNavigationView{id=2131231087, res-name=nav_view, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@c143333, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=1916.0, child-count=1}
+|
++-------&gt;BottomNavigationMenuView{id=-1, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@654cf8f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++--------&gt;BottomNavigationItemView{id=2131231091, res-name=navigation_tour_market, desc=Tour Market, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@23aebfa, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@458d5ab, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=28.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=265, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@b3bcdc6, tag=null, root-is-layout-requested=false, has-input-connection=false, x=107.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=VISIBLE, width=225, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@e4d2187, tag=null, root-is-layout-requested=false, has-input-connection=false, x=20.0, y=7.0, text=Tour Market, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=INVISIBLE, width=265, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@c7898b4, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Tour Market, input-type=0, ime-target=false, has-links=false}
+|
++--------&gt;BottomNavigationItemView{id=2131231092, res-name=navigation_tours, desc=Personal Tours, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@8504f23, tag=null, root-is-layout-requested=false, has-input-connection=false, x=480.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.widget.FrameLayout$LayoutParams@a608c20, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=21.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=329, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.widget.FrameLayout$LayoutParams@fceba7f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=75.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=INVISIBLE, width=281, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@5124a4c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=24.0, y=7.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=VISIBLE, width=329, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@e34fa95, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++--------&gt;BottomNavigationItemView{id=2131231090, res-name=navigation_profile, desc=Profile, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@6bf5395, tag=null, root-is-layout-requested=false, has-input-connection=false, x=960.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@53fbf38, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=28.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=141, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@bdb7a77, tag=null, root-is-layout-requested=false, has-input-connection=false, x=169.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=VISIBLE, width=120, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@acd96e4, tag=null, root-is-layout-requested=false, has-input-connection=false, x=10.0, y=7.0, text=Profile, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=INVISIBLE, width=141, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@5dae74d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Profile, input-type=0, ime-target=false, has-links=false}
+|
++----&gt;ActionBarContainer{id=2131230771, res-name=action_bar_container, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.ActionBarOverlayLayout$LayoutParams@d3f3d50, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++-----&gt;Toolbar{id=2131230769, res-name=action_bar, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@5d1416f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------&gt;AppCompatTextView{id=-1, visibility=VISIBLE, width=472, height=93, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.Toolbar$LayoutParams@6e2de7c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=56.0, y=51.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++------&gt;ActionMenuView{id=-1, visibility=VISIBLE, width=0, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.Toolbar$LayoutParams@e4ab305, tag=null, root-is-layout-requested=false, has-input-connection=false, x=1440.0, y=0.0, child-count=0}
+|
++-----&gt;ActionBarContextView{id=2131230777, res-name=action_context_bar, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@337ef5a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++-&gt;View{id=16908336, res-name=navigationBarBackground, visibility=VISIBLE, width=1440, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@35a858b, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=2392.0}
+|
++-&gt;View{id=16908335, res-name=statusBarBackground, visibility=VISIBLE, width=1440, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@6bd6668, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1720)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.TourMarketFragmentTest2.destroy(TourMarketFragmentTest2.java:142)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="sortByLocationDescendingTest"></a>
+<h3 class="failures">sortByLocationDescendingTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: with id is &lt;com.tourtrek:id/tour_public_cb&gt;
+
+View Hierarchy:
++&gt;DecorView{id=-1, visibility=VISIBLE, width=1440, height=2560, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++-&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1440, height=2392, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c38a0f3, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++--&gt;ViewStub{id=16908692, res-name=action_mode_bar_stub, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@418c1b0, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++--&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1440, height=2308, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@7e767ae, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=84.0, child-count=1}
+|
++---&gt;ActionBarOverlayLayout{id=2131230921, res-name=decor_content_parent, visibility=VISIBLE, width=1440, height=2308, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@dba3de5, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----&gt;ContentFrameLayout{id=16908290, res-name=content, visibility=VISIBLE, width=1440, height=2112, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.ActionBarOverlayLayout$LayoutParams@3653b6b, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=196.0, child-count=1}
+|
++-----&gt;LinearLayout{id=2131231047, res-name=main_container, visibility=VISIBLE, width=1440, height=2112, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@878be86, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------&gt;FragmentContainerView{id=2131231085, res-name=nav_host_fragment, visibility=VISIBLE, width=1440, height=1916, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@ccad774, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1440, height=1916, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@12a7d2d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++--------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@e107ff3, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=56.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@4c12ae, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----------&gt;AppCompatButton{id=2131231121, res-name=personal_current_tours_title_btn, visibility=VISIBLE, width=1272, height=108, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@ea9284f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=28.0, text=Current Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=428, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@ccaabba, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=136.0, child-count=2}
+|
++-----------&gt;SwipeRefreshLayout{id=2131231120, res-name=personal_current_tours_srl, visibility=VISIBLE, width=1272, height=428, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@23e2a61, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;CircleImageView{id=-1, visibility=GONE, width=140, height=140, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@d67c986, tag=null, root-is-layout-requested=false, has-input-connection=false, x=566.0, y=-140.0}
+|
++------------&gt;RecyclerView{id=2131231119, res-name=personal_current_tours_rv, visibility=VISIBLE, width=1272, height=428, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@83bd247, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++-----------&gt;LinearLayout{id=2131231118, res-name=personal_current_tours_loading_container, visibility=INVISIBLE, width=1272, height=428, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@fd20b9d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;AppCompatTextView{id=2131231117, res-name=personal_current_tours_future_loading_tv, visibility=VISIBLE, width=871, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@466f812, tag=null, root-is-layout-requested=false, has-input-connection=false, x=200.0, y=36.0, text=Loading Current Tours, input-type=0, ime-target=false, has-links=false}
+|
++------------&gt;ProgressBar{id=2131231116, res-name=personal_current_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@f594be3, tag=null, root-is-layout-requested=false, has-input-connection=false, x=552.0, y=223.0}
+|
++--------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@2c8c499, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=676.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@e0c840c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----------&gt;AppCompatButton{id=2131231126, res-name=personal_future_tours_title_btn, visibility=VISIBLE, width=1272, height=118, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@8d81155, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Future Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b03d4f8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=118.0, child-count=2}
+|
++-----------&gt;SwipeRefreshLayout{id=2131231125, res-name=personal_future_tours_srl, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@e37db37, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;CircleImageView{id=-1, visibility=GONE, width=140, height=140, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@61d48a4, tag=null, root-is-layout-requested=false, has-input-connection=false, x=566.0, y=-140.0}
+|
++------------&gt;RecyclerView{id=2131231124, res-name=personal_future_tours_rv, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@35989c2, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-------------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1166, height=141, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=androidx.recyclerview.widget.RecyclerView$LayoutParams@1384b10, tag=null, root-is-layout-requested=false, has-input-connection=false, x=53.0, y=32.0, child-count=1}
+|
++--------------&gt;ConstraintLayout{id=2131231018, res-name=item_personal_tour_container, visibility=VISIBLE, width=1166, height=141, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@1c0fa2f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------------&gt;AppCompatTextView{id=2131231020, res-name=item_personal_tour_name, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@abf083c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=35.0, y=35.0, text=EditTourTestTour, input-type=0, ime-target=false, has-links=false}
+|
++---------------&gt;AppCompatTextView{id=2131231019, res-name=item_personal_tour_location, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@240f9c5, tag=null, root-is-layout-requested=false, has-input-connection=false, x=606.0, y=35.0, text=mmm, input-type=0, ime-target=false, has-links=false}
+|
++-----------&gt;LinearLayout{id=2131231123, res-name=personal_future_tours_loading_container, visibility=INVISIBLE, width=1272, height=446, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@f6d0a4b, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;AppCompatTextView{id=2131231122, res-name=personal_future_tours_future_loading_tv, visibility=VISIBLE, width=832, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b926c28, tag=null, root-is-layout-requested=false, has-input-connection=false, x=220.0, y=45.0, text=Loading Future Tours, input-type=0, ime-target=false, has-links=false}
+|
++------------&gt;ProgressBar{id=2131231133, res-name=personal_tours_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@93c6d41, tag=null, root-is-layout-requested=false, has-input-connection=false, x=552.0, y=232.0}
+|
++--------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@c800027, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=1296.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1272, height=564, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@abe772, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----------&gt;AppCompatButton{id=2131231132, res-name=personal_past_tours_title_btn, visibility=VISIBLE, width=1272, height=118, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@de277c3, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Past Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@24d08be, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=118.0, child-count=2}
+|
++-----------&gt;SwipeRefreshLayout{id=2131231131, res-name=personal_past_tours_srl, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@eacde35, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;CircleImageView{id=-1, visibility=GONE, width=140, height=140, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@d4cf2ca, tag=null, root-is-layout-requested=false, has-input-connection=false, x=566.0, y=-140.0}
+|
++------------&gt;RecyclerView{id=2131231130, res-name=personal_past_tours_rv, visibility=VISIBLE, width=1272, height=446, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@1af7196, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++-------------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1166, height=203, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=androidx.recyclerview.widget.RecyclerView$LayoutParams@c11e904, tag=null, root-is-layout-requested=false, has-input-connection=false, x=53.0, y=32.0, child-count=1}
+|
++--------------&gt;ConstraintLayout{id=2131231018, res-name=item_personal_tour_container, visibility=VISIBLE, width=1166, height=203, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@dc0d7b3, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------------&gt;AppCompatTextView{id=2131231020, res-name=item_personal_tour_name, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@4469170, tag=null, root-is-layout-requested=false, has-input-connection=false, x=35.0, y=66.0, text=Some tour, input-type=0, ime-target=false, has-links=false}
+|
++---------------&gt;AppCompatTextView{id=2131231019, res-name=item_personal_tour_location, visibility=VISIBLE, width=525, height=133, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@efc3ce9, tag=null, root-is-layout-requested=false, has-input-connection=false, x=606.0, y=35.0, text=330 N. Orchard St., Madison, WI, USA, input-type=0, ime-target=false, has-links=false}
+|
++-------------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1166, height=141, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=androidx.recyclerview.widget.RecyclerView$LayoutParams@3673c0f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=53.0, y=271.0, child-count=1}
+|
++--------------&gt;ConstraintLayout{id=2131231018, res-name=item_personal_tour_container, visibility=VISIBLE, width=1166, height=141, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@26fa27a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------------&gt;AppCompatTextView{id=2131231020, res-name=item_personal_tour_name, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@1658a2b, tag=null, root-is-layout-requested=false, has-input-connection=false, x=35.0, y=35.0, text=Charlevoix, input-type=0, ime-target=false, has-links=false}
+|
++---------------&gt;AppCompatTextView{id=2131231019, res-name=item_personal_tour_location, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@971e88, tag=null, root-is-layout-requested=false, has-input-connection=false, x=606.0, y=35.0, text=Charlevoix, MI, input-type=0, ime-target=false, has-links=false}
+|
++-------------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1166, height=203, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=androidx.recyclerview.widget.RecyclerView$LayoutParams@c456c46, tag=null, root-is-layout-requested=false, has-input-connection=false, x=53.0, y=448.0, child-count=1}
+|
++--------------&gt;ConstraintLayout{id=2131231018, res-name=item_personal_tour_container, visibility=VISIBLE, width=1166, height=203, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@dcb1d5d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------------&gt;AppCompatTextView{id=2131231020, res-name=item_personal_tour_name, visibility=VISIBLE, width=525, height=71, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@55c06d2, tag=null, root-is-layout-requested=false, has-input-connection=false, x=35.0, y=66.0, text=Some tour, input-type=0, ime-target=false, has-links=false}
+|
++---------------&gt;AppCompatTextView{id=2131231019, res-name=item_personal_tour_location, visibility=VISIBLE, width=525, height=133, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.constraintlayout.widget.ConstraintLayout$LayoutParams@aaf13a3, tag=null, root-is-layout-requested=false, has-input-connection=false, x=606.0, y=35.0, text=330 Not. Orchard St., Madison, WI, USA, input-type=0, ime-target=false, has-links=false}
+|
++-----------&gt;LinearLayout{id=2131231127, res-name=personal_past_tours_loading_container, visibility=INVISIBLE, width=1272, height=446, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@aa13259, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------------&gt;AppCompatTextView{id=2131231129, res-name=personal_past_tours_loading_tv, visibility=VISIBLE, width=759, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@dcfbe1e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=256.0, y=45.0, text=Loading Past Tours, input-type=0, ime-target=false, has-links=false}
+|
++------------&gt;ProgressBar{id=2131231128, res-name=personal_past_tours_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@69546ff, tag=null, root-is-layout-requested=false, has-input-connection=false, x=552.0, y=232.0}
+|
++------&gt;BottomNavigationView{id=2131231087, res-name=nav_view, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@5690c85, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=1916.0, child-count=1}
+|
++-------&gt;BottomNavigationMenuView{id=-1, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@b2ec01, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++--------&gt;BottomNavigationItemView{id=2131231091, res-name=navigation_tour_market, desc=Tour Market, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@752c094, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@b61473d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=28.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=265, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@be55200, tag=null, root-is-layout-requested=false, has-input-connection=false, x=107.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=VISIBLE, width=225, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@ba01a39, tag=null, root-is-layout-requested=false, has-input-connection=false, x=20.0, y=7.0, text=Tour Market, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=INVISIBLE, width=265, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@c3eb87e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Tour Market, input-type=0, ime-target=false, has-links=false}
+|
++--------&gt;BottomNavigationItemView{id=2131231092, res-name=navigation_tours, desc=Personal Tours, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@45f20f5, tag=null, root-is-layout-requested=false, has-input-connection=false, x=480.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.widget.FrameLayout$LayoutParams@b09de8a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=21.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=329, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.widget.FrameLayout$LayoutParams@dcdd771, tag=null, root-is-layout-requested=false, has-input-connection=false, x=75.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=INVISIBLE, width=281, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@aaf5956, tag=null, root-is-layout-requested=false, has-input-connection=false, x=24.0, y=7.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=VISIBLE, width=329, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@8656dd7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++--------&gt;BottomNavigationItemView{id=2131231090, res-name=navigation_profile, desc=Profile, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@55fb4e2, tag=null, root-is-layout-requested=false, has-input-connection=false, x=960.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@ba91073, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=28.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=141, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@5c83d2e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=169.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=VISIBLE, width=120, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@87a40cf, tag=null, root-is-layout-requested=false, has-input-connection=false, x=10.0, y=7.0, text=Profile, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=INVISIBLE, width=141, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@ae6da5c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Profile, input-type=0, ime-target=false, has-links=false}
+|
++----&gt;ActionBarContainer{id=2131230771, res-name=action_bar_container, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.ActionBarOverlayLayout$LayoutParams@3841aeb, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++-----&gt;Toolbar{id=2131230769, res-name=action_bar, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@beec406, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------&gt;AppCompatTextView{id=-1, visibility=VISIBLE, width=472, height=93, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.Toolbar$LayoutParams@7077ac7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=56.0, y=51.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++------&gt;ActionMenuView{id=-1, visibility=VISIBLE, width=0, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.Toolbar$LayoutParams@28218f4, tag=null, root-is-layout-requested=false, has-input-connection=false, x=1440.0, y=0.0, child-count=0}
+|
++-----&gt;ActionBarContextView{id=2131230777, res-name=action_context_bar, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@5b7281d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++-&gt;View{id=16908336, res-name=navigationBarBackground, visibility=VISIBLE, width=1440, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@a31a92, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=2392.0}
+|
++-&gt;View{id=16908335, res-name=statusBarBackground, visibility=VISIBLE, width=1440, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@676fc63, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1720)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.TourMarketFragmentTest2.destroy(TourMarketFragmentTest2.java:142)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="sortByRatingAscendingTest"></a>
+<h3 class="failures">sortByRatingAscendingTest</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'scroll to' on view 'with id is &lt;com.tourtrek:id/tour_public_cb&gt;'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.TourMarketFragmentTest2.destroy(TourMarketFragmentTest2.java:142)
+... 28 trimmed
+Caused by: java.lang.RuntimeException: Action will not be performed because the target view does not match one or more of the following constraints:
+(view has effective visibility=VISIBLE and is descendant of a: (is assignable from class: class android.widget.ScrollView or is assignable from class: class android.widget.HorizontalScrollView or is assignable from class: class androidx.core.widget.NestedScrollView))
+Target view: &quot;AppCompatCheckBox{id=2131231317, res-name=tour_public_cb, visibility=VISIBLE, width=0, height=0, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=true, is-selected=false, layout-params=android.widget.RelativeLayout$LayoutParams@c3c2706, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Public, input-type=0, ime-target=false, has-links=false, is-checked=true}&quot;
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:20)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
 </pre>
 </span>
 </div>
@@ -103,51 +463,51 @@ at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:947)
 <thead>
 <tr>
 <th>Test</th>
-<th>Pixel_3_API_30(AVD) - 11</th>
+<th>Pixel_XL_API_29(AVD) - 10</th>
 </tr>
 </thead>
 <tr>
 <td>searchTourTest</td>
-<td class="success">passed (34.655s)</td>
+<td class="failures">failed (38.715s)</td>
 </tr>
 <tr>
 <td>sortByDurationAscendingTest</td>
-<td class="success">passed (31.842s)</td>
+<td class="success">passed (50.172s)</td>
 </tr>
 <tr>
 <td>sortByDurationDescendingTest</td>
-<td class="success">passed (30.430s)</td>
+<td class="failures">failed (1m46.11s)</td>
 </tr>
 <tr>
 <td>sortByLocationAscendingTest</td>
-<td class="failures">failed (24.672s)</td>
+<td class="success">passed (47.496s)</td>
 </tr>
 <tr>
 <td>sortByLocationDescendingTest</td>
-<td class="success">passed (29.672s)</td>
+<td class="failures">failed (1m46.17s)</td>
 </tr>
 <tr>
 <td>sortByNameAscendingTest</td>
-<td class="success">passed (30.509s)</td>
+<td class="success">passed (46.927s)</td>
 </tr>
 <tr>
 <td>sortByNameDescendingTest</td>
-<td class="success">passed (31.244s)</td>
+<td class="success">passed (47.126s)</td>
 </tr>
 <tr>
 <td>sortByRatingAscendingTest</td>
-<td class="success">passed (30.304s)</td>
+<td class="failures">failed (37.124s)</td>
 </tr>
 <tr>
 <td>sortByRatingDescendingTest</td>
-<td class="success">passed (31.154s)</td>
+<td class="success">passed (47.867s)</td>
 </tr>
 </table>
 </div>
 </div>
 <div id="footer">
 <p>Generated by 
-<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 7, 2020 10:28:59 PM</p>
+<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 8, 2020 1:40:27 AM</p>
 </div>
 </div>
 </body>

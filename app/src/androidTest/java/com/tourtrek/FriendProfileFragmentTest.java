@@ -70,9 +70,9 @@ public class FriendProfileFragmentTest {
             onView(withId(R.id.login_email_et)).perform(typeText("testingaccount@gmail.com"), ViewActions.closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("password"), ViewActions.closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
+            onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.navigation_profile)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(1000)));
+            onView(isRoot()).perform(waitForView(R.id.profile_friend_btn, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.profile_friend_btn)).perform(click());
 
         }
@@ -88,11 +88,11 @@ public class FriendProfileFragmentTest {
     @Test
     public void viewFriendsFriends(){
         //click on friend at position 1 inside recyclerview
-        onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
 
         //make sure that this friends list contains the friend "Testing Account"
-        onView(isRoot()).perform(waitForView(R.id.item_friend_friendName_tv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.item_friend_friendName_tv, TimeUnit.SECONDS.toMillis(30)));
         ViewInteraction textView = onView(
                 allOf(withId(R.id.item_friend_friendName_tv), withText("Testing Account"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
@@ -109,14 +109,14 @@ public class FriendProfileFragmentTest {
     @Test
     public void viewFriendsTours(){
         //click on friend at position 1 in friends list
-        onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.add_friend_my_friends_rv, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.add_friend_my_friends_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(1,click()));
 
         //scroll to friends tours recycler view
         onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
 
         //check to make sure user has tour name "Triple D"
-        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(30)));
         ViewInteraction textView = onView(
                 allOf(withId(R.id.item_tour_name), withText("Triple D"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),

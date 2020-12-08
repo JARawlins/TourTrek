@@ -60,7 +60,7 @@ public class RateTourTest {
 
         login();
 
-        create_tour();
+        create_tour("rating");
 
     }
 
@@ -70,6 +70,7 @@ public class RateTourTest {
 
         rate_tour();
         check("You successfully rated the tour");
+        sleep(2000);
     }
 
     @Test
@@ -88,14 +89,14 @@ public class RateTourTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.login_email_et)).perform(typeText("user@gmail.com"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("000000"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
@@ -105,18 +106,18 @@ public class RateTourTest {
 
     @After
     public void destroy() throws InterruptedException {
-        sleep(100);
+        sleep(2000);
         onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_delete_btn)).perform(click());
     }
 
-    public void create_tour() {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
+    public void create_tour(String name) throws InterruptedException {
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
 
         //enter info to create tour
-        onView(withId(R.id.tour_name_et)).perform(typeText("my tour"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText(name), closeSoftKeyboard());
         onView(withId(R.id.tour_location_et)).perform(typeText("Madison, WI, USA"), closeSoftKeyboard());
         onView(withId(R.id.tour_cost_et)).perform(typeText("0"), closeSoftKeyboard());
 
@@ -134,11 +135,12 @@ public class RateTourTest {
 
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
+        sleep(2000);
     }
 
     public void delete_tour() throws InterruptedException {
         //Clich on the future tour
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
 
         try {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("my tour"))));
@@ -148,7 +150,7 @@ public class RateTourTest {
             sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         } finally {
-            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
             //delete tour
             onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
@@ -157,16 +159,20 @@ public class RateTourTest {
     }
 
     public void rate_tour() throws InterruptedException {
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
-        sleep(1000);
-        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(30)));
+        try {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("rating"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("rating")), click()));
+        } catch (Exception e) {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
+        sleep(500);
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_review_btn)).perform(click());
-        onView(isRoot()).perform(waitForView(R.id.tour_review_rb, TimeUnit.SECONDS.toMillis(100)));
+        onView(isRoot()).perform(waitForView(R.id.tour_review_rb, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.tour_review_rb)).perform(click());
-
 
         ViewInteraction appCompatButton8 = onView(
                 allOf(withId(android.R.id.button1), withText("SUBMIT"),
@@ -177,8 +183,9 @@ public class RateTourTest {
                                 3)));
         appCompatButton8.perform(scrollTo(), click());
     }
-    public void check(String msg) {
+    public void check(String msg) throws InterruptedException {
         onView(withText(msg)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        sleep(2000);
     }
 
     private static Matcher<View> childAtPosition(
