@@ -150,7 +150,21 @@ public class SortAndSearchAttractionFragmentTest {
     public void destroy() throws InterruptedException {
         sleep(3000);
         Espresso.pressBack();
+        sleep(100);
+        onView(withId(R.id.navigation_profile)).perform(click());
+        sleep(100);
+        onView(withId(R.id.navigation_tours)).perform(click());
         sleep(2500);
+
+        try {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("sorting"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("sorting")), click()));
+        } catch (Exception e) {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
+
+        sleep(500);
 
         onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_delete_btn)).perform(click());
@@ -159,7 +173,14 @@ public class SortAndSearchAttractionFragmentTest {
 
     private void test(int pos) throws InterruptedException {
         sleep(2000);
-        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        try {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("sorting"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("sorting")), click()));
+        } catch (Exception e) {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
 
         sleep(1000);
 
@@ -202,7 +223,7 @@ public class SortAndSearchAttractionFragmentTest {
 
 
         //enter info to create tour
-        onView(withId(R.id.tour_name_et)).perform(typeText("my tour"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText("sorting"), closeSoftKeyboard());
         onView(withId(R.id.tour_location_et)).perform(typeText("Madison, WI, USA"), closeSoftKeyboard());
         onView(withId(R.id.tour_cost_et)).perform(typeText("0"), closeSoftKeyboard());
 
@@ -222,30 +243,18 @@ public class SortAndSearchAttractionFragmentTest {
         onView(withId(R.id.tour_update_btn)).perform(click());
     }
 
-    public void delete_tour() throws InterruptedException {
-        //Clich on the future tour
-        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
-
-        try {
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("my tour"))));
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("my tour")), click()));
-
-        } catch (androidx.test.espresso.PerformException e) {
-            sleep(2000);
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        } finally {
-            onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
-
-            //delete tour
-            onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
-            onView(withId(R.id.tour_delete_btn)).perform(click());
-        }
-    }
-
     public void add_attraction(String key) throws InterruptedException {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
-        sleep(1000);
-        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        try {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("sorting"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("sorting")), click()));
+        } catch (Exception e) {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
+
         onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
 
         onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
@@ -303,11 +312,16 @@ public class SortAndSearchAttractionFragmentTest {
         sleep(1500);
 
         onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.attraction_update_btn)).perform(click());
+        try {
+            onView(withId(R.id.attraction_update_btn)).perform(click());
+        } catch (Exception e) {
+
+        }
         sleep(3000);
 
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
+
     }
 
     public void sortBy(int pos) {

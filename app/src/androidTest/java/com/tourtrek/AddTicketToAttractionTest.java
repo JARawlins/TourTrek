@@ -33,6 +33,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -60,7 +61,7 @@ public class AddTicketToAttractionTest {
 
         login();
 
-        create_tour();
+        create_tour("ticket");
 
         add_attraction();
 
@@ -77,12 +78,17 @@ public class AddTicketToAttractionTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         sleep(100);
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.attraction_add_ticket_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_add_ticket_btn)).perform(click());
         sleep(1000);
 
-        onView(withId(R.id.item_attraction_okay_btn)).perform(click());
+        onView(withId(R.id.item_attraction_ticket_back_btn)).perform(click());
 
+        sleep(1000);
+
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_description_et)).check(matches(withText("nice food")));
     }
 
     public void login() throws InterruptedException, UiObjectNotFoundException {
@@ -106,14 +112,9 @@ public class AddTicketToAttractionTest {
 
     @After
     public void destroy() throws InterruptedException {
-        Espresso.pressBack();
-
         sleep(1000);
-
-        onView(isRoot()).perform(waitForView(R.id.item_attraction_ticket_back_btn, TimeUnit.SECONDS.toMillis(100)));
-        onView(withId(R.id.item_attraction_ticket_back_btn)).perform(click());
-
-        sleep(2500);
+        Espresso.pressBack();
+        sleep(1000);
 
         onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.navigation_profile)).perform(click());
@@ -121,23 +122,17 @@ public class AddTicketToAttractionTest {
         onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.navigation_tours)).perform(click());
 
-//        Espresso.pressBack();
-//
-//        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
-//        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_update_btn)).perform(click());
-
         delete_tour();
 
     }
 
-    public void create_tour() {
+    public void create_tour(String name) {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
 
         //enter info to create tour
-        onView(withId(R.id.tour_name_et)).perform(typeText("my tour"), closeSoftKeyboard());
+        onView(withId(R.id.tour_name_et)).perform(typeText(name), closeSoftKeyboard());
         onView(withId(R.id.tour_location_et)).perform(typeText("Madison, WI, USA"), closeSoftKeyboard());
         onView(withId(R.id.tour_cost_et)).perform(typeText("0"), closeSoftKeyboard());
 
@@ -162,8 +157,9 @@ public class AddTicketToAttractionTest {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
 
         try {
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("my tour"))));
-            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("my tour")), click()));
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("ticket"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("ticket")), click()));
 
         } catch (androidx.test.espresso.PerformException e) {
             sleep(2000);
@@ -180,12 +176,19 @@ public class AddTicketToAttractionTest {
     public void add_attraction() throws InterruptedException {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
         sleep(1000);
-        onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        try {
+            sleep(1000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("ticket"))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("ticket")), click()));
+        } catch (Exception e) {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
         onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
 
         onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_add_attraction_btn)).perform(click());
-        sleep(50);
+        sleep(100);
 
         onView(withId(R.id.attraction_search_ib)).perform(click());
         sleep(1000);
@@ -221,7 +224,7 @@ public class AddTicketToAttractionTest {
 
         onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_end_date_btn)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 29));
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 23));
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.attraction_end_time_btn)).perform(nestedScrollTo());
@@ -235,7 +238,7 @@ public class AddTicketToAttractionTest {
 
         onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_update_btn)).perform(click());
-        sleep(1500);
+        sleep(2500);
     }
 
     private static Matcher<View> childAtPosition(

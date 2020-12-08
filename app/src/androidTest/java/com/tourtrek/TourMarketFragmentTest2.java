@@ -117,7 +117,7 @@ public class TourMarketFragmentTest2 {
         onView(isRoot()).perform(waitForView(R.id.navigation_tour_market, TimeUnit.SECONDS.toMillis(15)));
         onView(withId(R.id.navigation_tour_market)).perform(click());
 
-        sleep(1000);
+        sleep(2000);
 
         search("A");
 
@@ -160,6 +160,7 @@ public class TourMarketFragmentTest2 {
     private void test(int pos) throws InterruptedException {
         create_tour("A");
 
+        sleep(2000);
         onView(isRoot()).perform(waitForView(R.id.navigation_tour_market, TimeUnit.SECONDS.toMillis(15)));
         onView(withId(R.id.navigation_tour_market)).perform(click());
 
@@ -173,9 +174,16 @@ public class TourMarketFragmentTest2 {
 
         sleep(2000);
 
-        onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        try {
+            onView(isRoot()).perform(waitForView(R.id.tour_market_rv, TimeUnit.SECONDS.toMillis(100)));
+            onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("A"))));
+            onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("A")), click()));
+        } catch (Exception e) {
+            onView(withId(R.id.tour_market_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
 
         sleep(1000);
+        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.tour_name_et)).perform(nestedScrollTo());
         onView(withId(R.id.tour_name_et)).check(matches(withText("A")));
     }
@@ -206,6 +214,7 @@ public class TourMarketFragmentTest2 {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(100)));
 
         try {
+            sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("A"))));
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("A")), click()));
 
@@ -213,6 +222,7 @@ public class TourMarketFragmentTest2 {
             sleep(2000);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         } finally {
+            sleep(1000);
             onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
 
             //delete tour
@@ -221,7 +231,7 @@ public class TourMarketFragmentTest2 {
         }
     }
 
-    public void create_tour(String name) {
+    public void create_tour(String name) throws InterruptedException {
         onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
         onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
 
@@ -248,6 +258,7 @@ public class TourMarketFragmentTest2 {
 
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_update_btn)).perform(click());
+        sleep(500);
     }
 
 
