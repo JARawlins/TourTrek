@@ -1507,5 +1507,6 @@ public class TourFragment extends Fragment {
             //update tour
             updateTourInFirebase();
         }
+
 }
 
