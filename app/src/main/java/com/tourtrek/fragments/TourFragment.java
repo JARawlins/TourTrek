@@ -1,33 +1,16 @@
 package com.tourtrek.fragments;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -35,25 +18,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -63,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,45 +39,38 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.facebook.CallbackManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -118,38 +80,32 @@ import com.tourtrek.adapters.CurrentTourAttractionsAdapter;
 import com.tourtrek.data.Attraction;
 import com.tourtrek.data.Tour;
 import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.Firestore;
-import com.tourtrek.utilities.ItemClickSupport;
-import com.tourtrek.utilities.PlacesLocal;
-import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.utilities.AttractionCostSorter;
+import com.tourtrek.utilities.AttractionDateSorter;
 import com.tourtrek.utilities.AttractionLocationSorter;
 import com.tourtrek.utilities.AttractionNameSorter;
 import com.tourtrek.utilities.AttractionRatingSorter;
+import com.tourtrek.utilities.AttractionsInfoDialogFragment;
 import com.tourtrek.utilities.Firestore;
 import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.utilities.Utilities;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
-import org.w3c.dom.Document;
-
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import static com.tourtrek.utilities.Firestore.updateUser;
-import static com.tourtrek.utilities.PlacesLocal.checkLocationPermission;
-import  com.facebook.FacebookSdk;
 
-public class TourFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+import static com.tourtrek.utilities.Firestore.updateUser;
+
+public class TourFragment extends Fragment {
 
     private static final String TAG = "TourFragment";
     private TourViewModel tourViewModel;
@@ -179,8 +135,8 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     private AlertDialog dialog;
     private AlertDialog.Builder builder;
     private String[] items = {"Name Ascending", "Location Ascending", "Cost Ascending",
-            "Rating Ascending", "Name Descending", "Location Descending",
-            "Cost Descending", "Rating Descending"};
+            "Rating Ascending","Date and Time Ascending", "Name Descending", "Location Descending",
+            "Cost Descending", "Rating Descending", "Date and Time Descending"};
     private String result = "";
     private boolean added;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -189,6 +145,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     // To keep track of whether we are in an async call
     private boolean loading;
     private ImageButton rate;
+    private android.widget.SearchView attractionSearchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -229,33 +186,39 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         // Initialize tourViewModel to get the current tour
         tourViewModel = new ViewModelProvider(requireActivity()).get(TourViewModel.class);
 
-            // Initialize attractionSortButton
-            //review button
-            rate = tourView.findViewById(R.id.tour_review_btn);
+        Button attractionInformationButton = tourView.findViewById(R.id.tour_attractions_info_btn);
+        attractionInformationButton.setOnClickListener(v -> {
+            DialogFragment dialogFragment = AttractionsInfoDialogFragment.newInstance("Attractions Info");
+            dialogFragment.show(getParentFragmentManager(), "dialog");
+        });
 
-            if (tourViewModel.isNewTour()) {
-                rate.setVisibility(View.GONE);
-            }
-            rate.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onClick(View v) {
+        // Initialize attractionSortButton
+        //review button
+        rate = tourView.findViewById(R.id.tour_review_btn);
 
-                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                    if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
-                        if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
-                            showReviewDialog();
-                        } else {
-                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
-                        }
+        if (tourViewModel.isNewTour()) {
+            rate.setVisibility(View.GONE);
+        }
+        rate.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                if (!tourViewModel.getSelectedTour().getReviews().equals(null)) {
+                    if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
+                        showReviewDialog();
+                    } else {
+                        Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
                     }
-
                 }
-            });
+
+            }
+        });
 
 
-            //initialize attractionSortButton
-            attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
+        //initialize attractionSortButton
+        attractionSortButton = tourView.findViewById(R.id.tour_attraction_sort_btn);
 
         //Setup dialog;
         builder = new AlertDialog.Builder(requireActivity());
@@ -288,6 +251,25 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public void onClick(View v) {
                 dialog.show();
+            }
+        });
+
+        attractionSearchView = (android.widget.SearchView)tourView.findViewById(R.id.attraction_search_sv);
+
+        attractionSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                searchAttractions(attractionsAdapter, query);
+                Activity currentActivity = requireActivity();
+                Utilities.hideKeyboard(currentActivity);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchAttractions(attractionsAdapter, newText);
+                return false;
             }
         });
 
@@ -333,6 +315,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         if (tourViewModel.isNewTour()){
             navigationButton.setVisibility(View.GONE);
         }
+
 
         // When the button is clicked, switch to the AddAttractionFragment
         addAttractionButton.setOnClickListener(v -> {
@@ -525,6 +508,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
         setupDeleteTourButton(tourView);
         setupImportTourButton(tourView);
+        setupAddFriendToTourButton(tourView);
 
         ((MainActivity)requireActivity()).enableTabs();
         loading = false;
@@ -565,7 +549,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
             }
         }
 
-        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation()) {
+        if (!tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromNavigation() && !tourViewModel.returnedFromAddFriendToTour()) {
             tourViewModel.setSelectedTour(null);
             tourViewModel.setIsNewTour(null);
         }
@@ -633,7 +617,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 });
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -652,6 +635,21 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
 
     }
 
+    /**
+     * This method creates a on click listener for the add friend button. Once clicked it opens a new fragment
+     * that allows the user to search for a friend and then add the tour to their tours list
+     * Precondition: The button should only be clicked on a tour in the marketplace. Such a tour already has a UID.
+     * @param tourView
+     */
+    private void setupAddFriendToTourButton(View tourView) {
+        Button addFriend = tourView.findViewById(R.id.tour_add_friend_btn);
+        tourViewModel.setReturnedFromAddFriendToTour(true);
+        addFriend.setOnClickListener(u -> {
+            final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new AddFriendToTourFragment(), "AddFriendToTourFragment");
+            ft.addToBackStack("AddFriendToTourFragment").commit();
+        });
+    }
     /**
      * Retrieve all attractions belonging to this user
      */
@@ -682,6 +680,9 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                                 swipeRefreshLayout.setRefreshing(false);
 
                             }
+                        })
+                        .addOnFailureListener(v -> {
+                           Log.d("TourFragment", "Failure in fetchAttractionsAsync");
                         });
 
             }
@@ -819,6 +820,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
     /**
      * Remove the tour from the user's list of tours in the database and return to the prior screen
      *
+     *
      * @param view
      */
     public void setupDeleteTourButton(View view){
@@ -881,6 +883,31 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         break;
                     }
                 }
+
+                // Setup collection reference
+                CollectionReference toursCollection = db.collection("Users");
+
+                DocumentReference documentReference = db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID());
+
+                // Setup basic query information
+                Query query = toursCollection.whereArrayContains("tours", documentReference);
+
+                query.get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot users) {
+                                for (DocumentSnapshot user : users.getDocuments()) {
+                                    Log.i(TAG, "Tour Removed from user: " + user.getId());
+                                    user.getReference().update("tours", FieldValue.arrayRemove(documentReference));
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Unable to remove the tour from user:", e);
+                            }
+                        });
             }
             // the tour is not private - error
             else{
@@ -988,7 +1015,7 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-
+                                Log.d("TourFragment", "Failure setting attraction dates to null");
                             }
                         });
             }
@@ -1008,18 +1035,14 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         if (!tourViewModel.getSelectedTour().getNotifications())
                             removeAlarms();
 
-                        tourViewModel.setSelectedTour(null);
-                        tourViewModel.setIsNewTour(null);
-                        getParentFragmentManager().popBackStack();
-
                         if (tourViewModel.isNewTour()) {
                             Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
                         }
                         else {
                             Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
-
-                            tourViewModel.setIsNewTour(false);
                         }
+
+                        getParentFragmentManager().popBackStack();
 
                         ((MainActivity)requireActivity()).enableTabs();
                         loading = false;
@@ -1034,41 +1057,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                         }
                     });
         });
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        // Show the top app bar with the search icon
-        inflater.inflate(R.menu.tour_search_menu, menu);
-
-        // Get the menu item
-        MenuItem item = menu.findItem(R.id.tour_search_itm);
-
-        SearchView searchView = (SearchView) item.getActionView();
-
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-
-                searchAttractions(attractionsAdapter, query);
-                Activity currentActivity = requireActivity();
-                Utilities.hideKeyboard(currentActivity);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                searchAttractions(attractionsAdapter, newText);
-
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void searchAttractions(CurrentTourAttractionsAdapter adapter, String newText){
@@ -1104,18 +1092,6 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
         return filteredTourList;
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        String key = (String) parent.getItemAtPosition(position);
-        sortAttractions((CurrentTourAttractionsAdapter) attractionsAdapter, key);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
-
     public void sortAttractions(CurrentTourAttractionsAdapter adapter, String key){
 
         ArrayList<Attraction> data = new ArrayList<>(adapter.getDataSetFiltered());
@@ -1143,14 +1119,18 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.sort(temp, new AttractionCostSorter());
                 break;
 
-                case "Rating Ascending":
-                    Collections.sort(temp, new AttractionRatingSorter());
-                    break;
+            case "Rating Ascending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                break;
 
-                case "Name Descending":
-                    Collections.sort(temp, new AttractionNameSorter());
-                    Collections.reverse(temp);
-                    break;
+            case "Date and Time Ascending":
+                Collections.sort(temp, new AttractionDateSorter());
+                break;
+
+            case "Name Descending":
+                Collections.sort(temp, new AttractionNameSorter());
+                Collections.reverse(temp);
+                break;
 
             case "Location Descending":
                 Collections.sort(temp, new AttractionLocationSorter());
@@ -1162,10 +1142,15 @@ public class TourFragment extends Fragment implements AdapterView.OnItemSelected
                 Collections.reverse(temp);
                 break;
 
-                case "Rating Descending":
-                    Collections.sort(temp, new AttractionRatingSorter());
-                    Collections.reverse(temp);
-                    break;
+            case "Rating Descending":
+                Collections.sort(temp, new AttractionRatingSorter());
+                Collections.reverse(temp);
+                break;
+
+            case "Date and Time Descending":
+                Collections.sort(temp, new AttractionDateSorter());
+                Collections.reverse(temp);
+                break;
 
                 default:
                     return temp;

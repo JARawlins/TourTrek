@@ -215,22 +215,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center|center_vertical"
                     android:text="Attractions"
-                    android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="28dp"
                     android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/tour_attractions_info_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/ic_baseline_info_24" />
 
                 <Button
                     android:id="@+id/tour_attraction_sort_btn"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:layout_marginEnd="24dp"
+                    android:layout_gravity="center|center_vertical"
+                    android:background="#EEEEEE"
+                    android:text="Sort By"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <SearchView
+                    android:id="@+id/attraction_search_sv"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="24dp"
                     android:layout_marginStart="24dp"
                     android:layout_gravity="bottom"
                     android:background="#EEEEEE"
-                    android:text="Sort By"
+                    android:queryHint="Search attraction"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimaryDark"/>
 
@@ -281,6 +307,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:nestedScrollingEnabled="true"
+                        android:scrollbars="vertical"
+                        android:fadeScrollbars="false"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:layout_marginStart="24dp"

@@ -35,30 +35,31 @@ import static org.hamcrest.Matchers.not;
 @LargeTest
 public class EditTourFragmentTest {
 
-    public static final String TAG = "EditTourFragmentTest";
-    private ActivityScenario mainActivityScenario;
+   public static final String TAG = "EditTourFragmentTest";
+   private ActivityScenario mainActivityScenario;
 
-    @Rule
-    public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
+   @Rule
+   public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
 
 
-    @Before
-    public void setup() {
+   @Before
+   public void setup() {
 
-        mainActivityScenario = mainActivityScenarioRule.getScenario();
+       mainActivityScenario = mainActivityScenarioRule.getScenario();
 
-        // If any user is logged in, make sure to log them out
-        try {
+       // If any user is logged in, make sure to log them out
+       try {
 
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
-            onView(withId(R.id.navigation_profile)).perform(click());
-            onView(withId(R.id.profile_logout_btn)).perform(click());
-        } catch (Exception NoMatchingViewException) {
-            Log.w(TAG, "No user is not logged in, continuing test execution");
-        } finally {
-            onView(withId(R.id.navigation_tours)).perform(click());
-        }
-    }
+           onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(15)));
+           onView(withId(R.id.navigation_profile)).perform(click());
+           onView(withId(R.id.profile_logout_btn)).perform(click());
+       } catch (Exception NoMatchingViewException) {
+           Log.w(TAG, "No user is not logged in, continuing test execution");
+       } finally {
+           onView(withId(R.id.navigation_tours)).perform(click());
+       }
+   }
+
 
     @Test
     public void editSuccessfullyFeedback() throws InterruptedException {
@@ -76,3 +77,4 @@ public class EditTourFragmentTest {
                 .check(matches(isDisplayed()));
     }
 }
+

@@ -29,6 +29,16 @@ public class User {
         this.friends= new ArrayList<>();
     }
 
+//    /**
+//     * check if account is empty
+//     * @return current status
+//     */
+//    public boolean isEmpty(){
+//        if(this.username == null ){
+//
+//        }
+//    }
+
     /**
      * Getter for settings.
      *
