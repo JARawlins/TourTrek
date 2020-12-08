@@ -1029,6 +1029,7 @@ public class TourFragment extends Fragment {
 
                         tourViewModel.setSelectedTour(null);
                         tourViewModel.setIsNewTour(null);
+
                         getParentFragmentManager().popBackStack();
 
                         if (tourViewModel.isNewTour()) {
