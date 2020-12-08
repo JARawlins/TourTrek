@@ -1,61 +1,49 @@
 package com.tourtrek.fragments;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.location.Location;
-import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
-
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RatingBar;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -67,42 +55,28 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tourtrek.R;
 import com.tourtrek.activities.MainActivity;
-import com.tourtrek.adapters.CurrentPersonalToursAdapter;
 import com.tourtrek.data.Attraction;
-import com.tourtrek.notifications.AlarmBroadcastReceiver;
-import com.tourtrek.utilities.PlacesLocal;
 import com.tourtrek.utilities.Weather;
 import com.tourtrek.viewModels.AttractionViewModel;
 import com.tourtrek.viewModels.TourViewModel;
-import com.tourtrek.data.Tour;
 
 import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import org.w3c.dom.Document;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -115,11 +89,14 @@ import java.util.UUID;
  *
  * TODO fix tapping the back button when in a Google Map leading to the add attraction screen
  * TODO make sure that this location is accessible via the view model
+ * Test
  */
 public class AttractionFragment extends Fragment {
 
     private static final String TAG = "AttractionFragment";
     private static final int AUTOCOMPLETE_REQUEST_CODE = 4588;
+    private static final int ADD_PDF_CODE = 4589;
+    private static final int COVER_IMAGE_CODE = 4590;
     private EditText locationEditText;
     private EditText costEditText;
     private EditText nameEditText;
@@ -142,13 +119,16 @@ public class AttractionFragment extends Fragment {
     // To keep track of whether we are in an async call
     private boolean loading;
     // To keep track of whether tour ticket dialog is showing
-    private boolean dialogIsShowing;
-    private ImageButton rate;
     private Button addTicketButton;
-    ImageView ticketImageView;
-    Button backButton;
-    Button confirmButton;
-    Dialog dialog;
+    private ImageView ticketImageView;
+    private Button backButton;
+    private Button confirmButton;
+    private Dialog dialog;
+    private PDFView pdfView;
+    private Button uploadTicketButton;
+    private String fileExtension;
+    private ProgressBar progressBar;
+    private TextView progressBarTextView;
 
     /**
      * Default for proper back button usage
@@ -193,25 +173,9 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-        //review button
-        rate = attractionView.findViewById(R.id.attraction_review_btn);
-
-        if (attractionViewModel.isNewAttraction() || attractionViewModel.getSelectedAttraction() == null) {
-            rate.setVisibility(View.GONE);
+        if (!tourViewModel.isUserOwned()) {
+            addTicketButton.setVisibility(View.INVISIBLE);
         }
-        rate.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                if (!attractionViewModel.getSelectedAttraction().getReviews()
-                        .contains(mAuth.getCurrentUser().getUid())) { showReviewDialog();
-                } else {
-                    Toast.makeText(getContext(), "You cannot rate an attraction more than once", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         // Initialize all fields
         nameEditText = attractionView.findViewById(R.id.attraction_name_et);
@@ -400,21 +364,21 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-//        locationEditText.setOnFocusChangeListener((view, hasFocus) -> {
-//
-//            if (locationEditText.getHint().equals("City, State")) {
-//                locationEditText.setHint("");
-//            }
-//
-//            locationEditText.setBackgroundColor(Color.parseColor("#10000000"));
-//
-//            if (!hasFocus && locationEditText.getHint().equals("")) {
-//                if (locationEditText.getText().toString().equals("")) {
-//                    locationEditText.setHint("City, State");
-//                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
-//                }
-//            }
-//        });
+        locationEditText.setOnFocusChangeListener((view, hasFocus) -> {
+
+            if (locationEditText.getHint().equals("City, State")) {
+                locationEditText.setHint("");
+            }
+
+            locationEditText.setBackgroundColor(Color.parseColor("#10000000"));
+
+            if (!hasFocus && locationEditText.getHint().equals("")) {
+                if (locationEditText.getText().toString().equals("")) {
+                    locationEditText.setHint("City, State");
+                    locationEditText.setBackgroundColor(Color.parseColor("#FF4859"));
+                }
+            }
+        });
 
         costEditText.setOnFocusChangeListener((view, hasFocus) -> {
             if (costEditText.getHint().equals("$0.00")) {
@@ -444,75 +408,75 @@ public class AttractionFragment extends Fragment {
             }
         });
 
-//        startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
-//
-//            if (startDateButton.getHint().equals("Pick Date")) {
-//                startDateButton.setHint("");
-//            }
-//
-//            startDateButton.setBackgroundColor(Color.parseColor("#10000000"));
-//
-//            if (!hasFocus && startDateButton.getHint().equals("")) {
-//                if (startDateButton.getText().toString().equals("")) {
-//                    startDateButton.setHint("Pick Date");
-//                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
-//                }
-//            }
-//        });
+        startDateButton.setOnFocusChangeListener((view, hasFocus) -> {
+
+            if (startDateButton.getHint().equals("Pick Date")) {
+                startDateButton.setHint("");
+            }
+
+            startDateButton.setBackgroundColor(Color.parseColor("#10000000"));
+
+            if (!hasFocus && startDateButton.getHint().equals("")) {
+                if (startDateButton.getText().toString().equals("")) {
+                    startDateButton.setHint("Pick Date");
+                    startDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
+                }
+            }
+        });
 
         startTimeButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showTimePickerDialog(startTimeButton));
 
-//        startTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
-//
-//            if (startTimeButton.getHint().equals("Pick Time")) {
-//                startTimeButton.setHint("");
-//            }
-//
-//            startTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
-//
-//            if (!hasFocus && startTimeButton.getHint().equals("")) {
-//                if (startTimeButton.getText().toString().equals("")) {
-//                    startTimeButton.setHint("Pick Time");
-//                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
-//                }
-//            }
-//        });
+        startTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
+
+            if (startTimeButton.getHint().equals("Pick Time")) {
+                startTimeButton.setHint("");
+            }
+
+            startTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
+
+            if (!hasFocus && startTimeButton.getHint().equals("")) {
+                if (startTimeButton.getText().toString().equals("")) {
+                    startTimeButton.setHint("Pick Time");
+                    startTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
+                }
+            }
+        });
 
         endDateButton.setOnClickListener(view -> showDatePickerDialog(endDateButton, null, getContext(), "end"));
 
-//        endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
-//
-//            if (endDateButton.getHint().equals("Pick Date")) {
-//                endDateButton.setHint("");
-//            }
-//
-//            endDateButton.setBackgroundColor(Color.parseColor("#10000000"));
-//
-//            if (!hasFocus && endDateButton.getHint().equals("")) {
-//                if (endDateButton.getText().toString().equals("")) {
-//                    endDateButton.setHint("Pick Date");
-//                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
-//                }
-//            }
-//        });
+        endDateButton.setOnFocusChangeListener((view, hasFocus) -> {
+
+            if (endDateButton.getHint().equals("Pick Date")) {
+                endDateButton.setHint("");
+            }
+
+            endDateButton.setBackgroundColor(Color.parseColor("#10000000"));
+
+            if (!hasFocus && endDateButton.getHint().equals("")) {
+                if (endDateButton.getText().toString().equals("")) {
+                    endDateButton.setHint("Pick Date");
+                    endDateButton.setBackgroundColor(Color.parseColor("#FF4859"));
+                }
+            }
+        });
 
         endTimeButton.setOnClickListener(view -> ((MainActivity) requireActivity()).showTimePickerDialog(endTimeButton));
 
-//        endTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
-//
-//            if (endTimeButton.getHint().equals("Pick Time")) {
-//                endTimeButton.setHint("");
-//            }
-//
-//            endTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
-//
-//            if (!hasFocus && endTimeButton.getHint().equals("")) {
-//                if (endTimeButton.getText().toString().equals("")) {
-//                    endTimeButton.setHint("Pick Time");
-//                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
-//                }
-//            }
-//        });
+        endTimeButton.setOnFocusChangeListener((view, hasFocus) -> {
+
+            if (endTimeButton.getHint().equals("Pick Time")) {
+                endTimeButton.setHint("");
+            }
+
+            endTimeButton.setBackgroundColor(Color.parseColor("#10000000"));
+
+            if (!hasFocus && endTimeButton.getHint().equals("")) {
+                if (endTimeButton.getText().toString().equals("")) {
+                    endTimeButton.setHint("Pick Time");
+                    endTimeButton.setBackgroundColor(Color.parseColor("#FF4859"));
+                }
+            }
+        });
 
         descriptionEditText.setOnFocusChangeListener((view, hasFocus) -> {
 
@@ -651,8 +615,7 @@ public class AttractionFragment extends Fragment {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
-                    int PICK_IMAGE = 1;
-                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), COVER_IMAGE_CODE);
                 }
             });
         }
@@ -665,7 +628,7 @@ public class AttractionFragment extends Fragment {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
 
             if (resultCode == Activity.RESULT_OK) {
-              
+
                 ((MainActivity)requireActivity()).disableTabs();
                 loading = true;
 
@@ -763,11 +726,11 @@ public class AttractionFragment extends Fragment {
 
                 attractionViewModel.setReturnedFromSearch(true);
 
-                attractionViewModel.getSelectedAttraction().setName(place.getName());
-                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress());
-                attractionViewModel.getSelectedAttraction().setLat(Objects.requireNonNull(place.getLatLng()).latitude);
-                attractionViewModel.getSelectedAttraction().setLon(Objects.requireNonNull(place.getLatLng()).longitude);
-                attractionViewModel.getSelectedAttraction().setRating(place.getRating());
+                attractionViewModel.getSelectedAttraction().setName(place.getName()==null?"":place.getName());
+                attractionViewModel.getSelectedAttraction().setLocation(place.getAddress()==null?"":place.getAddress());
+                attractionViewModel.getSelectedAttraction().setLat(place.getLatLng()==null?0.00:place.getLatLng().latitude);
+                attractionViewModel.getSelectedAttraction().setLon(place.getLatLng()==null?0.00:place.getLatLng().longitude);
+                attractionViewModel.getSelectedAttraction().setRating(place.getRating()==null?0.00:place.getRating());
 
                 // Get updated weather
                 Weather.getWeather(attractionViewModel.getSelectedAttraction().getLat(), attractionViewModel.getSelectedAttraction().getLon(), getContext());
@@ -824,8 +787,37 @@ public class AttractionFragment extends Fragment {
                 // Do Nothing because the user is exiting intent
             }
         }
-        else {
-            if(resultCode == Activity.RESULT_OK && !dialogIsShowing) {
+        else if (requestCode == ADD_PDF_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                assert data != null;
+
+                if (!getMimeType(data.getData()).contains("pdf")) {
+                    fileExtension = "image";
+                    pdfView.setVisibility(View.INVISIBLE);
+                    ticketImageView.setVisibility(View.VISIBLE);
+                    Glide.with(this)
+                            .load(data.getData())
+                            .placeholder(R.drawable.default_image)
+                            .into(ticketImageView);
+
+                } else {
+                    fileExtension = "pdf";
+                    pdfView.setVisibility(View.VISIBLE);
+                    ticketImageView.setVisibility(View.INVISIBLE);
+                    pdfView.fromUri(data.getData()).load();
+                }
+
+                //Write to Firebase only when the user confirm
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadTicketToDatabase(data);
+                    }
+                });
+            }
+        }
+        else if (requestCode == COVER_IMAGE_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
                 assert data != null;
 
                 Glide.with(this)
@@ -835,27 +827,6 @@ public class AttractionFragment extends Fragment {
                 uploadImageToDatabase(data);
             }
         }
-
-        if(resultCode == Activity.RESULT_OK) {
-            assert data != null;
-            if (dialogIsShowing) {
-                Glide.with(this)
-                        .load(data.getData())
-                        .placeholder(R.drawable.default_image)
-                        .into(ticketImageView);
-
-                //Write to Firebase only when the user confirm
-                confirmButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        uploadTicketToDatabase(data);
-                        dialog.dismiss();
-                    }
-                });
-            }
-
-        }
-
     }
 
     /**
@@ -874,20 +845,26 @@ public class AttractionFragment extends Fragment {
 
         final StorageReference storageReference = storage.getReference().child("AttractionCoverPictures/" + imageUUID);
 
-        final UploadTask uploadTask = storageReference.putFile(selectedImage);
+        storageReference.putFile(selectedImage)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
 
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.i(TAG, "Successfully added image: " + imageUUID + " to cloud storage");
-
-                    storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
-                            .addOnSuccessListener(uri -> {
-                                attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
-                            })
-                            .addOnFailureListener(exception -> {
-                                Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
-                            });
+                        storage.getReference().child("AttractionCoverPictures/" + imageUUID).getDownloadUrl()
+                                .addOnSuccessListener(uri -> {
+                                    attractionViewModel.getSelectedAttraction().setCoverImageURI(uri.toString());
+                                })
+                                .addOnFailureListener(exception -> {
+                                    Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage");
+                    }
                 });
     }
 
@@ -910,18 +887,6 @@ public class AttractionFragment extends Fragment {
             String endDate = endDateButton.getText().toString();
             String endTime = endTimeButton.getText().toString();
 
-            // error-handling of dates
-            try {
-                Date start = simpleDateFormat.parse(startDate);
-                Date end = simpleDateFormat.parse(endDate);
-                if (end.compareTo(start) < 0){
-                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
             if (name.equals("") ||
                     location.equals("") ||
                     cost.equals("") ||
@@ -932,6 +897,57 @@ public class AttractionFragment extends Fragment {
                     description.equals("")) {
                 Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
                 return;
+            }
+
+            attractionViewModel.getSelectedAttraction().setName(name);
+            attractionViewModel.getSelectedAttraction().setLocation(location);
+            attractionViewModel.getSelectedAttraction().setDescription(description);
+            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
+            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
+
+            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
+
+                try {
+                    // Check that the attraction lies within the tour dates
+                    Calendar calendar = Calendar.getInstance();
+
+                    calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
+                    String attractionStartTime = attractionViewModel.getSelectedAttraction().getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(attractionStartTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                    Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
+                    String attractionEndTime = attractionViewModel.getSelectedAttraction().getEndTime();
+                    date = df.parse(attractionEndTime);
+                    calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                    Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                    Timestamp tourStartDate = new Timestamp(calendar.getTime());
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                    Timestamp tourEndDate = new Timestamp(calendar.getTime());
+
+                    if (attractionStartDate.compareTo(attractionEndDate) > 0) {
+                        Toast.makeText(getContext(), "Attraction must start before it ends", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                        Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                catch (ParseException e) {
+                    Log.e(TAG, "Error parsion date/time", e);
+                }
             }
 
             try {
@@ -947,30 +963,6 @@ public class AttractionFragment extends Fragment {
             } catch (ParseException e) {
                 Log.e(TAG, "Error converting startDate to a firebase Timestamp");
                 return;
-            }
-
-            attractionViewModel.getSelectedAttraction().setName(name);
-            attractionViewModel.getSelectedAttraction().setLocation(location);
-            attractionViewModel.getSelectedAttraction().setDescription(description);
-            attractionViewModel.getSelectedAttraction().setStartTime(startTime);
-            attractionViewModel.getSelectedAttraction().setEndTime(endTime);
-
-            if (tourViewModel.getSelectedTour().getStartDate() != null && tourViewModel.getSelectedTour().getEndDate() != null){
-                // Check that the attraction lies within the tour dates
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(attractionViewModel.getSelectedAttraction().getStartDate());
-                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-                calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
-                Timestamp attractionEndDate = new Timestamp(calendar.getTime());
-                calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
-                Timestamp tourStartDate = new Timestamp(calendar.getTime());
-                calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
-                Timestamp tourEndDate = new Timestamp(calendar.getTime());
-
-                if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
-                    Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
-                    return;
-                }
             }
 
             // Remove $ from cost
@@ -1178,27 +1170,6 @@ public class AttractionFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void showReviewDialog(){
-
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_attraction_review, null);
-        //Get elements
-        RatingBar ratingBar = view.findViewById(R.id.attraction_review_rb);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(view);
-        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
-            dialogInterface.dismiss();
-        });
-
-        builder.setPositiveButton("SUBMIT", (dialogInterface, i) -> {
-
-            addNewRating(ratingBar.getRating());
-
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
-    }
-
     private void updateAttractionInFirebase(){
         // Get Firestore instance
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -1213,53 +1184,37 @@ public class AttractionFragment extends Fragment {
                     db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
                 })
-                .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
-    }
-
-    private double computeRating(double totalRating) {
-
-        return totalRating / attractionViewModel.getSelectedAttraction().getReviews().size();
-    }
-
-    private void addNewRating(double newRating) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        attractionViewModel.getSelectedAttraction().addUser(mAuth.getCurrentUser().getUid());
-
-        if (attractionViewModel.getSelectedAttraction().getReviews().equals(null)) {
-            attractionViewModel.getSelectedAttraction().setReviews(new ArrayList<>());
-            attractionViewModel.getSelectedAttraction().setRating(0);
-            attractionViewModel.getSelectedAttraction().setTotalRating(0);
-        }
-
-        //add new rating to totalRating
-        attractionViewModel.getSelectedAttraction().setTotalRating(
-                attractionViewModel.getSelectedAttraction().getTotalRating() + newRating);
-
-        //compute rating
-        attractionViewModel.getSelectedAttraction().setRating(computeRating(
-                attractionViewModel.getSelectedAttraction().getTotalRating()));
-
-        Toast.makeText(getContext(), "You successfully rated the attraction", Toast.LENGTH_SHORT).show();
-        updateAttractionInFirebase();
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document");
+                    }
+                });
     }
 
     private void showTicketDialog() {
-
 
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.item_attraction_ticket);
 
         dialog.show();
-        dialogIsShowing = true;
 
         backButton = dialog.findViewById(R.id.item_attraction_ticket_back_btn);
         confirmButton = dialog.findViewById(R.id.item_attraction_okay_btn);
+        pdfView = dialog.findViewById(R.id.item_attraction_ticket_pv);
         ticketImageView = dialog.findViewById(R.id.item_attraction_ticket_iv);
+        uploadTicketButton = dialog.findViewById(R.id.attraction_upload_ticket_btn);
+
+        //progress bar
+        progressBar = dialog.findViewById(R.id.item_attraction_ticket_progressBar);
+        progressBarTextView = dialog.findViewById(R.id.item_attraction_ticket_percent_tv);
+        progressBar.setVisibility(View.INVISIBLE);
+        progressBarTextView.setVisibility(View.INVISIBLE);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogIsShowing = false;
+
                 dialog.dismiss();
             }
         });
@@ -1267,27 +1222,60 @@ public class AttractionFragment extends Fragment {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogIsShowing = false;
+
                 dialog.dismiss();
             }
         });
 
-        ticketImageView.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            int PICK_IMAGE = 1;
-            startActivityForResult(Intent.createChooser(intent, "Select Ticket"), PICK_IMAGE);
+        uploadTicketButton.setOnClickListener(view -> {
+            ticketImageView.setVisibility(View.VISIBLE);
+            pdfView.setVisibility(View.VISIBLE);
+            startActivityForResult(Intent.createChooser(getFileChooserIntent(), "Select Ticket"), ADD_PDF_CODE);
         });
 
-        Glide.with(getActivity())
-                .load(attractionViewModel.getSelectedAttraction().getTicketURI())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_tourist)
-                .into(ticketImageView);
+        getTicketFromFirebase();
+    }
 
-        updateAttractionInFirebase();
+    private void getTicketFromFirebase() {
+        if (attractionViewModel.getSelectedAttraction().getTicket() == null ||
+                attractionViewModel.getSelectedAttraction().getTicket().length() <= 5) {
+            attractionViewModel.getSelectedAttraction().setTicket(
+                    attractionViewModel.getSelectedAttraction().getAttractionUID() + "image"
+            );
+        }
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        final StorageReference storageReference = storage.getReference()
+                .child("AttractionTickets")
+                .child(attractionViewModel.getSelectedAttraction().getTicket());
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
 
+                    storageReference.getBytes(1024*1024)
+                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+
+                                    if (attractionViewModel.getSelectedAttraction().getTicket().toLowerCase().contains("pdf")) {
+                                        ticketImageView.setVisibility(View.INVISIBLE);
+                                        pdfView.setVisibility(View.VISIBLE);
+                                        pdfView.fromBytes(bytes).load();
+                                    } else {
+                                        ticketImageView.setVisibility(View.VISIBLE);
+                                        pdfView.setVisibility(View.INVISIBLE);
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        ticketImageView.setImageBitmap(bitmap);
+                                    }
+
+                                }
+                            });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i(TAG, "Get Ticket from firebase failed");
+            }
+        });
     }
 
     public void uploadTicketToDatabase(Intent imageReturnedIntent) {
@@ -1297,11 +1285,14 @@ public class AttractionFragment extends Fragment {
         // Uri to the image
         Uri selectedImage = imageReturnedIntent.getData();
 
-        final UUID imageUUID = UUID.randomUUID();
+        final String imageUUID = attractionViewModel.getSelectedAttraction().getAttractionUID() + fileExtension;
 
         final StorageReference storageReference = storage.getReference().child("AttractionTickets/" + imageUUID);
 
         final UploadTask uploadTask = storageReference.putFile(selectedImage);
+
+        progressBar.setVisibility(View.VISIBLE);
+        progressBarTextView.setVisibility(View.VISIBLE);
 
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
@@ -1311,10 +1302,63 @@ public class AttractionFragment extends Fragment {
                     storage.getReference().child("AttractionTickets/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                                 attractionViewModel.getSelectedAttraction().setTicketURI(uri.toString());
+                                attractionViewModel.getSelectedAttraction().setTicket(imageUUID);
+                                updateAttractionInFirebase();
+                                progressBar.setProgress(0);
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                }
+
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
                             });
-                });
+                })
+        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                progressBar.setProgress((int) progress);
+                progressBarTextView.setText(progress + " %");
+            }
+        });
+    }
+
+    private Intent getFileChooserIntent() {
+        String[] mimeTypes = {"image/*", "application/pdf"};
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
+            if (mimeTypes.length > 0) {
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            }
+        } else {
+            String mimeTypesStr = "";
+
+            for (String mimeType : mimeTypes) {
+                mimeTypesStr += mimeType + "|";
+            }
+
+            intent.setType(mimeTypesStr.substring(0, mimeTypesStr.length() - 1));
+        }
+
+        return intent;
+    }
+
+    public String getMimeType(Uri uri) {
+        String mimeType = null;
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            ContentResolver cr = getContext().getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
     }
 }

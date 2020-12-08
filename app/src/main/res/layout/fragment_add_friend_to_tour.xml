@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_friend_to_tour_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    android:background="@drawable/gradient"
+    >
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/add_friend_to_tour_top_panel_container"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/border"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/add_friend_to_tour_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="Add Friend to Tour"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold"
+                    android:textSize="37dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:text="Find a friend by e-mail:"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/add_friend_to_tour_email_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:hint="@string/prompt_email"
+                android:textColorHint="@color/colorAccent"
+                android:inputType="textEmailAddress"
+                android:selectAllOnFocus="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/add_friend_to_tour_error_tv"
+                android:layout_width="283dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/add_friend_to_tour_loading_pb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:background="#EEEEEE"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/add_friend_to_tour_search_btn"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_gravity="center"
+                android:enabled="true"
+                android:text="Search"
+                android:textStyle="bold"
+                android:textColor="#EEEEEE"
+                android:background="@drawable/btn_shape_selector_primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <RelativeLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_marginTop="16dp">
+
+                <ImageView
+                    android:id="@+id/add_friend_to_tour_profile_iv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_alignParentLeft="true"
+                    android:background="@drawable/item_tour_bg_img"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/default_image"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/add_friend_to_tour_friendName_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_toRightOf="@+id/add_friend_to_tour_profile_iv"
+                    android:text="friendName"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="30dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/add_friend_to_tour_add_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginRight="24dp"
+                    android:background="@drawable/ic_baseline_add_24"
+                    android:drawablePadding="10dip"
+                    android:layout_gravity="left"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".fragment.AddFriendToTourFragment"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

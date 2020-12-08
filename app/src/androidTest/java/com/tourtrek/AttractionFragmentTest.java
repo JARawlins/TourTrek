@@ -15,9 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
@@ -45,13 +42,6 @@ public class AttractionFragmentTest {
 
     public static final String TAG = "AttractionFragmentTest";
     private ActivityScenario mainActivityScenario;
-    Calendar calendar = java.util.Calendar.getInstance();
-
-    int day = calendar.get(Calendar.DAY_OF_MONTH);
-    int month = calendar.get(Calendar.MONTH);
-    int year = calendar.get(Calendar.YEAR);
-
-
 
     @Rule
     public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
@@ -63,23 +53,22 @@ public class AttractionFragmentTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
-            sleep(100);
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.login_email_et)).perform(replaceText("jrawlins@wisc.edu"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(replaceText("123456"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(30)));
             sleep(1000); // sleep so that the recycler view to click is loaded
             // onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
             onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(100)));
+            onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
             onView(withId(R.id.tour_add_attraction_btn)).perform(click());
         }
@@ -91,7 +80,7 @@ public class AttractionFragmentTest {
      * https://stackoverflow.com/questions/43149728/select-date-from-calendar-in-android-espresso/43180527
      */
     @Test
-    public void noName() throws InterruptedException {
+    public void missingInfoTests() throws InterruptedException {
         // test the case of no attraction name
 //        onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
 //        onView(withId(R.id.tour_add_attraction_btn)).perform(click());
@@ -175,30 +164,6 @@ public class AttractionFragmentTest {
         attractionConditionsTest("SUCCESSFUL ADDITION");
 //        onView(withText("Successfully Added Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 //        Espresso.pressBack();
-
-
-        // attraction updating
-        onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(50)));
-        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
-        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(50)));
-
-//        // hit the image upload listener
-//        onView(withId(R.id.attraction_cover_iv)).perform(nestedScrollTo());
-//        onView(withId(R.id.attraction_cover_iv)).perform(click());
-//
-//        Espresso.pressBack();
-//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(50)));
-        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.attraction_update_btn)).perform(click());
-
-        // attraction navigation
-        // map check
-        onView(withId(R.id.attraction_navigation_btn)).perform(nestedScrollTo(), click());
-//        onView(withText("Tap on a marker for navigation.")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-        Espresso.pressBack();
-        Espresso.pressBack();
         removeAdded();
     }
 
@@ -212,7 +177,8 @@ public class AttractionFragmentTest {
 //        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMIllis(1000)));
 //        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
 //    }
-
+// TODO - ticket testing
+// TODO - rating testing
 
 //    /**
 //     * test to check that an attraction is successfully added to the recycler view of the current tour following addition
@@ -246,87 +212,14 @@ public class AttractionFragmentTest {
 //
 //    }
 
-//    /**
-//     * Test for updating an attraction, not making a new one
-//     */
-//    @Test
-//    public void existingAttractionTests() throws InterruptedException {
-//        attractionConditionsTest("");
-//
-//        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(500)));
-//
-//        sleep(500); // give time for the recycler view items to load
-//
-//        // find the newly made attraction and select it
-//        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
-//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
-//
-//        // update the attraction name
-//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
-//        onView(withId(R.id.attraction_name_et)).perform(replaceText("New attraction name"), closeSoftKeyboard());
-//
-//        // map check
-//        onView(withId(R.id.attraction_navigation_btn)).perform(nestedScrollTo(), click());
-//        onView(withText("Tap on a marker for navigation.")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        Espresso.pressBack();
-//
-//        // scroll to the "update attraction" button and click it
-//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
-//        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.attraction_update_btn)).perform(click());
-//
-//        // check for the proper toast message
-////        sleep(1000);
-////        onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//
-//        // delete the tour and attraction
-//        sleep(1000);
-//        Espresso.pressBack();
-//        removeAdded();
-//
-////        // scroll to the "update attraction" button and click it
-////        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
-////        onView(withId(R.id.attraction_delete_btn)).perform(click());
-//    }
-
-//    /**
-//     * Test for updating an attraction, not making a new one
-//     */
-//    @Test
-//    public void mapTest() throws InterruptedException {
-//        attractionConditionsTest("");
-//
-//        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(500)));
-//
-//        sleep(500); // give time for the recycler view items to load
-//
-//        // find the newly made attraction and select it
-//        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
-//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
-//
-//        // map check
-//        onView(withId(R.id.attraction_navigation_btn)).perform(nestedScrollTo(), click());
-//        onView(withText("Tap on a marker for navigation.")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//
-//        Espresso.pressBack();
-//        Espresso.pressBack();
-//        removeAdded();
-//
-////        // scroll to the "update attraction" button and click it
-////        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
-////        onView(withId(R.id.attraction_delete_btn)).perform(click());
-//    }
-
     /**
-     * Test deletion of an attraction
+     * Test for updating an attraction, not making a new one
      */
     @Test
-    public void deletionTest() throws InterruptedException {
+    public void existingAttractionTests() throws InterruptedException {
         attractionConditionsTest("");
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         sleep(500); // give time for the recycler view items to load
 
@@ -336,7 +229,80 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
 
         // update the attraction name
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
+        onView(withId(R.id.attraction_name_et)).perform(replaceText("New attraction name"), closeSoftKeyboard());
+
+        // map check
+        onView(withId(R.id.attraction_navigation_btn)).perform(nestedScrollTo(), click());
+        onView(withText("Tap on a marker for navigation.")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        Espresso.pressBack();
+
+        // scroll to the "update attraction" button and click it
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
+        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_update_btn)).perform(click());
+
+        // check for the proper toast message
+//        sleep(1000);
+        onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+
+        // delete the tour and attraction
+        sleep(1000);
+        Espresso.pressBack();
+        removeAdded();
+
+//        // scroll to the "update attraction" button and click it
+//        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
+//        onView(withId(R.id.attraction_delete_btn)).perform(click());
+    }
+
+    /**
+     * Test for updating an attraction, not making a new one
+     */
+    @Test
+    public void mapTest() throws InterruptedException {
+        attractionConditionsTest("");
+
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
+
+        sleep(500); // give time for the recycler view items to load
+
+        // find the newly made attraction and select it
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
+
+        // map check
+        onView(withId(R.id.attraction_navigation_btn)).perform(nestedScrollTo(), click());
+        onView(withText("Tap on a marker for navigation.")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+
+        Espresso.pressBack();
+        Espresso.pressBack();
+        removeAdded();
+
+//        // scroll to the "update attraction" button and click it
+//        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
+//        onView(withId(R.id.attraction_delete_btn)).perform(click());
+    }
+
+    /**
+     * Test deletion of an attraction
+     */
+    @Test
+    public void deletionTest() throws InterruptedException {
+        attractionConditionsTest("");
+
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
+
+        sleep(500); // give time for the recycler view items to load
+
+        // find the newly made attraction and select it
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
+
+        // update the attraction name
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
 
         // scroll to the "update attraction" button and click it
         onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
@@ -407,7 +373,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_start_date_btn)).perform(nestedScrollTo());
         if (!condition.equals("noStartDate")){
             onView(withId(R.id.attraction_start_date_btn)).perform(click());
-            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(year, month+1, day+1));
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 10));
             onView(withId(android.R.id.button1)).perform(click());
         }
 
@@ -423,12 +389,12 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
         if (condition.equals("invalidDates")){
             onView(withId(R.id.attraction_end_date_btn)).perform(click());
-            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(year, month+1, day));
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 9));
             onView(withId(android.R.id.button1)).perform(click());
         }
         else if (!condition.equals("noEndDate")){
             onView(withId(R.id.attraction_end_date_btn)).perform(click());
-            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(year, month+1, day+2));
+            onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 11, 12));
             onView(withId(android.R.id.button1)).perform(click());
         }
 
@@ -447,17 +413,11 @@ public class AttractionFragmentTest {
     }
 
     @Test
-    public void textChangeListenerTests() throws InterruptedException {
-        // name and location focus listeners
+    public void textChangeListenerTests(){
         onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo(), click());
         onView(withId(R.id.attraction_cost_et)).perform(nestedScrollTo(), click());
-        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo(), click());
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_name_et)).perform(nestedScrollTo(), click());
-        onView(withId(R.id.attraction_cost_et)).perform(nestedScrollTo(), click());
-        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo(), click(), closeSoftKeyboard());
-
-        Espresso.pressBack();
-        removeAdded();
     }
 
     /**
@@ -496,3 +456,4 @@ public class AttractionFragmentTest {
         };
     }
 }
+

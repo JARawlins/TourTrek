@@ -168,49 +168,40 @@ public class TourFragmentTest {
 //        onView(withText("Tour removed")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 //    }
 
-//    /**
-//     * Test deletion of a tour
-//     */
-//    @Test
-//    public void deletionPublicTourTest() throws InterruptedException {
-//        tourConditionsTest("deletionPublic");
-//
-//        onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(20)));
-//
-//        sleep(1000); // give time for the recycler view items to load
-//
-//        // find the newly made attraction and select it
-//        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//        onView(isRoot()).perform(waitForView(R.id.tour_public_cb, TimeUnit.SECONDS.toMillis(20)));
-//        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_delete_btn)).perform(click());
-//        sleep(1000);
-//
-//        // check for the proper toast message
-//        onView(withText("You cannot delete a public tour!")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//
-//        onView(withId(R.id.navigation_tours)).perform(click());
-//
-//        onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(20)));
-//
-//        sleep(1000); // give time for the recycler view items to load
-//
-//        // find the newly made attraction and select it
-//        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//        onView(isRoot()).perform(waitForView(R.id.tour_public_cb, TimeUnit.SECONDS.toMillis(20)));
-//        onView(withId(R.id.tour_public_cb)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_public_cb)).perform(click());
-//        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_update_btn)).perform(click());
-//
-//        sleep(1000); // give time for the recycler view items to load
-//
-//        // find the newly made attraction and select it
-//        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//        onView(isRoot()).perform(waitForView(R.id.tour_delete_btn, TimeUnit.SECONDS.toMillis(20)));
-//        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_delete_btn)).perform(click());
-//    }
+    /**
+     * Test deletion of a tour
+     */
+    @Test
+    public void deletionPublicTourTest() throws InterruptedException {
+        tourConditionsTest("deletionPublic");
+
+        onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(30)));
+
+        sleep(1000); // give time for the recycler view items to load
+
+        // find the newly made attraction and select it
+        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        onView(isRoot()).perform(waitForView(R.id.tour_public_cb, TimeUnit.SECONDS.toMillis(30)));
+        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_delete_btn)).perform(click());
+        sleep(1000);
+
+        // check for the proper toast message
+        onView(withText("You cannot delete a public tour!")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+
+        onView(withId(R.id.tour_public_cb)).perform(click());
+        onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_update_btn)).perform(click());
+
+        sleep(1000); // give time for the recycler view items to load
+
+        // find the newly made tour and select it
+        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        onView(isRoot()).perform(waitForView(R.id.tour_delete_btn, TimeUnit.SECONDS.toMillis(30)));
+        onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_delete_btn)).perform(click());
+
+    }
 
 
     /**

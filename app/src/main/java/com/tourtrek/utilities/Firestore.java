@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tourtrek.activities.MainActivity;
+import com.tourtrek.data.User;
 
 import java.util.Objects;
 
@@ -39,12 +40,12 @@ public class Firestore {
 
     }
 
-    public static void updateUser(String userUID) {
+    public static void updateUser(User user, String userUID) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Users").document(userUID)
-                .set(MainActivity.user)
+                .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
