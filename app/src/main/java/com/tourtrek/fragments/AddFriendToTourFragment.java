@@ -111,8 +111,9 @@ public class AddFriendToTourFragment extends Fragment {
             Firestore.updateUser(friend,friendID);
             //addTour(friend,tour);
 
-            Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
-
+            if (getContext() != null){
+                Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
+            }
         });
     }
     private void addTour(User user, DocumentReference tour){

@@ -65,23 +65,23 @@ public class RateTourTest {
     }
 
 
-    @Test
-    public void rateSuccessfulTest() throws InterruptedException {
-
-        rate_tour();
-        check("You successfully rated the tour");
-        sleep(2000);
-    }
-
-    @Test
-    public void alreadyRatedTourTest() throws InterruptedException {
-
-        rate_tour();
-        sleep(2000);
-        onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_review_btn)).perform(click());
-        check("You cannot rate a tour more than once");
-    }
+//    @Test
+//    public void rateSuccessfulTest() throws InterruptedException {
+//
+//        rate_tour();
+////        check("You successfully rated the tour");
+//        sleep(2000);
+//    }
+//
+//    @Test
+//    public void alreadyRatedTourTest() throws InterruptedException {
+//
+//        rate_tour();
+//        sleep(2000);
+//        onView(withId(R.id.tour_review_btn)).perform(nestedScrollTo());
+//        onView(withId(R.id.tour_review_btn)).perform(click());
+////        check("You cannot rate a tour more than once");
+//    }
 
 
 

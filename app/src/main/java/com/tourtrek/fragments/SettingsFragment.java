@@ -195,8 +195,10 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onSuccess(Void aVoid) {
                 MainActivity.user.setUsername(newUsername);
-                Toast.makeText(getActivity(),
-                        "Username changed successfully", Toast.LENGTH_SHORT).show();
+                if (getActivity() != null){
+                    Toast.makeText(getActivity(),
+                            "Username changed successfully", Toast.LENGTH_SHORT).show();
+                }
                 dialog.dismiss();
             }
         })
@@ -205,8 +207,10 @@ public class SettingsFragment extends Fragment {
                     public void onFailure(@NonNull Exception e) {
                         errorTextView.setVisibility(View.VISIBLE);
                         errorTextView.setText("" + e.getMessage());
-                        Toast.makeText(getActivity(),
-                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null){
+                            Toast.makeText(getActivity(),
+                                    "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
@@ -231,8 +235,10 @@ public class SettingsFragment extends Fragment {
                 updateEmail(newEmail.getText().toString(),errorTextView, dialog);
             }
             else{
-                Toast.makeText(getActivity(),
-                        "New email formatted incorrectly", Toast.LENGTH_SHORT).show();
+                if (getActivity() != null){
+                    Toast.makeText(getActivity(),
+                            "New email formatted incorrectly", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         //create cancel update email button listener
@@ -260,8 +266,10 @@ public class SettingsFragment extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         MainActivity.user.setEmail(newEmail);
-                        Toast.makeText(getActivity(),
-                                "Email changed successfully", Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null){
+                            Toast.makeText(getActivity(),
+                                    "Email changed successfully", Toast.LENGTH_SHORT).show();
+                        }
                         dialog.dismiss();
                     }
                 })
@@ -270,8 +278,10 @@ public class SettingsFragment extends Fragment {
                             public void onFailure(@NonNull Exception e) {
                                 errorTextView.setVisibility(View.VISIBLE);
                                 errorTextView.setText("" + e.getMessage());
-                                Toast.makeText(getActivity(),
-                                        "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                if (getActivity() != null){
+                                    Toast.makeText(getActivity(),
+                                            "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
             }
@@ -281,8 +291,10 @@ public class SettingsFragment extends Fragment {
                     public void onFailure(@NonNull Exception e) {
                         errorTextView.setVisibility(View.VISIBLE);
                         errorTextView.setText("" + e.getMessage());
-                        Toast.makeText(getActivity(),
-                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null){
+                            Toast.makeText(getActivity(),
+                                    "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -350,8 +362,10 @@ public class SettingsFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Toast.makeText(getActivity(),
-                                                "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                        if (getActivity() != null){
+                                            Toast.makeText(getActivity(),
+                                                    "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                        }
                                         dialog.dismiss();
                                     }
                                 })
@@ -360,8 +374,10 @@ public class SettingsFragment extends Fragment {
                                     public void onFailure(@NonNull Exception e) {
                                         errorTextView.setVisibility(View.VISIBLE);
                                         errorTextView.setText("" + e.getMessage());
-                                        Toast.makeText(getActivity(),
-                                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        if (getActivity() != null){
+                                            Toast.makeText(getActivity(),
+                                                    "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 });
                     }
@@ -369,7 +385,9 @@ public class SettingsFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null){
+                            Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }

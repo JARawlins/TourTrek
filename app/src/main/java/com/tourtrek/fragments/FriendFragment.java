@@ -188,7 +188,9 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
                                                     MainActivity.user.getFriends().add(friendReference);
                                                     Firestore.updateUser();
                                                     ((FriendsAdapter) friendsAdapter).add(friend);
-                                                    Toast.makeText(getContext(), "Successfully Add Friend", Toast.LENGTH_SHORT).show();
+                                                    if (getContext() != null){
+                                                        Toast.makeText(getContext(), "Successfully Add Friend", Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
                                             });
                                             addFriendBtn.setVisibility(View.VISIBLE);
@@ -343,9 +345,10 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(),
-                "clicked on " , Toast.LENGTH_SHORT).show();
-
+        if (getActivity() != null){
+            Toast.makeText(getActivity(),
+                    "clicked on " , Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

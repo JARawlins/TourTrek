@@ -77,7 +77,9 @@ public class MapsFragment extends Fragment {
             if (tourViewModel.getSelectedTour() != null && attractionViewModel.getSelectedAttraction() == null){
                 addTourMarkers(googleMap);
                 if (tourViewModel.getSelectedTour().getAttractions().size() == 0){
-                    Toast.makeText(getActivity(), "No were attractions displayed - try adding some!", Toast.LENGTH_LONG).show();
+                    if (getActivity() != null){
+                        Toast.makeText(getActivity(), "No were attractions displayed - try adding some!", Toast.LENGTH_LONG).show();
+                    }
                 }
                 return;
             }
@@ -164,7 +166,9 @@ public class MapsFragment extends Fragment {
                 }
                 else{
                     Log.d(TAG, "YOUR CURRENT LOCATION COULD NOT BE FOUND.");
-                    Toast.makeText(getActivity(), "Your current location could not be found.", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null){
+                        Toast.makeText(getActivity(), "Your current location could not be found.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });
@@ -183,7 +187,9 @@ public class MapsFragment extends Fragment {
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
 
             // explanation to the user
-            Toast.makeText(getActivity(), "Tap on a marker for navigation.", Toast.LENGTH_LONG).show();
+            if (getActivity() != null){
+                Toast.makeText(getActivity(), "Tap on a marker for navigation.", Toast.LENGTH_LONG).show();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -228,7 +234,9 @@ public class MapsFragment extends Fragment {
                 }
                 else{
                     Log.d(TAG, "YOUR CURRENT LOCATION COULD NOT BE FOUND.");
-                    Toast.makeText(getActivity(), "Your current location could not be found.", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null){
+                        Toast.makeText(getActivity(), "Your current location could not be found.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });
@@ -266,7 +274,9 @@ public class MapsFragment extends Fragment {
         }
         // explanation to the user
         if (size != 0){
-            Toast.makeText(getActivity(), "Tap on a marker for navigation.", Toast.LENGTH_LONG).show();
+            if (getActivity() != null){
+                Toast.makeText(getActivity(), "Tap on a marker for navigation.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

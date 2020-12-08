@@ -895,9 +895,26 @@ public class AttractionFragment extends Fragment {
                     endDate.equals("") ||
                     endTime.equals("") ||
                     description.equals("")) {
-                Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
+                if (getContext() != null){
+                    Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
+                }
                 return;
             }
+
+            // prevent the creation of an attraction with an impossible time frame
+            try {
+                Date end = simpleDateFormat.parse(endDate);
+                Date start = simpleDateFormat.parse(startDate);
+                if (start.compareTo(end) > 0){
+                    if (getContext() != null){
+                        Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
 
             attractionViewModel.getSelectedAttraction().setName(name);
             attractionViewModel.getSelectedAttraction().setLocation(location);
@@ -936,17 +953,21 @@ public class AttractionFragment extends Fragment {
                     Timestamp tourEndDate = new Timestamp(calendar.getTime());
 
                     if (attractionStartDate.compareTo(attractionEndDate) > 0) {
-                        Toast.makeText(getContext(), "Attraction must start before it ends", Toast.LENGTH_SHORT).show();
+                        if (getContext() != null){
+                            Toast.makeText(getContext(), "Attraction must start before it ends", Toast.LENGTH_SHORT).show();
+                        }
                         return;
                     }
 
                     if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
-                        Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                        if (getContext() != null){
+                            Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
+                        }
                         return;
                     }
                 }
                 catch (ParseException e) {
-                    Log.e(TAG, "Error parsion date/time", e);
+                    Log.e(TAG, "Error parsing date/time", e);
                 }
             }
 
@@ -994,11 +1015,15 @@ public class AttractionFragment extends Fragment {
                         db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID()).update("attractions", tourViewModel.getSelectedTour().getAttractions());
 
                         if (attractionViewModel.isNewAttraction()) {
-                            Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
+                            if (getContext() != null){
+                                Toast.makeText(getContext(), "Successfully Added Attraction", Toast.LENGTH_SHORT).show();
+                            }
                             getParentFragmentManager().popBackStack();
                         }
                         else {
-                            Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
+                            if (getContext() != null){
+                                Toast.makeText(getContext(), "Successfully Updated Attraction", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         ((MainActivity)requireActivity()).enableTabs();
@@ -1041,7 +1066,9 @@ public class AttractionFragment extends Fragment {
             db.collection("Attractions").document(currentAttractionUID).delete()
                     .addOnCompleteListener(task -> {
 
-                        Toast.makeText(getContext(), "Attraction Deleted", Toast.LENGTH_SHORT).show();
+                        if (getContext() != null){
+                            Toast.makeText(getContext(), "Attraction Deleted", Toast.LENGTH_SHORT).show();
+                        }
 
                         attractionViewModel.setSelectedAttraction(null);
                         attractionViewModel.setIsNewAttraction(null);
@@ -1053,7 +1080,9 @@ public class AttractionFragment extends Fragment {
                         getParentFragmentManager().popBackStack();
                     })
                     .addOnFailureListener(task2 -> {
-                        Toast.makeText(getContext(), "Error Deleting Attraction", Toast.LENGTH_SHORT).show();
+                        if (getContext() != null){
+                            Toast.makeText(getContext(), "Error Deleting Attraction", Toast.LENGTH_SHORT).show();
+                        }
                     });
         });
     }

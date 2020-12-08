@@ -144,9 +144,9 @@ public class FriendProfileFragment extends Fragment {
                                         MainActivity.user.setFriends(newFriendsList);
                                         Firestore.updateUser();
                                         // toast message
-                                        Toast.makeText(getContext(), "Friend removed", Toast.LENGTH_SHORT).show();
-
-
+                                        if (getContext() != null){
+                                            Toast.makeText(getContext(), "Friend removed", Toast.LENGTH_SHORT).show();
+                                        }
                                         // go back
                                         getParentFragmentManager().popBackStack();
                                     });

@@ -209,7 +209,9 @@ public class TourFragment extends Fragment {
                     if (!tourViewModel.getSelectedTour().getReviews().contains(mAuth.getCurrentUser().getUid())) {
                         showReviewDialog();
                     } else {
-                        Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                        if (getContext() != null){
+                            Toast.makeText(getContext(), "You cannot rate a tour more than once", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
@@ -872,8 +874,9 @@ public class TourFragment extends Fragment {
                                                 updateUser();
 
                                                 // toast message
-                                                Toast.makeText(getContext(), "Tour removed", Toast.LENGTH_SHORT).show();
-
+                                                if (getContext() != null){
+                                                    Toast.makeText(getContext(), "Tour removed", Toast.LENGTH_SHORT).show();
+                                                }
                                                 // go back
                                                 getParentFragmentManager().popBackStack();
 
@@ -911,7 +914,9 @@ public class TourFragment extends Fragment {
             }
             // the tour is not private - error
             else{
-                Toast.makeText(getContext(), "You cannot delete a public tour!", Toast.LENGTH_LONG).show();
+                if (getContext() != null){
+                    Toast.makeText(getContext(), "You cannot delete a public tour!", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -937,7 +942,9 @@ public class TourFragment extends Fragment {
                 Date start = simpleDateFormat.parse(startDate);
                 Date end = simpleDateFormat.parse(endDate);
                 if (end.compareTo(start) < 0){
-                    Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    if (getContext() != null){
+                        Toast.makeText(getContext(), "Start dates must be before end dates!", Toast.LENGTH_SHORT).show();
+                    }
                     return;
                 }
             } catch (ParseException e) {
@@ -949,7 +956,9 @@ public class TourFragment extends Fragment {
                     cost.equals("") ||
                     startDate.equals("") ||
                     endDate.equals("")) {
-                Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
+                if (getContext() != null){
+                    Toast.makeText(getContext(), "Not all fields entered", Toast.LENGTH_SHORT).show();
+                }
                 return;
             }
 
@@ -1035,11 +1044,13 @@ public class TourFragment extends Fragment {
                         if (!tourViewModel.getSelectedTour().getNotifications())
                             removeAlarms();
 
-                        if (tourViewModel.isNewTour()) {
-                            Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
+                        if (getContext() != null){
+                            if (tourViewModel.isNewTour()) {
+                                Toast.makeText(getContext(), "Successfully Added Tour", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(getContext(), "Successfully Updated Tour", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         tourViewModel.setIsNewTour(null);
                         tourViewModel.setSelectedTour(null);
@@ -1254,7 +1265,9 @@ public class TourFragment extends Fragment {
             startActivity(Intent.createChooser(waIntent, "Share with"));
 
         } catch (PackageManager.NameNotFoundException e) {
-            Toast.makeText(getContext(), "Twitter not Installed", Toast.LENGTH_SHORT).show();
+            if (getContext() != null){
+                Toast.makeText(getContext(), "Twitter not Installed", Toast.LENGTH_SHORT).show();
+            }
             return ;
         }
         return ;
@@ -1520,8 +1533,9 @@ public class TourFragment extends Fragment {
                     // Update the user in the firestore
                     Firestore.updateUser();
 
-                    Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
-
+                    if (getContext() != null){
+                        Toast.makeText(getContext(), "You successfully rated the tour", Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document"));
     }

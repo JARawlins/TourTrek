@@ -238,8 +238,10 @@ public class ProfileFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Toast.makeText(getActivity(),
-                                                "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                        if (getActivity() != null){
+                                            Toast.makeText(getActivity(),
+                                                    "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                        }
                                         dialog.dismiss();
                                     }
                                 })
@@ -248,8 +250,10 @@ public class ProfileFragment extends Fragment {
                                     public void onFailure(@NonNull Exception e) {
                                         errorTextView.setVisibility(View.VISIBLE);
                                         errorTextView.setText("" + e.getMessage());
-                                        Toast.makeText(getActivity(),
-                                                "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        if (getActivity() != null){
+                                            Toast.makeText(getActivity(),
+                                                    "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 });
                     }
@@ -257,7 +261,9 @@ public class ProfileFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null){
+                            Toast.makeText(getActivity(), "Enter correct password", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
