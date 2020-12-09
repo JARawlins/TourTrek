@@ -54,11 +54,11 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 
 
-public class SortAndSearchAttractionFragmentTest {
+public class AttractionTest {
 
-    public static final String TAG = "SortAndSearchAttractionFragmentTest";
+    public static final String TAG = "AttractionTest";
     private ActivityScenario mainActivityScenario;
-    private String name = "sorting";
+    private String name = "madison";
 
     @Rule
     public final ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
@@ -72,7 +72,7 @@ public class SortAndSearchAttractionFragmentTest {
 
         create_tour();
 
-        add_attraction("madison");
+        add_attraction(name);
 
         sleep(2500);
         onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
@@ -83,58 +83,39 @@ public class SortAndSearchAttractionFragmentTest {
 
 
     @Test
-    public void attractionSearchTest() throws InterruptedException {
+    public void editTest() throws InterruptedException {
 
         sleep(2000);
+
+        edit_attraction("togo");
+        sleep(2000);
+        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(100)));
+        onView(withId(R.id.navigation_profile)).perform(click());
+        onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(100)));
+        onView(withId(R.id.navigation_tours)).perform(click());
 
         try {
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText(name))));
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(name)), click()));
         } catch (Exception e) {
-            sleep(2000);
+            sleep(100);
             onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         }
 
-        sleep(2000);
-        onView(withId(R.id.tour_attraction_sort_btn)).perform(nestedScrollTo());
-
-        test(0);
-        test(1);
-        test(2);
-        test(3);
-        test(4);
-        test(5);
-        test(6);
-        test(7);
-        test(8);
-        test(9);
 
         sleep(1000);
 
-        search("Madison");
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        sleep(1000);
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_description_et)).check(matches(withText("food")));
+
+
+        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_delete_btn)).perform(click());
 
         sleep(2000);
-
-        try {
-            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Madison Park"))));
-            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Madison Park")), click()));
-            sleep(1000);
-            onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
-            onView(withId(R.id.attraction_description_et)).check(matches(withText("nice food")));
-
-        } catch (Exception e) {
-            try {
-                sleep(2000);
-                onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-                sleep(1000);
-                onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
-                onView(withId(R.id.attraction_description_et)).check(matches(withText("nice food")));
-            } catch (Exception e2) {
-
-            }
-        }
-
-
     }
 
     @After
@@ -157,15 +138,6 @@ public class SortAndSearchAttractionFragmentTest {
 
         onView(withId(R.id.tour_delete_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_delete_btn)).perform(click());
-        sleep(2000);
-    }
-
-    private void test(int pos) throws InterruptedException {
-
-        sleep(2000);
-
-        sortBy(pos);
-
         sleep(2000);
     }
 
@@ -208,7 +180,7 @@ public class SortAndSearchAttractionFragmentTest {
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
 
         onView(withId(R.id.tour_end_date_btn)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2020, 12, 29));
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2022, 12, 29));
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.tour_update_btn)).perform(nestedScrollTo());
@@ -292,65 +264,91 @@ public class SortAndSearchAttractionFragmentTest {
         sleep(3000);
     }
 
-    public void sortBy(int pos) {
-        onView(withId(R.id.tour_attraction_sort_btn)).perform(nestedScrollTo());
-        onView(withId(R.id.tour_attraction_sort_btn)).perform(click());
 
-        DataInteraction appCompatCheckedTextView = onData(anything())
-                .inAdapterView(allOf(withClassName(is("com.android.internal.app.AlertController$RecycleListView")),
-                        childAtPosition(
-                                withClassName(is("android.widget.FrameLayout")),
-                                0)))
-                .atPosition(pos);
-        appCompatCheckedTextView.perform(click());
 
-        ViewInteraction appCompatButton3 = onView(
-                allOf(withId(android.R.id.button1), withText("OK"),
+    public void edit_attraction(String key) throws InterruptedException {
+        sleep(2500);
+        onView(isRoot()).perform(waitForView(R.id.personal_future_tours_rv, TimeUnit.SECONDS.toMillis(1000)));
+
+        try {
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText(name))));
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("name")), click()));
+        } catch (Exception e) {
+            sleep(2000);
+            onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
+
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(1000)));
+
+        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
+
+        try {
+            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Madison Park"))));
+            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Madison Park")), click()));
+        } catch (Exception e) {
+            sleep(2000);
+            onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        }
+
+        sleep(50);
+
+        onView(withId(R.id.attraction_search_ib)).perform(click());
+        sleep(1000);
+        onView(withId(R.id.places_autocomplete_search_bar)).perform(replaceText(key));
+        sleep(1000);
+        onView(isRoot()).perform(waitForView(R.id.places_autocomplete_content, TimeUnit.SECONDS.toMillis(30)));
+        ViewInteraction recyclerView = onView(
+                allOf(withId(R.id.places_autocomplete_list),
                         childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
+                                withId(R.id.places_autocomplete_content),
                                 3)));
-        appCompatButton3.perform(scrollTo(), click());
-    }
+        recyclerView.perform(actionOnItemAtPosition(0, click()));
 
-    private void search(String key) throws InterruptedException {
+
+
+        //enter info to create attraction
         sleep(2000);
-        onView(withId(R.id.attraction_search_sv)).perform(nestedScrollTo());
 
+        onView(isRoot()).perform(waitForView(R.id.attraction_cover_iv, TimeUnit.SECONDS.toMillis(100)));
 
-        ViewInteraction appCompatImageView = onView(
-                allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Search"),
-                        childAtPosition(
-                                allOf(withClassName(is("android.widget.LinearLayout")),
-                                        childAtPosition(
-                                                withId(R.id.attraction_search_sv),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        appCompatImageView.perform(click());
+        onView(withId(R.id.attraction_cost_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_cost_et)).perform(typeText("50"), closeSoftKeyboard());
 
-        sleep(3000);
+        onView(withId(R.id.attraction_start_date_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_start_date_btn)).perform(click());
 
-        ViewInteraction searchAutoComplete = onView(
-                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
-                        childAtPosition(
-                                allOf(withClassName(is("android.widget.LinearLayout")),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.LinearLayout")),
-                                                1)),
-                                0),
-                        isDisplayed()));
-        searchAutoComplete.perform(replaceText("madison"));
-        sleep(3000);
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2021, 10, 20));
+        onView(withId(android.R.id.button1)).perform(click());
 
-        searchAutoComplete.perform(ViewActions.pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withId(R.id.attraction_start_time_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_start_time_btn)).perform(click());
 
-        sleep(3500);
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(10,20));
+        onView(withId(android.R.id.button1)).perform(click());
 
-        searchAutoComplete.perform(replaceText(key), closeSoftKeyboard());
+        onView(withId(R.id.attraction_end_date_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_end_date_btn)).perform(click());
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2021, 12, 26));
+        onView(withId(android.R.id.button1)).perform(click());
 
-        sleep(500);
+        onView(withId(R.id.attraction_end_time_btn)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_end_time_btn)).perform(click());
+
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(11,5));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.attraction_description_et)).perform(nestedScrollTo());
+        onView(withId(R.id.attraction_description_et)).perform(typeText("food"), closeSoftKeyboard());
+
+        sleep(1500);
+
+        onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
+        try {
+            onView(withId(R.id.attraction_update_btn)).perform(click());
+        } catch (Exception e) {
+
+        }
+        sleep(2500);
     }
 
     private static Matcher<View> childAtPosition(

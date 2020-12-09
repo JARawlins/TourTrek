@@ -63,7 +63,7 @@ public class PersonalToursFragmentTest {
             onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(20)));
             onView(withId(R.id.navigation_tours)).perform(click());
             onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(20)));
-          
+
             onView(withId(R.id.login_email_et)).perform(typeText("jrawlins@wisc.edu"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(typeText("123456"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
@@ -164,7 +164,7 @@ public class PersonalToursFragmentTest {
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/1901")));
 
-       // Espresso.pressBack();
+        // Espresso.pressBack();
         removeAdded();
     }
 

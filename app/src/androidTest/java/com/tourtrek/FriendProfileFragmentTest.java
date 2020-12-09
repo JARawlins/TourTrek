@@ -2,8 +2,6 @@ package com.tourtrek;
 
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewInteraction;
@@ -13,9 +11,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.tourtrek.activities.MainActivity;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +22,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -35,7 +29,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.tourtrek.EspressoExtensions.nestedScrollTo;
 import static com.tourtrek.EspressoExtensions.waitForView;
-import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
 
 public class FriendProfileFragmentTest {
@@ -80,7 +73,7 @@ public class FriendProfileFragmentTest {
 
     }
     /**
-    *This test checks to make sure you can view a friend's friends by checking a specific profile for a specific friend
+     *This test checks to make sure you can view a friend's friends by checking a specific profile for a specific friend
      *
      * This test depends on the testing accounts second friend in the recycler view being an account named "Michael" that contains
      *  a friend named "Testing Account"
@@ -97,7 +90,7 @@ public class FriendProfileFragmentTest {
                 allOf(withId(R.id.item_friend_friendName_tv), withText("Testing Account"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
-//        textView.check(matches(withText("Testing Account")));
+        textView.check(matches(withText("Testing Account")));
     }
 
     /**
@@ -121,6 +114,6 @@ public class FriendProfileFragmentTest {
                 allOf(withId(R.id.item_tour_name), withText("Triple D"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
-//        textView.check(matches(withText("Triple D")));
+        textView.check(matches(withText("Triple D")));
     }
 }
