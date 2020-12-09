@@ -337,6 +337,7 @@ public class TourFragment extends Fragment {
         startDateButton.setEnabled(false);
         endDateButton.setEnabled(false);
         coverImageView.setClickable(false);
+        coverImageView.setEnabled(false);
         addAttractionButton.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.GONE);
         coverTextView.setVisibility(View.GONE);
@@ -344,6 +345,7 @@ public class TourFragment extends Fragment {
 
         // tour flagged as not belonging to the user by default
         tourViewModel.setIsUserOwned(false);
+
         //configure Image View onClick event
         coverImageView.setOnClickListener(view -> {
             Intent intent = new Intent();
@@ -645,8 +647,8 @@ public class TourFragment extends Fragment {
      */
     private void setupAddFriendToTourButton(View tourView) {
         Button addFriend = tourView.findViewById(R.id.tour_add_friend_btn);
-        tourViewModel.setReturnedFromAddFriendToTour(true);
         addFriend.setOnClickListener(u -> {
+            tourViewModel.setReturnedFromAddFriendToTour(true);
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new AddFriendToTourFragment(), "AddFriendToTourFragment");
             ft.addToBackStack("AddFriendToTourFragment").commit();
@@ -677,10 +679,13 @@ public class TourFragment extends Fragment {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                attractionsAdapter.addNewData(documentSnapshot.toObject(Attraction.class));
-                                attractionsAdapter.copyAttractions(attractionsAdapter.getDataSet());
-                                swipeRefreshLayout.setRefreshing(false);
+                                Attraction attraction = documentSnapshot.toObject(Attraction.class);
 
+                                if (attraction != null) {
+                                    attractionsAdapter.addNewData(attraction);
+                                    attractionsAdapter.copyAttractions(attractionsAdapter.getDataSet());
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
                             }
                         })
                         .addOnFailureListener(v -> {
@@ -716,6 +721,7 @@ public class TourFragment extends Fragment {
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+            coverImageView.setEnabled(true);
 
             updateTourButton.setVisibility(View.VISIBLE);
             tourImportButton.setVisibility(View.GONE);
@@ -749,6 +755,7 @@ public class TourFragment extends Fragment {
             startDateButton.setEnabled(true);
             endDateButton.setEnabled(true);
             coverImageView.setClickable(true);
+            coverImageView.setEnabled(true);
 
             updateTourButton.setVisibility(View.VISIBLE);
             tourImportButton.setVisibility(View.GONE);
@@ -758,14 +765,6 @@ public class TourFragment extends Fragment {
             checkBoxesContainer.setVisibility(View.VISIBLE);
 
             tourViewModel.setIsUserOwned(true);
-
-            coverImageView.setOnClickListener(view -> {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                int PICK_IMAGE = 1;
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-            });
         }
     }
 
@@ -995,7 +994,7 @@ public class TourFragment extends Fragment {
 
                                 Attraction attraction = documentSnapshot.toObject(Attraction.class);
 
-                                if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
+                                if (attraction != null && attraction.getStartDate() != null && attraction.getEndDate() != null) {
                                     // Check if the attraction falls within the new tour dates
                                     Calendar calendar = Calendar.getInstance();
                                     calendar.setTime(attraction.getStartDate());

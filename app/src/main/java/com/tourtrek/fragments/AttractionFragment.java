@@ -174,7 +174,7 @@ public class AttractionFragment extends Fragment {
         });
 
         if (!tourViewModel.isUserOwned()) {
-            addTicketButton.setVisibility(View.INVISIBLE);
+            addTicketButton.setVisibility(View.GONE);
         }
 
         // Initialize all fields
@@ -210,7 +210,9 @@ public class AttractionFragment extends Fragment {
         startTimeButton.setEnabled(false);
         endDateButton.setEnabled(false);
         endTimeButton.setEnabled(false);
+        descriptionEditText.setEnabled(false);
         coverImageView.setClickable(false);
+        searchAttractionButton.setEnabled(false);
         coverTextView.setVisibility(View.GONE);
 //        buttonsContainer.setVisibility(View.GONE);
 
@@ -227,6 +229,8 @@ public class AttractionFragment extends Fragment {
             startTimeButton.setEnabled(true);
             endDateButton.setEnabled(true);
             endTimeButton.setEnabled(true);
+            descriptionEditText.setEnabled(true);
+            searchAttractionButton.setEnabled(true);
             endTimeButton.setVisibility(View.VISIBLE);
             coverImageView.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
@@ -599,6 +603,8 @@ public class AttractionFragment extends Fragment {
             startTimeButton.setEnabled(true);
             endDateButton.setEnabled(true);
             endTimeButton.setEnabled(true);
+            descriptionEditText.setEnabled(true);
+            searchAttractionButton.setEnabled(true);
             coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
 //            buttonsContainer.setVisibility(View.VISIBLE);

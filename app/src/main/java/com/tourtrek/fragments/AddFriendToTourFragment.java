@@ -105,6 +105,14 @@ public class AddFriendToTourFragment extends Fragment {
         return FriendSearchView;
     }
 
+    @Override
+    public void onDestroyView() {
+
+        tourViewModel.setReturnedFromAddFriendToTour(false);
+
+        super.onDestroyView();
+    }
+
     private void setupAddButton(View friendSearchView) {
         addFriendButton.setOnClickListener(view1 -> {
             friend.addTourToTours(tour);
