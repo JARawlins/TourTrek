@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Test results - Class com.tourtrek.AddFriendToTourFragmentTest</title>
+<link href="css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="css/style.css" rel="stylesheet" type="text/css"/>
+<script src="js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class com.tourtrek.AddFriendToTourFragmentTest</h1>
+<div class="breadcrumbs">
+<a href="index.html">all</a> &gt; 
+<a href="com.tourtrek.html">com.tourtrek</a> &gt; AddFriendToTourFragmentTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">5</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">5</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">2m17.33s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox failures" id="successRate">
+<div class="percent">0%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Tests</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="canSearchForFriendToAdd"></a>
+<h3 class="failures">canSearchForFriendToAdd</h3>
+<span class="code">
+<pre>androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: (with id is &lt;com.tourtrek:id/add_friend_to_tour_friendName_tv&gt; and with text: is &quot;Michael&quot; and has parent matching: has parent matching: an instance of android.widget.LinearLayout and is displayed on the screen to the user)
+
+View Hierarchy:
++&gt;DecorView{id=-1, visibility=VISIBLE, width=1440, height=2560, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params={(0,0)(fillxfill) sim={adjust=pan} ty=BASE_APPLICATION wanim=0x10302fe
+fl=LAYOUT_IN_SCREEN LAYOUT_INSET_DECOR SPLIT_TOUCH HARDWARE_ACCELERATED DRAWS_SYSTEM_BAR_BACKGROUNDS
+pfl=FORCE_DRAW_STATUS_BAR_BACKGROUND}, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++-&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1440, height=2392, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@6caac3a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++--&gt;ViewStub{id=16908692, res-name=action_mode_bar_stub, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@3a130eb, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++--&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1440, height=2308, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@31c84e1, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=84.0, child-count=1}
+|
++---&gt;ActionBarOverlayLayout{id=2131230921, res-name=decor_content_parent, visibility=VISIBLE, width=1440, height=2308, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@aa75206, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++----&gt;ContentFrameLayout{id=16908290, res-name=content, visibility=VISIBLE, width=1440, height=2112, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.ActionBarOverlayLayout$LayoutParams@da056f4, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=196.0, child-count=1}
+|
++-----&gt;LinearLayout{id=2131231047, res-name=main_container, visibility=VISIBLE, width=1440, height=2112, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c7b8e1d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------&gt;FragmentContainerView{id=2131231085, res-name=nav_host_fragment, visibility=VISIBLE, width=1440, height=1916, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@e60d263, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-------&gt;LinearLayout{id=2131230804, res-name=add_friend_to_tour_container, visibility=VISIBLE, width=1440, height=1916, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c7ef19, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++--------&gt;NestedScrollView{id=-1, visibility=VISIBLE, width=1328, height=1804, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@b8431bf, tag=null, root-is-layout-requested=false, has-input-connection=false, x=56.0, y=56.0, child-count=1}
+|
++---------&gt;LinearLayout{id=-1, visibility=VISIBLE, width=1328, height=1213, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@36099b7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=8}
+|
++----------&gt;FrameLayout{id=2131230811, res-name=add_friend_to_tour_top_panel_container, visibility=VISIBLE, width=1328, height=350, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@6c1388d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=1}
+|
++-----------&gt;AppCompatTextView{id=2131230812, res-name=add_friend_to_tour_tv, visibility=VISIBLE, width=1145, height=156, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@98e3a42, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=97.0, text=Add Friend to Tour, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=-1, visibility=VISIBLE, width=1160, height=117, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@85b1a53, tag=null, root-is-layout-requested=false, has-input-connection=false, x=84.0, y=406.0, text=Find a friend by e-mail:, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatEditText{id=2131230805, res-name=add_friend_to_tour_email_et, visibility=VISIBLE, width=1160, height=158, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@d95d089, tag=null, root-is-layout-requested=false, has-input-connection=true, editor-info=[inputType=0x21 imeOptions=0x6 privateImeOptions=null actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=Email label=null packageName=null fieldId=0 fieldName=null extras=null hintLocales=null contentMimeTypes=null ], x=84.0, y=551.0, text=michael@gmail.com, hint=Email, input-type=33, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131230806, res-name=add_friend_to_tour_error_tv, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@149b88e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;ProgressBar{id=2131230808, res-name=add_friend_to_tour_loading_pb, visibility=VISIBLE, width=168, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@e7308af, tag=null, root-is-layout-requested=false, has-input-connection=false, x=580.0, y=737.0}
+|
++----------&gt;AppCompatButton{id=2131230810, res-name=add_friend_to_tour_search_btn, visibility=VISIBLE, width=700, height=168, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@9fa34bc, tag=null, root-is-layout-requested=false, has-input-connection=false, x=314.0, y=933.0, text=Search, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;RelativeLayout{id=-1, visibility=VISIBLE, width=1328, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@493e0a8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=1157.0, child-count=3}
+|
++-----------&gt;AppCompatImageView{id=2131230809, res-name=add_friend_to_tour_profile_iv, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.RelativeLayout$LayoutParams@b5a07c1, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
++-----------&gt;AppCompatTextView{id=2131230807, res-name=add_friend_to_tour_friendName_tv, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.RelativeLayout$LayoutParams@3f84b66, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=friendName, input-type=0, ime-target=false, has-links=false}
+|
++-----------&gt;AppCompatButton{id=2131230803, res-name=add_friend_to_tour_add_btn, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=true, is-selected=false, layout-params=android.widget.RelativeLayout$LayoutParams@e955ea7, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;FrameLayout{id=-1, visibility=VISIBLE, width=1328, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@49a5f54, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=1213.0, child-count=0}
+|
++------&gt;BottomNavigationView{id=2131231087, res-name=nav_view, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.LinearLayout$LayoutParams@dbe5efd, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=1916.0, child-count=1}
+|
++-------&gt;BottomNavigationMenuView{id=-1, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@fadb7f2, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=3}
+|
++--------&gt;BottomNavigationItemView{id=2131231091, res-name=navigation_tour_market, desc=Tour Market, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@22f3e43, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@de81cc0, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=28.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=265, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@116edf9, tag=null, root-is-layout-requested=false, has-input-connection=false, x=107.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=VISIBLE, width=225, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@adb613e, tag=null, root-is-layout-requested=false, has-input-connection=false, x=20.0, y=7.0, text=Tour Market, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=INVISIBLE, width=265, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@afd7b9f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Tour Market, input-type=0, ime-target=false, has-links=false}
+|
++--------&gt;BottomNavigationItemView{id=2131231092, res-name=navigation_tours, desc=Personal Tours, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@59244ec, tag=null, root-is-layout-requested=false, has-input-connection=false, x=480.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.widget.FrameLayout$LayoutParams@acf70b5, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=21.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=329, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.widget.FrameLayout$LayoutParams@fa8534a, tag=null, root-is-layout-requested=false, has-input-connection=false, x=75.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=INVISIBLE, width=281, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@94832bb, tag=null, root-is-layout-requested=false, has-input-connection=false, x=24.0, y=7.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=VISIBLE, width=329, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=true, layout-params=android.view.ViewGroup$LayoutParams@ad4c3d8, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Personal Tours, input-type=0, ime-target=false, has-links=false}
+|
++--------&gt;BottomNavigationItemView{id=2131231090, res-name=navigation_profile, desc=Profile, visibility=VISIBLE, width=480, height=196, has-focus=false, has-focusable=true, has-window-focus=true, is-clickable=true, is-enabled=true, is-focused=false, is-focusable=true, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@1536331, tag=null, root-is-layout-requested=false, has-input-connection=false, x=960.0, y=0.0, child-count=2}
+|
++---------&gt;AppCompatImageView{id=2131230991, res-name=icon, visibility=VISIBLE, width=84, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@1a05a16, tag=null, root-is-layout-requested=false, has-input-connection=false, x=198.0, y=28.0}
+|
++---------&gt;BaselineLayout{id=-1, visibility=VISIBLE, width=141, height=87, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@fbd3f97, tag=null, root-is-layout-requested=false, has-input-connection=false, x=169.0, y=109.0, child-count=2}
+|
++----------&gt;AppCompatTextView{id=2131231222, res-name=smallLabel, visibility=VISIBLE, width=120, height=57, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@2be4584, tag=null, root-is-layout-requested=false, has-input-connection=false, x=10.0, y=7.0, text=Profile, input-type=0, ime-target=false, has-links=false}
+|
++----------&gt;AppCompatTextView{id=2131231031, res-name=largeLabel, visibility=INVISIBLE, width=141, height=66, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@c4a016d, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, text=Profile, input-type=0, ime-target=false, has-links=false}
+|
++----&gt;ActionBarContainer{id=2131230771, res-name=action_bar_container, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.ActionBarOverlayLayout$LayoutParams@29c35f0, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++-----&gt;Toolbar{id=2131230769, res-name=action_bar, visibility=VISIBLE, width=1440, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@c924769, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=2}
+|
++------&gt;AppCompatTextView{id=-1, visibility=VISIBLE, width=361, height=93, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.Toolbar$LayoutParams@4095ee, tag=null, root-is-layout-requested=false, has-input-connection=false, x=56.0, y=51.0, text=Denver Trip, input-type=0, ime-target=false, has-links=false}
+|
++------&gt;ActionMenuView{id=-1, visibility=VISIBLE, width=0, height=196, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=androidx.appcompat.widget.Toolbar$LayoutParams@d428a8f, tag=null, root-is-layout-requested=false, has-input-connection=false, x=1440.0, y=0.0, child-count=0}
+|
++-----&gt;ActionBarContextView{id=2131230777, res-name=action_context_bar, visibility=GONE, width=0, height=0, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=true, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@526c11c, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0, child-count=0}
+|
++-&gt;View{id=16908336, res-name=navigationBarBackground, visibility=VISIBLE, width=1440, height=168, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@7fef125, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=2392.0}
+|
++-&gt;View{id=16908335, res-name=statusBarBackground, visibility=VISIBLE, width=1440, height=84, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.widget.FrameLayout$LayoutParams@ca422fa, tag=null, root-is-layout-requested=false, has-input-connection=false, x=0.0, y=0.0}
+|
+at dalvik.system.VMStack.getThreadStackTrace(Native Method)
+at java.lang.Thread.getStackTrace(Thread.java:1720)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:12)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.check(ViewInteraction.java:12)
+at com.tourtrek.AddFriendToTourFragmentTest.canSearchForFriendToAdd(AddFriendToTourFragmentTest.java:324)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="cantAddStrangerToTour"></a>
+<h3 class="failures">cantAddStrangerToTour</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'androidx.test.espresso.contrib.RecyclerViewActions$ActionOnItemAtPositionViewAction@7bf75eb' on view 'with id is &lt;com.tourtrek:id/personal_current_tours_rv&gt;'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.AddFriendToTourFragmentTest.cantAddStrangerToTour(AddFriendToTourFragmentTest.java:334)
+... 30 trimmed
+Caused by: java.lang.IllegalStateException: No view holder at position: 0
+at androidx.test.espresso.contrib.RecyclerViewActions$ActionOnItemAtPositionViewAction.perform(RecyclerViewActions.java:292)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAction.perform(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:22)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="cantSearchForInvalidUser"></a>
+<h3 class="failures">cantSearchForInvalidUser</h3>
+<span class="code">
+<pre>Test failed to run to completion. Reason: 'com.android.ddmlib.TimeoutException: executeRemoteCommand interrupted with immediate timeout via interruption.'. Check device logcat for details</pre>
+</span>
+</div>
+<div class="test">
+<a name="friendActuallyAddedToTour"></a>
+<h3 class="failures">friendActuallyAddedToTour</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'single click - At Coordinates: 719, 2293 and precision: 16, 16' on view 'with id is &lt;com.tourtrek:id/navigation_tours&gt;'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.AddFriendToTourFragmentTest.deleteTour(AddFriendToTourFragmentTest.java:142)
+at com.tourtrek.AddFriendToTourFragmentTest.shutdown(AddFriendToTourFragmentTest.java:66)
+... 28 trimmed
+Caused by: com.bumptech.glide.load.engine.CallbackException: Unexpected exception thrown by non-Glide code
+at com.bumptech.glide.load.engine.EngineJob.callCallbackOnResourceReady(EngineJob.java:160)
+at com.bumptech.glide.load.engine.EngineJob$CallResourceReady.run(EngineJob.java:424)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at androidx.test.espresso.base.Interrogator.loopAndInterrogate(Interrogator.java:14)
+at androidx.test.espresso.base.UiControllerImpl.loopUntil(UiControllerImpl.java:7)
+at androidx.test.espresso.base.UiControllerImpl.loopUntil(UiControllerImpl.java:1)
+at androidx.test.espresso.base.UiControllerImpl.injectMotionEvent(UiControllerImpl.java:6)
+at androidx.test.espresso.action.MotionEvents.sendUp(MotionEvents.java:7)
+at androidx.test.espresso.action.MotionEvents.sendUp(MotionEvents.java:1)
+at androidx.test.espresso.action.Tap.sendSingleTap(Tap.java:5)
+at androidx.test.espresso.action.Tap.access$100(Tap.java:1)
+at androidx.test.espresso.action.Tap$1.sendTap(Tap.java:3)
+at androidx.test.espresso.action.GeneralClickAction.perform(GeneralClickAction.java:6)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAction.perform(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:22)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'void android.view.View.setVisibility(int)' on a null object reference
+at com.tourtrek.adapters.ToursOfFriendsAdapter$1.onResourceReady(ToursOfFriendsAdapter.java:88)
+at com.tourtrek.adapters.ToursOfFriendsAdapter$1.onResourceReady(ToursOfFriendsAdapter.java:78)
+at com.bumptech.glide.request.SingleRequest.onResourceReady(SingleRequest.java:622)
+at com.bumptech.glide.request.SingleRequest.onResourceReady(SingleRequest.java:575)
+at com.bumptech.glide.load.engine.EngineJob.callCallbackOnResourceReady(EngineJob.java:158)
+... 26 more
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="tourGetsDeletedFromFriend"></a>
+<h3 class="failures">tourGetsDeletedFromFriend</h3>
+<span class="code">
+<pre>androidx.test.espresso.PerformException: Error performing 'single click - At Coordinates: 719, 2293 and precision: 16, 16' on view 'with id is &lt;com.tourtrek:id/navigation_tours&gt;'.
+at androidx.test.espresso.PerformException$Builder.build(PerformException.java:1)
+at androidx.test.espresso.base.DefaultFailureHandler.getUserFriendlyError(DefaultFailureHandler.java:9)
+at androidx.test.espresso.base.DefaultFailureHandler.handle(DefaultFailureHandler.java:7)
+at androidx.test.espresso.ViewInteraction.waitForAndHandleInteractionResults(ViewInteraction.java:8)
+at androidx.test.espresso.ViewInteraction.desugaredPerform(ViewInteraction.java:11)
+at androidx.test.espresso.ViewInteraction.perform(ViewInteraction.java:4)
+at com.tourtrek.AddFriendToTourFragmentTest.deleteTour(AddFriendToTourFragmentTest.java:142)
+at com.tourtrek.AddFriendToTourFragmentTest.tourGetsDeletedFromFriend(AddFriendToTourFragmentTest.java:275)
+... 30 trimmed
+Caused by: com.bumptech.glide.load.engine.CallbackException: Unexpected exception thrown by non-Glide code
+at com.bumptech.glide.load.engine.EngineJob.callCallbackOnResourceReady(EngineJob.java:160)
+at com.bumptech.glide.load.engine.EngineJob$CallResourceReady.run(EngineJob.java:424)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at androidx.test.espresso.base.Interrogator.loopAndInterrogate(Interrogator.java:14)
+at androidx.test.espresso.base.UiControllerImpl.loopUntil(UiControllerImpl.java:7)
+at androidx.test.espresso.base.UiControllerImpl.loopUntil(UiControllerImpl.java:1)
+at androidx.test.espresso.base.UiControllerImpl.injectMotionEvent(UiControllerImpl.java:6)
+at androidx.test.espresso.action.MotionEvents.sendUp(MotionEvents.java:7)
+at androidx.test.espresso.action.MotionEvents.sendUp(MotionEvents.java:1)
+at androidx.test.espresso.action.Tap.sendSingleTap(Tap.java:5)
+at androidx.test.espresso.action.Tap.access$100(Tap.java:1)
+at androidx.test.espresso.action.Tap$1.sendTap(Tap.java:3)
+at androidx.test.espresso.action.GeneralClickAction.perform(GeneralClickAction.java:6)
+at androidx.test.espresso.ViewInteraction$SingleExecutionViewAction.perform(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction.doPerform(ViewInteraction.java:22)
+at androidx.test.espresso.ViewInteraction.access$100(ViewInteraction.java:1)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:2)
+at androidx.test.espresso.ViewInteraction$1.call(ViewInteraction.java:1)
+at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+at android.os.Handler.handleCallback(Handler.java:883)
+at android.os.Handler.dispatchMessage(Handler.java:100)
+at android.os.Looper.loop(Looper.java:214)
+at android.app.ActivityThread.main(ActivityThread.java:7356)
+at java.lang.reflect.Method.invoke(Native Method)
+at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:930)
+Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'void android.view.View.setVisibility(int)' on a null object reference
+at com.tourtrek.adapters.ToursOfFriendsAdapter$1.onResourceReady(ToursOfFriendsAdapter.java:88)
+at com.tourtrek.adapters.ToursOfFriendsAdapter$1.onResourceReady(ToursOfFriendsAdapter.java:78)
+at com.bumptech.glide.request.SingleRequest.onResourceReady(SingleRequest.java:622)
+at com.bumptech.glide.request.SingleRequest.onResourceReady(SingleRequest.java:575)
+at com.bumptech.glide.load.engine.EngineJob.callCallbackOnResourceReady(EngineJob.java:158)
+... 26 more
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Pixel_XL_API_29(AVD) - 10</th>
+</tr>
+</thead>
+<tr>
+<td>canSearchForFriendToAdd</td>
+<td class="failures">failed (35.392s)</td>
+</tr>
+<tr>
+<td>cantAddStrangerToTour</td>
+<td class="failures">failed (26.439s)</td>
+</tr>
+<tr>
+<td>cantSearchForInvalidUser</td>
+<td class="failures">failed (11.829s)</td>
+</tr>
+<tr>
+<td>friendActuallyAddedToTour</td>
+<td class="failures">failed (28.472s)</td>
+</tr>
+<tr>
+<td>tourGetsDeletedFromFriend</td>
+<td class="failures">failed (35.201s)</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="footer">
+<p>Generated by 
+<a href="http://www.gradle.org">Gradle 6.5</a> at Dec 8, 2020 6:55:29 PM</p>
+</div>
+</div>
+</body>
