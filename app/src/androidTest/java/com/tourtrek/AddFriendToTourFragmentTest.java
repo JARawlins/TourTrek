@@ -73,12 +73,7 @@ public class AddFriendToTourFragmentTest {
     public void setup() throws InterruptedException {
 
         deletedTour = true;
-
-
         mainActivityScenario = mainActivityScenarioRule.getScenario();
-
-
-
 
          try{
              onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(5)));
@@ -89,14 +84,11 @@ public class AddFriendToTourFragmentTest {
              Log.w(TAG, "No user is not logged in, continuing test execution");
          }
          finally {
-             onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(5)));
              onView(withId(R.id.navigation_tours)).perform(click());
-             onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(5)));
              onView(withId(R.id.login_email_et)).perform(typeText("testingaccount@gmail.com"), ViewActions.closeSoftKeyboard());
              onView(withId(R.id.login_password_et)).perform(typeText("password"), ViewActions.closeSoftKeyboard());
              onView(withId(R.id.login_login_btn)).perform(click());
              onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(5)));
-             onView(isRoot()).perform(waitForView(R.id.navigation_tours, TimeUnit.SECONDS.toMillis(5)));
              onView(withId(R.id.navigation_tours)).perform(click());
          }
 
@@ -206,170 +198,168 @@ public class AddFriendToTourFragmentTest {
 
 
     }
-//
-//    /**
-//     * Checks to make sure that after adding a friend to a tour the tour actually shows up on the friends tours list
-//     */
-//    @Test
-//    public void friendActuallyAddedToTour() throws InterruptedException {
-//
-//        //create new past tour
-//        createNewTour();
-//
-//        //click on new tour
-//        sleep(1000);
-//        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//        //search for friend
-//        searchForFriendToAddToTour("michael@gmail.com");
-//        //click add button
-//
-//        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(5)));
-//        onView(withId(R.id.add_friend_to_tour_add_btn)).perform(nestedScrollTo(), click());
-//
-//
-//        //open friends account
-//            clickFriendAccount();
-//
-//        //scroll to friends tours recycler view
-//        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
-//        //check to make sure user has tour name "Fun Times"
-//
-//        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
-//
-//        ViewInteraction textView = onView(
-//                allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
-//                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
-//                        isDisplayed()));
-////        textView.check(matches(withText("aaaaFun Times")));
-//
-//    }
-//
-//    /**
-//     * Checks to make sure that after adding a friend to a tour and then deleting that tour it doesn't show up on friends tour list after
-//     * previously having been there
-//     */
-//    @Test
-//    public void tourGetsDeletedFromFriend() throws InterruptedException {
-//        //create new past tour
-//        createNewTour();
-//
-//        //click on new tour
-//        onView(isRoot()).perform(waitForView(R.id.personal_past_tours_rv, TimeUnit.SECONDS.toMillis(5)));
-//        sleep(1000);
-//        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//        //search for friend
-//        searchForFriendToAddToTour("michael@gmail.com");
-//        //click add button
-//
-//        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(5)));
-//        onView(withId(R.id.add_friend_to_tour_add_btn)).perform(nestedScrollTo(),click());
-//
-//
-//        //open friends account
-//        clickFriendAccount();
-//
-//        //scroll to friends tours recycler view
-//        onView(isRoot()).perform(waitForView(R.id.friend_tours_rv, TimeUnit.SECONDS.toMillis(5)));
-//        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
-//        //check to make sure user has tour name "Fun Times"
-//
-//        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
-//
-//        ViewInteraction textView = onView(
-//                allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
-//                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
-//                        isDisplayed()));
-////        textView.check(matches(withText("aaaaFun Times")));
-//
-//        //delete tour
-//        deleteTour();
-//
-//
-//        //open friends account
-//        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(5)));
-//
-//        onView(withId(R.id.navigation_profile)).perform(click());
-//        clickFriendAccount();
-//
-//        //scroll to friends tours recycler view
-//        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
-//        //check to make sure user has tour name "Fun Times"
-//
-//        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
-//
-//        try {
-//            ViewInteraction textView2 = onView(
-//                    allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
-//                            withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
-//                            isDisplayed()));
-////        textView2.check(matches(withText("aaaaFun Times")));
-//
-//        }
-//        catch(NoMatchingViewException e){
-//                assert true;
-//        }
-//    }
 
-//    /**
-//     *Checks to make sure that you can click add friend to tour and then are able to search for a friend.
-//     * It does this by checking to make sure that the friend that was searched for appears on the screen with the correct name
-//     **/
-//    @Test
-//    public void canSearchForFriendToAdd(){
-//
-//        //click on a tour
-//        onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//
-//        //search for friend
-//        searchForFriendToAddToTour("michael@gmail.com");
-//
-//        //make sure friend that was searched for appears
-//
-//        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(1)));
-//
-//        ViewInteraction textView = onView(
-//                allOf(withId(R.id.add_friend_to_tour_friendName_tv), withText("Michael"),
-//                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class))),
-//                        isDisplayed()));
-////        textView.check(matches(withText("Michael")));
-//    }
+    /**
+     * Checks to make sure that after adding a friend to a tour the tour actually shows up on the friends tours list
+     */
+    @Test
+    public void friendActuallyAddedToTour() throws InterruptedException {
 
-//    /**
-//     *Checks to make sure someone not on the users friends list cant be added by them.
-//     **/
-//    @Test
-//    public void cantAddStrangerToTour(){
-//
-//        //click on a tour
-//        onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//
-//        //search for friend
-//        searchForFriendToAddToTour("test2@gmail.com");
-//
-//        //make sure error message appears
-//        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
-//
-////        onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
-//    }
+        //create new past tour
+        createNewTour();
 
-//    /**
-//     *Checks to make sure someone not on the users friends list cant be added by them.
-//     **/
-//    @Test
-//    public void cantSearchForInvalidUser(){
-//
-//        //click on a tour
-//        onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-//
-//        //search for friend
-//        searchForFriendToAddToTour("asasaa@sads.cass");
-//
-//        //make sure error message appears
-//
-//        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
-//
-////        onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
-//    }
+        //click on new tour
+        sleep(1000);
+        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        //search for friend
+        searchForFriendToAddToTour("michael@gmail.com");
+        //click add button
+
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(5)));
+        onView(withId(R.id.add_friend_to_tour_add_btn)).perform(nestedScrollTo(), click());
+
+
+        //open friends account
+            clickFriendAccount();
+
+        //scroll to friends tours recycler view
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+        //check to make sure user has tour name "Fun Times"
+
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("aaaaFun Times")));
+
+    }
+
+    /**
+     * Checks to make sure that after adding a friend to a tour and then deleting that tour it doesn't show up on friends tour list after
+     * previously having been there
+     */
+    @Test
+    public void tourGetsDeletedFromFriend() throws InterruptedException {
+        //create new past tour
+        createNewTour();
+
+        //click on new tour
+        sleep(1000);
+        onView(withId(R.id.personal_past_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        //search for friend
+        searchForFriendToAddToTour("michael@gmail.com");
+        //click add button
+
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_add_btn, TimeUnit.SECONDS.toMillis(5)));
+        onView(withId(R.id.add_friend_to_tour_add_btn)).perform(nestedScrollTo(),click());
+
+
+        //open friends account
+        clickFriendAccount();
+
+        //scroll to friends tours recycler view
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+        //check to make sure user has tour name "Fun Times"
+
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("aaaaFun Times")));
+
+        //delete tour
+        deleteTour();
+
+
+        //open friends account
+        onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(5)));
+
+        onView(withId(R.id.navigation_profile)).perform(click());
+        clickFriendAccount();
+
+        //scroll to friends tours recycler view
+        onView(withId(R.id.friend_tours_rv)).perform(nestedScrollTo());
+        //check to make sure user has tour name "Fun Times"
+
+        onView(isRoot()).perform(waitForView(R.id.item_tour_name, TimeUnit.SECONDS.toMillis(5)));
+
+        try {
+            ViewInteraction textView2 = onView(
+                    allOf(withId(R.id.item_tour_name), withText("aaaaFun Times"),
+                            withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                            isDisplayed()));
+        textView2.check(matches(withText("aaaaFun Times")));
+          
+        }
+        catch(NoMatchingViewException e){
+                assert true;
+        }
+    }
+
+    /**
+     *Checks to make sure that you can click add friend to tour and then are able to search for a friend.
+     * It does this by checking to make sure that the friend that was searched for appears on the screen with the correct name
+     **/
+    @Test
+    public void canSearchForFriendToAdd(){
+
+        //click on a tour
+        onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+
+        //search for friend
+        searchForFriendToAddToTour("michael@gmail.com");
+
+        //make sure friend that was searched for appears
+
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(1)));
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.add_friend_to_tour_friendName_tv), withText("Michael"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("Michael")));
+    }
+
+    /**
+     *Checks to make sure someone not on the users friends list cant be added by them.
+     **/
+    @Test
+    public void cantAddStrangerToTour(){
+
+        //click on a tour
+        onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+
+        //search for friend
+        searchForFriendToAddToTour("test2@gmail.com");
+
+        //make sure error message appears
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_error_tv, TimeUnit.SECONDS.toMillis(5)));
+        onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
+    }
+
+    /**
+     *Checks to make sure someone not on the users friends list cant be added by them.
+     **/
+    @Test
+    public void cantSearchForInvalidUser(){
+
+        //click on a tour
+        onView(withId(R.id.personal_current_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+
+        //search for friend
+        searchForFriendToAddToTour("asasaa@sads.cass");
+
+        //make sure error message appears
+
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_friendName_tv, TimeUnit.SECONDS.toMillis(5)));
+        onView(isRoot()).perform(waitForView(R.id.add_friend_to_tour_error_tv, TimeUnit.SECONDS.toMillis(5)));
+        onView(withId(R.id.add_friend_to_tour_error_tv)).check(matches(withText("Cannot find user with email entered on friends list")));
+    }
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
