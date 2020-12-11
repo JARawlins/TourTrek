@@ -1,7 +1,9 @@
 package com.tourtrek.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -95,6 +98,45 @@ public class SettingsFragment extends Fragment {
         updateEmailButton.setOnClickListener(v -> {
             showChangeEmailDialog();
         });
+
+        // initialize theme button
+        Button changeThemeButton = view.findViewById(R.id.settings_change_theme_btn);
+        // use shared preferences to determine if cool theme is on or off
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
+
+        // when user reopens the app after applying the warm or cool theme
+        if (isDarkModeOn) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            changeThemeButton.setText("Warm Theme");
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            changeThemeButton.setText("Cool Theme");
+        }
+
+        changeThemeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // when user touches warm or cool theme button
+                if (isDarkModeOn) {
+                    // if the cool theme is enabled, it will turn it off
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean("isDarkModeOn", false);
+                    editor.apply();
+                    // change the text of theme button
+                    changeThemeButton.setText("Cool Theme");
+                } else {
+                    // if the warm theme is enabled, it will turn it off
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean("isDarkModeOn", true);
+                    editor.apply();
+                    // change the text of theme button
+                    changeThemeButton.setText("Cool Theme");
+                }
+            }
+        });
+
 
         Button privacyPolicyButton = view.findViewById(R.id.settings_privacy_policy_btn);
         privacyPolicyButton.setOnClickListener(v -> {

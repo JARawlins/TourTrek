@@ -38,12 +38,16 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
         public TextView attractionName;
         public TextView attractionLocation;
         public RatingBar rating;
+        private TextView startDate;
+        private TextView endDate;
 
         public CurrentAttractionsViewHolder (View view) {
             super(view);
             this.attractionName = view.findViewById(R.id.item_attraction_name_tv);
             this.attractionLocation = view.findViewById(R.id.item_attraction_location_tv);
             this.rating = view.findViewById(R.id.item_attraction_ratingBar);
+            this.startDate = view.findViewById(R.id.item_attraction_start_tv);
+            this.endDate = view.findViewById(R.id.item_attraction_end_tv);
         }
 
     }
@@ -64,60 +68,75 @@ public class CurrentTourAttractionsAdapter extends RecyclerView.Adapter<CurrentT
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void onBindViewHolder(@NonNull CurrentTourAttractionsAdapter.CurrentAttractionsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CurrentAttractionsViewHolder holder, int position) {
 
         ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.VISIBLE);
         ((MainActivity) context).findViewById(R.id.tour_attractions_rv).setVisibility(View.INVISIBLE);
 
-        holder.attractionName.setText(currentTourAttractionsDataSet.get(position).getName());
-        holder.attractionName.setTextColor(Color.parseColor("#FF4859"));
-        holder.attractionName.setTextSize(15);
-        holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation());
-        holder.attractionLocation.setTextColor(Color.parseColor("#FF4859"));
-        holder.attractionLocation.setTextSize(15);
-        holder.rating.setRating((float) currentTourAttractionsDataSet.get(position).getRating());
-
         // highlighting the attraction item when it is happening
         Attraction attraction = currentTourAttractionsDataSet.get(position);
 
-        if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
+        if (attraction.getStartDate() != null && attraction.getStartTime() != null) {
+            holder.startDate.setText(attraction.retrieveStartDateAsString() + "  " + attraction.getStartTime());
+            holder.startDate.setTextColor(Color.parseColor("#3C1533"));
+        }
 
-            // get instances of the calendar and set the start time for the attraction
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(attraction.getStartDate());
+        if (attraction.getEndDate() != null && attraction.getEndTime() != null) {
+            holder.endDate.setText(attraction.retrieveEndDateAsString() + "  " + attraction.getEndTime());
+            holder.startDate.setTextColor(Color.parseColor("#3C1533"));
+        }
 
-            try {
-                String startTime = attraction.getStartTime();
-                SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-                Date date = df.parse(startTime);
-                calendar.set(Calendar.HOUR, date.getHours());
-                calendar.set(Calendar.MINUTE, date.getMinutes());
-            } catch (ParseException e) {
-                e.printStackTrace();
+        if (attraction != null) {
+            holder.attractionName.setText(currentTourAttractionsDataSet.get(position)==null?"":currentTourAttractionsDataSet.get(position).getName());
+            holder.attractionName.setTextColor(Color.parseColor("#FF4859"));
+            holder.attractionName.setTextSize(15);
+            holder.attractionLocation.setText(currentTourAttractionsDataSet.get(position).getLocation()==null?"":currentTourAttractionsDataSet.get(position).getLocation());
+            holder.attractionLocation.setTextColor(Color.parseColor("#FF4859"));
+            holder.attractionLocation.setTextSize(15);
+            holder.rating.setRating((float) currentTourAttractionsDataSet.get(position).getRating());
+
+            if (attraction.getStartDate() != null && attraction.getEndDate() != null) {
+
+                // get instances of the calendar and set the start time for the attraction
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(attraction.getStartDate());
+
+                try {
+                    String startTime = attraction.getStartTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(startTime);
+                    calendar.set(Calendar.HOUR, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Timestamp attractionStartDate = new Timestamp(calendar.getTime());
+                calendar.setTime(attraction.getEndDate());
+
+                try {
+                    String endTime = attraction.getEndTime();
+                    SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
+                    Date date = df.parse(endTime);
+                    calendar.set(Calendar.HOUR, date.getHours());
+                    calendar.set(Calendar.MINUTE, date.getMinutes());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Timestamp attractionEndDate = new Timestamp(calendar.getTime());
+                Timestamp now = Timestamp.now();
+
+                // determine if the attraction is happening and change background and text colors
+                if (attractionStartDate.compareTo(now) < 0 && attractionEndDate.compareTo(now) > 0) {
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FF4859"));
+                    holder.attractionName.setTextColor(Color.parseColor("#EEEEEE"));
+                    holder.attractionLocation.setTextColor(Color.parseColor("#EEEEEE"));
+                }
             }
+        }
+        else {
 
-            Timestamp attractionStartDate = new Timestamp(calendar.getTime());
-            calendar.setTime(attraction.getEndDate());
-
-            try {
-                String endTime = attraction.getEndTime();
-                SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
-                Date date = df.parse(endTime);
-                calendar.set(Calendar.HOUR, date.getHours());
-                calendar.set(Calendar.MINUTE, date.getMinutes());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            Timestamp attractionEndDate = new Timestamp(calendar.getTime());
-            Timestamp now = Timestamp.now();
-
-            // determine if the attraction is happening and change background and text colors
-            if (attractionStartDate.compareTo(now) < 0 && attractionEndDate.compareTo(now) > 0) {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FF4859"));
-                holder.attractionName.setTextColor(Color.parseColor("#EEEEEE"));
-                holder.attractionLocation.setTextColor(Color.parseColor("#EEEEEE"));
-            }
         }
 
         ((MainActivity) context).findViewById(R.id.tour_attractions_loading_container).setVisibility(View.INVISIBLE);

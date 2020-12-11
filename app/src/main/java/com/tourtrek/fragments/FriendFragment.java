@@ -48,10 +48,6 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemSelect
     private static final String TAG = "AddFriendFragment";
     private RecyclerView friendsRecyclerView;
     private SwipeRefreshLayout friendsSwipeRefreshLayout;
-    private RecyclerView friendsOfFriendsRecyclerView;
-    private SwipeRefreshLayout friendsOfFriendsSwipeRefreshLayout;
-    private RecyclerView toursOfFriendsRecyclerView;
-    private SwipeRefreshLayout toursOfFriendsSwipeRefreshLayout;
     private FriendsAdapter friendsAdapter;
 
     private FriendViewModel friendViewModel;

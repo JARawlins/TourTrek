@@ -103,6 +103,17 @@ Also keep in mind that once you import a project, regardless of whether or not i
   <p>You need to perform a gradle sync by selecting File --> Sync Project with Gradle Files</p>
 </details>
 
+<details>
+  <summary>The app in the emulator keeps crashing unexpectidly with no errors in the log</summary>
+  <p>This is most likely the cause of not having up to date libraries downloaded on your machine. You'll want to: </p>
+      <p>
+      <ol>
+            <li> Select File --> Sync Project with Gradle Files </li>
+            <li> Wait for project status to display “Gradle Sync Finished” </li>
+      </ol>
+      </p>
+</details>
+
 ## Screenshots
 
 | Login | Register | Tour Market |

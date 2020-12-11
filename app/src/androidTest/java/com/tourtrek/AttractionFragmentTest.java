@@ -53,22 +53,22 @@ public class AttractionFragmentTest {
 
         // log out of any current account, log into the test account, navigate to the personal tours tab, and select the first tour in the future tours section
         try {
-            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(1000)));
+            onView(isRoot()).perform(waitForView(R.id.navigation_profile, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.navigation_profile)).perform(click());
             onView(withId(R.id.profile_logout_btn)).perform(click());
         } catch (Exception NoMatchingViewException) {
             Log.w(TAG, "Not logged in");
         } finally {
             onView(withId(R.id.navigation_tours)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(1000)));
+            onView(isRoot()).perform(waitForView(R.id.login_email_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.login_email_et)).perform(replaceText("jrawlins@wisc.edu"), closeSoftKeyboard());
             onView(withId(R.id.login_password_et)).perform(replaceText("123456"), closeSoftKeyboard());
             onView(withId(R.id.login_login_btn)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(1000)));
+            onView(isRoot()).perform(waitForView(R.id.personal_future_tours_title_btn, TimeUnit.SECONDS.toMillis(30)));
             sleep(1000); // sleep so that the recycler view to click is loaded
             // onView(withId(R.id.personal_future_tours_rv)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
             onView(withId(R.id.personal_future_tours_title_btn)).perform(click());
-            onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(1000)));
+            onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(30)));
             onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
             onView(withId(R.id.tour_add_attraction_btn)).perform(click());
         }
@@ -177,7 +177,8 @@ public class AttractionFragmentTest {
 //        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMIllis(1000)));
 //        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
 //    }
-
+// TODO - ticket testing
+// TODO - rating testing
 
 //    /**
 //     * test to check that an attraction is successfully added to the recycler view of the current tour following addition
@@ -218,7 +219,7 @@ public class AttractionFragmentTest {
     public void existingAttractionTests() throws InterruptedException {
         attractionConditionsTest("");
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         sleep(500); // give time for the recycler view items to load
 
@@ -228,7 +229,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
 
         // update the attraction name
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.attraction_name_et)).perform(replaceText("New attraction name"), closeSoftKeyboard());
 
         // map check
@@ -237,7 +238,7 @@ public class AttractionFragmentTest {
         Espresso.pressBack();
 
         // scroll to the "update attraction" button and click it
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
         onView(withId(R.id.attraction_update_btn)).perform(nestedScrollTo());
         onView(withId(R.id.attraction_update_btn)).perform(click());
 
@@ -262,7 +263,7 @@ public class AttractionFragmentTest {
     public void mapTest() throws InterruptedException {
         attractionConditionsTest("");
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         sleep(500); // give time for the recycler view items to load
 
@@ -291,7 +292,7 @@ public class AttractionFragmentTest {
     public void deletionTest() throws InterruptedException {
         attractionConditionsTest("");
 
-        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(30)));
 
         sleep(500); // give time for the recycler view items to load
 
@@ -301,7 +302,7 @@ public class AttractionFragmentTest {
         onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
 
         // update the attraction name
-        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(500)));
+        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(30)));
 
         // scroll to the "update attraction" button and click it
         onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
@@ -455,3 +456,4 @@ public class AttractionFragmentTest {
         };
     }
 }
+

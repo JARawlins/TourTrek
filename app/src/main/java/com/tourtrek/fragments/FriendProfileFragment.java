@@ -23,6 +23,7 @@ import com.tourtrek.adapters.ToursOfFriendsAdapter;
 import com.tourtrek.data.Tour;
 import com.tourtrek.data.User;
 import com.tourtrek.utilities.Firestore;
+import com.tourtrek.utilities.ItemClickSupport;
 import com.tourtrek.viewModels.FriendViewModel;
 import com.tourtrek.viewModels.TourViewModel;
 
@@ -32,6 +33,7 @@ import java.util.List;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,9 +47,8 @@ public class FriendProfileFragment extends Fragment {
     private Button deleteFriendButton;
 
 
-    private SwipeRefreshLayout friendsOfFriendsSwipeRefreshLayout;
-    private RecyclerView toursOfFriendsRecyclerView;
     private SwipeRefreshLayout toursOfFriendsSwipeRefreshLayout;
+    private RecyclerView toursOfFriendsRecyclerView;
     private FriendsOfFriendsAdapter friendsListAdapter;
     private ToursOfFriendsAdapter toursListAdapter;
 
@@ -104,11 +105,34 @@ public class FriendProfileFragment extends Fragment {
 
         //populate tours list of user
         toursOfFriendsRecyclerView = friendProfileView.findViewById(R.id.friend_tours_rv);
+        configureOnClickRecyclerView();
         configureRecyclerViewsTours(toursOfFriendsRecyclerView);
         configureSwipeRefreshLayoutsTours(friendProfileView);
 
-
         return friendProfileView;
+    }
+
+    /**
+     * Enables the click listener for each item in our recycler view
+     */
+    private void configureOnClickRecyclerView() {
+        ItemClickSupport.addTo(toursOfFriendsRecyclerView, R.layout.item_tour)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                        // Reference to the current tour selected
+                        Tour tour = toursListAdapter.getData(position);
+
+                        // Add the selected tour to the view model so we can access the tour inside the fragment
+                        tourViewModel.setSelectedTour(tour);
+
+                        // Display the tour selected
+                        final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, new TourFragment(), "TourFragment");
+                        ft.addToBackStack("TourFragment").commit();
+                    }
+                });
     }
 
     private void configureDeleteBtn(View friendProfileView) {
@@ -293,8 +317,8 @@ public class FriendProfileFragment extends Fragment {
     public void configureSwipeRefreshLayoutsTours(View view) {
 
 
-        friendsSwipeRefreshLayout = view.findViewById(R.id.friend_tours_srl);
-        friendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync());
+        toursOfFriendsSwipeRefreshLayout = view.findViewById(R.id.friend_tours_srl);
+        toursOfFriendsSwipeRefreshLayout.setOnRefreshListener(() -> fetchToursAsync());
 
     }
     /**
