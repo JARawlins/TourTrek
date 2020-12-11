@@ -998,6 +998,9 @@ public class TourFragment extends Fragment {
             ((MainActivity)requireActivity()).disableTabs();
             loading = true;
 
+            Date tourStartDate = tourViewModel.getSelectedTour().getStartDate();
+            Date tourEndDate = tourViewModel.getSelectedTour().getEndDate();
+
             // Set all attraction dates to null if they fall outside the tour date
             for(DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
                 documentReference.get()
@@ -1014,9 +1017,9 @@ public class TourFragment extends Fragment {
                                     Timestamp attractionStartDate = new Timestamp(calendar.getTime());
                                     calendar.setTime(attraction.getEndDate());
                                     Timestamp attractionEndDate = new Timestamp(calendar.getTime());
-                                    calendar.setTime(tourViewModel.getSelectedTour().getStartDate());
+                                    calendar.setTime(tourStartDate);
                                     Timestamp tourStartDate = new Timestamp(calendar.getTime());
-                                    calendar.setTime(tourViewModel.getSelectedTour().getEndDate());
+                                    calendar.setTime(tourEndDate);
                                     Timestamp tourEndDate = new Timestamp(calendar.getTime());
 
                                     if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
