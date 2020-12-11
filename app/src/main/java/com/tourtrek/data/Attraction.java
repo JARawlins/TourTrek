@@ -120,7 +120,10 @@ public class Attraction {
     }
 
     public String getCoverImageURI() {
-        return coverImageURI;
+        if (this.coverImageURI == null){
+            this.coverImageURI = "";
+        }
+        return this.coverImageURI;
     }
 
     public void setCoverImageURI(String coverImageURI) {

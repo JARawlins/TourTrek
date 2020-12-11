@@ -146,6 +146,7 @@ public class TourFragment extends Fragment {
     private boolean loading;
     private ImageButton rate;
     private android.widget.SearchView attractionSearchView;
+    private String tourUID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -780,6 +781,7 @@ public class TourFragment extends Fragment {
                     .placeholder(R.drawable.default_image)
                     .into(coverImageView);
             uploadImageToDatabase(imageReturnedIntent);
+
         }
 
         callbackManager.onActivityResult(requestCode, resultCode, imageReturnedIntent);
@@ -803,6 +805,8 @@ public class TourFragment extends Fragment {
 
         final UploadTask uploadTask = storageReference.putFile(selectedImage);
 
+        tourUID = tourViewModel.getSelectedTour().getTourUID();
+
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(exception -> Log.e(TAG, "Error adding image: " + imageUUID + " to cloud storage"))
                 .addOnSuccessListener(taskSnapshot -> {
@@ -810,7 +814,16 @@ public class TourFragment extends Fragment {
 
                     storage.getReference().child("TourCoverPictures/" + imageUUID).getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                                tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
+
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                if (tourViewModel.getSelectedTour() != null) {
+                                    tourViewModel.getSelectedTour().setCoverImageURI(uri.toString());
+                                }
+
+                                db.collection("Tours").document(tourUID).update("coverImageURI", uri.toString());
+
+                                Log.i(TAG, "Uploaded coverImage for tour: " + tourUID);
                             })
                             .addOnFailureListener(exception -> {
                                 Log.e(TAG, "Error retrieving uri for image: " + imageUUID + " in cloud storage, " + exception.getMessage());
@@ -1044,6 +1057,7 @@ public class TourFragment extends Fragment {
                         }
                         tourViewModel.setIsNewTour(null);
                         tourViewModel.setSelectedTour(null);
+
                         getParentFragmentManager().popBackStack();
 
                         ((MainActivity)requireActivity()).enableTabs();
