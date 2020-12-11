@@ -123,12 +123,12 @@ Also keep in mind that once you import a project, regardless of whether or not i
 
 | Login | Register | Tour Market |
 |:-:|:-:|:-:|
-| <img src=".github/assets/screenshots/Login-Screen.PNG" alt="Login" height="500"> | <img src=".github/assets/screenshots/Registration-Screen.PNG" alt="Registration" height="500"> | <img src=".github/assets/screenshots/Tour-Market-Screen.PNG" alt="Tour Market" height="500"> |
+| <img src=".github/assets/screenshots/Login-Screen.png" alt="Login" height="500"> | <img src=".github/assets/screenshots/Registration-Screen.png" alt="Registration" height="500"> | <img src=".github/assets/screenshots/Tour-Market-Screen.png" alt="Tour Market" height="500"> |
 
 | Personal Tours | Profile | Tour Top |
 |:-:|:-:|:-:|
-| <img src=".github/assets/screenshots/Personal-Tours-Screen.PNG" alt="Personal Tours" height="500"> | <img src=".github/assets/screenshots/Profile-Screen.PNG" alt="Profile" height="500"> | <img src=".github/assets/screenshots/Tour-Screen-1.PNG" alt="Tour Top" height="500"> |
+| <img src=".github/assets/screenshots/Personal-Tours-Screen.png" alt="Personal Tours" height="500"> | <img src=".github/assets/screenshots/Profile-Screen.png" alt="Profile" height="500"> | <img src=".github/assets/screenshots/Tour-Screen-1.png" alt="Tour Top" height="500"> |
 
 | Tour Bottom |
 |:-:|
-| <img src=".github/assets/screenshots/Tour-Screen-2.PNG" alt="Tour Bottom" height="500"> |
+| <img src=".github/assets/screenshots/Tour-Screen-2.png" alt="Tour Bottom" height="500"> |
