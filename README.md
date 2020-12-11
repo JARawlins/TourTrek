@@ -114,6 +114,11 @@ Also keep in mind that once you import a project, regardless of whether or not i
       </p>
 </details>
 
+<details>
+  <summary>Running a code coverage test fails</summary>
+  <p>This could be because you're emulator is stalling or not able to keep up with the tests that are being conducted. If the exception that is being thrown says something along the lines of "could not find view", then this is most likely the issue.</p>
+</details>
+
 ## Screenshots
 
 | Login | Register | Tour Market |
