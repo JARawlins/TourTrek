@@ -92,8 +92,10 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
-                        ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+                        if (((MainActivity) context).findViewById(R.id.tour_market_loading_container) != null) {
+                            ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
+                            ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+                        }
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             holder.coverImage.setClipToOutline(true);
@@ -103,9 +105,10 @@ public class TourMarketAdapter extends RecyclerView.Adapter<TourMarketAdapter.To
                 })
                 .into(holder.coverImage);
 
-        ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
-        ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
-
+        if (((MainActivity) context).findViewById(R.id.tour_market_loading_container) != null) {
+            ((MainActivity) context).findViewById(R.id.tour_market_loading_container).setVisibility(View.INVISIBLE);
+            ((MainActivity) context).findViewById(R.id.tour_market_rv).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
