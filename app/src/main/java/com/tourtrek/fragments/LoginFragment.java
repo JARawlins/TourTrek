@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -129,6 +132,35 @@ public class LoginFragment extends Fragment {
                                                 // This means the user does not exist in the database
                                                 else {
                                                     Log.w(TAG, "firestore:failure - unable to find user in firestore");
+
+                                                    User user = new User();
+                                                    user.setEmail(mAuth.getCurrentUser().getEmail());
+                                                    user.setUsername(mAuth.getCurrentUser().getDisplayName());
+
+                                                    // Create user in firestore
+                                                    db.collection("Users").document(mAuth.getUid()).set(user)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    Log.i(TAG, "Successfully created user in the firestore");
+
+                                                                    MainActivity.user = user;
+
+                                                                    // Go back to the profile screen
+                                                                    getParentFragmentManager().popBackStack();
+
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Unable to create a user object in the firestore");
+
+                                                                    // If sign in fails, display a message to the user.
+                                                                    errorTextView.setVisibility(View.VISIBLE);
+                                                                    errorTextView.setText(Objects.requireNonNull(e).getLocalizedMessage());
+                                                                }
+                                                            });
                                                 }
 
                                                 // Stop showing progress bar
