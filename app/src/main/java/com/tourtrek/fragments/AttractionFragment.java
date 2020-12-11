@@ -921,6 +921,7 @@ public class AttractionFragment extends Fragment {
                     String attractionStartTime = attractionViewModel.getSelectedAttraction().getStartTime();
                     SimpleDateFormat df = new SimpleDateFormat("hh:mm aa");
                     Date date = df.parse(attractionStartTime);
+                    Timestamp attractionStartDateNoTime = new Timestamp(calendar.getTime());
                     calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
                     calendar.set(Calendar.MINUTE, date.getMinutes());
                     Timestamp attractionStartDate = new Timestamp(calendar.getTime());
@@ -929,6 +930,7 @@ public class AttractionFragment extends Fragment {
                     calendar.setTime(attractionViewModel.getSelectedAttraction().getEndDate());
                     String attractionEndTime = attractionViewModel.getSelectedAttraction().getEndTime();
                     date = df.parse(attractionEndTime);
+                    Timestamp attractionEndDateNoTime = new Timestamp(calendar.getTime());
                     calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
                     calendar.set(Calendar.MINUTE, date.getMinutes());
                     Timestamp attractionEndDate = new Timestamp(calendar.getTime());
@@ -946,7 +948,7 @@ public class AttractionFragment extends Fragment {
                         return;
                     }
 
-                    if (attractionStartDate.compareTo(tourStartDate) < 0 || attractionEndDate.compareTo(tourEndDate) > 0) {
+                    if (attractionStartDateNoTime.compareTo(tourStartDate) < 0 || attractionEndDateNoTime.compareTo(tourEndDate) > 0) {
                         Toast.makeText(getContext(), "Attraction must fall within tour dates", Toast.LENGTH_SHORT).show();
                         return;
                     }
