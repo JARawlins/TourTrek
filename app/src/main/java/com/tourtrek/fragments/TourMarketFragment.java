@@ -150,6 +150,10 @@ public class TourMarketFragment extends Fragment {
 
                         // Add the selected tour to the view model so we can access the tour inside the fragment
                         tourViewModel.setSelectedTour(tour);
+                        tourViewModel.setReturnedFromAddFriendToTour(false);
+                        tourViewModel.setReturnedFromAddAttraction(false);
+                        tourViewModel.setReturnedFromNavigation(false);
+                        tourViewModel.setIsNewTour(false);
 
                         // Display the tour selected
                         final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
