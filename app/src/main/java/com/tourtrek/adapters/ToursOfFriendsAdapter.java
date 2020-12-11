@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -40,13 +41,14 @@ public class ToursOfFriendsAdapter extends RecyclerView.Adapter<ToursOfFriendsAd
         public TextView tourName;
         public TextView tourLocation;
         public ImageView tourPicture;
+        public RatingBar rating;
 
         public ToursOfFriendsViewHolder(View view) {
             super(view);
             this.tourName = view.findViewById(R.id.item_tour_name);
             this.tourLocation = view.findViewById(R.id.item_tour_location);
             this.tourPicture = view.findViewById(R.id.item_tour_cover_iv);
-
+            this.rating = view.findViewById(R.id.item_tour_ratingBar);
         }
     }
 
@@ -71,6 +73,8 @@ public class ToursOfFriendsAdapter extends RecyclerView.Adapter<ToursOfFriendsAd
 
         holder.tourName.setText(toursDataSet.get(position).getName());
         holder.tourLocation.setText(toursDataSet.get(position).getLocation());
+        holder.rating.setRating((float) toursDataSet.get(position).getRating());
+
         //load picture for tour
         Glide.with(context)
                 .load(toursDataSet.get(position).getCoverImageURI())
