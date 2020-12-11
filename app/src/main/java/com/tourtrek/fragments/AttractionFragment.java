@@ -87,8 +87,6 @@ import java.util.UUID;
  * The fragment will consist of a form with text fields corresponding to Attraction variables to fill in and a button to collect
  * the contents of them and push the information to Firestore.
  *
- * TODO fix tapping the back button when in a Google Map leading to the add attraction screen
- * TODO make sure that this location is accessible via the view model
  * Test
  */
 public class AttractionFragment extends Fragment {
@@ -191,7 +189,6 @@ public class AttractionFragment extends Fragment {
         updateAttractionButton = attractionView.findViewById(R.id.attraction_update_btn);
         deleteAttractionButton = attractionView.findViewById(R.id.attraction_delete_btn);
         navigationAttractionButton = attractionView.findViewById(R.id.attraction_navigation_btn);
-//        buttonsContainer = attractionView.findViewById(R.id.attraction_buttons_container);
         searchAttractionButton = attractionView.findViewById(R.id.attraction_search_ib);
 
         weatherTextView = attractionView.findViewById(R.id.attraction_weather_tv);
@@ -214,7 +211,6 @@ public class AttractionFragment extends Fragment {
         coverImageView.setClickable(false);
         searchAttractionButton.setEnabled(false);
         coverTextView.setVisibility(View.GONE);
-//        buttonsContainer.setVisibility(View.GONE);
 
         // no attraction selected -> new one
         if (attractionViewModel.getSelectedAttraction() == null) {
@@ -223,7 +219,6 @@ public class AttractionFragment extends Fragment {
 
             // set up fields to be made visible since we are creating a new tour
             nameEditText.setEnabled(true);
-//            locationEditText.setEnabled(true);
             costEditText.setEnabled(true);
             startDateButton.setEnabled(true);
             startTimeButton.setEnabled(true);
@@ -235,7 +230,6 @@ public class AttractionFragment extends Fragment {
             coverImageView.setVisibility(View.VISIBLE);
             coverTextView.setVisibility(View.VISIBLE);
             descriptionEditText.setVisibility(View.VISIBLE);
-//            buttonsContainer.setVisibility(View.VISIBLE);
 
             updateAttractionButton.setText("Add Attraction");
 
@@ -566,18 +560,12 @@ public class AttractionFragment extends Fragment {
 
         navigationAttractionButton.setOnClickListener(v -> {
 
-            // check that location services are enabled and give a prompt to enable them if needed
-//            Boolean permissionIsGranted = PlacesLocal.checkLocationPermission(getContext());
-//            if (permissionIsGranted){
-//                Log.d(TAG, "Location enabled");
-
                 attractionViewModel.setReturnedFromNavigation(true);
 
                 // switch to the map fragment
                 final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, new MapsFragment(), "MapsFragment");
                 ft.addToBackStack("MapsFragment").commit();
-//            }
         });
     }
 
@@ -585,7 +573,6 @@ public class AttractionFragment extends Fragment {
      * Check if the attraction belongs to the current user and make fields visible if so
      */
     public void attractionIsUsers() {
-//        Log.d(TAG, "Checking attraction status..." + "UID " + attractionViewModel.getSelectedAttraction().getAttractionUID() + "user " + MainActivity.user.getUsername());
         // navigation should be available for every attraction in the database
         if (attractionViewModel.getSelectedAttraction().getAttractionUID() != null){
             navigationAttractionButton.setVisibility(View.VISIBLE);
@@ -597,7 +584,6 @@ public class AttractionFragment extends Fragment {
         // enables updating an attraction when it is part of a tour owned by the user and when it is a new attraction
         if (tourViewModel.isUserOwned() || attractionViewModel.isNewAttraction()){
             nameEditText.setEnabled(true);
-//            locationEditText.setEnabled(true);
             costEditText.setEnabled(true);
             startDateButton.setEnabled(true);
             startTimeButton.setEnabled(true);
@@ -607,7 +593,6 @@ public class AttractionFragment extends Fragment {
             searchAttractionButton.setEnabled(true);
             coverImageView.setClickable(true);
             coverTextView.setVisibility(View.VISIBLE);
-//            buttonsContainer.setVisibility(View.VISIBLE);
             updateAttractionButton.setVisibility(View.VISIBLE);
 
             // to enable deletion of attractions selected from the tour's recycler view

@@ -165,15 +165,6 @@ public class AddFriendToTourFragment extends Fragment {
                     // Setup collection references
                     CollectionReference usersCollection = db.collection("Users");
 
-
-//                    // Add UID of users friends to a list
-//                    List<String> usersUIDs = new ArrayList<>();
-//                    if (!MainActivity.user.getFriends().isEmpty()) {
-//                        for (DocumentReference documentReference : MainActivity.user.getFriends()) {
-//                            usersUIDs.add(documentReference.getId());
-//                        }
-//                    }
-
                     // Query database
                     usersCollection.get().addOnSuccessListener(queryDocumentSnapshots -> {
 
@@ -216,14 +207,6 @@ public class AddFriendToTourFragment extends Fragment {
                                             //get document reference variable for current tour
                                             tour = db.collection("Tours").document(tourViewModel.getSelectedTour().getTourUID());
 
-
-
-//                                            addFriendButton.setOnClickListener(view1 -> {
-//                                                friend.addTourToTours(tour);
-//
-//                                                Toast.makeText(getContext(), "Successfully added friend to tour", Toast.LENGTH_SHORT).show();
-//
-//                                            });
 
                                         }
                                     }

@@ -138,9 +138,6 @@ public class LoginFragment extends Fragment {
                                                     User user = new User();
                                                     user.setEmail(mAuth.getCurrentUser().getEmail());
                                                     user.setUsername(mAuth.getCurrentUser().getDisplayName());
-//                                                    Map<String,Boolean> settings = new HashMap<>();
-//                                                    settings.put()
-//                                                    user.setSettings();
 
                                                     // Create user in firestore
                                                     db.collection("Users").document(mAuth.getUid()).set(user)

@@ -8,7 +8,6 @@
     <string name="prompt_email">Email</string>
     <string name="action_register">Register</string>
     <string name="prompt_username">Username</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_edit_tour_notifications">Notifications</string>
     <string name="fragment_edit_tour_public">Public</string>
     <!--    <string name=""></string>-->
@@ -18,7 +17,6 @@
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="facebook_app_id">456155985393505</string>
     <string name="view_add_ticket">View/Add ticket</string>
 

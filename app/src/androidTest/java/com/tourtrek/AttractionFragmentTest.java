@@ -80,10 +80,8 @@ public class AttractionFragmentTest {
      * https://stackoverflow.com/questions/43149728/select-date-from-calendar-in-android-espresso/43180527
      */
     @Test
-    public void missingInfoTests() throws InterruptedException {
+    public void noName() throws InterruptedException {
         // test the case of no attraction name
-//        onView(withId(R.id.tour_add_attraction_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_add_attraction_btn)).perform(click());
         attractionConditionsTest("noAttraction");
         onView(withText("Not all fields entered")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         Espresso.pressBack();
@@ -111,7 +109,6 @@ public class AttractionFragmentTest {
     @Test
     public void noStartDate() throws InterruptedException {
         attractionConditionsTest("noStartDate");
-//        onView(withText("Not all fields entered")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         Espresso.pressBack();
         removeAdded();
     }
@@ -162,55 +159,9 @@ public class AttractionFragmentTest {
     @Test
     public void additionSuccessfulTest() throws InterruptedException {
         attractionConditionsTest("SUCCESSFUL ADDITION");
-//        onView(withText("Successfully Added Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        Espresso.pressBack();
         removeAdded();
     }
 
-//    /**
-//     * Check that updating or adding an attraction takes you back to the prior tour screen
-//     */
-//    @Test
-//    public void backToEditTourTest() {
-//        // this check will only pass if we have successfully returned to the edit tour page
-//        attractionConditionsTest("");
-//        onView(isRoot()).perform(waitForView(R.id.tour_update_btn, TimeUnit.SECONDS.toMIllis(1000)));
-//        onView(withId(R.id.tour_update_btn)).check(matches(withText("Update Tour")));
-//    }
-// TODO - ticket testing
-// TODO - rating testing
-
-//    /**
-//     * test to check that an attraction is successfully added to the recycler view of the current tour following addition
-//     *https://stackoverflow.com/questions/37736616/espresso-how-to-find-a-specific-item-in-a-recycler-view-order-is-random
-//     */
-//    @Test
-//    public void addedToRecyclerTest() throws InterruptedException {
-//        attractionConditionsTest("");
-//
-////        Espresso.pressBack();
-//
-//        onView(isRoot()).perform(waitForView(R.id.tour_attractions_rv, TimeUnit.SECONDS.toMillis(100)));
-//
-//        sleep(1000); // give time for the recycler view to load
-//
-//        onView(withId(R.id.tour_attractions_rv)).perform(nestedScrollTo());
-//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Wisconsin Institute for Discovery"))));
-//        onView(withId(R.id.tour_attractions_rv)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Wisconsin Institute for Discovery")), click()));
-//        onView(isRoot()).perform(waitForView(R.id.attraction_name_et, TimeUnit.SECONDS.toMillis(100)));
-//
-////        onView(withId(R.id.attraction_name_et)).check(matches(withText("Wisconsin Institute for Discovery")));
-//
-//        // delete the tour and attraction
-//        Espresso.pressBack();
-//        sleep(100);
-//        removeAdded();
-//
-////        // scroll to the "update attraction" button and click it
-////        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
-////        onView(withId(R.id.attraction_delete_btn)).perform(click());
-//
-//    }
 
     /**
      * Test for updating an attraction, not making a new one
@@ -243,17 +194,12 @@ public class AttractionFragmentTest {
         onView(withId(R.id.attraction_update_btn)).perform(click());
 
         // check for the proper toast message
-//        sleep(1000);
         onView(withText("Successfully Updated Attraction")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 
         // delete the tour and attraction
         sleep(1000);
         Espresso.pressBack();
         removeAdded();
-
-//        // scroll to the "update attraction" button and click it
-//        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.attraction_delete_btn)).perform(click());
     }
 
     /**
@@ -280,9 +226,6 @@ public class AttractionFragmentTest {
         Espresso.pressBack();
         removeAdded();
 
-//        // scroll to the "update attraction" button and click it
-//        onView(withId(R.id.attraction_delete_btn)).perform(nestedScrollTo());
-//        onView(withId(R.id.attraction_delete_btn)).perform(click());
     }
 
     /**
@@ -341,8 +284,6 @@ public class AttractionFragmentTest {
 
         // location
         onView(withId(R.id.attraction_location_et)).perform(nestedScrollTo());
-//        if (condition.equals("noLocation")){onView(withId(R.id.attraction_location_et)).perform(typeText(""), closeSoftKeyboard()); }
-//        else {onView(withId(R.id.attraction_location_et)).perform(typeText("330 N. Orchard St., Madison, WI, USA"), closeSoftKeyboard()); }
         if (!(condition.equals("noLocation") || condition.equals("noAttraction"))) {
             onView(withId(R.id.attraction_search_ib)).perform(click());
             sleep(1000);

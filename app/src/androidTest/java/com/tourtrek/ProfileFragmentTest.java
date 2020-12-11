@@ -54,7 +54,6 @@ public class ProfileFragmentTest {
         }
     }
 
-    // TODO - fix
 //    @Test
 //    public void TestLogOut() {
 //        onView(withId(R.id.profile_logout_btn)).perform(click());

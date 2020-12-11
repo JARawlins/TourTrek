@@ -94,13 +94,11 @@ public class PersonalToursFragmentTest {
         onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(20)));
         //sleep(1000);
 
-//        onView(withId(R.id.tour_name_et)).check(matches(withText("future tour")));
         onView(withId(R.id.tour_start_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/2100")));
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/2101")));
 
-        //Espresso.pressBack();
         removeAdded();
     }
 
@@ -126,13 +124,11 @@ public class PersonalToursFragmentTest {
         onView(isRoot()).perform(waitForView(R.id.tour_name_et, TimeUnit.SECONDS.toMillis(20)));
         sleep(1000);
 
-//        onView(withId(R.id.tour_name_et)).check(matches(withText("current tour")));
         onView(withId(R.id.tour_start_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/1900")));
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/2101")));
 
-        //Espresso.pressBack();
         removeAdded();
     }
 
@@ -158,13 +154,11 @@ public class PersonalToursFragmentTest {
         onView(isRoot()).perform(waitForView(R.id.tour_end_date_btn, TimeUnit.SECONDS.toMillis(20)));
         sleep(1000);
 
-//        onView(withId(R.id.tour_name_et)).check(matches(withText("past tour")));
         onView(withId(R.id.tour_start_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_start_date_btn)).check(matches(withText("11/10/1900")));
         onView(withId(R.id.tour_end_date_btn)).perform(nestedScrollTo());
         onView(withId(R.id.tour_end_date_btn)).check(matches(withText("11/12/1901")));
 
-       // Espresso.pressBack();
         removeAdded();
     }
 
