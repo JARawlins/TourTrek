@@ -129,6 +129,10 @@ Also keep in mind that once you import a project, regardless of whether or not i
 |:-:|:-:|:-:|
 | <img src=".github/assets/screenshots/Personal-Tours-Screen.png" alt="Personal Tours" height="500"> | <img src=".github/assets/screenshots/Profile-Screen.png" alt="Profile" height="500"> | <img src=".github/assets/screenshots/Tour-Screen-1.png" alt="Tour Top" height="500"> |
 
-| Tour Bottom |
-|:-:|
-| <img src=".github/assets/screenshots/Tour-Screen-2.png" alt="Tour Bottom" height="500"> |
+| Tour Bottom | Attraction Top | Attraction Bottom |
+|:-:|:-:|:-:|
+| <img src=".github/assets/screenshots/Tour-Screen-2.png" alt="Tour Bottom" height="500"> | <img src=".github/assets/screenshots/Attraction-Screen-1.png" alt="Attraction Top" height="500"> | <img src=".github/assets/screenshots/Attraction-Screen-2.png" alt="Attraction Bottom" height="500"> |
+
+| Friends | Settings |
+|:-:|:-:|
+| <img src=".github/assets/screenshots/Friends-Screen.png" alt="Friends" height="500"> | <img src=".github/assets/screenshots/Settings-Screen.png" alt="Settings" height="500"> |
