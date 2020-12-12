@@ -940,8 +940,6 @@ public class TourFragment extends Fragment {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-            added = true;
-
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
             String cost = costEditText.getText().toString();
@@ -1002,6 +1000,8 @@ public class TourFragment extends Fragment {
 
             Date tourStartDate = tourViewModel.getSelectedTour().getStartDate();
             Date tourEndDate = tourViewModel.getSelectedTour().getEndDate();
+
+            added = true;
 
             // Set all attraction dates to null if they fall outside the tour date
             for(DocumentReference documentReference : tourViewModel.getSelectedTour().getAttractions()) {
