@@ -124,6 +124,12 @@ Also keep in mind that once you import a project, regardless of whether or not i
   <p>This is actually a bug with the 3rd party library that we use (Glide). Some images work and others do not. Please try another image</p>
 </details>
 
+
+<details>
+  <summary>Attempting to post a tour to Facebook tells me I need to be added as a developer</summary>
+  <p>While the app is in a development state, users will need to be added as developers to our facebook group. Please reach out to us in order to be added to this group</p>
+</details>
+
 ## Screenshots
 
 | Login | Register | Tour Market |
