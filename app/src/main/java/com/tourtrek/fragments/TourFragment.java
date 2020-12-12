@@ -529,7 +529,7 @@ public class TourFragment extends Fragment {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        if (tourViewModel.isNewTour() && !added && !tourViewModel.returnedFromAddAttraction()) {
+        if (tourViewModel.isNewTour() && !added && !tourViewModel.returnedFromAddAttraction() && !tourViewModel.returnedFromAddFriendToTour()) {
             // Go through each attraction in the tour and delete them from the firestore
 
             // Pull out the UID's of each attraction that belongs to this tour
@@ -649,7 +649,9 @@ public class TourFragment extends Fragment {
     private void setupAddFriendToTourButton(View tourView) {
         Button addFriend = tourView.findViewById(R.id.tour_add_friend_btn);
         addFriend.setOnClickListener(u -> {
+
             tourViewModel.setReturnedFromAddFriendToTour(true);
+
             final FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new AddFriendToTourFragment(), "AddFriendToTourFragment");
             ft.addToBackStack("AddFriendToTourFragment").commit();
