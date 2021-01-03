@@ -54,7 +54,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" /> <!-- Service to receive messages from firebase cloud messaging -->
+            android:value= "AIzaSyCgOUt3oZnDt2twoKOcgzcoqYEGBEEhU9A"/> <!-- Service to receive messages from firebase cloud messaging -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" /> <!-- receiver to display alarms for tour and attraction start -->
